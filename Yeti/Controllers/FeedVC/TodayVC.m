@@ -11,7 +11,7 @@
 #define kTodayDBView @"todayDBView"
 #define kTodayDBFilteredView @"todayDBFilteredView"
 
-@interface TodayVC ()
+@interface TodayVC () 
 
 @property (nonatomic, strong) PagingManager *todayManager;
 
@@ -131,7 +131,9 @@
         
         self.dbFilteredView = filteredView;
         
-        [MyDBManager.database registerExtension:self.dbFilteredView withName:kTodayDBFilteredView];
+        BOOL registered = [MyDBManager.database registerExtension:self.dbFilteredView withName:kTodayDBFilteredView];
+        
+        NSLogDebug(@"Registered today filtered view: %@", @(registered));
         
     }
     else {
@@ -199,12 +201,18 @@
             
             dispatch_async(MyDBManager.readQueue, ^{
                 
-                [MyDBManager.countsConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+                [MyDBManager.uiConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
                     
                     YapDatabaseViewTransaction *ext = [transaction extension:kTodayDBFilteredView];
                     
                     if (ext == nil) {
-                        return completion(nil);
+                        
+                        if (completion) {
+                            completion(nil);
+                        }
+                        
+                        return;
+                        
                     }
                     
                     NSRange range = NSMakeRange(((self.todayManager.page - 1) * 20) - 1, 20);
@@ -339,10 +347,10 @@
 
 - (void)_setSortingOption:(YetiSortOption)option {
     
+    [self setupDatabases:option];
+    
     self.todayManager = nil;
     self.pagingManager = self.todayManager;
-    
-    [self setupDatabases:option];
     
 }
 

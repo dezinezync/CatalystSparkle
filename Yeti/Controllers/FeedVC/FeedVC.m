@@ -958,7 +958,7 @@ static NSUInteger _filteringTag = 0;
 
 - (void)updateiOSTitleView {
     
-    self.titleView.countLabel.text = formattedString(@"%@ Unread%@", self.feed.unread, self.feed.unread.integerValue == 1 ? @"" : @"s");
+    self.titleView.countLabel.text = formattedString(@"%@ Unread%@", self.feed.unread ?: @(0), self.feed.unread.integerValue == 1 ? @"" : @"s");
     
 }
 

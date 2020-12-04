@@ -13,6 +13,14 @@ This build includes support for Local Syncing. If something breaks, the app cras
 
 - Searching in feeds may crash the app. 
 
+## Build 103
+
+- Fixed articles not loading for certain feeds. 
+
+- Fixed Today View not updating when opened after an app launch. 
+
+- Fixed unread counts showing a small mismatch. (Filtered counts issue still exists. Some feeds may show counts of the articles which have been filtered out of the view.)
+
 ## Build 100
 
 - Fixed a crash when app is backgrounded. 

@@ -235,18 +235,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     if (MyFeedsManager.additionalFeedsToSync != nil && MyFeedsManager.additionalFeedsToSync.count > 0) {
         
-        NSCalendarUnit units = NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay|NSCalendarUnitHour;
-        
-        // two weeks ago.
-        NSDate *date = [NSDate.date dateByAddingTimeInterval:-(1209600)];
-        
-        NSDateComponents * components = [NSCalendar.currentCalendar components:units fromDate:date];
-        
-        NSString *token = [NSString stringWithFormat:@"%@-%@-%@ %@:00:00", @(components.year), @(components.month), @(components.day), @(components.hour)];
-        
-        token = [token base64Encoded];
-        
-        [MyDBManager fetchNewArticlesFor:MyFeedsManager.additionalFeedsToSync.allObjects since:token];
+        [MyDBManager fetchNewArticlesFor:MyFeedsManager.additionalFeedsToSync.allObjects since:@"new"];
         
     }
     

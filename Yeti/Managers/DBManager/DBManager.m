@@ -1309,6 +1309,8 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
 
 - (void)fetchNewArticlesFor:(NSArray <NSNumber *> *)feedIDs since:(NSString *)since {
     
+    NSNumber *identifier = [since isEqualToString:@"new"] ? @0 : nil;
+    
     dispatch_async(self.readQueue, ^{
         
         NSLogDebug(@"[Sync] Fetching new articles for: %@", feedIDs);
@@ -1323,7 +1325,7 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                 
                 strongify(queue);
                 
-                [self _fetchNewArticlesFor:feedID page:1 since:since queue:queue];
+                [self _fetchNewArticlesFor:feedID page:1 since:since queue:queue identifier:identifier];
                 
             }];
             
@@ -1335,32 +1337,32 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     
 }
 
-- (void)_fetchNewArticlesFor:(NSNumber *)feedID page:(NSInteger)page since:(NSString *)since queue:(NSOperationQueue *)queue {
+- (void)_fetchNewArticlesFor:(NSNumber *)feedID page:(NSInteger)page since:(NSString *)since queue:(NSOperationQueue *)queue identifier:(NSNumber *)identifier {
     
-    __block NSNumber *articleID = nil;
+    __block NSNumber *articleID = identifier;
     __block NSString *etag = nil;
     
 //     first we get the latest article for this Feed ID.
-    [self.uiConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
-
-        YapDatabaseAutoViewTransaction *viewTransaction = [transaction extension:@"articlesView"];
-
-        NSString *collection = [NSString stringWithFormat:@"%@:%@", GROUP_ARTICLES, feedID];
-        NSString *key = nil;
+    if (articleID == nil) {
         
-        [viewTransaction getFirstKey:&key collection:&collection inGroup:GROUP_ARTICLES];
+        [self.bgConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
 
-        if (key != nil && collection != nil) {
-            articleID = @(key.integerValue);
-        }
-        
-        NSDictionary *metadata = [transaction metadataForKey:feedID.stringValue inCollection:LOCAL_FEEDS_COLLECTION];
-        
-        if (metadata != nil) {
-            etag = [metadata valueForKey:@"etag"];
-        }
+            YapDatabaseAutoViewTransaction *viewTransaction = [transaction extension:DB_FEED_VIEW];
 
-    }];
+            NSString *collection = [NSString stringWithFormat:@"%@:%@", GROUP_ARTICLES, feedID];
+            
+            [viewTransaction enumerateKeysInGroup:GROUP_ARTICLES withOptions:NSEnumerationReverse usingBlock:^(NSString * _Nonnull col, NSString * _Nonnull key, NSUInteger index, BOOL * _Nonnull stop) {
+                
+                if ([collection isEqualToString:col]) {
+                    articleID = @(key.integerValue);
+                    *stop = YES;
+                }
+                
+            }];
+
+        }];
+        
+    }
 
     if (articleID) {
         NSLog(@"[Sync] Fetching articles for %@ since %@", feedID, articleID);
@@ -1377,9 +1379,6 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     
     if (articleID) {
         params[@"articleID"] = articleID;
-        // since we're providing the articleID, we want to fetch since that
-        // so we reset the page param back to 2 and recount
-        params[@"page"] = @(2);
     }
     
     if (etag) {
@@ -1389,6 +1388,21 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     weakify(self);
     
     [MyFeedsManager getSyncArticles:params success:^(NSArray <FeedItem *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if (response.statusCode != 200) {
+            
+            if (self.syncProgressBlock) {
+                
+                self->_currentProgress += 1;
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.syncProgressBlock(self->_currentProgress/self->_totalProgress);
+                });
+                
+            }
+            
+            return;
+        }
         
         strongify(self);
         
@@ -1416,8 +1430,7 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         }
         
         if (responseObject == nil || responseObject.count == 0) {
-//            [queue setSuspended:NO];
-            
+
             if (self.syncProgressBlock) {
                 
                 self->_currentProgress += 1;
@@ -1440,51 +1453,27 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         // do not load more than 100 articles.
         if (responseObject.count == 20 && (page + 1) <= 5) {
             
-            BOOL hasArticleID = NO;
+            NSLogDebug(@"Fetching page %@ for feed: %@", @(page + 1), feedID);
             
-            // check the last ID of the article. It should be
-            // not be higher than our current articleID if we have one
-            if (articleID != nil) {
+            @synchronized (self) {
+                self->_totalProgress += 1;
+                self->_currentProgress += 1;
+            }
+            
+            if (self.syncProgressBlock) {
                 
-                NSArray <NSNumber *> *identifiers = [[(NSArray <NSNumber *> *)[responseObject rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
-                    return obj.identifier;
-                }] sortedArrayUsingSelector:@selector(compare:)] rz_reversed];
-                
-                // get the last ID
-                NSNumber *lastArticleID = [identifiers firstObject];
-                
-                // check if we have this article
-                id lastArticle = [self articleForID:lastArticleID feedID:feedID];
-                
-                hasArticleID = lastArticle != nil;
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.syncProgressBlock(self->_currentProgress/self->_totalProgress);
+                });
                 
             }
             
-            if (hasArticleID == NO) {
+            // get next page
+            [queue addOperationWithBlock:^{
                 
-                NSLogDebug(@"Fetching page %@ for feed: %@", @(page + 1), feedID);
+                [self _fetchNewArticlesFor:feedID page:(page + 1) since:since queue:queue identifier:articleID];
                 
-                @synchronized (self) {
-                    self->_totalProgress += 1;
-                    self->_currentProgress += 1;
-                }
-                
-                if (self.syncProgressBlock) {
-                    
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        self.syncProgressBlock(self->_currentProgress/self->_totalProgress);
-                    });
-                    
-                }
-                
-                // get next page
-                [queue addOperationWithBlock:^{
-                    
-                    [self _fetchNewArticlesFor:feedID page:(page + 1) since:since queue:queue];
-                    
-                }];
-                
-            }
+            }];
             
         }
         else {
@@ -1818,6 +1807,8 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         
         [transaction removeObjectsForKeys:keys inCollection:LOCAL_ARTICLES_FULLTEXT_COLLECTION];
         
+        [transaction removeObjectForKey:feedID.stringValue inCollection:LOCAL_FEEDS_COLLECTION];
+        
     }];
     
 }
@@ -1825,46 +1816,46 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
 #pragma mark - Notifications
 
 - (void)yapDatabaseModified:(NSNotification *)ignored {
-    // Notify observers we're about to update the database connection
     
-    dispatch_async(self.readQueue, ^{
+    // Notify observers we're about to update the database connection
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIDatabaseConnectionWillUpdateNotification
+                                                        object:self];
+    
+    // Move uiDatabaseConnection to the latest commit.
+    // Do so atomically, and fetch all the notifications for each commit we jump.
+    
+    NSArray *notifications = [self.uiConnection beginLongLivedReadTransaction];
+    NSArray *notifications2 = [self.countsConnection beginLongLivedReadTransaction];
+    
+    NSSet *uniqueNotifications = [NSSet setWithArray:notifications];
+    uniqueNotifications = [uniqueNotifications setByAddingObjectsFromArray:notifications2];
+    
+    notifications = uniqueNotifications.allObjects;
+    
+    if (notifications.count == 0) {
+        // nothing has changed for us.
+        return;
+    }
+    
+    // Notify observers that the uiDatabaseConnection was updated
+    
+    NSDictionary *userInfo = @{
+                               kNotificationsKey : notifications,
+                               };
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIDatabaseConnectionDidUpdateNotification
+                                                        object:self
+                                                      userInfo:userInfo];
+    
+    if ([(YapDatabaseAutoViewConnection *)[self.uiConnection ext:DB_FEED_VIEW] hasChangesForGroup:GROUP_ARTICLES inNotifications:notifications]) {
         
-        [[NSNotificationCenter defaultCenter] postNotificationName:UIDatabaseConnectionWillUpdateNotification
-                                                            object:self];
-        
-        // Move uiDatabaseConnection to the latest commit.
-        // Do so atomically, and fetch all the notifications for each commit we jump.
-        
-        NSArray *notifications = [self.uiConnection beginLongLivedReadTransaction];
-        NSArray *notifications2 = [self.countsConnection beginLongLivedReadTransaction];
-        
-        NSSet *uniqueNotifications = [NSSet setWithArray:notifications];
-        uniqueNotifications = [uniqueNotifications setByAddingObjectsFromArray:notifications2];
-        
-        notifications = uniqueNotifications.allObjects;
-        
-        if (notifications.count == 0) {
-            // nothing has changed for us.
-            return;
-        }
-        
-        // Notify observers that the uiDatabaseConnection was updated
-        
-        NSDictionary *userInfo = @{
-                                   kNotificationsKey : notifications,
-                                   };
-        
-        [[NSNotificationCenter defaultCenter] postNotificationName:UIDatabaseConnectionDidUpdateNotification
-                                                            object:self
-                                                          userInfo:userInfo];
-        
-        if ([(YapDatabaseAutoViewConnection *)[self.uiConnection ext:DB_FEED_VIEW] hasChangesForGroup:GROUP_ARTICLES inNotifications:notifications]) {
+        dispatch_async(self.readQueue, ^{
             
             [MyDBManager updateUnreadCounters];
-            
-        }
 
-    });
+        });
+        
+    }
     
 }
 

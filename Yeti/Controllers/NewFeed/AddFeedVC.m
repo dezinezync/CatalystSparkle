@@ -88,6 +88,13 @@
     
     self.title = @"Add Feed";
     
+    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+        
+        self.navigationController.modalPresentationStyle = UIModalPresentationFullScreen;
+        self.modalPresentationStyle = UIModalPresentationFullScreen;
+        
+    }
+    
     self.navigationController.navigationBar.prefersLargeTitles = NO;
     self.navigationController.view.backgroundColor = UIColor.systemBackgroundColor;
     self.navigationController.navigationBar.translucent = YES;

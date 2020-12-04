@@ -155,7 +155,7 @@ AppDelegate *MyAppDelegate = nil;
 //                [self showArticle:@(1831527)]; // crashing article
 //                [self openFeed:@(11750) article:@(11311036)]; // youtube video
 //                [self openFeed:@(18) article:@(17754118)]; // Elytra
-                [self openFeed:@(1) article:nil];
+//                [self openFeed:@(1) article:nil];
             });
         #endif
         

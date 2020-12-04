@@ -269,6 +269,7 @@ NSString* deviceName() {
     UINavigationController *nav = [AddFeedVC instanceInNavController];
     
     nav.viewControllers.firstObject.mainCoordinator = self;
+    nav.modalPresentationStyle = UIModalPresentationFullScreen;
     
     [self.splitViewController presentViewController:nav animated:YES completion:nil];
     
