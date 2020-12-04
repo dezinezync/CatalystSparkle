@@ -218,7 +218,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
 #if !TARGET_OS_MACCATALYST
     self.navigationController.navigationBar.prefersLargeTitles = YES;
-    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
+    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
     
     if (SharedPrefs.useToolbar) {
         

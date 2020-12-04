@@ -15,6 +15,10 @@ Please run "Force Resync" or delete the app and install again before using the f
 
 - Searching in feeds may crash the app. 
 
+## Build 105
+
+- Fixed: inside a feed, the context and right swipe Browser actions will also respect the reader mode setting. 
+
 ## Build 104
 
 - Fixed articles not loading for certain feeds. 

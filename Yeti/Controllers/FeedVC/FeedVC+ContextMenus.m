@@ -78,7 +78,21 @@
         
         UIAction *browser = [UIAction actionWithTitle:@"Open in Browser" image:[UIImage systemImageNamed:@"safari"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
             
-            NSURL *URL = formattedURL(@"yeti://external?link=%@", item.articleURL);
+            strongify(self);
+            
+            BOOL readerMode = NO;
+            
+            if (self.type == FeedVCTypeNatural) {
+                
+                NSDictionary *dict = [MyDBManager metadataForFeed:self.feed];
+                
+                if (dict != nil && [(dict[kFeedSafariReaderMode] ?: @(NO)) boolValue] == YES) {
+                    readerMode = YES;
+                }
+                
+            }
+            
+            NSURL *URL = formattedURL(@"yeti://external?link=%@%@", item.articleURL, readerMode ? @"&ytreader=1" : @"");
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 
@@ -271,11 +285,27 @@
     
     NSMutableArray <UIContextualAction *> *actions = [NSMutableArray arrayWithCapacity:2];
     
+    weakify(self);
+    
     UIContextualAction *browser = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleNormal title:@"Browser" handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
         
         completionHandler(YES);
         
-        NSURL *URL = formattedURL(@"yeti://external?link=%@", item.articleURL);
+        strongify(self);
+        
+        BOOL readerMode = NO;
+        
+        if (self.type == FeedVCTypeNatural) {
+            
+            NSDictionary *dict = [MyDBManager metadataForFeed:self.feed];
+            
+            if (dict != nil && [(dict[kFeedSafariReaderMode] ?: @(NO)) boolValue] == YES) {
+                readerMode = YES;
+            }
+            
+        }
+        
+        NSURL *URL = formattedURL(@"yeti://external?link=%@%@", item.articleURL, readerMode ? @"&ytreader=1" : @"");
         
         dispatch_async(dispatch_get_main_queue(), ^{
             
@@ -290,8 +320,6 @@
     browser.backgroundColor = UIColor.systemTealColor;
     
     [actions addObject:browser];
-    
-    weakify(self);
     
     UIContextualAction *share = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleNormal title:@"Share" handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
         
