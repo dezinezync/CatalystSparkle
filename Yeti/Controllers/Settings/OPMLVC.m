@@ -202,7 +202,7 @@
     if (MyFeedsManager.subscription == nil || [MyFeedsManager.subscription hasExpired]) {
         // A subscription is required to import Feeds from an OPML file.
         if (MyFeedsManager.subscription == nil) {
-            [MyFeedsManager setValue:[Subscription new] forKey:@"subscription"];
+            [MyFeedsManager setValue:[YTSubscription new] forKey:@"subscription"];
         }
         
         NSString * const error = @"An active subscription is required to import Subscriptions files in to Elytra.";

@@ -29,6 +29,7 @@ class FeedInfoCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        selectionStyle = .none
     }
     
     override func prepareForReuse() {

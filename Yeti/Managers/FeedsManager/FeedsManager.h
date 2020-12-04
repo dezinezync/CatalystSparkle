@@ -21,12 +21,11 @@
 #import "YetiConstants.h"
 #import "ArticlesManager.h"
 
-#import "Elytra-Swift.h"
-
 #define kAccountID @"YTUserID"
 #define kUserID @"userID"
 #define kUUIDString @"UUIDString"
 
+@class KVSItem;
 @class FeedsManager;
 
 extern FeedsManager * _Nonnull MyFeedsManager;
@@ -35,7 +34,7 @@ extern FeedsManager * _Nonnull MyFeedsManager;
     
     NSString *_pushToken;
     
-    Subscription * _subscription;
+    YTSubscription * _subscription;
     
     NSNumber * _userID;
     
@@ -47,7 +46,7 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 @property (nonatomic, copy, readonly) NSString * _Nullable deviceID;
 
-@property (atomic, strong, readonly) Subscription * _Nullable subscription;
+@property (atomic, strong, readonly) YTSubscription * _Nullable subscription;
 
 @property (nonatomic, strong, readonly) DZURLSession * _Nonnull session, * _Nonnull backgroundSession;
 

@@ -141,7 +141,7 @@ import SDWebImage
             else if (indexPath.row == 1) {
                 
                 cell.label.text = "Push Notifications"
-                cell.toggle.addTarget(self, action: #selector(didTogglePush(toggle:)), for: .valueChanged)
+//                cell.toggle.addTarget(self, action: #selector(didTogglePush(toggle:)), for: .valueChanged)
                 
                 cell.toggle.setOn(self.feed?.isSubscribed ?? false, animated: false)
                 
@@ -272,7 +272,22 @@ import SDWebImage
     // MARK: - Actions
     @objc func didTogglePush(toggle: UISwitch) {
         
+        guard let feed = self.feed else {
+            return
+        }
         
+        // check which push type the feed supports.
+        if (feed.isHubSubscribed || ((feed.rpcCount?.intValue ?? 0) > 2)) {
+            
+            // supports push
+            
+            
+        }
+        else {
+            
+            // supports local
+            
+        }
         
     }
     

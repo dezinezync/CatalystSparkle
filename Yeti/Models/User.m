@@ -44,7 +44,7 @@
         
         self.userID = [coder decodeObjectOfClass:NSNumber.class forKey:propSel(userID)];
         self.uuid = [coder decodeObjectOfClass:NSString.class forKey:propSel(uuid)];
-        self.subscription = [coder decodeObjectOfClass:Subscription.class forKey:propSel(subscription)];
+        self.subscription = [coder decodeObjectOfClass:YTSubscription.class forKey:propSel(subscription)];
         self.filters = [coder decodeObjectOfClasses:[NSSet setWithObjects:NSSet.class, NSString.class, nil] forKey:propSel(filters)];
         
     }
@@ -75,7 +75,7 @@
     
     if ([key isEqualToString:propSel(subscription)] && value != nil && [value isKindOfClass:NSDictionary.class]) {
         
-        value = [Subscription instanceFromDictionary:value];
+        value = [YTSubscription instanceFromDictionary:value];
         
     }
     

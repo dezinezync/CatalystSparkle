@@ -13,6 +13,7 @@
 #import "YetiConstants.h"
 
 #import <DZKit/DZUtilities.h>
+#import "Elytra-Swift.h"
 
 @implementation FeedsManager (KVS)
 

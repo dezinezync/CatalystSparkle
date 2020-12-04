@@ -3,3 +3,6 @@
 //
 
 #import "Feed.h"
+#import "User.h"
+#import "FeedsManager.h"
+#import "DBManager.h"

@@ -133,6 +133,7 @@
 		F044B3CA2338A6E900DD8E90 /* BookmarksMigrationVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F044B3C82338A6E900DD8E90 /* BookmarksMigrationVC.xib */; };
 		F0469DF220A0514100163C4E /* dark.css in Resources */ = {isa = PBXBuildFile; fileRef = F0469DF120A0514100163C4E /* dark.css */; };
 		F0469DF420A0528000163C4E /* black.css in Resources */ = {isa = PBXBuildFile; fileRef = F0469DF320A0528000163C4E /* black.css */; };
+		F047CB6F2579F98E00395DC2 /* UIControlSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = F047CB6E2579F98E00395DC2 /* UIControlSubscription.swift */; };
 		F047F4E220C25FB900626968 /* Spectral-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4D420C25FB800626968 /* Spectral-Regular.ttf */; };
 		F047F4E620C25FB900626968 /* Spectral-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4D620C25FB800626968 /* Spectral-MediumItalic.ttf */; };
 		F047F4E820C25FB900626968 /* Spectral-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4D720C25FB900626968 /* Spectral-Bold.ttf */; };
@@ -934,6 +935,7 @@
 		F044B3C82338A6E900DD8E90 /* BookmarksMigrationVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BookmarksMigrationVC.xib; sourceTree = "<group>"; };
 		F0469DF120A0514100163C4E /* dark.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = dark.css; sourceTree = "<group>"; };
 		F0469DF320A0528000163C4E /* black.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = black.css; sourceTree = "<group>"; };
+		F047CB6E2579F98E00395DC2 /* UIControlSubscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIControlSubscription.swift; sourceTree = "<group>"; };
 		F047F4D420C25FB800626968 /* Spectral-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-Regular.ttf"; sourceTree = "<group>"; };
 		F047F4D620C25FB800626968 /* Spectral-MediumItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-MediumItalic.ttf"; sourceTree = "<group>"; };
 		F047F4D720C25FB900626968 /* Spectral-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-Bold.ttf"; sourceTree = "<group>"; };
@@ -1900,6 +1902,7 @@
 				F032A75F244D7F470024AC63 /* TypeFactory.h */,
 				F032A75E244D7F470024AC63 /* TypeFactory.m */,
 				F0DFBBF32570A36400246D8A /* CoalescingQueue.swift */,
+				F047CB6E2579F98E00395DC2 /* UIControlSubscription.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -3404,6 +3407,7 @@
 				F0A589F5205A580300488015 /* LinguisticSearch.m in Sources */,
 				F02B705124EA7E5C00DD607F /* IDMZoomingScrollView.m in Sources */,
 				F070C3591FBAE7A200912CCF /* ArticleVC.m in Sources */,
+				F047CB6F2579F98E00395DC2 /* UIControlSubscription.swift in Sources */,
 				F092C5CE246C288B007FDE8A /* FeedVC.m in Sources */,
 				F0D01CCB2118683B003A01DD /* MiscVC.m in Sources */,
 				F0B0EA3A24EC205500D675B4 /* CheckWifi.m in Sources */,

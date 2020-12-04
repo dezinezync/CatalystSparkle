@@ -6,6 +6,8 @@
 //  Copyright © 2017 Dezine Zync Studios. All rights reserved.
 //
 
+#import "Elytra-Swift.h"
+
 #import "FeedsManager+KVS.h"
 #import "FeedItem.h"
 
@@ -2052,7 +2054,7 @@ NSArray <NSString *> * _defaultsKeys;
             strongify(self);
             
             if ([[responseObject valueForKey:@"status"] boolValue]) {
-                Subscription *sub = [Subscription instanceFromDictionary:[responseObject valueForKey:@"subscription"]];
+                YTSubscription *sub = [YTSubscription instanceFromDictionary:[responseObject valueForKey:@"subscription"]];
                 
                 self.user.subscription = sub;
                 
@@ -2063,7 +2065,7 @@ NSArray <NSString *> * _defaultsKeys;
                 }
             }
             else {
-                Subscription *sub = [Subscription new];
+                YTSubscription *sub = [YTSubscription new];
                 NSString *error = [responseObject valueForKey:@"message"] ?: @"An unknown error occurred when updating the subscription.";
                 sub.error = [NSError errorWithDomain:@"Yeti" code:-200 userInfo:@{NSLocalizedDescriptionKey: error}];
                 
@@ -2108,7 +2110,7 @@ NSArray <NSString *> * _defaultsKeys;
             strongify(self);
             
 //            if ([[responseObject valueForKey:@"status"] boolValue]) {
-                Subscription *sub = [Subscription instanceFromDictionary:[responseObject valueForKey:@"subscription"]];
+            YTSubscription *sub = [YTSubscription instanceFromDictionary:[responseObject valueForKey:@"subscription"]];
                 
                 self.user.subscription = sub;
             
@@ -2143,7 +2145,7 @@ NSArray <NSString *> * _defaultsKeys;
             
             NSLog(@"Subscription Error: %@", error.localizedDescription);
             
-            Subscription *sub = [Subscription new];
+            YTSubscription *sub = [YTSubscription new];
             sub.error = error;
             
             strongify(self);
@@ -2185,7 +2187,7 @@ NSArray <NSString *> * _defaultsKeys;
                     [dict removeObjectForKey:@"stripe"];
                 }
                 
-                Subscription *sub = [Subscription instanceFromDictionary:dict];
+                YTSubscription *sub = [YTSubscription instanceFromDictionary:dict];
                 
                 if (stripeData != nil) {
                     [sub setValue:stripeData forKey:@"stripe"];
@@ -2205,7 +2207,7 @@ NSArray <NSString *> * _defaultsKeys;
 
             }
             else {
-                Subscription *sub = [Subscription new];
+                YTSubscription *sub = [YTSubscription new];
                 NSString *error = [responseObject valueForKey:@"message"] ?: @"An unknown error occurred when updating the subscription.";
                 sub.error = [NSError errorWithDomain:@"Yeti" code:-200 userInfo:@{NSLocalizedDescriptionKey: error}];
                 
@@ -2226,7 +2228,7 @@ NSArray <NSString *> * _defaultsKeys;
            
             NSLog(@"Subscription Error: %@", error.localizedDescription);
             
-            Subscription *sub = [Subscription new];
+            YTSubscription *sub = [YTSubscription new];
             sub.error = error;
             
             strongify(self);
@@ -3119,7 +3121,7 @@ NSArray <NSString *> * _defaultsKeys;
     
 }
 
-- (Subscription *)subscription {
+- (YTSubscription *)subscription {
     return self.user.subscription;
 }
 

@@ -9,7 +9,7 @@
 #import "Subscription.h"
 #import "Keychain.h"
 
-@implementation Subscription
+@implementation YTSubscription
 
 + (BOOL)supportsSecureCoding {
     return YES;
@@ -17,7 +17,7 @@
 
 + (instancetype)instanceFromDictionary:(NSDictionary *)attrs {
     
-    Subscription *instance = [[Subscription alloc] initWithDictionary:attrs];
+    YTSubscription *instance = [[YTSubscription alloc] initWithDictionary:attrs];
     
     return instance;
     
