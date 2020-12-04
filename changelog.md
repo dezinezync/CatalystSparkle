@@ -2,6 +2,8 @@
 
 This build includes support for Local Syncing. If something breaks, the app crashes or does not work as expected, roll back to Build 85. 
 
+Please run "Force Resync" or delete the app and install again before using the first time. 
+
 ## Known Issues
 - Local sync sometimes will not update a specific feed. If that happens, please let me know the feed's name which did not update. Or share the feed URL. 
 
@@ -13,13 +15,15 @@ This build includes support for Local Syncing. If something breaks, the app cras
 
 - Searching in feeds may crash the app. 
 
-## Build 103
+## Build 104
 
 - Fixed articles not loading for certain feeds. 
 
 - Fixed Today View not updating when opened after an app launch. 
 
 - Fixed unread counts showing a small mismatch. (Filtered counts issue still exists. Some feeds may show counts of the articles which have been filtered out of the view.)
+
+- Add a new "Title View" to individual feeds. This shows the Feed Info and two preferences at the moment: Push Notifications & Safari Reader Mode. These are per feed settings. Push notifications can either be real-time (functional) or near real-time (non-functional at the moment). 
 
 ## Build 100
 
