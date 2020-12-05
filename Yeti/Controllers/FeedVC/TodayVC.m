@@ -42,8 +42,8 @@
     [super viewDidLoad];
     
     self.title = @"Today";
+    self.controllerState = StateLoading;
     self.pagingManager = self.todayManager;
-    self.controllerState = StateDefault;
     
 #if !TARGET_OS_MACCATALYST
     UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];

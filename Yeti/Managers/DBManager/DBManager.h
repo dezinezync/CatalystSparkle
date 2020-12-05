@@ -136,6 +136,8 @@ extern DBManager * MyDBManager;
 
 - (BOOL)isSyncing;
 
+- (void)cleanupDatabase;
+
 #pragma mark - Background Operations
 
 @property (nonatomic, copy, nullable) void (^backgroundCompletionHandler)(void);

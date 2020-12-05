@@ -421,6 +421,8 @@ NSString* deviceName() {
     }];
     
 }
+    
+#endif
 
 - (void)showContactInterface {
     
@@ -450,8 +452,6 @@ NSString* deviceName() {
                                  fromController:self.splitViewController];
     
 }
-    
-#endif
 
 #pragma mark - Helpers
 

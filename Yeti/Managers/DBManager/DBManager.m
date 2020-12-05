@@ -723,9 +723,6 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
 //#ifdef DEBUG
 //    [self purgeDataForResync];
 //#endif
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), self.readQueue, ^{
-        [self cleanupDatabase];
-    });
     
 }
 
@@ -1553,8 +1550,6 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         return;
     }
     
-    
-    
     NSTimeInterval interval = 0;
     
     if (self.updateCountersTimer != nil) {
@@ -1596,11 +1591,36 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         
         NSTimeInterval timestamp = [NSDate.date timeIntervalSince1970];
         
-        [tnx enumerateKeysAndMetadataInGroup:GROUP_ARTICLES usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nullable metadata, NSUInteger index, BOOL * _Nonnull stop) {
+        [tnx enumerateRowsInGroup:GROUP_ARTICLES usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, FeedItem * _Nonnull object, NSDictionary * _Nullable meta, NSUInteger index, BOOL * _Nonnull stop) {
             
-            NSDictionary *meta = metadata;
+            if (MyFeedsManager.user.filters.count > 0) {
+                
+                // compare title to each item in the filters
+                
+                __block BOOL checkThree = YES;
+                
+                [MyFeedsManager.user.filters enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, BOOL * _Nonnull stop) {
+                    
+                    if ([object.articleTitle.lowercaseString containsString:obj] == YES) {
+                        checkThree = NO;
+                        *stop = YES;
+                        return;
+                    }
+                    
+                    if (object.summary != nil && [object.summary.lowercaseString containsString:obj] == YES) {
+                        checkThree = NO;
+                        *stop = YES;
+                    }
+                    
+                }];
+                
+                if (checkThree == NO) {
+                    return;
+                }
+                
+            }
             
-            if ([([meta valueForKey:@"read"] ?: @(NO)) boolValue] == NO) {
+            if (meta != nil && [([meta valueForKey:@"read"] ?: @(NO)) boolValue] == NO) {
                 
                 NSTimeInterval articleTimestamp = [[meta valueForKey:@"timestamp"] doubleValue];
                 
@@ -1616,7 +1636,7 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                 
             }
             
-            Feed *feed = [manager feedForID:[meta valueForKey:@"feedID"]];
+            Feed *feed = [manager feedForID:object.feedID];
             
             if (feed != nil) {
                 @synchronized (feed) {
@@ -1847,41 +1867,49 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     [[NSNotificationCenter defaultCenter] postNotificationName:UIDatabaseConnectionWillUpdateNotification
                                                         object:self];
     
-    // Move uiDatabaseConnection to the latest commit.
-    // Do so atomically, and fetch all the notifications for each commit we jump.
-    
-    NSArray *notifications = [self.uiConnection beginLongLivedReadTransaction];
-    NSArray *notifications2 = [self.countsConnection beginLongLivedReadTransaction];
-    
-    NSSet *uniqueNotifications = [NSSet setWithArray:notifications];
-    uniqueNotifications = [uniqueNotifications setByAddingObjectsFromArray:notifications2];
-    
-    notifications = uniqueNotifications.allObjects;
-    
-    if (notifications.count == 0) {
-        // nothing has changed for us.
-        return;
-    }
-    
-    // Notify observers that the uiDatabaseConnection was updated
-    
-    NSDictionary *userInfo = @{
-                               kNotificationsKey : notifications,
-                               };
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIDatabaseConnectionDidUpdateNotification
-                                                        object:self
-                                                      userInfo:userInfo];
-    
-    if ([(YapDatabaseAutoViewConnection *)[self.uiConnection ext:DB_FEED_VIEW] hasChangesForGroup:GROUP_ARTICLES inNotifications:notifications]) {
+    dispatch_async(self.readQueue, ^{
         
-        dispatch_async(self.readQueue, ^{
+        // Move uiDatabaseConnection to the latest commit.
+        // Do so atomically, and fetch all the notifications for each commit we jump.
+        
+        NSArray *notifications = [self.uiConnection beginLongLivedReadTransaction];
+        NSArray *notifications2 = [self.countsConnection beginLongLivedReadTransaction];
+        
+        NSSet *uniqueNotifications = [NSSet setWithArray:notifications];
+        uniqueNotifications = [uniqueNotifications setByAddingObjectsFromArray:notifications2];
+        
+        notifications = uniqueNotifications.allObjects;
+        
+        if (notifications.count == 0) {
+            // nothing has changed for us.
+            return;
+        }
+        
+        // Notify observers that the uiDatabaseConnection was updated
+        
+        NSDictionary *userInfo = @{
+                                   kNotificationsKey : notifications,
+                                   };
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
             
-            [MyDBManager updateUnreadCounters];
-
+            [[NSNotificationCenter defaultCenter] postNotificationName:UIDatabaseConnectionDidUpdateNotification
+                                                                object:self
+                                                              userInfo:userInfo];
+            
         });
         
-    }
+        if ([(YapDatabaseAutoViewConnection *)[self.uiConnection ext:DB_FEED_VIEW] hasChangesForGroup:GROUP_ARTICLES inNotifications:notifications]) {
+            
+            dispatch_async(self.readQueue, ^{
+                
+                [MyDBManager updateUnreadCounters];
+
+            });
+            
+        }
+        
+    });
     
 }
 

@@ -595,7 +595,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             [self.syncProgressView setProgress:progress animated:YES];
             
         }
-        else if (progress >= 0.95f) {
+        else if (progress >= 0.99f) {
             
             [self.syncProgressView setProgress:progress animated:YES];
             
@@ -613,14 +613,12 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
                 [self.refreshControl endRefreshing];
             }
             
-            
-            // DB Change notification will automatically trigger this. 
-//            dispatch_async(MyDBManager.readQueue, ^{
-//                [MyDBManager updateUnreadCounters];
-//            });
-            
             dispatch_async(MyDBManager.readQueue, ^{
                 [MyFeedsManager updateBookmarksFromServer];
+            });
+            
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), MyDBManager.readQueue, ^{
+                [MyDBManager cleanupDatabase];
             });
             
             if (self.mainCoordinator.feedVC != nil

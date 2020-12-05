@@ -15,6 +15,14 @@ Please run "Force Resync" or delete the app and install again before using the f
 
 - Searching in feeds may crash the app. 
 
+## Build 106
+
+- Fixed an issue where the app would stall or eventually crash (sometimes immediately) during initial or fresh sync. 
+
+- Fixed an issue where the Today view would load twice in quick succession. 
+
+- Unread counts in the Feeds View and the new Feed Title view should not correctly account for your filters. 
+
 ## Build 105
 
 - Fixed: inside a feed, the context and right swipe Browser actions will also respect the reader mode setting. 
