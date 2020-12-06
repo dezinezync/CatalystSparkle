@@ -2682,6 +2682,17 @@ NSArray <NSString *> * _defaultsKeys;
             return;
         }
         
+        if (responseObject == nil) {
+            
+            if (successCB) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    successCB(@[], response, task);
+                });
+            }
+            
+            return;
+        }
+        
         NSArray <NSDictionary *> *objects = [responseObject valueForKey:@"articles"];
         
         NSMutableArray <FeedItem *> *articles = [NSMutableArray arrayWithCapacity:objects.count];
@@ -2695,7 +2706,9 @@ NSArray <NSString *> * _defaultsKeys;
         }
         
         if (successCB) {
-            successCB(articles, response, task);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                successCB(articles, response, task);
+            });
         }
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {

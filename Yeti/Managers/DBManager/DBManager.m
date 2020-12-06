@@ -19,6 +19,8 @@
 
 #define FEEDS_META_COLLECTION @"feedsMetadata"
 
+typedef void (^internalProgressBlock)(CGFloat progress, ChangeSet * _Nullable changeSet);
+
 DBManager *MyDBManager;
 
 NSNotificationName const UIDatabaseConnectionWillUpdateNotification = @"UIDatabaseConnectionWillUpdateNotification";
@@ -42,7 +44,12 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     CGFloat _totalProgress;
     CGFloat _currentProgress;
     NSOperationQueue *_syncQueue;
+    
+    NSString * _Nullable _inProgressSyncToken;
+    ChangeSet * _Nullable _inProgressChangeSet;
 }
+
+@property (nonatomic, copy) internalProgressBlock internalSyncBlock;
 
 @property (nonatomic, assign, getter=isSyncSetup) BOOL syncSetup;
 
@@ -159,6 +166,103 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
             [ArticlesManager.shared didFinishUpdatingStore];
             
         });
+        
+        weakify(self);
+        
+        self.internalSyncBlock = ^(CGFloat progress, ChangeSet *changeSet) {
+            
+            strongify(self);
+            
+            if (changeSet != nil && self->_inProgressChangeSet == nil) {
+                self->_inProgressChangeSet = changeSet;
+            }
+            
+            if (progress >= 0.99f) {
+                
+                if (self->_inProgressSyncToken != nil) {
+                    
+                    [MyDBManager.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+                        
+                        [transaction setObject:self->_inProgressSyncToken forKey:syncToken inCollection:SYNC_COLLECTION];
+                        
+                    } completionBlock:^{
+                       
+                        MyDBManager->_inProgressSyncToken = nil;
+                        
+                    }];
+                    
+                }
+                
+                if (self->_inProgressChangeSet != nil) {
+                    
+                    changeSet = self->_inProgressChangeSet;
+                    
+                    if (changeSet.reads.count > 0) {
+                        
+                        [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+                            
+                            YapDatabaseAutoViewTransaction *txn = [transaction ext:DB_FEED_VIEW];
+                            
+                            NSUInteger total = changeSet.reads.count;
+                            __block NSUInteger counted = 0;
+                            
+                            NSMutableDictionary <NSString *, NSMutableSet <NSString *> *> *articles = @{}.mutableCopy;
+                            
+                            [txn enumerateKeysAndMetadataInGroup:GROUP_ARTICLES usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nullable metadata, NSUInteger index, BOOL * _Nonnull stop) {
+                                
+                                if ([changeSet.reads containsObject:@(key.integerValue)]) {
+                                    
+                                    if (articles[collection] == nil) {
+                                        articles[collection] = [NSMutableSet setWithCapacity:total];
+                                    }
+                                    
+                                    if ([([metadata valueForKey:@"read"] ?: @(NO)) boolValue] == NO) {
+                                        [articles[collection] addObject:key];
+                                    }
+                                    
+                                    counted++;
+                                    
+                                }
+                               
+                                if (counted == total) {
+                                    *stop = YES;
+                                }
+                                
+                            }];
+                            
+                            [articles enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull collection, NSMutableSet<NSString *> * _Nonnull keys, BOOL * _Nonnull stop) {
+                               
+                                for (NSString *key in keys) {
+                                    
+                                    FeedItem *item = nil;
+                                    NSDictionary *metadata = nil;
+                                    
+                                    [transaction getObject:&item metadata:&metadata forKey:key inCollection:collection];
+                                    
+                                    if (item != nil && metadata != nil) {
+                                        
+                                        NSMutableDictionary *dict = metadata.mutableCopy;
+                                        
+                                        dict[@"read"] = @(YES);
+                                        item.read = YES;
+                                        
+                                        [transaction setObject:item forKey:key inCollection:collection withMetadata:dict];
+                                        
+                                    }
+                                    
+                                }
+                                
+                            }];
+                            
+                        }];
+                        
+                    }
+                    
+                }
+                
+            }
+            
+        };
         
     }
     
@@ -1113,6 +1217,10 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         
     }
     
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.internalSyncBlock(0.f, nil);
+    });
+    
     weakify(self);
     
     [_syncQueue addOperationWithBlock:^{
@@ -1129,6 +1237,10 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                     
                 }
                 
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.internalSyncBlock(1.f, nil);
+                });
+                
                 return;
                 
             }
@@ -1138,7 +1250,9 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                 
                 strongify(self);
 
-                [transaction setObject:changeSet.changeToken forKey:syncToken inCollection:SYNC_COLLECTION];
+                @synchronized (self) {
+                    self->_inProgressSyncToken = changeSet.changeToken;
+                }
                 
                 // now for every change set, create/update an appropriate key in the database
                 if (changeSet.customFeeds) {
@@ -1147,63 +1261,6 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                     self->_currentProgress = self->_totalProgress;
                     
                     [self updateCustomFeedsMapping:changeSet transaction:transaction];
-                    
-                }
-                
-                if (changeSet.reads.count > 0) {
-                    
-                    YapDatabaseAutoViewTransaction *txn = [transaction ext:DB_FEED_VIEW];
-                    
-                    NSUInteger total = changeSet.reads.count;
-                    __block NSUInteger counted = 0;
-                    
-                    NSMutableDictionary <NSString *, NSMutableSet <NSString *> *> *articles = @{}.mutableCopy;
-                    
-                    [txn enumerateKeysAndMetadataInGroup:GROUP_ARTICLES usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nullable metadata, NSUInteger index, BOOL * _Nonnull stop) {
-                        
-                        if ([changeSet.reads containsObject:@(key.integerValue)]) {
-                            
-                            if (articles[collection] == nil) {
-                                articles[collection] = [NSMutableSet setWithCapacity:total];
-                            }
-                            
-                            if ([([metadata valueForKey:@"read"] ?: @(NO)) boolValue] == NO) {
-                                [articles[collection] addObject:key];
-                            }
-                            
-                            counted++;
-                            
-                        }
-                       
-                        if (counted == total) {
-                            *stop = YES;
-                        }
-                        
-                    }];
-                    
-                    [articles enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull collection, NSMutableSet<NSString *> * _Nonnull keys, BOOL * _Nonnull stop) {
-                       
-                        for (NSString *key in keys) {
-                            
-                            FeedItem *item = nil;
-                            NSDictionary *metadata = nil;
-                            
-                            [transaction getObject:&item metadata:&metadata forKey:key inCollection:collection];
-                            
-                            if (item != nil && metadata != nil) {
-                                
-                                NSMutableDictionary *dict = metadata.mutableCopy;
-                                
-                                dict[@"read"] = @(YES);
-                                item.read = YES;
-                                
-                                [transaction setObject:item forKey:key inCollection:collection withMetadata:dict];
-                                
-                            }
-                            
-                        }
-                        
-                    }];
                     
                 }
                 
@@ -1248,6 +1305,10 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                         
                     }
                     
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        self.internalSyncBlock(self->_currentProgress/self->_totalProgress, changeSet);
+                    });
+                    
                     // this is an async method. So we don't pass it a transaction.
                     // it'll fetch its own transaction as necessary.
                     dispatch_async(self.readQueue, ^{
@@ -1267,6 +1328,10 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                         });
                         
                     }
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        self.internalSyncBlock(1.f, changeSet);
+                    });
                     
                 }
 
@@ -1301,6 +1366,10 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                 });
                 
             }
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.internalSyncBlock(1.f, nil);
+            });
            
             NSLog(@"An error occurred when syncing changes: %@", error);
             
@@ -1424,6 +1493,10 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                 
             }
             
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.internalSyncBlock(self->_currentProgress/self->_totalProgress, nil);
+            });
+            
             return;
         }
         
@@ -1464,6 +1537,10 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                 
             }
             
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.internalSyncBlock(self->_currentProgress/self->_totalProgress, nil);
+            });
+            
             return;
         }
         
@@ -1491,6 +1568,10 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                 
             }
             
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.internalSyncBlock(self->_currentProgress/self->_totalProgress, nil);
+            });
+            
             // get next page
             [queue addOperationWithBlock:^{
                 
@@ -1515,6 +1596,10 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                     
                 }
                 
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.internalSyncBlock(self->_currentProgress/self->_totalProgress, nil);
+                });
+                
             }
             
         }
@@ -1534,6 +1619,10 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
             });
             
         }
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.internalSyncBlock(self->_currentProgress/self->_totalProgress, nil);
+        });
        
         NSLog(@"An error occurred when fetching articles for %@: %@", feedID, error.localizedDescription);
         

@@ -15,6 +15,16 @@ Please run "Force Resync" or delete the app and install again before using the f
 
 - Searching in feeds may crash the app. 
 
+## Build 107 
+
+Other bugs and crash reports apart from these two: I'll look into them over the coming week. 
+
+- This is a hot patch build which fixes a crash that would occur when the app is fetching updates. 
+
+- This hot patch also fixes another related issue where the app would no longer fetch items from pending feeds until the next refresh is ready if the app had previously crashed. 
+
+- This hotpatch also fixes an issue with incorrect updates to the read-articles from your other devices. 
+
 ## Build 106
 
 - Fixed an issue where the app would stall or eventually crash (sometimes immediately) during initial or fresh sync. 
