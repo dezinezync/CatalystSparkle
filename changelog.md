@@ -15,7 +15,7 @@ Please run "Force Resync" or delete the app and install again before using the f
 
 - Searching in feeds may crash the app. 
 
-## Build 108
+## Build 109
 
 Other bugs and crash reports apart from these two: I'll look into them over the coming week. 
 

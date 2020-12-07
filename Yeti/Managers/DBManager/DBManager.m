@@ -1264,7 +1264,6 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                     
                 }
                 
-                /*
                 if (changeSet.feedsWithNewArticles) {
                     
                     self->_totalProgress += changeSet.feedsWithNewArticles.count;
@@ -1277,6 +1276,10 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                         
                     }
                     
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        self.internalSyncBlock(self->_currentProgress/self->_totalProgress, changeSet);
+                    });
+                    
                     // this is an async method. So we don't pass it a transaction.
                     // it'll fetch its own transaction as necessary.
                     dispatch_async(self.readQueue, ^{
@@ -1286,8 +1289,8 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                     });
                     
                 }
-                */
                 
+                /*
                 if (changeSet.feedsWithNewArticles) {
                     
                     NSArray <NSNumber *> *feedIDs = [ArticlesManager.shared.feeds rz_map:^id(Feed *obj, NSUInteger idx, NSArray *array) {
@@ -1318,6 +1321,7 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                     });
                     
                 }
+                */
                 
                 if (self->_totalProgress == 0.f) {
                     
