@@ -226,8 +226,6 @@
 		F07DCA4420C51B550068ED51 /* ArticleVC+Keyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = F07DCA4320C51B550068ED51 /* ArticleVC+Keyboard.m */; };
 		F08011E42167345300F0CE81 /* OPMLDeckController.m in Sources */ = {isa = PBXBuildFile; fileRef = F08011E32167345300F0CE81 /* OPMLDeckController.m */; };
 		F085785521D1EAE200CC2B95 /* PreviewLinesVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F085785321D1EAE200CC2B95 /* PreviewLinesVC.m */; };
-		F088CF60248E6D080010EBC0 /* DZNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C4F8CC234C69B900D57C18 /* DZNetworking.framework */; };
-		F088CF61248E6D080010EBC0 /* DZNetworking.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0C4F8CC234C69B900D57C18 /* DZNetworking.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F088CF6E248E72020010EBC0 /* AppDelegate+Catalyst.m in Sources */ = {isa = PBXBuildFile; fileRef = F088CF6D248E72020010EBC0 /* AppDelegate+Catalyst.m */; platformFilter = maccatalyst; };
 		F089FFA2252AFAD1004D4EB9 /* SidebarVC+DragAndDrop.m in Sources */ = {isa = PBXBuildFile; fileRef = F089FFA1252AFAD1004D4EB9 /* SidebarVC+DragAndDrop.m */; };
 		F089FFC5252B365C004D4EB9 /* FeedVC+DragAndDrop.m in Sources */ = {isa = PBXBuildFile; fileRef = F089FFC4252B365C004D4EB9 /* FeedVC+DragAndDrop.m */; };
@@ -404,6 +402,8 @@
 		F0F35B0B257779CD0043982C /* FeedInfoController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0F35B09257779CD0043982C /* FeedInfoController.xib */; };
 		F0F35B2C2577A05D0043982C /* FeedInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F35B2A2577A05D0043982C /* FeedInfoCell.swift */; };
 		F0F35B2D2577A05D0043982C /* FeedInfoCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0F35B2B2577A05D0043982C /* FeedInfoCell.xib */; };
+		F0F3920D257E5BE20040518C /* DZNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C4F8CC234C69B900D57C18 /* DZNetworking.framework */; };
+		F0F3920E257E5BE20040518C /* DZNetworking.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0C4F8CC234C69B900D57C18 /* DZNetworking.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F0F44E4624CEFDA20044CA01 /* SidebarVC+SearchResults.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F44E4524CEFDA20044CA01 /* SidebarVC+SearchResults.m */; };
 		F0F8DBBB21516EE80076156D /* NSPointerArray+AbstractionHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F8DBBA21516EE80076156D /* NSPointerArray+AbstractionHelpers.m */; };
 		F0F8DBBD21516EE80076156D /* NSPointerArray+AbstractionHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F8DBBA21516EE80076156D /* NSPointerArray+AbstractionHelpers.m */; };
@@ -679,7 +679,7 @@
 			remoteGlobalIDString = 5CB4EB481B45BF5B0058E91A;
 			remoteInfo = "JLRoutes-iOS";
 		};
-		F0FC5BE824F7D33700F49224 /* PBXContainerItemProxy */ = {
+		F0F3923F257E5C180040518C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F0C4F8C4234C69B900D57C18 /* DZNetworking.xcodeproj */;
 			proxyType = 1;
@@ -719,9 +719,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				F0F3920E257E5BE20040518C /* DZNetworking.framework in Embed Frameworks */,
 				F0B4827D2455F65000EE5AA2 /* DZKit.framework in Embed Frameworks */,
 				F0E0E6EF2457FF2400DFFD17 /* JLRoutes.framework in Embed Frameworks */,
-				F088CF61248E6D080010EBC0 /* DZNetworking.framework in Embed Frameworks */,
 				F08C5E63238660B00055946F /* DZThemeKit.framework in Embed Frameworks */,
 				F0B4827F2455F65600EE5AA2 /* YapDatabase.framework in Embed Frameworks */,
 				F08C5E002386567F0055946F /* DZAppdelegate.framework in Embed Frameworks */,
@@ -1376,11 +1376,11 @@
 			files = (
 				F0E0E6EE2457FF2300DFFD17 /* JLRoutes.framework in Frameworks */,
 				F0E0DBBD22AE0F47006A2D93 /* WebKit.framework in Frameworks */,
+				F0F3920D257E5BE20040518C /* DZNetworking.framework in Frameworks */,
 				F08C5E62238660B00055946F /* DZThemeKit.framework in Frameworks */,
 				F0B4827E2455F65600EE5AA2 /* YapDatabase.framework in Frameworks */,
 				F02A4894252653C7001063E9 /* SDWebImage in Frameworks */,
 				F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */,
-				F088CF60248E6D080010EBC0 /* DZNetworking.framework in Frameworks */,
 				F08C5DFF2386567F0055946F /* DZAppdelegate.framework in Frameworks */,
 				F0B4827C2455F65000EE5AA2 /* DZKit.framework in Frameworks */,
 				F0448D0C244463B7003B6AA7 /* CoreServices.framework in Frameworks */,
@@ -2668,7 +2668,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				F0FC5BE924F7D33700F49224 /* PBXTargetDependency */,
+				F0F39240257E5C180040518C /* PBXTargetDependency */,
 				F0B0EA3624EC1F3200D675B4 /* PBXTargetDependency */,
 				F0BFD6BF245804FD009A863C /* PBXTargetDependency */,
 				F0E0E6F12457FF2A00DFFD17 /* PBXTargetDependency */,
@@ -3647,10 +3647,10 @@
 			name = "JLRoutes-iOS";
 			targetProxy = F0E0E6F02457FF2A00DFFD17 /* PBXContainerItemProxy */;
 		};
-		F0FC5BE924F7D33700F49224 /* PBXTargetDependency */ = {
+		F0F39240257E5C180040518C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = DZNetworking;
-			targetProxy = F0FC5BE824F7D33700F49224 /* PBXContainerItemProxy */;
+			targetProxy = F0F3923F257E5C180040518C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
