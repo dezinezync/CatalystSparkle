@@ -69,6 +69,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)showContactInterface;
 
+- (void)prepareDataForFullResync;
+
 #if TARGET_OS_MACCATALYST
 
 - (void)showAttributions;

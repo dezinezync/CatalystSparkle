@@ -81,7 +81,10 @@
     
     UIKeyCommand *refresh = [UIKeyCommand commandWithTitle:@"Refresh" image:nil action:@selector(refreshAll) input:@"r" modifierFlags:UIKeyModifierCommand propertyList:nil];
     
-    UIMenu *newFeedMenu = [UIMenu menuWithTitle:@"New Items" image:nil identifier:@"NewFeedInlineMenuItem" options:UIMenuOptionsDisplayInline children:@[newFeed, newFolder, refresh]];
+    UIKeyCommand *hardRefresh = [UIKeyCommand commandWithTitle:@"Force Re-Sync" image:nil action:@selector(__refreshAll) input:@"r" modifierFlags:UIKeyModifierCommand|UIKeyModifierAlternate propertyList:nil];
+    hardRefresh.attributes = UIMenuElementAttributesHidden;
+    
+    UIMenu *newFeedMenu = [UIMenu menuWithTitle:@"New Items" image:nil identifier:@"NewFeedInlineMenuItem" options:UIMenuOptionsDisplayInline children:@[newFeed, newFolder, refresh, hardRefresh]];
     
     UICommand *importSubscriptions = [UICommand commandWithTitle:@"Import Subscriptions" image:nil action:@selector(didClickImportSubscriptions) propertyList:nil];
     
@@ -220,8 +223,33 @@
     
 }
 
+- (void)validateCommand:(UICommand *)command {
+    
+    Class aClass = NSClassFromString([NSString stringWithFormat:@"%@%@%@", @"NSE", @"ve", @"nt"]);
+    
+    BOOL hideOptionals = ((NSUInteger)[aClass performSelector:NSSelectorFromString(@"modifierFlags")] & (1 << 19)) != (1 << 19);
+    
+    if ([command.title isEqualToString:@"Force Re-Sync"]) {
+        
+        command.attributes = hideOptionals ? UIMenuElementAttributesHidden : 0;
+        
+    }
+    else if ([command.title isEqualToString:@"Refresh"]) {
+        
+        command.attributes = hideOptionals ? 0 : UIMenuElementAttributesHidden;
+        
+    }
+    
+}
+
 - (void)contactSupport {
     [self.coordinator showContactInterface];
+}
+
+- (void)__refreshAll {
+    
+    [self.coordinator prepareDataForFullResync];
+    
 }
 
 @end

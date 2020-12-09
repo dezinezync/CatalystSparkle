@@ -396,27 +396,9 @@ typedef NS_ENUM(NSUInteger, SectionOneRows) {
         
         [tableView deselectRowAtIndexPath:indexPath animated:NO];
         
-        SidebarVC *instance = self.mainCoordinator.sidebarVC;
+        [self.mainCoordinator prepareDataForFullResync];
         
-        if (instance != nil) {
-            
-            ArticlesManager.shared.folders = nil;
-            
-            ArticlesManager.shared.feeds = nil;
-            
-            [DBManager.sharedInstance purgeDataForResync];
-            
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.625 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                
-//                [instance performSelector:NSSelectorFromString(@"") withObject:instance.refreshControl];
-                
-                [instance beginRefreshingAll:instance.refreshControl];
-                
-            });
-            
-            [self.navigationController dismissViewControllerAnimated:YES completion:nil];
-            
-        }
+        [self.navigationController dismissViewControllerAnimated:YES completion:nil];
         
         return;
         

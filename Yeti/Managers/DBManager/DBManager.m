@@ -427,6 +427,8 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
             NSAssert(key != nil, @"Expected feed to have a feedID.");
 #endif
             
+            NSMutableDictionary *existing = (id)[self metadataForFeed:feed];
+            
             NSMutableDictionary *metadata = @{@"id": feed.feedID,
                                               @"url": feed.url,
                                               @"title": feed.title ?: @"",
@@ -436,7 +438,17 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                 metadata[@"folderID"] = feed.folderID;
             }
             
-            [transaction setObject:feed forKey:key inCollection:LOCAL_FEEDS_COLLECTION withMetadata:metadata.copy];
+            if (existing != nil) {
+                
+                existing = [existing mutableCopy];
+                
+                [existing addEntriesFromDictionary:metadata];
+            }
+            else {
+                existing = metadata;
+            }
+            
+            [transaction setObject:feed forKey:key inCollection:LOCAL_FEEDS_COLLECTION withMetadata:existing.copy];
             
         }
         
