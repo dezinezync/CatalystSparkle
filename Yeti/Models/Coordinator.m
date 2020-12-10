@@ -510,6 +510,11 @@ NSString* deviceName() {
             }];
             
         }
+        else {
+            
+            completion(YES, nil);
+            
+        }
         
     });
     
