@@ -100,28 +100,7 @@ AppDelegate *MyAppDelegate = nil;
         [UNUserNotificationCenter currentNotificationCenter].delegate = (id <UNUserNotificationCenterDelegate>)self;
         
 #if TARGET_OS_MACCATALYST
-        
-        if ([[UIApplication sharedApplication] isRegisteredForRemoteNotifications] == NO) {
-            
-            [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:UNAuthorizationOptionBadge|UNAuthorizationOptionAlert|UNAuthorizationOptionSound completionHandler:^(BOOL granted, NSError * _Nullable error) {
-                
-                if (error) {
-                    NSLog(@"Error authorizing for push notifications: %@",error);
-                    return;
-                }
-                
-                if (granted) {
-                    
-                    [Keychain add:kIsSubscribingToPushNotifications boolean:YES];
-                    
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [UIApplication.sharedApplication registerForRemoteNotifications];
-                    });
-                    
-                }
-            }];
-            
-        }
+        [self.coordinator registerForNotifications];
 #endif
         
         [self setupStoreManager];
@@ -163,24 +142,6 @@ AppDelegate *MyAppDelegate = nil;
         
         //    NSString *data = [[@"highlightRowAtIndexPath:animated:scrollPosition:" dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:kNilOptions];
         //    NSLogDebug(@"EX:%@", data);
-        
-        // did finish launching
-#if !(TARGET_IPHONE_SIMULATOR)
-        
-        weakify(application);
-        
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            
-            strongify(application);
-            
-            if ([application isRegisteredForRemoteNotifications] == YES) {
-                
-                [application registerForRemoteNotifications];
-                
-            }
-        
-        });
-#endif
         
         NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
         NSString *appVersion = [infoDict objectForKey:@"CFBundleShortVersionString"];

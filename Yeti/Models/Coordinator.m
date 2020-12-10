@@ -26,6 +26,8 @@
 #import "OPMLVC.h"
 #import <DZKit/DZMessagingController.h>
 #import <sys/utsname.h>
+#import <UserNotifications/UserNotifications.h>
+#import "Keychain.h"
 
 NSString* deviceName() {
     struct utsname systemInfo;
@@ -474,6 +476,42 @@ NSString* deviceName() {
         });
         
     }
+    
+}
+
+- (void)registerForNotifications:(void (^)(BOOL, NSError * _Nonnull))completion {
+    
+    runOnMainQueueWithoutDeadlocking(^{
+        
+        if ([[UIApplication sharedApplication] isRegisteredForRemoteNotifications] == NO) {
+            
+            [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:UNAuthorizationOptionBadge|UNAuthorizationOptionAlert|UNAuthorizationOptionSound completionHandler:^(BOOL granted, NSError * _Nullable error) {
+                
+                if (error) {
+                    NSLog(@"Error authorizing for push notifications: %@",error);
+                }
+                
+                else if (granted) {
+                    
+                    [Keychain add:kIsSubscribingToPushNotifications boolean:YES];
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [UIApplication.sharedApplication registerForRemoteNotifications];
+                    });
+                    
+                }
+                
+                if (completion) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        completion(granted, error);
+                    });
+                }
+                
+            }];
+            
+        }
+        
+    });
     
 }
 

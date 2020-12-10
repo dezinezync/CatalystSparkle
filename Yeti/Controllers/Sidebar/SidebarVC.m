@@ -583,6 +583,8 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     MyDBManager.syncProgressBlock = ^(CGFloat progress) {
         
+        strongify(self);
+        
         NSLogDebug(@"Sync Progress: %@", @(progress));
         
         if (progress == 0.f) {
@@ -634,6 +636,8 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 
                 [self.navigationController setToolbarHidden:YES animated:YES];
+                
+                [self.mainCoordinator registerForNotifications:nil];
                 
             });
             

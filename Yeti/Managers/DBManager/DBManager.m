@@ -17,6 +17,8 @@
 #import <DZKit/NSString+Extras.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 
+#import <UserNotifications/UserNotifications.h>
+
 #define FEEDS_META_COLLECTION @"feedsMetadata"
 
 typedef void (^internalProgressBlock)(CGFloat progress, ChangeSet * _Nullable changeSet);
@@ -1019,6 +1021,35 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         
     }
     
+    // test local notifications for MacStories.
+#ifdef DEBUG
+    __block NSMutableArray <NSString *> *keys = @[].mutableCopy;
+    
+    [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+       
+        YapDatabaseFilteredViewTransaction *txn = [transaction ext:UNREADS_FEED_EXT];
+        
+        [txn enumerateKeysInGroup:GROUP_ARTICLES usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, NSUInteger index, BOOL * _Nonnull stop) {
+            
+            if ([[collection componentsSeparatedByString:@":"].lastObject isEqualToString:@"1"]) {
+                [keys addObject:key];
+            }
+            
+            if (keys.count == 5) {
+                *stop = YES;
+            }
+            
+        }];
+        
+    }];
+    
+    NSLogDebug(@"%@", keys);
+    
+    for (NSString *key in keys) {
+        [self _deleteArticle:key collection:@"articles:1"];
+    }
+    
+#endif
 }
 
 - (void)cleanupDatabase {
@@ -1226,7 +1257,7 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         
         self.syncSetup = YES;
         
-//        token = [@"2020-11-23 04:10:00" base64Encoded];
+//        token = [@"2020-12-01 04:10:00" base64Encoded];
         
         [self syncNow:token];
         
@@ -1264,6 +1295,22 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     [_syncQueue addOperationWithBlock:^{
        
         [MyFeedsManager getSync:token success:^(ChangeSet *changeSet, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+#ifdef DEBUG
+      
+            if (changeSet == nil) {
+                changeSet = [ChangeSet new];
+            }
+            
+            if (changeSet.feedsWithNewArticles == nil) {
+                changeSet.feedsWithNewArticles = @[];
+            }
+            
+            if ([changeSet.feedsWithNewArticles containsObject:@(1)] == NO) {
+                changeSet.feedsWithNewArticles = [changeSet.feedsWithNewArticles arrayByAddingObject:@1];
+            }
+            
+#endif
             
             if (changeSet == nil) {
                 
@@ -1586,12 +1633,24 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
             return;
         }
         
+        Feed *feed = [Feed new];
+        feed.feedID = feedID;
+        
+        NSDictionary *metadata = [MyDBManager metadataForFeed:feed];
+        
         // insert these articles to the DB.
         for (FeedItem *item in responseObject) {
             
             [self addArticle:item];
             
         }
+        
+        if ([([metadata valueForKey:kFeedLocalNotifications] ?: @(NO)) boolValue] == YES) {
+            
+            [self showNotificationsFor:responseObject];
+            
+        }
+        
         // do not load more than 100 articles.
         if (responseObject.count == 20 && (page + 1) <= 5) {
             
@@ -1671,6 +1730,107 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
 //        [queue setSuspended:NO];
         
     }];
+    
+}
+
+- (void)showNotificationsFor:(NSArray <FeedItem *> *)articles {
+    
+    if (articles == nil || articles.count == 0) {
+        return;
+    }
+    
+    NSDate * notificationDate = [NSDate.date dateByAddingTimeInterval:2];
+    
+    NSDateComponents *components = [NSCalendar.currentCalendar components:NSCalendarUnitYear|NSCalendarUnitDay|NSCalendarUnitMonth|NSCalendarUnitHour|NSCalendarUnitMinute|NSCalendarUnitSecond fromDate:notificationDate];
+    
+    UNCalendarNotificationTrigger *trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:components repeats:NO];
+    
+    Feed *feed = [ArticlesManager.shared feedForID:[[articles firstObject] feedID]];
+    
+    if (articles.count > 10) {
+        // show a single notification
+        
+        UNMutableNotificationContent *content = [UNMutableNotificationContent new];
+        content.title = [NSString stringWithFormat:@"%@ new articles in %@", @(articles.count), feed.displayTitle];
+        content.body = [[[[articles subarrayWithRange:NSMakeRange(0, 4)] rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
+            
+            return obj.articleTitle;
+            
+        }] componentsJoinedByString:@", "] stringByAppendingString:@" and more..."];
+        
+        content.categoryIdentifier = @"NOTE_CATEGORY_ARTICLE";
+        content.threadIdentifier = feed.feedID.stringValue;
+        
+        content.userInfo = @{@"feedID": feed.feedID};
+        
+        NSString *uuid = NSUUID.UUID.UUIDString;
+        
+        UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:uuid content:content trigger:trigger];
+        
+        [UNUserNotificationCenter.currentNotificationCenter addNotificationRequest:request withCompletionHandler:^(NSError * _Nullable error) {
+           
+            if (error != nil) {
+                NSLog(@"Error adding local notification request for: %@ - %@\n Error: %@", content.title, content.body, error);
+            }
+            
+        }];
+        
+    }
+    else {
+        
+        for (FeedItem *article in articles) {
+            
+            NSString *author = article.author;
+            
+            if ([article.author isKindOfClass:NSDictionary.class]) {
+                author = [article.author valueForKey:@"name"];
+            }
+            
+            if (author != nil) {
+                
+                author = [NSString stringWithFormat:@"%@ - %@", feed.displayTitle, author];
+                
+            }
+            else {
+                author = feed.displayTitle;
+            }
+            
+            UNMutableNotificationContent *content = [UNMutableNotificationContent new];
+            content.title = article.articleTitle;
+            content.body = author;
+            
+            NSString *cover = article.coverImage;
+            NSString *favicon = [feed faviconURI] ?: @"";
+            
+            NSDictionary *userInfo = nil;
+            
+            if (cover) {
+                userInfo = @{@"feedID": feed.feedID, @"articleID": article.identifier, @"coverImage": cover, @"favicon": favicon};
+            }
+            else {
+                userInfo = @{@"feedID": feed.feedID, @"articleID": article.identifier, @"favicon": favicon};
+            }
+            
+            content.categoryIdentifier = @"NOTE_CATEGORY_ARTICLE";
+            content.threadIdentifier = feed.feedID.stringValue;
+            
+            content.userInfo = userInfo;
+            
+            NSString *uuid = NSUUID.UUID.UUIDString;
+            
+            UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:uuid content:content trigger:trigger];
+            
+            [UNUserNotificationCenter.currentNotificationCenter addNotificationRequest:request withCompletionHandler:^(NSError * _Nullable error) {
+               
+                if (error != nil) {
+                    NSLog(@"Error adding local notification request for: %@ - %@\n Error: %@", content.title, content.body, error);
+                }
+                
+            }];
+            
+        }
+        
+    }
     
 }
 

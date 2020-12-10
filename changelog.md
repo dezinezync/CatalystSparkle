@@ -12,6 +12,10 @@ Please run "Force Resync" or delete the app and install again before using the f
 
 - Searching in feeds may crash the app. 
 
+## Build 112 
+
+- Testing local notifications. 
+
 ## Build 111
 
 - Improved sync performance. 
