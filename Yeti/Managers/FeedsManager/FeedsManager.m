@@ -3299,30 +3299,41 @@ NSArray <NSString *> * _defaultsKeys;
     }
     
     // get filters
-    [self getFiltersWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    if (self.user.filters == nil || self.user.filters.count == 0) {
         
-        if (responseObject == nil) {
-            responseObject = @[];
-        }
+        [self getFiltersWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            if (responseObject == nil) {
+                responseObject = @[];
+            }
+            
+            [NSNotificationCenter.defaultCenter removeObserver:self name:UserDidUpdate object:nil];
+            
+            User *user = self.user;
+            user.filters = [NSSet setWithArray:responseObject];
+            
+            [MyDBManager setUser:user];
+            
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                
+                [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
+                
+            });
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            NSLog(@"Error: Failed to fetch filters for user");
+            
+        }];
         
-        [NSNotificationCenter.defaultCenter removeObserver:self name:UserDidUpdate object:nil];
-        
-        User *user = self.user;
-        user.filters = [NSSet setWithArray:responseObject];
-        
-        [MyDBManager setUser:user];
-        
+    }
+    else {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             
             [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
             
         });
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        NSLog(@"Error: Failed to fetch filters for user");
-        
-    }];
+    }
     
     if ((self.user.subscription == nil || self.user.subscription.expiry == nil)
         || (self.user.subscription != nil && [self.user.subscription hasExpired] == YES)) {

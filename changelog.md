@@ -4,16 +4,25 @@ This build includes support for Local Syncing. If something breaks, the app cras
 
 Please run "Force Resync" or delete the app and install again before using the first time. 
 
-## Known Issues
-- Local sync sometimes will not update a specific feed. If that happens, please let me know the feed's name which did not update. Or share the feed URL. 
-
-- Local sync at the moment does not consider your mute filters when counting unread items. 
+## Known Issues 
 
 - Local sync may not fetch all of your bookmarks. 
 
 - Opening "Today" section and "Folder" feeds may be slow on certain A9, A10, A10X and A11 powered devices. If you experience this, please contact me. 
 
 - Searching in feeds may crash the app. 
+
+## Build 111
+
+- Improved sync performance. 
+
+- Widgets are now updated considering the filters if you have any set up. 
+
+- Filters are now processed when processing timelines. 
+
+- Filters are now correctly updated locally when adding or removing filters. 
+
+- macOS:  Force-Resync menu option for macOS. Hold option key before clicking on the Elytra Menu item in the menu bar. 
 
 ## Build 109
 

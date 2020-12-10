@@ -2349,13 +2349,14 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                 UIImageView *imageView = [[UIImageView alloc] initWithFrame:playerController.contentOverlayView.bounds];
                 imageView.contentMode = UIViewContentModeScaleAspectFill;
                 imageView.autoUpdateFrameOrConstraints = NO;
+                imageView.translatesAutoresizingMaskIntoConstraints = NO;
 
                 [playerController.contentOverlayView addSubview:imageView];
 
                 [imageView.widthAnchor constraintEqualToAnchor:playerController.contentOverlayView.widthAnchor multiplier:1.f].active = YES;
                 [imageView.heightAnchor constraintEqualToAnchor:playerController.contentOverlayView.heightAnchor multiplier:1.f].active = YES;
                 [imageView.leadingAnchor constraintEqualToAnchor:playerController.contentOverlayView.leadingAnchor].active = YES;
-                [imageView.trailingAnchor constraintEqualToAnchor:playerController.contentOverlayView.trailingAnchor].active = YES;
+                [imageView.topAnchor constraintEqualToAnchor:playerController.contentOverlayView.topAnchor].active = YES;
 
                 NSString *thumbnail = videoInfo.coverImage;
                 

@@ -952,16 +952,42 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     // unreads feed view
     {
         
-        YapDatabaseViewFiltering *filtering = [YapDatabaseViewFiltering withMetadataBlock:^BOOL(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nullable metadata) {
+        YapDatabaseViewFiltering *filtering = [YapDatabaseViewFiltering withRowBlock:^BOOL(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection, NSString * _Nonnull key, FeedItem * _Nonnull object, NSDictionary * _Nullable metadata) {
             
             if ([collection containsString:LOCAL_ARTICLES_COLLECTION] == NO) {
                 return NO;
             }
             
-            // article metadata is an NSDictionary
-            NSDictionary *dict = metadata;
+            BOOL checkOne = metadata != nil && ([([metadata valueForKey:@"read"] ?: @(NO)) boolValue] == NO);
             
-            return ([([dict valueForKey:@"read"] ?: @(NO)) boolValue] == NO);
+            if (checkOne == NO) {
+                return checkOne;
+            }
+            
+            if (MyFeedsManager.user.filters.count == 0) {
+                return YES;
+            }
+            
+            // compare title to each item in the filters
+            
+            __block BOOL checkThree = YES;
+            
+            [MyFeedsManager.user.filters enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, BOOL * _Nonnull stop) {
+                
+                if ([object.articleTitle.lowercaseString containsString:obj] == YES) {
+                    checkThree = NO;
+                    *stop = YES;
+                    return;
+                }
+                
+                if (object.summary != nil && [object.summary.lowercaseString containsString:obj] == YES) {
+                    checkThree = NO;
+                    *stop = YES;
+                }
+                
+            }];
+            
+            return checkThree;
             
         }];
         
