@@ -40,6 +40,7 @@ NSString* deviceName() {
 @interface MainCoordinator ()
 
 @property (nonatomic, strong) NewFolderController *folderController;
+@property (nonatomic, strong) NSTimer *registerNotificationsTimer;
 
 @end
 
@@ -479,42 +480,78 @@ NSString* deviceName() {
     
 }
 
-- (void)registerForNotifications:(void (^)(BOOL, NSError * _Nonnull))completion {
+- (void)registerForNotifications:(void (^)(BOOL, NSError * _Nullable))completion {
     
     runOnMainQueueWithoutDeadlocking(^{
         
-        if ([[UIApplication sharedApplication] isRegisteredForRemoteNotifications] == NO) {
+        if (UIApplication.sharedApplication.applicationState == UIApplicationStateBackground) {
             
-            [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:UNAuthorizationOptionBadge|UNAuthorizationOptionAlert|UNAuthorizationOptionSound completionHandler:^(BOOL granted, NSError * _Nullable error) {
-                
-                if (error) {
-                    NSLog(@"Error authorizing for push notifications: %@",error);
-                }
-                
-                else if (granted) {
-                    
-                    [Keychain add:kIsSubscribingToPushNotifications boolean:YES];
-                    
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [UIApplication.sharedApplication registerForRemoteNotifications];
-                    });
-                    
-                }
-                
-                if (completion) {
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        completion(granted, error);
-                    });
-                }
-                
-            }];
+            if (completion) {
+                completion(YES, nil);
+            }
             
+            return;
         }
-        else {
+        
+        if (UIApplication.sharedApplication.isRegisteredForRemoteNotifications == YES) {
             
-            completion(YES, nil);
+            if (completion) {
+                completion(YES, nil);
+            }
             
+            return;
         }
+        
+        [UNUserNotificationCenter.currentNotificationCenter getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
+           
+            if (settings.authorizationStatus == UNAuthorizationStatusDenied) {
+                // no permission, ignore.
+                return;
+            }
+            else if (settings.authorizationStatus == UNAuthorizationStatusNotDetermined) {
+                // no requested yet. Ask
+                
+                if (self.registerNotificationsTimer != nil) {
+                    
+                    if (self.registerNotificationsTimer.isValid) {
+                        [self.registerNotificationsTimer invalidate];
+                    }
+                    
+                    self.registerNotificationsTimer = nil;
+                    
+                }
+                
+                self.registerNotificationsTimer = [NSTimer scheduledTimerWithTimeInterval:5 repeats:NO block:^(NSTimer * _Nonnull timer) {
+                   
+                    [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:UNAuthorizationOptionBadge|UNAuthorizationOptionAlert|UNAuthorizationOptionSound completionHandler:^(BOOL granted, NSError * _Nullable error) {
+                        
+                        if (error) {
+                            NSLog(@"Error authorizing for push notifications: %@",error);
+                        }
+                        
+                        else if (granted) {
+                            
+                            [Keychain add:kIsSubscribingToPushNotifications boolean:YES];
+                            
+                            dispatch_async(dispatch_get_main_queue(), ^{
+                                [UIApplication.sharedApplication registerForRemoteNotifications];
+                            });
+                            
+                        }
+                        
+                        if (completion) {
+                            dispatch_async(dispatch_get_main_queue(), ^{
+                                completion(granted, error);
+                            });
+                        }
+                        
+                    }];
+                    
+                }];
+                
+            }
+            
+        }];
         
     });
     

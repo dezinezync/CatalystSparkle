@@ -1739,6 +1739,14 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         return;
     }
     
+    articles = [articles rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+        return obj.isRead == NO;
+    }];
+    
+    if (articles.count == 0) {
+        return;
+    }
+    
     NSDate * notificationDate = [NSDate.date dateByAddingTimeInterval:2];
     
     NSDateComponents *components = [NSCalendar.currentCalendar components:NSCalendarUnitYear|NSCalendarUnitDay|NSCalendarUnitMonth|NSCalendarUnitHour|NSCalendarUnitMinute|NSCalendarUnitSecond fromDate:notificationDate];
