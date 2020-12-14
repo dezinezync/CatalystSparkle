@@ -25,7 +25,7 @@ static NSDateFormatter *_formatter = nil;
     [encoder encodeObject:self.articleURL forKey:@"articleURL"];
     [encoder encodeObject:self.author forKey:@"author"];
     [encoder encodeObject:self.blogTitle forKey:@"blogTitle"];
-    [encoder encodeObject:self.content forKey:@"content"];
+//    [encoder encodeObject:self.content forKey:@"content"];
     [encoder encodeObject:self.coverImage forKey:@"coverImage"];
     [encoder encodeObject:self.guid forKey:@"guid"];
     [encoder encodeObject:self.modified forKey:@"modified"];
@@ -58,7 +58,7 @@ static NSDateFormatter *_formatter = nil;
         self.bookmarked = [([decoder decodeObjectOfClass:[NSNumber class] forKey:@"bookmarked"] ?: @0) boolValue];
         self.read = [([decoder decodeObjectOfClass:NSNumber.class forKey:@"read"]  ?: @1) boolValue];
         
-        self.content = [decoder decodeObjectOfClasses:[NSSet setWithObjects:NSArray.class, Content.class, nil] forKey:@"content"];
+//        self.content = [decoder decodeObjectOfClasses:[NSSet setWithObjects:NSArray.class, Content.class, nil] forKey:@"content"];
         self.coverImage = [decoder decodeObjectOfClass:[NSString class] forKey:@"coverImage"];
         self.guid = [decoder decodeObjectOfClass:[NSString class] forKey:@"guid"];
         self.modified = [decoder decodeObjectOfClass:[NSString class] forKey:@"modified"];

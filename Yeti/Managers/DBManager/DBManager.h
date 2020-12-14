@@ -55,7 +55,7 @@ typedef void (^syncProgressBlock)(CGFloat progress);
 #define DB_FEED_VIEW @"feedView"
 #define DB_BOOKMARKED_VIEW @"bookmarksView"
 
-#define DB_VERSION_TAG @"2020-11-22 10:16AM"
+#define DB_VERSION_TAG @"2020-12-14 06:21PM"
 
 extern NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval time2);
 

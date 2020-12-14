@@ -120,7 +120,11 @@ NSString* deviceName() {
         return;
     }
     
-    if (feed.feedType == FeedVCTypeUnread) {
+    if (feed.feedType == FeedVCTypeUnread && (self.feedVC == nil || [self.feedVC isKindOfClass:UnreadVC.class] == NO)) {
+        
+        if (self.feedVC != nil) {
+            self.feedVC = nil;
+        }
         
         UnreadVC *unreadVC = [[UnreadVC alloc] init];
         
