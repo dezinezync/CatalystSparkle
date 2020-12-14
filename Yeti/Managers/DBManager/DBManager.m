@@ -372,7 +372,9 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         [MyFeedsManager setValue:user forKey:@"user"];
         
         if (completion) {
-            runOnMainQueueWithoutDeadlocking(completion);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completion();
+            });
         }
         
     }];

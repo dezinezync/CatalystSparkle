@@ -24,7 +24,11 @@
 
 @interface SplitVC () <UIGestureRecognizerDelegate>
 
+#if TARGET_OS_MACCATALYST
+
 - (void)setupDisplayModes:(CGSize)size;
+
+#endif
 
 @property (nonatomic, weak) TwoFingerPanGestureRecognizer *twoFingerPan;
 
@@ -57,6 +61,9 @@
         self.preferredSupplementaryColumnWidth = 320.f;
         self.minimumSupplementaryColumnWidth = 320.f;
         self.maximumSupplementaryColumnWidth = 375.f;
+#else
+        self.minimumPrPrimaryColumnWidth = 298.f;
+        self.minimumSupplementaryColumnWidth = 375.f;
 #endif
       
         self.preferredSplitBehavior = UISplitViewControllerSplitBehaviorDisplace;

@@ -10,7 +10,13 @@ Please run "Force Resync" or delete the app and install again before using the f
 
 - Opening "Today" section and "Folder" feeds may be slow on certain A9, A10, A10X and A11 powered devices. If you experience this, please contact me. 
 
-- Searching in feeds may crash the app. 
+- Searching in feeds may crash the app.
+
+## Build 114
+
+- macOS: Fixed an issue where if your account had an expired subscription, it would multiple windows for the Subscriptions interface and eventually fill up the screen.  
+
+- Fixed an issue with the iPadOS app showing different widths for the columns in different orientations or environments (split view).
 
 ## Build 112 
 

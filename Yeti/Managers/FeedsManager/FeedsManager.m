@@ -3073,6 +3073,10 @@ NSArray <NSString *> * _defaultsKeys;
         return [self performSelectorOnMainThread:@selector(setUser:) withObject:user waitUntilDone:NO];
     }
     
+    if (_user != nil && user != nil && [_user hash] == [user hash]) {
+        return;
+    }
+    
     _user = user;
     
     [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
@@ -3335,8 +3339,8 @@ NSArray <NSString *> * _defaultsKeys;
         });
     }
     
-    if ((self.user.subscription == nil || self.user.subscription.expiry == nil)
-        || (self.user.subscription != nil && [self.user.subscription hasExpired] == YES)) {
+//    if ((self.user.subscription == nil || self.user.subscription.expiry == nil)
+//        || (self.user.subscription != nil && [self.user.subscription hasExpired] == YES)) {
         
         [self getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
          
@@ -3368,7 +3372,7 @@ NSArray <NSString *> * _defaultsKeys;
             
         }];
         
-    }
+//    }
     
 }
 
