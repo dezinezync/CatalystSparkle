@@ -62,7 +62,7 @@
         self.minimumSupplementaryColumnWidth = 320.f;
         self.maximumSupplementaryColumnWidth = 375.f;
 #else
-        self.minimumPrPrimaryColumnWidth = 298.f;
+        self.minimumPrimaryColumnWidth = 298.f;
         self.minimumSupplementaryColumnWidth = 375.f;
 #endif
       
