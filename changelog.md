@@ -12,7 +12,11 @@ Please run "Force Resync" or delete the app and install again before using the f
 
 - Searching in feeds may crash the app.
 
-## Build 115
+## Build 116
+
+- Fixed an issue with line-heights in the articles list for multi-lined article titles with favicons. 
+
+- Fixed an issue where the "no articles" label would appear over the articles. 
 
 - macOS: Fixes a long standing issue where the article's list would not draw a separator between two articles. 
 

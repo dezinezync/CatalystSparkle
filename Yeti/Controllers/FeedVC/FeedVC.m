@@ -834,7 +834,7 @@ static NSUInteger _filteringTag = 0;
             
             [self setupData];
             
-            dispatch_async(dispatch_get_main_queue(), ^{
+            runOnMainQueueWithoutDeadlocking(^{
                 self.controllerState = StateLoaded;
             });
             

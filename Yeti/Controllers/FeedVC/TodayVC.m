@@ -347,17 +347,10 @@
 
 - (void)_setSortingOption:(YetiSortOption)option {
     
-    dispatch_async(dispatch_get_main_queue(), ^{
-        NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
-        [self.DS applySnapshot:snapshot animatingDifferences:YES];
-    });
+    [self setupDatabases:option];
     
-    dispatch_async(MyDBManager.readQueue, ^{
-        [self setupDatabases:option];
-        
-        self.todayManager = nil;
-        self.pagingManager = self.todayManager;
-    });
+    self.todayManager = nil;
+    self.pagingManager = self.todayManager;
     
 }
 
