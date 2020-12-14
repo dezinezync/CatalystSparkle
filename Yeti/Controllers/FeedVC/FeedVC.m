@@ -508,14 +508,17 @@ static NSUInteger _filteringTag = 0;
     }
     
     self.tableView.tableFooterView = [UIView new];
-    self.tableView.estimatedRowHeight =  150.f;
+    self.tableView.estimatedRowHeight =  120.f;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
     
-    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomMac) {
-        self.tableView.contentInset = UIEdgeInsetsMake(10.f, 0, 10.f, 0);
-    }
-    
+#if TARGET_OS_MACCATALYST
+    self.tableView.tableHeaderView = [UIView new];
+    self.tableView.separatorInset = UIEdgeInsetsMake(0, 16.f, 0, 16.f);
+#else
     self.tableView.separatorInset = UIEdgeInsetsZero;
+#endif
+    
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     
     [ArticleCell registerOnTableView:self.tableView];
 //    [self.tableView registerClass:UITableViewCell.class forCellReuseIdentifier:@"cell"];

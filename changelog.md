@@ -12,6 +12,10 @@ Please run "Force Resync" or delete the app and install again before using the f
 
 - Searching in feeds may crash the app.
 
+## Build 115
+
+- macOS: Fixes a long standing issue where the article's list would not draw a separator between two articles. 
+
 ## Build 114
 
 - macOS: Fixed an issue where if your account had an expired subscription, it would multiple windows for the Subscriptions interface and eventually fill up the screen.  
