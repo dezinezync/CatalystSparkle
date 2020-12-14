@@ -18,6 +18,10 @@ Please run "Force Resync" or delete the app and install again before using the f
 
 - Fixed an issue with the iPadOS app showing different widths for the columns in different orientations or environments (split view).
 
+- Fixed an issue with the apps not correctly download bookmarks from the API. 
+
+- Fixed an issue where toggling folders in the sidebar interface would show empty folders. 
+
 ## Build 112 
 
 - Testing local notifications. 

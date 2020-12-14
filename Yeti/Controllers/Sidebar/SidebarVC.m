@@ -434,6 +434,26 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
                 
                 NSArray <Feed *> *feeds = [folder.feeds.allObjects sortedArrayUsingDescriptors:@[alphaSort]];
                 
+                if (feeds.count < folder.feedIDs.count) {
+                    
+                    NSPointerArray *pointers = [NSPointerArray weakObjectsPointerArray];
+                    
+                    for (NSNumber *feedID in folder.feedIDs.allObjects) {
+                        
+                        Feed *feed = [ArticlesManager.shared feedForID:feedID];
+                        
+                        if (feed != nil) {
+                            [pointers addPointer:(__bridge void *)feed];
+                        }
+                        
+                    }
+                    
+                    folder.feeds = pointers;
+                    
+                    feeds = [folder.feeds.allObjects sortedArrayUsingDescriptors:@[alphaSort]];
+                    
+                }
+                
                 [foldersSnapshot appendItems:feeds intoParentItem:folder];
                 
                 if (sectionSnapshot != nil && sectionSnapshot.items.count) {

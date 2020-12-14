@@ -3954,23 +3954,21 @@ NSArray <NSString *> * _defaultsKeys;
                 NSUInteger total = bookmarked.count;
                 __block NSUInteger counted = 0;
                 
-                NSMutableDictionary <NSString *, NSMutableSet <NSString *> *> *articles = @{}.mutableCopy;
+//                NSMutableDictionary <NSString *, NSMutableSet <NSString *> *> *articles = @{}.mutableCopy;
+                
+                NSMutableArray <NSNumber *> *articlesToFetch = [NSMutableArray arrayWithArray:bookmarked];
                 
                 [txn enumerateKeysAndMetadataInGroup:GROUP_ARTICLES usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nullable metadata, NSUInteger index, BOOL * _Nonnull stop) {
                     
-                    if ([bookmarked containsObject:@(key.integerValue)] == NO) {
+                    NSNumber *objToIdentify = @(key.integerValue);
+                    
+                    if ([articlesToFetch containsObject:objToIdentify] == YES) {
                         
-                        if (articles[collection] == nil) {
-                            articles[collection] = [NSMutableSet setWithCapacity:total];
-                        }
-                        
-                        if ([([metadata valueForKey:@"bookmarked"] ?: @(NO)) boolValue] == NO) {
-                            [articles[collection] addObject:key];
-                        }
-                        
-                        counted++;
+                        [articlesToFetch removeObject:objToIdentify];
                         
                     }
+                    
+                    counted++;
                     
                     // 1. this may not always be the case if we do not have the article on file.
                     if (counted == total) {
@@ -3979,50 +3977,15 @@ NSArray <NSString *> * _defaultsKeys;
                     
                 }];
                 
-                if (articles.allKeys.count == 0) {
+                if (articlesToFetch.count == 0) {
                     // we have all.
                     return [self bookmarksUpdateFromServerCompleted];
                 }
                 
-                // 2. so check how many we have so we can download the rest.
-                counted = 0;
-                NSMutableSet *articlesNotCached = [NSMutableSet setWithArray:bookmarked];
+                __block NSUInteger count = articlesToFetch.count;
                 
-                [articles enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull collection, NSMutableSet<NSString *> * _Nonnull keys, BOOL * _Nonnull stop) {
-                   
-                    for (NSString *key in keys) {
-                        
-                        FeedItem *item = nil;
-                        NSDictionary *metadata = nil;
-                        
-                        [transaction getObject:&item metadata:&metadata forKey:key inCollection:collection];
-                        
-                        if (item != nil && metadata != nil) {
-                            
-                            NSMutableDictionary *dict = metadata.mutableCopy;
-                            
-                            dict[@"bookmarked"] = @(YES);
-                            item.read = YES;
-                            
-                            [transaction setObject:item forKey:key inCollection:collection withMetadata:dict];
-                            
-                            [articlesNotCached removeObject:@(key.integerValue)];
-                            
-                        }
-                        
-                    }
-                    
-                }];
-                
-                if (articlesNotCached.count == 0) {
-                    
-                    return [self bookmarksUpdateFromServerCompleted];
-                    
-                }
-                
-                __block NSUInteger count = articlesNotCached.count;
-                
-                [articlesNotCached.allObjects enumerateObjectsUsingBlock:^(NSNumber * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                // 2. fetch the articles we dont have.
+                [articlesToFetch enumerateObjectsUsingBlock:^(NSNumber * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                     
                     // this article needs to be downloaded and cached
                     
@@ -4053,6 +4016,8 @@ NSArray <NSString *> * _defaultsKeys;
                     }];
                     
                 }];
+                
+                
                 
             }
             else {
