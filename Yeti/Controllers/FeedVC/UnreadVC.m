@@ -91,7 +91,7 @@
     NSDate *now = NSDate.date;
     NSTimeInterval interval = [now timeIntervalSince1970];
 
-    YapDatabaseViewFiltering *filter = [YapDatabaseViewFiltering withRowBlock:^BOOL(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection, NSString * _Nonnull key, FeedItem *  _Nonnull object, id  _Nullable metadata) {
+    YapDatabaseViewFiltering *filter = [YapDatabaseViewFiltering withMetadataBlock:^BOOL(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nullable metadata) {
         
         if ([collection containsString:LOCAL_ARTICLES_COLLECTION] == NO) {
             return NO;
@@ -122,24 +122,11 @@
         
         // compare title to each item in the filters
         
-        __block BOOL checkThree = YES;
+        NSArray <NSString *> *wordCloud = [metadata valueForKey:kTitleWordCloud] ?: @[];
         
-        [MyFeedsManager.user.filters enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, BOOL * _Nonnull stop) {
-            
-            if ([object.articleTitle.lowercaseString containsString:obj] == YES) {
-                checkThree = NO;
-                *stop = YES;
-                return;
-            }
-            
-            if (object.summary != nil && [object.summary.lowercaseString containsString:obj] == YES) {
-                checkThree = NO;
-                *stop = YES;
-            }
-            
-        }];
+        BOOL checkThree = [[NSSet setWithArray:wordCloud] intersectsSet:MyFeedsManager.user.filters];
         
-        return checkThree;
+        return !checkThree;
 
     }];
     

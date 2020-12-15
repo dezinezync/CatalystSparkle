@@ -6,13 +6,19 @@ Please run "Force Resync" or delete the app and install again before using the f
 
 ## Known Issues 
 
-- Local sync may not fetch all of your bookmarks. 
-
 - Opening "Today" section and "Folder" feeds may be slow on certain A9, A10, A10X and A11 powered devices. If you experience this, please contact me. 
 
 - Searching in feeds may crash the app.
 
-## Build 116
+## Build 117
+
+- Massively improved local filtering. Relative to the previous implementation, the new implementation is 300% faster. :D 
+
+- Filtering is now stricter. It'll match "sponsor" but will not match "sponsored". 
+
+- Fixed an issue with certain CJK paragraph blocks rendering incorrectly when certain linebreak characters are used in the paragraph text.  
+
+- Fixed an issue with filters incorrectly hiding articles when matching against CJK based filters. 
 
 - Fixed an issue with line-heights in the articles list for multi-lined article titles with favicons. 
 

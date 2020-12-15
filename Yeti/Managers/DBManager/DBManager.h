@@ -57,6 +57,10 @@ typedef void (^syncProgressBlock)(CGFloat progress);
 
 #define DB_VERSION_TAG @"2020-12-14 06:21PM"
 
+// Key for article metadata which includes the title word cloud
+// for filtering. 
+#define kTitleWordCloud @"titleWordCloud"
+
 extern NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval time2);
 
 extern DBManager * MyDBManager;

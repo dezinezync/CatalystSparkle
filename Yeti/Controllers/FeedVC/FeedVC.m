@@ -214,8 +214,8 @@ static NSUInteger _filteringTag = 0;
     
     weakify(self);
     
-    YapDatabaseViewFiltering *filter = [YapDatabaseViewFiltering withRowBlock:^BOOL(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection, NSString * _Nonnull key, FeedItem *  _Nonnull object, id  _Nullable metadata) {
-        
+    YapDatabaseViewFiltering *filter = [YapDatabaseViewFiltering withMetadataBlock:^BOOL(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection, NSString * _Nonnull key, NSDictionary * _Nullable metadata) {
+
         strongify(self);
         
         if (!self) {
@@ -231,9 +231,11 @@ static NSUInteger _filteringTag = 0;
         }
         
         // article metadata is an NSDictionary
-        NSDictionary *dict = metadata;
+        if (metadata == nil) {
+            return NO;
+        }
         
-        NSNumber *feedID = [dict valueForKey:@"feedID"];
+        NSNumber *feedID = [metadata valueForKey:@"feedID"];
         
         if (feedID == nil) {
             return NO;
@@ -267,24 +269,11 @@ static NSUInteger _filteringTag = 0;
         
         // compare title to each item in the filters
         
-        __block BOOL checkThree = YES;
+        NSArray <NSString *> *wordCloud = [metadata valueForKey:kTitleWordCloud] ?: @[];
         
-        [MyFeedsManager.user.filters enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, BOOL * _Nonnull stop) {
-            
-            if ([object.articleTitle.lowercaseString containsString:obj] == YES) {
-                checkThree = NO;
-                *stop = YES;
-                return;
-            }
-            
-            if (object.summary != nil && [object.summary.lowercaseString containsString:obj] == YES) {
-                checkThree = NO;
-                *stop = YES;
-            }
-            
-        }];
+        BOOL checkThree = [[NSSet setWithArray:wordCloud] intersectsSet:MyFeedsManager.user.filters];
         
-        return checkThree;
+        return !checkThree;
         
     }];
     

@@ -19,7 +19,13 @@
 
 #import <UserNotifications/UserNotifications.h>
 
+// @TODO: Remove before submitting to production.
+#import "Keychain.h"
+
 #define FEEDS_META_COLLECTION @"feedsMetadata"
+
+/// Only used for Testflight. Production builds will have this from day 1.
+#define kHasUpdatedArticleMetadataToIncludeSplitTitles @"com.elytra.keychain.testflight.updatedArticleMetadataToIncludeSplitTitles"
 
 typedef void (^internalProgressBlock)(CGFloat progress, ChangeSet * _Nullable changeSet);
 
@@ -974,24 +980,11 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
             
             // compare title to each item in the filters
             
-            __block BOOL checkThree = YES;
+            NSArray <NSString *> *wordCloud = [metadata valueForKey:kTitleWordCloud] ?: @[];
             
-            [MyFeedsManager.user.filters enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, BOOL * _Nonnull stop) {
-                
-                if ([object.articleTitle.lowercaseString containsString:obj] == YES) {
-                    checkThree = NO;
-                    *stop = YES;
-                    return;
-                }
-                
-                if (object.summary != nil && [object.summary.lowercaseString containsString:obj] == YES) {
-                    checkThree = NO;
-                    *stop = YES;
-                }
-                
-            }];
+            BOOL checkThree = [[NSSet setWithArray:wordCloud] intersectsSet:MyFeedsManager.user.filters];
             
-            return checkThree;
+            return !checkThree;
             
         }];
         
@@ -1023,35 +1016,84 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         
     }
     
-    // test local notifications for MacStories.
-#ifdef DEBUG
-    __block NSMutableArray <NSString *> *keys = @[].mutableCopy;
+    // @TODO: Remove before submitting to production
     
-    [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
-       
-        YapDatabaseFilteredViewTransaction *txn = [transaction ext:UNREADS_FEED_EXT];
+    NSError *error = nil;
+    
+    BOOL migrated = [Keychain boolFor:kHasUpdatedArticleMetadataToIncludeSplitTitles error:&error];
+    
+    if ((error != nil && error.code == -25300) || migrated == NO) {
         
-        [txn enumerateKeysInGroup:GROUP_ARTICLES usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, NSUInteger index, BOOL * _Nonnull stop) {
+        [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+           
+            YapDatabaseFilteredViewTransaction *txn = [transaction ext:DB_FEED_VIEW];
             
-            if ([[collection componentsSeparatedByString:@":"].lastObject isEqualToString:@"1"]) {
-                [keys addObject:key];
+            if (txn == nil) {
+                return;
             }
             
-            if (keys.count == 5) {
-                *stop = YES;
-            }
+            NSCharacterSet *charSet = [NSCharacterSet whitespaceCharacterSet];
+            NSMutableCharacterSet *punctuations = [NSMutableCharacterSet punctuationCharacterSet];
+            
+            [punctuations addCharactersInString:@",./\{}[]()!~`“‘…–≠=-÷:;&"];
+            
+            [txn enumerateRowsInGroup:GROUP_ARTICLES usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, FeedItem * _Nonnull object, NSDictionary * _Nullable metadata, NSUInteger index, BOOL * _Nonnull stop) {
+               
+                NSMutableDictionary *mutable = (metadata ?: @{}).mutableCopy;
+                
+                if (mutable[kTitleWordCloud] != nil) {
+                    return;
+                }
+                
+                NSString *title = [[[object.articleTitle.lowercaseString stringByTrimmingCharactersInSet:charSet] componentsSeparatedByCharactersInSet:punctuations] componentsJoinedByString:@" "];
+                
+                NSArray <NSString *> *components = [[title componentsSeparatedByCharactersInSet:charSet] rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+                    
+                    return obj != nil && obj.length && [obj isBlank] == NO;
+                    
+                }];
+                
+                [mutable setValue:components forKey:kTitleWordCloud];
+                
+                [transaction setObject:object forKey:key inCollection:collection withMetadata:mutable.copy];
+                
+            }];
+            
+            [Keychain add:kHasUpdatedArticleMetadataToIncludeSplitTitles boolean:YES];
             
         }];
         
-    }];
-    
-    NSLogDebug(@"%@", keys);
-    
-    for (NSString *key in keys) {
-        [self _deleteArticle:key collection:@"articles:1"];
     }
     
-#endif
+//    // test local notifications for MacStories.
+//#ifdef DEBUG
+//    __block NSMutableArray <NSString *> *keys = @[].mutableCopy;
+//
+//    [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+//
+//        YapDatabaseFilteredViewTransaction *txn = [transaction ext:UNREADS_FEED_EXT];
+//
+//        [txn enumerateKeysInGroup:GROUP_ARTICLES usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, NSUInteger index, BOOL * _Nonnull stop) {
+//
+//            if ([[collection componentsSeparatedByString:@":"].lastObject isEqualToString:@"1"]) {
+//                [keys addObject:key];
+//            }
+//
+//            if (keys.count == 5) {
+//                *stop = YES;
+//            }
+//
+//        }];
+//
+//    }];
+//
+//    NSLogDebug(@"%@", keys);
+//
+//    for (NSString *key in keys) {
+//        [self _deleteArticle:key collection:@"articles:1"];
+//    }
+//
+//#endif
 }
 
 - (void)cleanupDatabase {
@@ -1894,33 +1936,6 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         
         [tnx enumerateRowsInGroup:GROUP_ARTICLES usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, FeedItem * _Nonnull object, NSDictionary * _Nullable meta, NSUInteger index, BOOL * _Nonnull stop) {
             
-            if (MyFeedsManager.user.filters.count > 0) {
-                
-                // compare title to each item in the filters
-                
-                __block BOOL checkThree = YES;
-                
-                [MyFeedsManager.user.filters enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, BOOL * _Nonnull stop) {
-                    
-                    if ([object.articleTitle.lowercaseString containsString:obj] == YES) {
-                        checkThree = NO;
-                        *stop = YES;
-                        return;
-                    }
-                    
-                    if (object.summary != nil && [object.summary.lowercaseString containsString:obj] == YES) {
-                        checkThree = NO;
-                        *stop = YES;
-                    }
-                    
-                }];
-                
-                if (checkThree == NO) {
-                    return;
-                }
-                
-            }
-            
             if (meta != nil && [([meta valueForKey:@"read"] ?: @(NO)) boolValue] == NO) {
                 
                 NSTimeInterval articleTimestamp = [[meta valueForKey:@"timestamp"] doubleValue];
@@ -2080,12 +2095,25 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
             article.content = nil;
         }
         
+        NSCharacterSet *charSet = [NSCharacterSet whitespaceCharacterSet];
+        NSMutableCharacterSet *punctuations = [NSMutableCharacterSet punctuationCharacterSet];
+        
+        [punctuations addCharactersInString:@",./\{}[]()!~`“‘…–≠=-÷:;&"];
+        NSString *title = [[[article.articleTitle.lowercaseString stringByTrimmingCharactersInSet:charSet] componentsSeparatedByCharactersInSet:punctuations] componentsJoinedByString:@" "];
+        
+        NSArray <NSString *> *components = [[title componentsSeparatedByCharactersInSet:charSet] rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+            
+            return obj != nil && obj.length && [obj isBlank] == NO;
+            
+        }];
+        
         NSDictionary *metadata = @{
             @"read": @(article.isRead),
             @"bookmarked": @(article.isBookmarked),
             @"mercury": @(article.mercury),
             @"feedID": article.feedID,
-            @"timestamp": @([article.timestamp timeIntervalSince1970])
+            @"timestamp": @([article.timestamp timeIntervalSince1970]),
+            kTitleWordCloud: components
         };
 
         [transaction setObject:article forKey:article.identifier.stringValue inCollection:collection withMetadata:metadata];

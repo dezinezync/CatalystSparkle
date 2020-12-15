@@ -115,24 +115,11 @@
         
         // compare title to each item in the filters
         
-        __block BOOL checkThree = YES;
+        NSArray <NSString *> *wordCloud = [metadata valueForKey:kTitleWordCloud] ?: @[];
         
-        [MyFeedsManager.user.filters enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, BOOL * _Nonnull stop) {
-            
-            if ([object.articleTitle.lowercaseString containsString:obj] == YES) {
-                checkThree = NO;
-                *stop = YES;
-                return;
-            }
-            
-            if (object.summary != nil && [object.summary.lowercaseString containsString:obj] == YES) {
-                checkThree = NO;
-                *stop = YES;
-            }
-            
-        }];
+        BOOL checkThree = [[NSSet setWithArray:wordCloud] intersectsSet:MyFeedsManager.user.filters];
         
-        return checkThree;
+        return !checkThree;
         
     }];
     
