@@ -1606,7 +1606,7 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         params[@"articleID"] = articleID;
     }
     
-    if (etag) {
+    if (etag && page == 1) {
         params[@"etag"] = etag;
     }
     

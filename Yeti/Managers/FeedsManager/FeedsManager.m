@@ -101,6 +101,10 @@ NSArray <NSString *> * _defaultsKeys;
                     
                     NSData *encoded = [token base64EncodedDataWithOptions:kNilOptions];
                     
+                    if (encoded == nil) {
+                        return;
+                    }
+                    
                     NSString *tokenString = [[NSString alloc] initWithData:encoded encoding:NSUTF8StringEncoding];
                     
                     NSString *tokenMD5 = [tokenString md5];

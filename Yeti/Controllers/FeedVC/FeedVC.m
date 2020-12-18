@@ -821,7 +821,9 @@ static NSUInteger _filteringTag = 0;
             
             });
             
-            [self setupData];
+            runOnMainQueueWithoutDeadlocking(^{
+                [self setupData];
+            });
             
             runOnMainQueueWithoutDeadlocking(^{
                 self.controllerState = StateLoaded;
