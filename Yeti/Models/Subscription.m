@@ -8,6 +8,7 @@
 
 #import "Subscription.h"
 #import "Keychain.h"
+#import <DZKit/NSArray+RZArrayCandy.h>
 
 @implementation YTSubscription
 
