@@ -145,11 +145,27 @@
 
 - (NSString *)subtitle {
     
-    NSString *totalArticles = [NSString stringWithFormat:@"%@ Article%@, ", @(self.todayManager.total), self.todayManager.total == 1 ? @"" : @"s"];
+    NSString *totalArticles = [NSString stringWithFormat:@"%@ Article%@, ", @(self.totalItemsForTitle), self.todayManager.total == 1 ? @"" : @"s"];
     
     NSString *unread = [NSString stringWithFormat:@"%@ Unread", @(MyFeedsManager.totalToday)];
     
     return [totalArticles stringByAppendingString:unread];
+    
+}
+
+- (NSUInteger)totalItemsForTitle {
+        
+    @synchronized (self) {
+            
+        if (self->_totalItemsForTitle == 0) {
+            
+            _totalItemsForTitle = MAX(self.todayManager.total, MyFeedsManager.totalToday);
+            
+        }
+            
+        return _totalItemsForTitle;
+        
+    }
     
 }
 

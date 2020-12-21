@@ -214,19 +214,21 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                             NSUInteger total = changeSet.reads.count;
                             __block NSUInteger counted = 0;
                             
-                            NSMutableDictionary <NSString *, NSMutableSet <NSString *> *> *articles = @{}.mutableCopy;
+                            NSMutableDictionary <NSString *, NSMutableSet <NSArray <NSNumber *> *> *> *articles = @{}.mutableCopy;
+                            
+                            NSArray <NSString *> *articleIDs = (id)changeSet.reads.allKeys;
                             
                             [txn enumerateKeysAndMetadataInGroup:GROUP_ARTICLES usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nullable metadata, NSUInteger index, BOOL * _Nonnull stop) {
                                 
-                                if ([changeSet.reads containsObject:@(key.integerValue)]) {
+                                if ([articleIDs containsObject:key]) {
                                     
                                     if (articles[collection] == nil) {
                                         articles[collection] = [NSMutableSet setWithCapacity:total];
                                     }
                                     
-                                    if ([([metadata valueForKey:@"read"] ?: @(NO)) boolValue] == NO) {
-                                        [articles[collection] addObject:key];
-                                    }
+                                    NSNumber *primaryKey = @(key.integerValue);
+                                    
+                                    [articles[collection] addObject:@[primaryKey, changeSet.reads[key]]];
                                     
                                     counted++;
                                     
@@ -238,9 +240,12 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                                 
                             }];
                             
-                            [articles enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull collection, NSMutableSet<NSString *> * _Nonnull keys, BOOL * _Nonnull stop) {
-                               
-                                for (NSString *key in keys) {
+                            [articles enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull collection, NSMutableSet<NSArray<NSNumber *> *> * _Nonnull keys, BOOL * _Nonnull stop) {
+                                
+                                for (NSArray *keypair in keys) {
+                                    
+                                    NSString *key = [keypair[0] stringValue];
+                                    BOOL status = [keypair[1] boolValue];
                                     
                                     FeedItem *item = nil;
                                     NSDictionary *metadata = nil;
@@ -251,8 +256,8 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                                         
                                         NSMutableDictionary *dict = metadata.mutableCopy;
                                         
-                                        dict[@"read"] = @(YES);
-                                        item.read = YES;
+                                        dict[@"read"] = @(status);
+                                        item.read = status;
                                         
                                         [transaction setObject:item forKey:key inCollection:collection withMetadata:dict];
                                         

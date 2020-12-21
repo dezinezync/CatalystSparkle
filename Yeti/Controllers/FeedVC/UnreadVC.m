@@ -168,11 +168,27 @@
 
 - (NSString *)subtitle {
     
-    NSString *totalArticles = [NSString stringWithFormat:@"%@ Article%@, ", @(MAX(self.unreadsManager.total, MyFeedsManager.totalUnread)), self.unreadsManager.total == 1 ? @"" : @"s"];
+    NSString *totalArticles = [NSString stringWithFormat:@"%@ Article%@, ", @(self.totalItemsForTitle), self.unreadsManager.total == 1 ? @"" : @"s"];
     
     NSString *unread = [NSString stringWithFormat:@"%@ Unread", @(MyFeedsManager.totalUnread)];
     
     return [totalArticles stringByAppendingString:unread];
+    
+}
+
+- (NSUInteger)totalItemsForTitle {
+        
+    @synchronized (self) {
+            
+        if (self->_totalItemsForTitle == 0) {
+            
+            _totalItemsForTitle = MAX(self.unreadsManager.total, MyFeedsManager.totalUnread);;
+            
+        }
+            
+        return _totalItemsForTitle;
+        
+    }
     
 }
 

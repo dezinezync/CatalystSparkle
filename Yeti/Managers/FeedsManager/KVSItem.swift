@@ -26,5 +26,10 @@ import UIKit
         return lhs.changeType == rhs.changeType && lhs.identifiers == rhs.identifiers
 
     }
+    
+    override var description: String {
+        let desc = super.description
+        return "\(desc)\n changeType: \(changeType.rawValue), value: \(value), identifies: \(identifiers)"
+    }
 
 }

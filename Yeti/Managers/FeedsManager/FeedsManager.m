@@ -2327,7 +2327,7 @@ NSArray <NSString *> * _defaultsKeys;
         // server will respond with changes and changeToken
         NSString *changeToken = responseObject[@"changeToken"];
         NSDictionary <NSString *, NSArray *> * changes = responseObject[@"changes"] ?: @{};
-        NSArray <NSNumber *> *reads = responseObject[@"reads"] ?: @[];
+        NSDictionary <NSString *, NSNumber *> *reads = responseObject[@"reads"] ?: @[];
         
         if (successCB) {
             
@@ -3183,9 +3183,9 @@ NSArray <NSString *> * _defaultsKeys;
         DZURLSession *session = [[DZURLSession alloc] initWithSessionConfiguration:defaultConfig];
         
         session.baseURL = [NSURL URLWithString:@"http://127.0.0.1:3000"];
-        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
+//        session.baseURL =  [NSURL URLWithString:@"https://api-acc.elytra.app"];
 #ifndef DEBUG
-        session.baseURL = [NSURL URLWithString:@"https://api.elytra.app"];
+        session.baseURL = [NSURL URLWithString:@"https://api-acc.elytra.app"];
 #endif
         session.useOMGUserAgent = YES;
         session.useActivityManager = YES;

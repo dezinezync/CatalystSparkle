@@ -64,14 +64,33 @@
     }
     else {
         
+        __block NSUInteger index = NSNotFound;
+        
         // find an item with the same changeType
         KVSItem *existing = [self.KVSItems.objectEnumerator.allObjects rz_find:^BOOL(KVSItem *obj, NSUInteger idx, NSArray *array) {
            
-            return obj.changeType == instance.changeType && obj.identifiers.count <= 100;
+            if (obj.changeType == instance.changeType && obj.identifiers.count <= 100) {
+                index = idx;
+                return YES;
+            }
+            
+            return NO;
             
         }];
         
-        if (existing) {
+        if (index != NSNotFound && index < (self.KVSItems.count - 1)) {
+            // within range
+            // so ensure next one is not of the opposing type
+            
+            KVSItem *item = self.KVSItems[index + 1];
+            
+            if (item != nil && item.changeType != instance.changeType) {
+                index = NSNotFound;
+            }
+            
+        }
+        
+        if (existing && index != NSNotFound) {
             // add it to the same
             existing.identifiers = [existing.identifiers arrayByAddingObjectsFromArray:instance.identifiers];
         }
@@ -196,7 +215,7 @@
         
         weakify(self);
        
-        self.batchKVSTimer = [NSTimer scheduledTimerWithTimeInterval:10 repeats:NO block:^(NSTimer * _Nonnull timer) {
+        self.batchKVSTimer = [NSTimer scheduledTimerWithTimeInterval:5 repeats:NO block:^(NSTimer * _Nonnull timer) {
             
             strongify(self);
             
