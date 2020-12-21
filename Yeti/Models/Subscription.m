@@ -125,6 +125,26 @@
                     
                     NSSortDescriptor *sortByPeriodEnd = [NSSortDescriptor sortDescriptorWithKey:@"current_period_end" ascending:YES];
                     
+                    items = [items rz_map:^id(NSDictionary *obj, NSUInteger idx, NSArray *array) {
+                        
+                        if ([obj isKindOfClass:NSString.class]) {
+                            
+                            NSData *data = [(NSString *)obj dataUsingEncoding:NSUTF8StringEncoding];
+                            
+                            id val = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
+                            
+                            if (val == nil) {
+                                return [NSDictionary new];
+                            }
+                            
+                            return val;
+                        }
+                        else {
+                            return obj;
+                        }
+                        
+                    }];
+                    
                     items = [items sortedArrayUsingDescriptors:@[sortByPeriodEnd]];
                     
                     latest = [items lastObject];

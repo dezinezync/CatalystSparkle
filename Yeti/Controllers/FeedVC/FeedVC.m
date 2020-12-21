@@ -1475,7 +1475,9 @@ static NSUInteger _filteringTag = 0;
     
     [self setupDatabases:option];
     
-    [self updateTitleView];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self updateTitleView];
+    });
     
 }
 
