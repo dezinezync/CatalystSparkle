@@ -3183,9 +3183,9 @@ NSArray <NSString *> * _defaultsKeys;
         DZURLSession *session = [[DZURLSession alloc] initWithSessionConfiguration:defaultConfig];
         
         session.baseURL = [NSURL URLWithString:@"http://127.0.0.1:3000"];
-//        session.baseURL =  [NSURL URLWithString:@"https://api-acc.elytra.app"];
+        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
 #ifndef DEBUG
-        session.baseURL = [NSURL URLWithString:@"https://api-acc.elytra.app"];
+        session.baseURL = [NSURL URLWithString:@"https://api.elytra.app"];
 #endif
         session.useOMGUserAgent = YES;
         session.useActivityManager = YES;
