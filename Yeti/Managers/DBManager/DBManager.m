@@ -1523,6 +1523,12 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         
         NSString *localNameKey = formattedString(@"feed-%@", change.feedID);
         
+        Feed *feed = [ArticlesManager.shared feedForID:change.feedID];
+        
+        if (feed != nil) {
+            feed.localName = change.title;
+        }
+        
         // for now we're only syncing titles, so check those
         if (change.title == nil) {
             // remove the custom title

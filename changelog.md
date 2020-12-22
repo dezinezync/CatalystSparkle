@@ -6,9 +6,13 @@ Please run "Force Resync" or delete the app and install again before using the f
 
 ## Known Issues 
 
-- Opening "Today" section and "Folder" feeds may be slow on certain A9, A10, A10X and A11 powered devices. If you experience this, please contact me. 
-
 - Searching in feeds may crash the app.
+
+## Build 120
+
+- Added a context menu option to force-resync under Settings. Now you can also only force refresh the feeds and folders if the app goes out of sync on any device. 
+
+- Fixed an issue where custom feed names were not immediately applied and would require an app-restart. Now, when you sync and new updates are available from other devices, the changes are applied immediately after syncing finishes. 
 
 ## Build 117
 
