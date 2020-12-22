@@ -178,16 +178,16 @@
         
         if (cancelling == YES) {
             
-#ifdef DEBUG
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-
-            dispatch_async(self.bgTaskDispatchQueue, ^{
-                [[BGTaskScheduler sharedScheduler] performSelector:NSSelectorFromString(@"_simulateLaunchForTaskWithIdentifier:") withObject:backgroundRefreshIdentifier];
-            });
-
-#pragma clang diagnostic pop
-#endif
+//#ifdef DEBUG
+//#pragma clang diagnostic push
+//#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+//
+//            dispatch_async(self.bgTaskDispatchQueue, ^{
+//                [[BGTaskScheduler sharedScheduler] performSelector:NSSelectorFromString(@"_simulateLaunchForTaskWithIdentifier:") withObject:backgroundRefreshIdentifier];
+//            });
+//
+//#pragma clang diagnostic pop
+//#endif
             
         }
         

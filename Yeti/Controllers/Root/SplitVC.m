@@ -514,13 +514,12 @@
     // collapseSecondaryViewController:forSplitViewController causes the
     // UINavigationController to be pushed on the the stack of the primary
     // navgiation controller.
-    if([[primaryViewController topViewController] isKindOfClass:UINavigationController.class]) {
+    if ([[primaryViewController topViewController] isKindOfClass:UINavigationController.class]) {
         return [primaryViewController popViewControllerAnimated:NO];
     }
     else if ([[primaryViewController topViewController] isKindOfClass:ArticleVC.class]) {
 
         ArticleVC *vc = (ArticleVC *)[primaryViewController popViewControllerAnimated:NO];
-//        vc.navigationItem.leftBarButtonItem = self.displayModeButtonItem;
 
         UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
         nav.restorationIdentifier = @"ArticleDetailNav";

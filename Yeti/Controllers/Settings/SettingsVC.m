@@ -539,6 +539,46 @@ typedef NS_ENUM(NSUInteger, SectionOneRows) {
     }
 }
 
+- (UIContextMenuConfiguration *)tableView:(UITableView *)tableView contextMenuConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath point:(CGPoint)point {
+ 
+    if (indexPath.section == 0 && indexPath.row == 3) {
+        
+        weakify(self);
+        
+        UIContextMenuConfiguration *config = [UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:nil actionProvider:^UIMenu * _Nullable(NSArray<UIMenuElement *> * _Nonnull suggestedActions) {
+           
+            UIAction *resyncAll = [UIAction actionWithTitle:@"Resync All" image:nil identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                
+                strongify(self);
+                
+                [self.mainCoordinator prepareDataForFullResync];
+                
+                [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+                
+            }];
+            
+            UIAction *resyncFeeds = [UIAction actionWithTitle:@"Resync Feeds" image:nil identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                
+                strongify(self);
+                
+                [self.mainCoordinator prepareFeedsForFullResync];
+                
+                [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+                
+            }];
+           
+            return [UIMenu menuWithChildren:@[resyncAll, resyncFeeds]];
+            
+        }];
+        
+        return config;
+    
+    }
+    
+    return nil;
+}
+    
+
 #pragma mark - <SettingsChanges>
 
 - (void)didChangeSettings

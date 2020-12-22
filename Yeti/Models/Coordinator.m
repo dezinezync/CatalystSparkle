@@ -484,6 +484,30 @@ NSString* deviceName() {
     
 }
 
+- (void)prepareFeedsForFullResync {
+    
+    SidebarVC *instance = self.sidebarVC;
+    
+    if (instance != nil) {
+        
+        ArticlesManager.shared.folders = nil;
+        
+        ArticlesManager.shared.feeds = nil;
+        
+        [DBManager.sharedInstance purgeFeedsForResync];
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+//                [instance performSelector:NSSelectorFromString(@"") withObject:instance.refreshControl];
+            
+            [instance beginRefreshingAll:instance.refreshControl];
+            
+        });
+        
+    }
+    
+}
+
 - (void)registerForNotifications:(void (^)(BOOL, NSError * _Nullable))completion {
     
     runOnMainQueueWithoutDeadlocking(^{

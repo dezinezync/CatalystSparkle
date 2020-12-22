@@ -136,6 +136,8 @@ extern DBManager * MyDBManager;
 
 - (void)purgeDataForResync;
 
+- (void)purgeFeedsForResync;
+
 - (void)setupSync:(BGAppRefreshTask *)task completionHandler:(void(^ _Nullable)(BOOL completed))completionHandler;
 
 - (BOOL)isSyncing;

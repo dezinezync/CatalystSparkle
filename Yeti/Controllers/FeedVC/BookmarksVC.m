@@ -45,6 +45,10 @@
        
         strongify(self);
         
+        if (self == nil) {
+            return;
+        }
+        
         if (self->_reloadBookmarks == NO) {
             self->_reloadBookmarks = YES;
         }

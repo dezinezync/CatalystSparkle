@@ -71,6 +71,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)prepareDataForFullResync;
 
+- (void)prepareFeedsForFullResync;
+
 - (void)registerForNotifications:(void(^ _Nullable)(BOOL granted, NSError * _Nullable error))completion;
 
 #if TARGET_OS_MACCATALYST

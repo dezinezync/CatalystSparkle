@@ -2265,4 +2265,15 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     
 }
 
+- (void)purgeFeedsForResync {
+    
+    [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+       
+        [transaction removeAllObjectsInCollection:LOCAL_FEEDS_COLLECTION];
+        [transaction removeAllObjectsInCollection:LOCAL_FOLDERS_COLLECTION];
+        
+    }];
+    
+}
+
 @end
