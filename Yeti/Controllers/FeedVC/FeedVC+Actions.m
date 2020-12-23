@@ -441,7 +441,7 @@
     if (self.splitViewController.traitCollection.userInterfaceIdiom != UIUserInterfaceIdiomPhone) {
         
         UIPopoverPresentationController *pvc = avc.popoverPresentationController;
-        
+#if TARGET_OS_MACCATALYST
         if ([sender isKindOfClass:NSToolbarItem.class]) {
             
             pvc.sourceView = self.view;
@@ -452,7 +452,9 @@
             
         }
         else if ([sender isKindOfClass:UIGestureRecognizer.class]) {
-            
+#else
+        if ([sender isKindOfClass:UIGestureRecognizer.class]) {
+#endif
             UIView *view = [(UITapGestureRecognizer *)sender view];
             pvc.sourceView = self.view;
             CGRect frame = [view convertRect:view.frame toView:self.view];
