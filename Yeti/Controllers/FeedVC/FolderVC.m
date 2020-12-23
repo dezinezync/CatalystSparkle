@@ -69,16 +69,31 @@
 
 - (void)setupDatabases:(YetiSortOption)sortingOption {
     
-    YapDatabaseViewFiltering *filter = [YapDatabaseViewFiltering withRowBlock:^BOOL(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection, NSString * _Nonnull key, FeedItem *  _Nonnull object, id  _Nullable metadata) {
+    weakify(self);
+    weakify(sortingOption);
+    
+    NSString *baseView = DB_BASE_ARTICLES_VIEW;
+    
+    if ([sortingOption isEqualToString:YTSortUnreadAsc] || [sortingOption isEqualToString:YTSortUnreadDesc]) {
         
-        if ([collection containsString:LOCAL_ARTICLES_COLLECTION] == NO) {
+        baseView = UNREADS_FEED_EXT;
+        
+    }
+    
+    YapDatabaseViewFiltering *filter = [YapDatabaseViewFiltering withMetadataBlock:^BOOL(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection, NSString * _Nonnull key, NSDictionary * _Nullable metadata) {
+        
+        strongify(self);
+        
+        if (!self) {
+            return NO;
+        }
+        
+        if (!metadata) {
             return NO;
         }
         
         // article metadata is an NSDictionary
-        NSDictionary *dict = metadata;
-        
-        NSNumber *feedID = [dict valueForKey:@"feedID"];
+        NSNumber *feedID = [metadata valueForKey:@"feedID"];
         
         if ([self.folder.feedIDs containsObject:feedID] == NO) {
             return NO;
@@ -86,54 +101,41 @@
         
         BOOL checkTwo = YES;
         
+        strongify(sortingOption);
+        
         if ([sortingOption isEqualToString:YTSortUnreadAsc] || [sortingOption isEqualToString:YTSortUnreadDesc]) {
             
             checkTwo = [([metadata valueForKey:@"read"] ?: @(NO)) boolValue] == NO;
             
         }
         
-        if (!checkTwo) {
-            return NO;
+        if (checkTwo == YES) {
+            // check date, should be within 14 days
+            NSTimeInterval timestamp = [[metadata valueForKey:@"timestamp"] doubleValue];
+            NSTimeInterval now = [NSDate.date timeIntervalSince1970];
+            
+            if ((now - timestamp) > 1209600) {
+                checkTwo = NO;
+            }
         }
         
-        // Filters
-        
-        if (MyFeedsManager.user.filters.count == 0) {
-            return YES;
-        }
-        
-        // compare title to each item in the filters
-        
-        NSArray <NSString *> *wordCloud = [metadata valueForKey:kTitleWordCloud] ?: @[];
-        
-        BOOL checkThree = [[NSSet setWithArray:wordCloud] intersectsSet:MyFeedsManager.user.filters];
-        
-        return !checkThree;
+        return checkTwo;
         
     }];
-
+    
     self.dbFilteredView = [MyDBManager.database registeredExtension:kFolderDBFilteredView];
     
-    if (self.dbFilteredView == nil) {
+    if (self.dbFilteredView != nil) {
         
-        YapDatabaseFilteredView *filteredView = [[YapDatabaseFilteredView alloc] initWithParentViewName:DB_FEED_VIEW filtering:filter versionTag:[NSString stringWithFormat:@"%u",(uint)self.superclass.filteringTag++]];
-        
-        self.dbFilteredView = filteredView;
-        
-        [MyDBManager.database registerExtension:self.dbFilteredView withName:kFolderDBFilteredView];
+        [MyDBManager.database unregisterExtensionWithName:kFolderDBFilteredView];
         
     }
-    else {
-        
-        [MyDBManager.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
-           
-            YapDatabaseFilteredViewTransaction *tnx = [transaction ext:kFolderDBFilteredView];
-            
-            [tnx setFiltering:filter versionTag:[NSString stringWithFormat:@"%u",(uint)self.superclass.filteringTag++]];
-            
-        }];
-        
-    }
+    
+    YapDatabaseFilteredView *filteredView = [[YapDatabaseFilteredView alloc] initWithParentViewName:baseView filtering:filter versionTag:[NSString stringWithFormat:@"%u",(uint)self.class.filteringTag++]];
+    
+    self.dbFilteredView = filteredView;
+    
+    [MyDBManager.database registerExtension:self.dbFilteredView withName:kFolderDBFilteredView];
     
 }
 
@@ -327,11 +329,11 @@
 
 - (void)_setSortingOption:(YetiSortOption)option {
     
+    [self setupDatabases:option];
+    
     self.folderFeedsManager = nil;
     self.totalItemsForTitle = 0;
     self.pagingManager = self.folderFeedsManager;
-    
-    [self setupDatabases:option];
     
     [self updateTitleView];
     
@@ -375,7 +377,9 @@
                 
                 YapDatabaseFilteredViewTransaction *tnx = [transaction ext:kFolderDBFilteredView];
                 
-                count = [tnx numberOfItemsInGroup:GROUP_ARTICLES];
+                if (tnx != nil) {
+                    count = [tnx numberOfItemsInGroup:GROUP_ARTICLES];
+                }
                 
             }];
             
@@ -431,7 +435,7 @@
     };
     
     if (showPrompt) {
-        UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:@"Mark all Articles as read including back-dated articles?" preferredStyle:UIAlertControllerStyleActionSheet];
+        UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:@"Mark all Articles as read?" preferredStyle:UIAlertControllerStyleAlert];
         
         [avc addAction:[UIAlertAction actionWithTitle:@"Mark all Read" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             

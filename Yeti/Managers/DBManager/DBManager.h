@@ -53,9 +53,10 @@ typedef void (^syncProgressBlock)(CGFloat progress);
 
 #define UNREADS_FEED_EXT @"unreadsFeedView"
 #define DB_FEED_VIEW @"feedView"
+#define DB_BASE_ARTICLES_VIEW @"baseArticlesView"
 #define DB_BOOKMARKED_VIEW @"bookmarksView"
 
-#define DB_VERSION_TAG @"2020-12-14 06:21PM"
+#define DB_VERSION_TAG @"2020-12-23 10:20AM IST"
 
 // Key for article metadata which includes the title word cloud
 // for filtering. 

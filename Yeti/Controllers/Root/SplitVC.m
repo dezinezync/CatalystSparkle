@@ -588,6 +588,17 @@
         return YES;
         
     }
+    else if ([NSStringFromSelector(aSelector) isEqualToString:@"didLongPressOnAllRead:"]) {
+        
+        if (self.mainCoordinator.feedVC != nil) {
+            
+            return [self.mainCoordinator.feedVC respondsToSelector:aSelector];
+            
+        }
+        
+        return NO;
+        
+    }
     
     return [super respondsToSelector:aSelector];
     
@@ -614,6 +625,11 @@
         return [self.mainCoordinator methodSignatureForSelector:selector];
         
     }
+    else if ([NSStringFromSelector(selector) isEqualToString:@"didLongPressOnAllRead:"] && self.mainCoordinator.feedVC != nil) {
+        
+        return [self.mainCoordinator.feedVC methodSignatureForSelector:selector];
+        
+    }
     
     return [super methodSignatureForSelector:selector];
 }
@@ -630,6 +646,10 @@
     }
     else if (anInvocation.selector == NSSelectorFromString(@"showSubscriptionsInterface")) {
         [anInvocation invokeWithTarget:self.mainCoordinator];
+        return;
+    }
+    else if (anInvocation.selector == NSSelectorFromString(@"didLongPressOnAllRead:") && self.mainCoordinator.feedVC != nil) {
+        [anInvocation invokeWithTarget:self.mainCoordinator.feedVC];
         return;
     }
     

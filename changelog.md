@@ -8,6 +8,18 @@ Please run "Force Resync" or delete the app and install again before using the f
 
 - Searching in feeds may crash the app.
 
+## Build 121
+
+- Improved performance for devices older than the A12 series when fetching, sorting and filtering articles inside feeds. 
+
+- Improved performance for filtering articles.
+
+- Improved accuracy of the unread counts across devices. 
+
+- Removed the Mark all including back-dated articles option. Two mark read options were confusing. Now things are simpler. Just one. 
+
+- macOS: Fixed a crash that would occur when Marking as Read inside a Folder view. 
+
 ## Build 120
 
 - Added a context menu option to force-resync under Settings. Now you can also only force refresh the feeds and folders if the app goes out of sync on any device. 

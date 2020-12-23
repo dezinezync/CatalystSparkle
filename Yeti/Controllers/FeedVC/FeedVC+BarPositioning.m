@@ -18,11 +18,11 @@
         return @[];
     }
  
-    UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"text.badge.checkmark"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAllRead:)];
-    allRead.accessibilityValue = @"Mark all articles as read";
-    allRead.accessibilityHint = @"Mark all current articles as read.";
-    allRead.title = @"Mark Read";
-    allRead.width = 32.f;
+//    UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"text.badge.checkmark"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAllRead:)];
+//    allRead.accessibilityValue = @"Mark all articles as read";
+//    allRead.accessibilityHint = @"Mark all current articles as read.";
+//    allRead.title = @"Mark Read";
+//    allRead.width = 32.f;
     
     UIBarButtonItem *allReadBackDated = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"checkmark"] style:UIBarButtonItemStylePlain target:self action:@selector(didLongPressOnAllRead:)];
     allReadBackDated.accessibilityValue = @"Mark all articles as read";
@@ -131,7 +131,7 @@
     BOOL isPushFromRPC = self.feed.rpcCount > 0;
     
     if (isPushFromHub == NO && isPushFromRPC == NO) {
-        NSMutableArray *buttons = @[allReadBackDated, allRead].mutableCopy;
+        NSMutableArray *buttons = @[allReadBackDated].mutableCopy;
         
         if ([self showsSortingButton]) {
             [buttons addObject:sorting];
@@ -148,7 +148,7 @@
         notifications.accessibilityHint = self.feed.isSubscribed ? @"Unsubscribe from notifications" : @"Subscribe to notifications";
         notifications.width = 32.f;
         
-        NSMutableArray *buttons = @[allReadBackDated, allRead, notifications].mutableCopy;
+        NSMutableArray *buttons = @[allReadBackDated, notifications].mutableCopy;
         
         if ([self showsSortingButton]) {
             [buttons addObject:sorting];

@@ -962,6 +962,32 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         
         [_database registerExtension:view withName:DB_FEED_VIEW];
         
+        YapDatabaseViewFiltering *filter = [YapDatabaseViewFiltering withMetadataBlock:^BOOL(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection, NSString * _Nonnull key, NSDictionary * _Nullable metadata) {
+            
+            if ([collection containsString:LOCAL_ARTICLES_COLLECTION] == NO) {
+                return NO;
+            }
+            
+            // Filters
+            
+            if (MyFeedsManager.user.filters.count == 0) {
+                return YES;
+            }
+            
+            // compare title to each item in the filters
+            
+            NSArray <NSString *> *wordCloud = [metadata valueForKey:kTitleWordCloud] ?: @[];
+            
+            BOOL checkThree = [[NSSet setWithArray:wordCloud] intersectsSet:MyFeedsManager.user.filters];
+            
+            return !checkThree;
+            
+        }];
+        
+        YapDatabaseFilteredView *baseArticlesView = [[YapDatabaseFilteredView alloc] initWithParentViewName:DB_FEED_VIEW filtering:filter versionTag:DB_VERSION_TAG];
+        
+        [_database registerExtension:baseArticlesView withName:DB_BASE_ARTICLES_VIEW];
+        
     }
     
     // unreads feed view
@@ -974,6 +1000,18 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
             }
             
             BOOL checkOne = metadata != nil && ([([metadata valueForKey:@"read"] ?: @(NO)) boolValue] == NO);
+            
+            if (checkOne == NO) {
+                return checkOne;
+            }
+            
+            // check date, should be within 14 days
+            NSTimeInterval timestamp = [[metadata valueForKey:@"timestamp"] doubleValue];
+            NSTimeInterval now = [NSDate.date timeIntervalSince1970];
+            
+            if ((now - timestamp) > 1209600) {
+                checkOne = NO;
+            }
             
             if (checkOne == NO) {
                 return checkOne;

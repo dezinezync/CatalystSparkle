@@ -372,6 +372,8 @@
     
     [self.navigationController pushViewController:vc animated:YES];
     
+    self.mainCoordinator.feedVC = vc;
+    
 }
 
 #pragma mark - <UIAdaptivePresentationControllerDelegate>

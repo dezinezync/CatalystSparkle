@@ -109,6 +109,16 @@
         }
 
         BOOL checkTwo = ([([dict valueForKey:@"read"] ?: @(NO)) boolValue] == NO);
+        
+        if (checkTwo == YES) {
+            // check date, should be within 14 days
+            NSTimeInterval timestamp = [[metadata valueForKey:@"timestamp"] doubleValue];
+            NSTimeInterval now = [NSDate.date timeIntervalSince1970];
+            
+            if ((now - timestamp) > 1209600) {
+                checkTwo = NO;
+            }
+        }
 
         if (!checkTwo) {
             return NO;
@@ -159,10 +169,14 @@
 
 - (void)_setSortingOption:(YetiSortOption)option {
     
+    [self setupDatabases:option];
+    
     self.unreadsManager = nil;
     self.pagingManager = self.unreadsManager;
     
-    [self setupDatabases:option];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self updateTitleView];
+    });
     
 }
 

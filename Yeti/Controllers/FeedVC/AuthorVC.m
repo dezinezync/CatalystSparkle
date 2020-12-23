@@ -60,10 +60,21 @@
 - (void)setupDatabases:(YetiSortOption)sortingOption {
     
     weakify(self);
+    weakify(sortingOption);
+    
+    NSString *baseView = DB_BASE_ARTICLES_VIEW;
+    
+    if ([sortingOption isEqualToString:YTSortUnreadAsc] || [sortingOption isEqualToString:YTSortUnreadDesc]) {
+        
+        baseView = UNREADS_FEED_EXT;
+        
+    }
     
     YapDatabaseViewFiltering *filter = [YapDatabaseViewFiltering withRowBlock:^BOOL(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection, NSString * _Nonnull key, FeedItem *  _Nonnull object, NSDictionary * _Nullable metadata) {
         
-        if ([collection containsString:LOCAL_ARTICLES_COLLECTION] == NO) {
+        strongify(self);
+        
+        if (!self) {
             return NO;
         }
         
@@ -97,54 +108,41 @@
             return checkOne;
         }
         
+        strongify(sortingOption);
+        
         if ([sortingOption isEqualToString:YTSortUnreadAsc] || [sortingOption isEqualToString:YTSortUnreadDesc]) {
             
             checkTwo = [([metadata valueForKey:@"read"] ?: @(NO)) boolValue] == NO;
             
         }
         
-        if (!checkTwo) {
-            return NO;
+        if (checkTwo == YES) {
+            // check date, should be within 14 days
+            NSTimeInterval timestamp = [[metadata valueForKey:@"timestamp"] doubleValue];
+            NSTimeInterval now = [NSDate.date timeIntervalSince1970];
+            
+            if ((now - timestamp) > 1209600) {
+                checkTwo = NO;
+            }
         }
         
-        // Filters
-        
-        if (MyFeedsManager.user.filters.count == 0) {
-            return YES;
-        }
-        
-        // compare title to each item in the filters
-        
-        NSArray <NSString *> *wordCloud = [metadata valueForKey:kTitleWordCloud] ?: @[];
-        
-        BOOL checkThree = [[NSSet setWithArray:wordCloud] intersectsSet:MyFeedsManager.user.filters];
-        
-        return !checkThree;
+        return checkTwo;
         
     }];
     
     self.dbFilteredView = [MyDBManager.database registeredExtension:kAuthorDBFilteredView];
     
-    if (self.dbFilteredView == nil) {
+    if (self.dbFilteredView != nil) {
         
-        YapDatabaseFilteredView *filteredView = [[YapDatabaseFilteredView alloc] initWithParentViewName:DB_FEED_VIEW filtering:filter versionTag:[NSString stringWithFormat:@"%u",(uint)self.superclass.filteringTag++]];
-        
-        self.dbFilteredView = filteredView;
-        
-        [MyDBManager.database registerExtension:self.dbFilteredView withName:kAuthorDBFilteredView];
+        [MyDBManager.database unregisterExtensionWithName:kAuthorDBFilteredView];
         
     }
-    else {
-        
-        [MyDBManager.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
-           
-            YapDatabaseFilteredViewTransaction *tnx = [transaction ext:kAuthorDBFilteredView];
-            
-            [tnx setFiltering:filter versionTag:[NSString stringWithFormat:@"%u",(uint)self.superclass.filteringTag++]];
-            
-        }];
-        
-    }
+    
+    YapDatabaseFilteredView *filteredView = [[YapDatabaseFilteredView alloc] initWithParentViewName:baseView filtering:filter versionTag:[NSString stringWithFormat:@"%u",(uint)self.class.filteringTag++]];
+    
+    self.dbFilteredView = filteredView;
+    
+    [MyDBManager.database registerExtension:self.dbFilteredView withName:kAuthorDBFilteredView];
     
 }
 
@@ -246,12 +244,17 @@
             
             [self setupData];
             
-            self.controllerState = StateLoaded;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.controllerState = StateLoaded;
+            });
             
             dispatch_async(dispatch_get_main_queue(), ^{
+                
+#if !TARGET_OS_MACCATALYST
                 if (self.refreshControl != nil && self.refreshControl.isRefreshing) {
                     [self.refreshControl endRefreshing];
                 }
+#endif
                 
                 if (self.pagingManager.page == 1) {
                     
@@ -314,10 +317,14 @@
 
 - (void)_setSortingOption:(YetiSortOption)option {
     
+    [self setupDatabases:option];
+    
     self.authorPagingManager = nil;
     self.pagingManager = self.authorPagingManager;
     
-    [self setupDatabases:option];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self updateTitleView];
+    });
     
 }
 

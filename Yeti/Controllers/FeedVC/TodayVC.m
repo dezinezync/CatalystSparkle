@@ -64,16 +64,26 @@
 
 - (void)setupDatabases:(YetiSortOption)sortingOption {
     
-    YapDatabaseViewFiltering *filter = [YapDatabaseViewFiltering withRowBlock:^BOOL(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection, NSString * _Nonnull key, FeedItem *  _Nonnull object, id  _Nullable metadata) {
+    weakify(self);
+    weakify(sortingOption);
+    
+    NSString *baseView = DB_BASE_ARTICLES_VIEW;
+    
+    if ([sortingOption isEqualToString:YTSortUnreadAsc] || [sortingOption isEqualToString:YTSortUnreadDesc]) {
         
-        if ([collection containsString:LOCAL_ARTICLES_COLLECTION] == NO) {
+        baseView = UNREADS_FEED_EXT;
+        
+    }
+    
+    YapDatabaseViewFiltering *filter = [YapDatabaseViewFiltering withRowBlock:^BOOL(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection, NSString * _Nonnull key, FeedItem *  _Nonnull object, NSDictionary * _Nullable metadata) {
+        
+        strongify(self);
+        
+        if (!self) {
             return NO;
         }
         
-        // article metadata is an NSDictionary
-        NSDictionary *dict = metadata;
-        
-        NSTimeInterval interval = [[dict valueForKey:@"timestamp"] doubleValue];
+        NSTimeInterval interval = [[metadata valueForKey:@"timestamp"] doubleValue];
         NSDate *date = [NSDate dateWithTimeIntervalSince1970:interval];
         
         BOOL checkOne = [NSCalendar.currentCalendar isDateInToday:date];
@@ -84,56 +94,41 @@
         
         BOOL checkTwo = YES;
         
+        strongify(sortingOption);
+        
         if ([sortingOption isEqualToString:YTSortUnreadAsc] || [sortingOption isEqualToString:YTSortUnreadDesc]) {
             
             checkTwo = [([metadata valueForKey:@"read"] ?: @(NO)) boolValue] == NO;
             
         }
         
-        if (!checkTwo) {
-            return NO;
+        if (checkTwo == YES) {
+            // check date, should be within 14 days
+            NSTimeInterval timestamp = [[metadata valueForKey:@"timestamp"] doubleValue];
+            NSTimeInterval now = [NSDate.date timeIntervalSince1970];
+            
+            if ((now - timestamp) > 1209600) {
+                checkTwo = NO;
+            }
         }
         
-        // Filters
-        
-        if (MyFeedsManager.user.filters.count == 0) {
-            return YES;
-        }
-        
-        // compare title to each item in the filters
-        
-        NSArray <NSString *> *wordCloud = [metadata valueForKey:kTitleWordCloud] ?: @[];
-        
-        BOOL checkThree = [[NSSet setWithArray:wordCloud] intersectsSet:MyFeedsManager.user.filters];
-        
-        return !checkThree;
+        return checkTwo;
         
     }];
     
     self.dbFilteredView = [MyDBManager.database registeredExtension:kTodayDBFilteredView];
     
-    if (self.dbFilteredView == nil) {
+    if (self.dbFilteredView != nil) {
         
-        YapDatabaseFilteredView *filteredView = [[YapDatabaseFilteredView alloc] initWithParentViewName:DB_FEED_VIEW filtering:filter versionTag:[NSString stringWithFormat:@"%u",(uint)self.superclass.filteringTag++]];
-        
-        self.dbFilteredView = filteredView;
-        
-        BOOL registered = [MyDBManager.database registerExtension:self.dbFilteredView withName:kTodayDBFilteredView];
-        
-        NSLogDebug(@"Registered today filtered view: %@", @(registered));
+        [MyDBManager.database unregisterExtensionWithName:kTodayDBFilteredView];
         
     }
-    else {
-        
-        [MyDBManager.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
-           
-            YapDatabaseFilteredViewTransaction *tnx = [transaction ext:kTodayDBFilteredView];
-            
-            [tnx setFiltering:filter versionTag:[NSString stringWithFormat:@"%u",(uint)self.superclass.filteringTag++]];
-            
-        }];
-        
-    }
+    
+    YapDatabaseFilteredView *filteredView = [[YapDatabaseFilteredView alloc] initWithParentViewName:baseView filtering:filter versionTag:[NSString stringWithFormat:@"%u",(uint)self.class.filteringTag++]];
+    
+    self.dbFilteredView = filteredView;
+    
+    [MyDBManager.database registerExtension:self.dbFilteredView withName:kTodayDBFilteredView];
     
 }
 
@@ -354,6 +349,10 @@
     
     self.todayManager = nil;
     self.pagingManager = self.todayManager;
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self updateTitleView];
+    });
     
 }
 

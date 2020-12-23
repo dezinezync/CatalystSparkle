@@ -1417,6 +1417,18 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         
     }
     
+    NSNumber *selectedFolder = [sidebar valueForKey:@"selectedFolder"];
+    
+    if (selectedFolder != nil) {
+        
+        Folder *item = [ArticlesManager.shared folderForID:selectedFolder];
+        
+        if (item != nil) {
+            indexPath = [self.DS indexPathForItemIdentifier:(id)item];
+        }
+        
+    }
+    
     if (indexPath != nil) {
         
         weakify(self);
@@ -1471,6 +1483,9 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             
             if ([item isKindOfClass:CustomFeed.class]) {
                 [sidebar setObject:@([(CustomFeed *)item feedType]) forKey:@"selectedCustom"];
+            }
+            else if ([item isKindOfClass:Folder.class]) {
+                [sidebar setObject:item.folderID forKey:@"selectedFolder"];
             }
             else {
                 [sidebar setObject:item.feedID forKey:@"selectedItem"];

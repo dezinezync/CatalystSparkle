@@ -200,7 +200,8 @@
     };
     
     if (showPrompt) {
-        UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:@"Mark all Articles as read including back-dated articles?" preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:@"Mark all Articles as read?" preferredStyle:UIAlertControllerStyleAlert];
         
         [avc addAction:[UIAlertAction actionWithTitle:@"Mark all Read" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             
@@ -211,6 +212,7 @@
         [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
         
         [self presentAllReadController:avc fromSender:sender];
+        
     }
     else {
         [self.feedbackGenerator selectionChanged];
@@ -435,25 +437,36 @@
 //}
 
 - (void)presentAllReadController:(UIAlertController *)avc fromSender:(id)sender {
-#if !TARGET_OS_MACCATALYST
-    if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad || self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+
+    if (self.splitViewController.traitCollection.userInterfaceIdiom != UIUserInterfaceIdiomPhone) {
         
         UIPopoverPresentationController *pvc = avc.popoverPresentationController;
         
-        if ([sender isKindOfClass:UIGestureRecognizer.class]) {
+        if ([sender isKindOfClass:NSToolbarItem.class]) {
+            
+            pvc.sourceView = self.view;
+            CGRect frame = self.view.frame;
+            
+//            frame.origin.x -= [avc preferredContentSize].width;
+            pvc.sourceRect = frame;
+            
+        }
+        else if ([sender isKindOfClass:UIGestureRecognizer.class]) {
+            
             UIView *view = [(UITapGestureRecognizer *)sender view];
             pvc.sourceView = self.view;
             CGRect frame = [view convertRect:view.frame toView:self.view];
             
             frame.origin.x -= [avc preferredContentSize].width;
             pvc.sourceRect = frame;
+            
         }
         else {
             pvc.barButtonItem = sender;
         }
         
     }
-#endif
+
     [self presentViewController:avc animated:YES completion:nil];
     
 }

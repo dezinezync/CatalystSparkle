@@ -165,9 +165,7 @@ static NSUInteger _filteringTag = 0;
     
     [self dz_smoothlyDeselectRows:self.tableView];
     
-//    if (self.pagingManager.page == 1 && [self.DS.snapshot numberOfItems] == 0) {
-//        [self loadNextPage];
-//    }
+    [self updateTitleView];
     
 #if TARGET_OS_MACCATALYST
     
@@ -210,19 +208,22 @@ static NSUInteger _filteringTag = 0;
 
 - (void)setupDatabases:(YetiSortOption)sortingOption {
     
+    weakify(self);
     weakify(sortingOption);
     
-    weakify(self);
+    NSString *baseView = DB_BASE_ARTICLES_VIEW;
     
+    if ([sortingOption isEqualToString:YTSortUnreadAsc] || [sortingOption isEqualToString:YTSortUnreadDesc]) {
+        
+        baseView = UNREADS_FEED_EXT;
+        
+    }
+        
     YapDatabaseViewFiltering *filter = [YapDatabaseViewFiltering withMetadataBlock:^BOOL(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection, NSString * _Nonnull key, NSDictionary * _Nullable metadata) {
-
+            
         strongify(self);
         
         if (!self) {
-            return NO;
-        }
-        
-        if ([collection containsString:LOCAL_ARTICLES_COLLECTION] == NO) {
             return NO;
         }
         
@@ -246,59 +247,46 @@ static NSUInteger _filteringTag = 0;
         if (checkOne == NO) {
             return NO;
         }
-        
-        BOOL checkTwo = YES;
-        
+    
         strongify(sortingOption);
         
         if ([sortingOption isEqualToString:YTSortUnreadAsc] || [sortingOption isEqualToString:YTSortUnreadDesc]) {
+        
+            BOOL checkTwo = [([metadata valueForKey:@"read"] ?: @(NO)) boolValue] == NO;
             
-            checkTwo = [([metadata valueForKey:@"read"] ?: @(NO)) boolValue] == NO;
+            if (checkTwo == YES) {
+                
+                // check date, should be within 14 days
+                NSTimeInterval timestamp = [[metadata valueForKey:@"timestamp"] doubleValue];
+                NSTimeInterval now = [NSDate.date timeIntervalSince1970];
+                
+                if ((now - timestamp) > 1209600) {
+                    checkTwo = NO;
+                }
+                
+            }
+            
+            return checkTwo;
             
         }
         
-        if (!checkTwo) {
-            return NO;
-        }
-        
-        // Filters
-        
-        if (MyFeedsManager.user.filters.count == 0) {
-            return YES;
-        }
-        
-        // compare title to each item in the filters
-        
-        NSArray <NSString *> *wordCloud = [metadata valueForKey:kTitleWordCloud] ?: @[];
-        
-        BOOL checkThree = [[NSSet setWithArray:wordCloud] intersectsSet:MyFeedsManager.user.filters];
-        
-        return !checkThree;
+        return YES;
         
     }];
     
     self.dbFilteredView = [MyDBManager.database registeredExtension:kFeedDBFilteredView];
     
-    if (self.dbFilteredView == nil) {
+    if (self.dbFilteredView != nil) {
         
-        YapDatabaseFilteredView *filteredView = [[YapDatabaseFilteredView alloc] initWithParentViewName:DB_FEED_VIEW filtering:filter versionTag:[NSString stringWithFormat:@"%u",(uint)self.class.filteringTag++]];
-        
-        self.dbFilteredView = filteredView;
-        
-        [MyDBManager.database registerExtension:self.dbFilteredView withName:kFeedDBFilteredView];
+        [MyDBManager.database unregisterExtensionWithName:kFeedDBFilteredView];
         
     }
-    else {
-        
-        [MyDBManager.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
-           
-            YapDatabaseFilteredViewTransaction *tnx = [transaction ext:kFeedDBFilteredView];
-            
-            [tnx setFiltering:filter versionTag:[NSString stringWithFormat:@"%u",(uint)self.class.filteringTag++]];
-            
-        }];
-        
-    }
+    
+    YapDatabaseFilteredView *filteredView = [[YapDatabaseFilteredView alloc] initWithParentViewName:baseView filtering:filter versionTag:[NSString stringWithFormat:@"%u",(uint)self.class.filteringTag++]];
+    
+    self.dbFilteredView = filteredView;
+    
+    [MyDBManager.database registerExtension:self.dbFilteredView withName:kFeedDBFilteredView];
     
 }
 
@@ -881,7 +869,9 @@ static NSUInteger _filteringTag = 0;
                 
                 YapDatabaseFilteredViewTransaction *tnx = [transaction ext:kFeedDBFilteredView];
                 
-                count = [tnx numberOfItemsInGroup:GROUP_ARTICLES];
+                if (tnx != nil) {
+                    count = [tnx numberOfItemsInGroup:GROUP_ARTICLES];
+                }
                 
             }];
             
@@ -972,12 +962,6 @@ static NSUInteger _filteringTag = 0;
         return;
     }
     
-    if (NSThread.isMainThread == NO) {
-        
-        return [self performSelectorOnMainThread:@selector(updateTitleView) withObject:nil waitUntilDone:NO];
-        
-    }
-    
     if (!self.title) {
         return;
     }
@@ -986,11 +970,17 @@ static NSUInteger _filteringTag = 0;
         
         [self.mainCoordinator.innerWindow performSelector:@selector(setTitle:) withObject:self.title];
         
-        NSString *subtitle = [self subtitle];
-        
-        SEL selector = NSSelectorFromString(@"setSubtitle:");
-        
-        DZS_SILENCE_CALL_TO_UNKNOWN_SELECTOR([self.mainCoordinator.innerWindow performSelector:selector withObject:subtitle];)
+        dispatch_async(MyDBManager.readQueue, ^{
+            
+            NSString *subtitle = [self subtitle];
+            
+            SEL selector = NSSelectorFromString(@"setSubtitle:");
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                DZS_SILENCE_CALL_TO_UNKNOWN_SELECTOR([self.mainCoordinator.innerWindow performSelector:selector withObject:subtitle];)
+            });
+            
+        });
         
     }
     
@@ -1026,9 +1016,7 @@ static NSUInteger _filteringTag = 0;
     if(_controllerState != controllerState)
     {
         
-        @synchronized (self) {
-            self->_controllerState = controllerState;
-        }
+        self->_controllerState = controllerState;
         
         if (self.DS.snapshot == nil || self.DS.snapshot.numberOfItems == 0) {
             // we can be in any state
@@ -1470,10 +1458,10 @@ static NSUInteger _filteringTag = 0;
 
 - (void)_setSortingOption:(YetiSortOption)option {
     
+    [self setupDatabases:option];
+    
     self.pagingManager = nil;
     self.totalItemsForTitle = 0;
-    
-    [self setupDatabases:option];
     
     dispatch_async(dispatch_get_main_queue(), ^{
         [self updateTitleView];
