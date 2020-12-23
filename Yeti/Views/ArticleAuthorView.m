@@ -9,8 +9,9 @@
 #import "ArticleAuthorView.h"
 #import "TypeFactory.h"
 #import "YetiConstants.h"
+#import "Coordinator.h"
 
-@interface ArticleAuthorView () {
+@interface ArticleAuthorView () <UIContextMenuInteractionDelegate> {
     BOOL _didAddHorizontalConstraints;
 }
 
@@ -64,6 +65,9 @@
         
         self.activityView.hidden = YES;
         self.activityIndicator.hidden = YES;
+        
+        UIContextMenuInteraction *interaction = [[UIContextMenuInteraction alloc] initWithDelegate:self];
+        [self.mercurialButton addInteraction:interaction];
         
     }
     
@@ -160,6 +164,73 @@
         // nothing else to do
         // re-enable the button
         self.mercurialButton.enabled = YES;
+    }
+    
+}
+
+#pragma mark - <UIContextMenuInteractionDelegate>
+
+- (nullable UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location {
+    
+    UIContextMenuConfiguration *config = nil;
+    
+    if (self.mercurialed) {
+        
+        weakify(self);
+        
+        config = [UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:nil actionProvider:^UIMenu * _Nullable(NSArray<UIMenuElement *> * _Nonnull suggestedActions) {
+           
+            UIAction *delete = [UIAction actionWithTitle:@"Delete Full Text Copy" image:[UIImage systemImageNamed:@"trash"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                
+                strongify(self);
+                
+                [self deleteCache];
+                
+            }];
+            
+            UIAction *deleteAndDownload = [UIAction actionWithTitle:@"Delete and Redownload" image:[UIImage systemImageNamed:@"arrow.triangle.2.circlepath.circle"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                
+                strongify(self);
+                
+                [self deleteCache];
+                
+                // tap button again
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    
+                    [self mercurialButton:self.mercurialButton];
+                    
+                });
+                
+            }];
+            
+            return [UIMenu menuWithTitle:@"Full-Text Content Options" children:@[delete, deleteAndDownload]];
+            
+        }];
+        
+    }
+    
+    return config;
+    
+}
+
+- (void)deleteCache {
+    
+    SEL aSel = NSSelectorFromString(@"item");
+    
+    if (self.delegate != nil && [self.delegate respondsToSelector:aSel]) {
+        
+        FeedItem *item = DZS_SILENCE_CALL_TO_UNKNOWN_SELECTOR([self.delegate performSelector:aSel];);
+        
+        if (item == nil) {
+            return;
+        }
+        
+        [MyDBManager deleteArticleFullText:item.identifier];
+        
+        [self mercurialButton:self.mercurialButton];
+        
+        item.mercury = NO;
+        
     }
     
 }

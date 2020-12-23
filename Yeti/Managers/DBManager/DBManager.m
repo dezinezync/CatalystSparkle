@@ -2185,6 +2185,20 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     
 }
 
+- (void)deleteArticleFullText:(NSNumber *)identifier {
+    
+    if (!identifier) {
+        return;
+    }
+    
+    [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+        
+        [transaction removeObjectForKey:identifier.stringValue inCollection:LOCAL_ARTICLES_FULLTEXT_COLLECTION];
+        
+    }];
+    
+}
+
 - (void)deleteArticle:(FeedItem *)article {
     
     NSString *collection = [self collectionForArticle:article];

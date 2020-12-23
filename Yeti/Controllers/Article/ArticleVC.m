@@ -636,6 +636,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 - (void)setState:(ArticleState)state {
     
+    [self setState:state isChangingArticle:YES];
+    
+}
+
+- (void)setState:(ArticleState)state isChangingArticle:(BOOL)isChangingArticle {
+    
     if (_state == state) {
         return;
     }
@@ -711,8 +717,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                 self.loader.transform = CGAffineTransformMakeScale(1.f, 1.f);
                 self.loader.alpha = 1.f;
                 
-                [self setupHelperViewActions];
-                [self setupToolbar:self.traitCollection];
+                if (isChangingArticle) {
+                    
+                    [self setupHelperViewActions];
+                    [self setupToolbar:self.traitCollection];
+                    
+                }
                 
             }];
             
@@ -755,8 +765,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     return self.item;
 }
 
-- (void)setupArticle:(FeedItem *)article
-{
+- (void)setupArticle:(FeedItem *)article {
+    
     if (!article)
         return;
     
@@ -788,7 +798,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     NSDate *start = NSDate.date;
     
     if (self.item.content && self.item.content.count) {
-        self.state = ArticleStateLoading;
+        
+        [self setState:ArticleStateLoading isChangingArticle:isChangingArticle];
         
         [self _setupArticle:self.item start:start isChangingArticle:isChangingArticle];
         return;
@@ -1161,7 +1172,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         NSLogDebug(@"ScrollView contentsize: %@", NSStringFromCGSize(contentSize));
         
-        self.state = ArticleStateLoaded;
+        [self setState:ArticleStateLoaded isChangingArticle:isChangingArticle];
+        
     });
     
     if (isChangingArticle && self.providerDelegate) {

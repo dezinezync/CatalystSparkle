@@ -1,70 +1,87 @@
-Winter is coming... soon. The Elytra Winter 2019 update is already here though. If you feel generous and have a couple of minutes, please leave a review on the App Store. It makes a huge difference for me. Thank you in advance. Here's the change log:
+## Build 114
 
-## What's New
+- macOS: Fixed an issue where if your account had an expired subscription, it would multiple windows for the Subscriptions interface and eventually fill up the screen.  
 
-- Added a new Bookmarks Manager. This is much more efficient system compared to the previous system and is much more scalable. This is a non-UI update so you'll see a lot of performance benefits from this. 
+- Fixed an issue with the iPadOS app showing different widths for the columns in different orientations or environments (split view).
 
-- Sign in With Apple. If you're new to Elytra, you don't need to take any additional steps. If you've been using  Elytra and are updating to the latest version, please head over to Settings > Account and link your account from there. 
+- Fixed an issue with the apps not correctly download bookmarks from the API. 
 
-- Image Viewer: Tap on an image in an article to open it in a full screen image viewer. All images from the article are gathered in single place for easier viewing. 
+- Fixed an issue where toggling folders in the sidebar interface would show empty folders. 
 
-- Push Settings: View a list of publishers you've subscribed to receive push notifications from. 
+## Build 112 
 
-- Added Settings Sync to work in tandem with the web app. More on this soon.
+- Testing local notifications. 
+
+## Build 111
+
+- Improved sync performance. 
+
+- Widgets are now updated considering the filters if you have any set up. 
+
+- Filters are now processed when processing timelines. 
+
+- Filters are now correctly updated locally when adding or removing filters. 
+
+- macOS:  Force-Resync menu option for macOS. Hold option key before clicking on the Elytra Menu item in the menu bar. 
+
+## Build 109
+
+Other bugs and crash reports apart from these two: I'll look into them over the coming week. 
+
+- This is a hot patch build which fixes a crash that would occur when the app is fetching updates. 
+
+- This hot patch also fixes another related issue where the app would no longer fetch items from pending feeds until the next refresh is ready if the app had previously crashed. 
+
+- This hotpatch also fixes an issue with incorrect updates to the read-articles from your other devices. 
+
+## Build 106
+
+- Fixed an issue where the app would stall or eventually crash (sometimes immediately) during initial or fresh sync. 
+
+- Fixed an issue where the Today view would load twice in quick succession. 
+
+- Unread counts in the Feeds View and the new Feed Title view should not correctly account for your filters. 
+
+## Build 105
+
+- Fixed: inside a feed, the context and right swipe Browser actions will also respect the reader mode setting. 
+
+## Build 104
+
+- Fixed articles not loading for certain feeds. 
+
+- Fixed Today View not updating when opened after an app launch. 
+
+- Fixed unread counts showing a small mismatch. (Filtered counts issue still exists. Some feeds may show counts of the articles which have been filtered out of the view.)
+
+- Add a new "Title View" to individual feeds. This shows the Feed Info and two preferences at the moment: Push Notifications & Safari Reader Mode. These are per feed settings. Push notifications can either be real-time (functional) or near real-time (non-functional at the moment). 
+
+## Build 100
+
+- Fixed a crash when app is backgrounded. 
+
+## Build 99 
+
+- Fixed some feeds not getting synced. Uses the new caching mechanism instead to check feeds with changes. 
+
+## Build 85
 
 ## Improvements
 
+- Tapping on a folder now opens the folder's feed. 
 
-- Adding a new feed from the search interface now increments the unread count.  
-
-- Removing a feed now decrements the unread count. 
-
-- Recommendations interface now correctly shows the custom Feed name if one is set.  
-
-- Improves how the app handles & reacts to memory pressure warnings from the OS.  
-
-- The Author Interface now shows the author's name prominently and defers the blog's name to the subtitle.  
-
-- Drastically improved managing of unread counts in the app. 
-
-- Improved behaviour of the app when marking backdated articles as read. 
+- Tapping on the disclosure icon on a folder now toggles its expanded state. 
 
 ## Fixes
 
-- Fixes push notifications opening the wrong feed.
+- Fixed the tint colour for the blog name when opening a micro-blog article. 
 
-- Fixes push notifications not opening the article on iOS 13. 
+- Fixed adding feed by URL where the feed presents multiple options.
 
-- Fixed a bug where the app would re-sync all bookmarks even if they existed locally.  
+- Fixed an issue when searching by title for 3-letter sites like CNN or BBC. 
 
-- Fixed the Settings icon for the Push Notifications row not showing up on some devices. 
+### macOS
 
-- Fixed the activity indicator persisting on screen when only one or no page exists for unread items. 
+- Added the "Contact Support" menu item under Help on macOS. 
 
-- Fixed a potential crash when opening new feed interface.
-
-- Fixes loading of unsupported image formats. Loading an SVG image would cause the app to crash. 
-
-- Fixed last updated date not matching the actual refresh date when manually refreshing through the User Interface. This only updated when fetching via background refresh.  
-
-- Fixed an issue that would cause a corrupted navigation bar in iOS 13. 
-
-- Fixes a crash which could occur when the Trial Interface was presented. 
-
-- Fixed linked images which would not render if they were contained inside an anchor blog with multiple other elements. These other elements were usually line-breaks preventing the entire block from rendering properly. Affected blog: Saturday Morning Breakfast Cereal.. 
-
-- Removed webp support. 
-
-- Images are loaded using the same extension from the proxy as the source image. 
-
-- Fixed a small bug with the unread count when marking read automatically from the article reader. 
-
-- Fixed an issue with image loading preferences. "Never Load Images" now works properly in the Articles List & Article Viewer.  
-
-- Fixed some really nasty memory leaks.  
-
-- Fixed a crash that would occur when launching the app. This was a regression introduced in Build 275 of Elytra and OS 13.1.2.
-
-- Micro.blog posts with images now show the image as a thumbnail in the articles list when settings are enabled for it. 
-
-- Fixed the colour of the summary label (iOS 13 only, correct on iOS 12). 
+- Fixed the activity indicator not being visible when opening a feed. 

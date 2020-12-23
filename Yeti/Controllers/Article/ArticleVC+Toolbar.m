@@ -172,8 +172,8 @@
 }
 
 
-- (void)setupToolbar:(UITraitCollection *)newCollection
-{
+- (void)setupToolbar:(UITraitCollection *)newCollection {
+    
     if (PrefsManager.sharedInstance.useToolbar == NO) {
         
         self.navigationItem.rightBarButtonItems = [self.commonNavBarItems arrayByAddingObjectsFromArray:self.leftBarButtonItems];

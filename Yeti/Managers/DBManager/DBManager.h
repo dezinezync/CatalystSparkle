@@ -127,6 +127,8 @@ extern DBManager * MyDBManager;
 
 - (void)addArticleFullText:(NSArray <Content *> *)content identifier:(NSNumber *)identifier;
 
+- (void)deleteArticleFullText:(NSNumber *)identifier;
+
 - (void)removeAllArticlesFor:(NSNumber *)feedID;
 
 #pragma mark - CloudCore
