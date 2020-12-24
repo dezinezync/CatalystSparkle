@@ -16,6 +16,8 @@
 
 - (void)articles:(NSArray <FeedItem *> * _Nonnull)items markAsRead:(BOOL)read;
 
+- (void)markArticlesAsRead:(NSArray <NSNumber *> * _Nonnull)identifiers;
+
 - (void)article:(FeedItem * _Nonnull)item markAsBookmarked:(BOOL)bookmarked success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 @end

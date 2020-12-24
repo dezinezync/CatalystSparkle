@@ -154,6 +154,26 @@
 
 }
 
+- (void)markArticlesAsRead:(NSArray<NSNumber *> *)identifiers {
+    
+    if (identifiers.count == 0) {
+        return;
+    }
+    
+    KVSItem *instance = [KVSItem new];
+    instance.changeType = KVSChangeTypeRead;
+    instance.identifiers = identifiers;
+    
+    if (self.KVSItems == nil) {
+        self.KVSItems = [NSMutableOrderedSet new];
+    }
+    
+    [self.KVSItems addObject:instance];
+    
+    [self trackChanges];
+    
+}
+
 - (void)article:(FeedItem *)item markAsBookmarked:(BOOL)bookmarked success:(successBlock)successCB error:(errorBlock)errorCB {
     
     item.bookmarked = bookmarked;

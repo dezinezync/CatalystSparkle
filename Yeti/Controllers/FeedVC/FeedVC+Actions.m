@@ -168,35 +168,87 @@
     BOOL showPrompt = SharedPrefs.showMarkReadPrompts;
     
     void(^markReadInline)(void) = ^(void) {
-        [MyFeedsManager markFeedRead:self.feed success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        [MyDBManager.uiConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+            
+            YapDatabaseFilteredViewTransaction *txn = [transaction ext:self.filteringViewName];
+            
+            if (txn == nil) {
+                return;
+            }
+            
+            NSUInteger capacity = [txn numberOfItemsInGroup:GROUP_ARTICLES];
+            
+            NSMutableSet <FeedItem *> *items = [NSMutableSet setWithCapacity:capacity];
+            
+            // get all the unread items from this view
+            [txn enumerateKeysInGroup:GROUP_ARTICLES usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, NSUInteger index, BOOL * _Nonnull stop) {
+                
+                NSDictionary *metadata = [transaction metadataForKey:key inCollection:collection];
+                
+                if (metadata == nil) {
+                    return;
+                }
+                
+                if ([([metadata valueForKey:@"read"] ?: @(NO)) boolValue] == NO) {
+                    
+                    FeedItem *item = [transaction objectForKey:key inCollection:collection];
+                    
+                    if (item != nil) {
+                        [items addObject:item];
+                    }
+                    
+                }
+                
+            }];
+            
+            NSLogDebug(@"Marking as read %@", @(items.count));
+            
+            [MyFeedsManager articles:items.allObjects markAsRead:YES];
             
             dispatch_async(dispatch_get_main_queue(), ^{
+
                 if (self != nil && [self tableView] != nil) {
                     // if we're in the unread section
                     if (self.type == FeedVCTypeUnread || self.sortingOption == YTSortUnreadAsc || self.sortingOption == YTSortUnreadDesc) {
                         
+                        if ([self respondsToSelector:@selector(didFinishAllReadActionSuccessfully:)]) {
+                            [self didFinishAllReadActionSuccessfully:items.count];
+                        }
+
                         self.controllerState = StateLoading;
-                        
+
                         NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
                         [snapshot appendSectionsWithIdentifiers:@[@0]];
-                        
+
                         [self.DS applySnapshot:snapshot animatingDifferences:YES];
-                        
+
                         self.controllerState = StateLoaded;
-                        
+
                     }
                     else {
+                        
                         [self _markVisibleRowsRead];
-                        [self _didFinishAllReadActionSuccessfully];
+                        
+                        if ([self respondsToSelector:@selector(didFinishAllReadActionSuccessfully:)]) {
+                            [self didFinishAllReadActionSuccessfully:items.count];
+                        }
+                        
                     }
                 }
+                
             });
             
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            [AlertManager showGenericAlertWithTitle:@"Error Marking all Read" message:error.localizedDescription];
-            
         }];
+        
+//        [MyFeedsManager markFeedRead:self.feed success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//
+//        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//            [AlertManager showGenericAlertWithTitle:@"Error Marking all Read" message:error.localizedDescription];
+//
+//        }];
     };
     
     if (showPrompt) {
@@ -222,12 +274,9 @@
     }
 }
 
-- (void)_didFinishAllReadActionSuccessfully {
+- (void)didFinishAllReadActionSuccessfully:(NSUInteger)count {
     
-    if (self.feed != nil && self.feed.unread.unsignedIntegerValue > 0) {
-        MyFeedsManager.totalUnread -= self.feed.unread.unsignedIntegerValue;
-        self.feed.unread = @(0);
-    }
+    
     
 }
 
