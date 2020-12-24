@@ -173,6 +173,10 @@
 
 #pragma mark - Subclassed
 
+- (NSString *)filteringViewName {
+    return @"";
+}
+
 - (NSString *)subtitle {
     
     NSString *totalArticles = [NSString stringWithFormat:@"%@ Bookmark%@", @(MyFeedsManager.totalBookmarks), MyFeedsManager.totalBookmarks == 1 ? @"" : @"s"];

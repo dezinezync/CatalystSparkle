@@ -206,6 +206,10 @@
     
 }
 
+- (NSString *)filteringViewName {
+    return kUnreadsDBFilteredView;
+}
+
 - (PagingManager *)pagingManager {
     return self.unreadsManager;
 }
@@ -375,10 +379,6 @@
     
 }
 
-- (NSString *)filteringViewName {
-    return kUnreadsDBFilteredView;
-}
-    
 //- (void)markAllDirectional:(NSInteger)direction indexPath:(NSIndexPath *)indexPath {
 //    
 //    YetiSortOption sorting = self.sortingOption ?: SharedPrefs.sortingOption;

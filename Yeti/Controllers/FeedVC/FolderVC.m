@@ -395,69 +395,69 @@
 
 #pragma mark - Actions
 
-- (void)didLongPressOnAllRead:(id)sender {
-    
-    BOOL showPrompt = SharedPrefs.showMarkReadPrompts;
-    
-    void(^markReadInline)(void) = ^(void) {
-        
-        [MyFeedsManager markFolderRead:self.folder success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                
-                if (self != nil && [self tableView] != nil) {
-                    // if we're in the unread section
-                    if (self.sortingOption == YTSortUnreadAsc || self.sortingOption == YTSortUnreadDesc) {
-                        
-                        self.controllerState = StateLoading;
-                        
-                        NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
-                        [snapshot appendSectionsWithIdentifiers:@[@0]];
-                        
-                        [self.DS applySnapshot:snapshot animatingDifferences:YES];
-                        
-                        self.controllerState = StateLoaded;
-                        
-                    }
-                    else {
-                        [self _markVisibleRowsRead];
-                        [self _didFinishAllReadActionSuccessfully];
-                    }
-                }
-            });
-            
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            [AlertManager showGenericAlertWithTitle:@"Error Marking all Read" message:error.localizedDescription];
-            
-        }];
-        
-    };
-    
-    if (showPrompt) {
-        UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:@"Mark all Articles as read?" preferredStyle:UIAlertControllerStyleAlert];
-        
-        [avc addAction:[UIAlertAction actionWithTitle:@"Mark all Read" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            
-            markReadInline();
-            
-        }]];
-        
-        [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
-        
-        [self presentAllReadController:avc fromSender:sender];
-    }
-    else {
-        [self.feedbackGenerator selectionChanged];
-        [self.feedbackGenerator prepare];
-        
-        markReadInline();
-    }
-}
-
-- (void)_didFinishAllReadActionSuccessfully {
-    
-}
+//- (void)didLongPressOnAllRead:(id)sender {
+//    
+//    BOOL showPrompt = SharedPrefs.showMarkReadPrompts;
+//    
+//    void(^markReadInline)(void) = ^(void) {
+//        
+//        [MyFeedsManager markFolderRead:self.folder success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//            
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                
+//                if (self != nil && [self tableView] != nil) {
+//                    // if we're in the unread section
+//                    if (self.sortingOption == YTSortUnreadAsc || self.sortingOption == YTSortUnreadDesc) {
+//                        
+//                        self.controllerState = StateLoading;
+//                        
+//                        NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
+//                        [snapshot appendSectionsWithIdentifiers:@[@0]];
+//                        
+//                        [self.DS applySnapshot:snapshot animatingDifferences:YES];
+//                        
+//                        self.controllerState = StateLoaded;
+//                        
+//                    }
+//                    else {
+//                        [self _markVisibleRowsRead];
+//                        [self _didFinishAllReadActionSuccessfully];
+//                    }
+//                }
+//            });
+//            
+//        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//            
+//            [AlertManager showGenericAlertWithTitle:@"Error Marking all Read" message:error.localizedDescription];
+//            
+//        }];
+//        
+//    };
+//    
+//    if (showPrompt) {
+//        UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:@"Mark all Articles as read?" preferredStyle:UIAlertControllerStyleAlert];
+//        
+//        [avc addAction:[UIAlertAction actionWithTitle:@"Mark all Read" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+//            
+//            markReadInline();
+//            
+//        }]];
+//        
+//        [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+//        
+//        [self presentAllReadController:avc fromSender:sender];
+//    }
+//    else {
+//        [self.feedbackGenerator selectionChanged];
+//        [self.feedbackGenerator prepare];
+//        
+//        markReadInline();
+//    }
+//}
+//
+//- (void)_didFinishAllReadActionSuccessfully {
+//    
+//}
 
 #pragma mark - State Restoration
 
