@@ -8,6 +8,14 @@ Please run "Force Resync" or delete the app and install again before using the f
 
 - Searching in feeds may crash the app.
 
+## Build 123
+
+- Fixes marking read across all feed views. 
+
+- Improved performance of marking articles as read. Marking up to a 1000 articles now takes the same amount of time, CPU and battery resources as 10. 
+
+- Marking articles as read or unread is now a coalesced to reduce network and battery usage. So it may sometimes take a second or two for changes to reflect across devices. An improvement around this should come in the next build next week.   
+
 ## Build 122
 
 - Added context menu to the Full-Text button. Provides an option to delete the existing cache and to delete it and redownload (the latter option is useful when debugging for updated cache options).
