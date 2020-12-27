@@ -1313,9 +1313,9 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         
         // if we don't have a token, we create one with an old date of 1993-03-11 06:11:00 ;)
         // date was later changed to 2020-04-14 22:30 when sync was finalised.
+        NSCalendarUnit units = NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay|NSCalendarUnitHour;
+        
         if (token == nil) {
-            
-            NSCalendarUnit units = NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay|NSCalendarUnitHour;
             
             // two weeks ago.
             NSDate *date = [NSDate.date dateByAddingTimeInterval:-(1209600)];
@@ -1326,6 +1326,24 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
             
             token = [token base64Encoded];
         
+        }
+        else {
+            
+            // subtract an hour from our previous token
+            NSDateFormatter *formatter = [NSDateFormatter new];
+            formatter.dateFormat = @"YYYY-MM-dd hh:mm:ss";
+//            formatter.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
+            
+            NSDate *date = [formatter dateFromString:[token decodeBase64]];
+            
+            units = units|NSCalendarUnitMinute|NSCalendarUnitSecond;
+            
+            NSDateComponents * components = [NSCalendar.currentCalendar components:units fromDate:date];
+            
+            token = [NSString stringWithFormat:@"%@-%@-%@ %@:%@:%@", @(components.year), @(components.month), @(components.day), @(components.hour - 1), @(components.minute), @(components.second)];
+            
+            token = [token base64Encoded];
+            
         }
         
 //#ifdef DEBUG
@@ -1344,7 +1362,7 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         
         self.syncSetup = YES;
         
-//        token = [@"2020-12-01 04:10:00" base64Encoded];
+//        token = [@"2020-12-27 05:00:00" base64Encoded];
         
         [self syncNow:token];
         
@@ -1653,6 +1671,10 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     
     if (articleID) {
         params[@"articleID"] = articleID;
+        
+        params[@"page"] = @(1);
+        
+        etag = nil;
     }
     
     if (etag && page == 1) {
