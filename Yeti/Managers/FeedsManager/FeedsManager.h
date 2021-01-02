@@ -98,6 +98,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)addFeedByID:(NSNumber * _Nonnull)feedID success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
+- (void)updateFeedWithLocalName:(Feed * _Nonnull)feed;
+
 - (void)articlesByAuthor:(NSNumber * _Nonnull)authorID feedID:(NSNumber * _Nonnull)feedID page:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)getArticle:(NSNumber * _Nonnull)articleID feedID:(NSNumber * _Nullable)feedID noAuth:(BOOL)noAuth success:(successBlock _Nonnull)successCB error:(errorBlock _Nonnull)errorCB;

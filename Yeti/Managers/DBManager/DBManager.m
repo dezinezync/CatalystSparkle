@@ -410,6 +410,8 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
             
             if (feed != nil) {
                 
+                [MyFeedsManager updateFeedWithLocalName:feed];
+                
                 [feeds addObject:feed];
                 
             }

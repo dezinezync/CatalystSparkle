@@ -8,6 +8,10 @@ Please run "Force Resync" or delete the app and install again before using the f
 
 - Searching in feeds may crash the app.
 
+## Build 124 
+
+- Fixes custom feeds not loading up when launching the app. 
+
 ## Build 123
 
 - Fixes marking read across all feed views. 
