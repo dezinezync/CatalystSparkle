@@ -893,8 +893,8 @@ static NSUInteger _filteringTag = 0;
         searchController.searchResultsUpdater = self;
         searchController.searchBar.placeholder = @"Search Articles";
         searchController.automaticallyShowsCancelButton = YES;
-        searchController.automaticallyShowsScopeBar = YES;
-        searchController.searchBar.scopeButtonTitles = @[@"Local", @"Server"];
+//        searchController.automaticallyShowsScopeBar = YES;
+//        searchController.searchBar.scopeButtonTitles = @[@"Local", @"Server"];
         searchController.obscuresBackgroundDuringPresentation = NO;
         
         _searchController = searchController;

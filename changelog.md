@@ -4,13 +4,11 @@ This build includes support for Local Syncing. If something breaks, the app cras
 
 Please run "Force Resync" or delete the app and install again before using the first time. 
 
-## Known Issues 
-
-- Searching in feeds may crash the app.
-
 ## Build 125
 
 - If you mark articles as read through the various modes and then shift the app to the background or switch to another app, the app now correctly syncs this information. Previously, this would not run until the app was brought to the foreground or if the app was terminated by the OS.  
+
+- Preliminary support & implementation of local search based on the new local sync system. 
 
 ## Build 124 
 

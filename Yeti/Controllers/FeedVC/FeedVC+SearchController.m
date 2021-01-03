@@ -24,121 +24,60 @@
     
     text = [text stringByStrippingWhitespace];
     
-    NSInteger scope = searchController.searchBar.selectedScopeButtonIndex;
-    
-    NSLogDebug(@"Search text: %@ - Scope: %@", text, @(scope));
-    
-    if (scope == 1) {
-        
-        if (self.searchOperationSuccess == nil) {
-            
-            weakify(self);
-            
-            self.searchOperationSuccess = ^(NSArray <FeedItem *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                
-                NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
-                
-                [snapshot appendSectionsWithIdentifiers:@[@0]];
-                [snapshot appendItemsWithIdentifiers:responseObject intoSectionWithIdentifier:@0];
-                
-                strongify(self);
-                
-                [self.DS applySnapshot:snapshot animatingDifferences:YES];
-            };
-            
-        }
-        
-        if (self.searchOperationError == nil) {
-            
-            self.searchOperationError = ^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                
-                if (error.code == 0) {
-                    return;
-                }
-               
-                [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription];
-                
-            };
-            
-        }
-        
-        NSTimeInterval dispatchTime = 0;
-        
-        if (self.searchOperation != nil) {
-            
-            dispatchTime = 1;
-            
-            // cancel it.
-            [self.searchOperation cancel];
-            self.searchOperation = nil;
-        }
-        
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(dispatchTime * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            
-            [self _search:text scope:scope];
-            
-        });
-        
-    }
-    else {
-        [self _search:text scope:scope];
-    }
+    [self _search:text scope:0];
     
 }
 
 - (void)_search:(NSString *)text scope:(NSInteger)scope {
     
-    if (scope == 0) {
+    if (text.length < 3) {
+        return;
+    }
+    
+    NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
+    
+    [MyDBManager.uiConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+       
+        YapDatabaseFilteredViewTransaction *txn = [transaction ext:self.filteringViewName];
         
-        NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
+        if (txn == nil) {
+            return;
+        }
         
-        NSArray <FeedItem *> * items = self.pagingManager.uniqueItems.objectEnumerator.allObjects;
+        NSMutableOrderedSet <FeedItem *> *set = [NSMutableOrderedSet new];
         
-        items = [items rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+        [txn enumerateRowsInGroup:GROUP_ARTICLES usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, FeedItem * _Nonnull object, NSDictionary * _Nullable metadata, NSUInteger index, BOOL * _Nonnull stop) {
             
-            NSString *title = obj.articleTitle.lowercaseString;
+            NSString *title = object.articleTitle.lowercaseString;
             
             if ([title isEqualToString:text] || [title containsString:text]) {
-                return YES;
+                return [set addObject:object];
             }
             
-            if (obj.summary != nil) {
+            if (object.summary != nil) {
                 
-                NSString *summary = [obj.summary lowercaseString];
+                NSString *summary = [object.summary lowercaseString];
                 
                 if ([summary containsString:text]) {
-                    return YES;
+                    return [set addObject:object];
                 }
                 
             }
             
-            NSString *blogTitle = obj.blogTitle.lowercaseString;
+            NSString *blogTitle = object.blogTitle.lowercaseString;
             
             if ([blogTitle isEqualToString:text] || [blogTitle containsString:text]) {
-                return YES;
+                [set addObject:object];
             }
-            
-            return NO;
             
         }];
         
         [snapshot appendSectionsWithIdentifiers:@[@0]];
-        [snapshot appendItemsWithIdentifiers:items intoSectionWithIdentifier:@0];
+        [snapshot appendItemsWithIdentifiers:set.objectEnumerator.allObjects intoSectionWithIdentifier:@0];
         
         [self.DS applySnapshot:snapshot animatingDifferences:YES];
         
-    }
-    else {
-        
-        if (text.length < 3) {
-            return;
-        }
-        
-        self.searchOperation = [self searchOperationTask:text];
-        
-        [self.searchOperation resume];
-        
-    }
+    }];
     
 }
 
