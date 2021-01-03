@@ -8,6 +8,10 @@ Please run "Force Resync" or delete the app and install again before using the f
 
 - Searching in feeds may crash the app.
 
+## Build 125
+
+- If you mark articles as read through the various modes and then shift the app to the background or switch to another app, the app now correctly syncs this information. Previously, this would not run until the app was brought to the foreground or if the app was terminated by the OS.  
+
 ## Build 124 
 
 - Fixes custom feeds not loading up when launching the app. 

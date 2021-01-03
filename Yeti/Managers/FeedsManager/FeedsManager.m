@@ -247,8 +247,7 @@ NSArray <NSString *> * _defaultsKeys;
     
 }
 
-- (void)getFeedsWithSuccess:(successBlock)successCB error:(errorBlock)errorCB
-{
+- (void)getFeedsWithSuccess:(successBlock)successCB error:(errorBlock)errorCB {
     weakify(self);
     
     if (MyFeedsManager.userID == nil) {
@@ -273,20 +272,7 @@ NSArray <NSString *> * _defaultsKeys;
                              @"hash": @([NSDate.date timeIntervalSince1970])
     };
     
-    __block DZURLSession *session = self.session;
-    
-    runOnMainQueueWithoutDeadlocking(^{
-        
-        if (UIApplication.sharedApplication.applicationState == UIApplicationStateBackground) {
-            
-            // use the background session for sync.
-            NSLog(@"Setup get feeds task in background mode");
-            
-            session = self.backgroundSession;
-            
-        }
-        
-    });
+    DZURLSession *session = self.currentSession;
     
     [session GET:@"/feeds" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
       
@@ -498,7 +484,9 @@ NSArray <NSString *> * _defaultsKeys;
         params[@"sortType"] = @(sorting.integerValue);
     }
     
-    [self.session GET:formattedString(@"/feeds/%@", feed.feedID) parameters:params success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session GET:formattedString(@"/feeds/%@", feed.feedID) parameters:params success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         NSArray <NSDictionary *> * articles = [responseObject valueForKey:@"articles"];
         
@@ -569,8 +557,10 @@ NSArray <NSString *> * _defaultsKeys;
     }
 
     weakify(self);
+    
+    DZURLSession *session = self.currentSession;
 
-    [MyFeedsManager.session PUT:@"/feed?version=2" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [session PUT:@"/feed?version=2" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if ([response statusCode] == 300) {
             
@@ -737,11 +727,14 @@ NSArray <NSString *> * _defaultsKeys;
     }
     
     NSDictionary *params = @{@"feedID" : feedID};
+    
     if ([MyFeedsManager userID] != nil) {
         params = @{@"feedID": feedID, @"userID": [self userID]};
     }
+    
+    DZURLSession *session = self.currentSession;
 
-    [MyFeedsManager.session PUT:@"/feed" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [session PUT:@"/feed" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (response.statusCode == 304) {
             
@@ -854,7 +847,9 @@ NSArray <NSString *> * _defaultsKeys;
         params[@"userID"] = MyFeedsManager.userID;
     }
     
-    [self.session GET:path parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session GET:path parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (successCB) {
             
@@ -925,7 +920,9 @@ NSArray <NSString *> * _defaultsKeys;
         params[@"userID"] = MyFeedsManager.userID;
     }
     
-    [self.session GET:path parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session GET:path parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (successCB) {
             
@@ -968,8 +965,8 @@ NSArray <NSString *> * _defaultsKeys;
     
 }
 
-- (void)articlesByAuthor:(NSNumber *)authorID feedID:(NSNumber *)feedID page:(NSInteger)page success:(successBlock)successCB error:(errorBlock)errorCB
-{
+- (void)articlesByAuthor:(NSNumber *)authorID feedID:(NSNumber *)feedID page:(NSInteger)page success:(successBlock)successCB error:(errorBlock)errorCB {
+    
     if ([self userID] == nil) {
         if (errorCB) {
             errorCB(nil, nil, nil);
@@ -993,7 +990,9 @@ NSArray <NSString *> * _defaultsKeys;
         params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
     }
     
-    [self.session GET:path parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session GET:path parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (!successCB)
             return;
@@ -1025,12 +1024,14 @@ NSArray <NSString *> * _defaultsKeys;
     NSString *path;
     NSNumber *userID = [self userID] ?: @(0);
     
+    DZURLSession *session = self.currentSession;
+    
     if (feed) {
         NSNumber *feedID = feed.feedID;
         
         path = formattedString(@"/feeds/%@/allread", feedID);
         
-        [self.session GET:path parameters:@{@"userID": userID} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        [session GET:path parameters:@{@"userID": userID} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
             error = [self errorFromResponse:error.userInfo];
             
@@ -1045,7 +1046,7 @@ NSArray <NSString *> * _defaultsKeys;
     else {
         path = formattedString(@"/unread/markall?userID=%@", userID);
         
-        [self.session POST:path parameters:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        [session POST:path parameters:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
             NSArray <NSNumber *> *feedIDs = [responseObject valueForKey:@"feeds"];
             
@@ -1127,7 +1128,9 @@ NSArray <NSString *> * _defaultsKeys;
     // this prevents the cached response if the hour has changed.
     params[@"ts"] = @([date timeIntervalSince1970]);
     
-    [self.session GET:@"/recommendations" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session GET:@"/recommendations" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (!successCB)
             return;
@@ -1189,14 +1192,17 @@ NSArray <NSString *> * _defaultsKeys;
     
 }
 
-- (void)removeFeed:(NSNumber *)feedID success:(successBlock)successCB error:(errorBlock)errorCB
-{
+- (void)removeFeed:(NSNumber *)feedID success:(successBlock)successCB error:(errorBlock)errorCB {
+    
     NSDictionary *params = @{};
+    
     if ([self userID] != nil) {
         params = @{@"userID": [self userID]};
     }
     
-    [self.session DELETE:formattedString(@"/feeds/%@", feedID) parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session DELETE:formattedString(@"/feeds/%@", feedID) parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         [MyDBManager removeAllArticlesFor:feedID];
         
@@ -1227,6 +1233,7 @@ NSArray <NSString *> * _defaultsKeys;
 - (void)renameFeed:(Feed *)feed title:(NSString *)title success:(successBlock)successCB error:(errorBlock)errorCB {
     
     NSDictionary *query = @{};
+    
     if ([self userID] != nil) {
         query = @{@"userID": [self userID]};
     }
@@ -1253,7 +1260,9 @@ NSArray <NSString *> * _defaultsKeys;
                            @"title": title
                            };
     
-    [self.session POST:@"/1.2/customFeed" queryParams:query parameters:body success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session POST:@"/1.2/customFeed" queryParams:query parameters:body success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         error = [self errorFromResponse:error.userInfo];
         
@@ -1271,7 +1280,9 @@ NSArray <NSString *> * _defaultsKeys;
     
     NSURLRequest *request = [NSURLRequest requestWithURL:originalURL];
     
-    [self.session GET:request success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session GET:request success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         NSString *html = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
         NSString *canonical = nil;
@@ -1318,7 +1329,9 @@ NSArray <NSString *> * _defaultsKeys;
         
     }
     
-    [self.session POST:path parameters:params success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session POST:path parameters:params success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         BOOL status = [[responseObject valueForKey:@"status"] boolValue];
         
@@ -1389,35 +1402,14 @@ NSArray <NSString *> * _defaultsKeys;
 
 #pragma mark - Custom Feeds
 
-- (void)updateUnreadArray
-{
-//    NSMutableArray <NSNumber *> * markedRead = @[].mutableCopy;
-//    
-//    NSArray <FeedItem *> *newUnread = [ArticlesManager.shared.unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
-//        BOOL isRead = obj.isRead;
-//        if (isRead) {
-//            [markedRead addObject:obj.identifier];
-//        }
-//        return !isRead;
-//    }];
-//    
-//    if (!markedRead.count)
-//        return;
-//    
-//    ArticlesManager.shared.unread = newUnread;
-//    
-//    // propagate changes to the feeds object as well
-//    [self updateFeedsReadCount:ArticlesManager.shared.feeds markedRead:markedRead];
-//    
-//    for (Folder *folder in ArticlesManager.shared.folders) { @autoreleasepool {
-//       
-//        [self updateFeedsReadCount:folder.feeds.allObjects markedRead:markedRead];
-//        
-//    } }
+- (void)updateUnreadArray {
+    
+    // No longer used.
     
 }
 
 - (void)updateFeedsReadCount:(NSArray <Feed *> *)feeds markedRead:(NSArray <NSNumber *> *)markedRead {
+    
     if (!feeds || feeds.count == 0)
         return;
     
@@ -1426,25 +1418,12 @@ NSArray <NSString *> * _defaultsKeys;
         BOOL marked = NO;
         NSNumber *feedID = obj.feedID.copy;
         
-//        for (FeedItem *item in obj.articles) {
-//            
-//            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF == %d", item.identifier.integerValue];
-//            NSArray *filteredArray = [markedRead filteredArrayUsingPredicate:predicate];
-//            NSLogDebug(@"Index: %@", filteredArray);
-//            
-//            if (filteredArray.count > 0 && !item.read) {
-//                item.read = YES;
-//                
-//                if (!marked)
-//                    marked = YES;
-//            }
-//        }
-        
         if (marked) {
             [[NSNotificationCenter defaultCenter] postNotificationName:FeedDidUpReadCount object:feedID];
         }
         
     }}
+    
 }
 
 - (void)getUnreadForPage:(NSInteger)page limit:(NSInteger)limit sorting:(YetiSortOption)sorting success:(successBlock)successCB error:(errorBlock)errorCB {
@@ -1463,8 +1442,10 @@ NSArray <NSString *> * _defaultsKeys;
         params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
     }
 #endif
+    
+    DZURLSession *session = self.currentSession;
 
-    [self.session GET:@"/unread" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [session GET:@"/unread" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
 
         NSArray <FeedItem *> * items = [[responseObject valueForKey:@"articles"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
             return [FeedItem instanceFromDictionary:obj];
@@ -1489,8 +1470,7 @@ NSArray <NSString *> * _defaultsKeys;
 
 #pragma mark - Folders
 
-- (void)addFolder:(NSString *)title success:(successBlock)successCB error:(errorBlock)errorCB
-{
+- (void)addFolder:(NSString *)title success:(successBlock)successCB error:(errorBlock)errorCB {
     
     if (!title || (title && [title isBlank] == YES)) {
         
@@ -1501,7 +1481,9 @@ NSArray <NSString *> * _defaultsKeys;
         return;
     }
     
-    [self.session PUT:@"/folder" queryParams:@{@"userID": [self userID]} parameters:@{@"title": title} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session PUT:@"/folder" queryParams:@{@"userID": [self userID]} parameters:@{@"title": title} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         id retval = [responseObject valueForKey:@"folder"];
         
@@ -1668,7 +1650,9 @@ NSArray <NSString *> * _defaultsKeys;
     
     NSString *path = formattedString(@"/folder?userID=%@&folderID=%@", [self userID], folder.folderID);
     
-    [self.session DELETE:path parameters:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session DELETE:path parameters:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         [[folder.feeds allObjects] enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             
@@ -1700,14 +1684,18 @@ NSArray <NSString *> * _defaultsKeys;
 - (void)updateFolder:(Folder *)folder properties:(NSDictionary *)props success:(successBlock)successCB error:(errorBlock)errorCB {
     
     if (![props valueForKey:@"folderID"]) {
+        
         NSMutableDictionary *temp = props.mutableCopy;
         
         [temp setValue:folder.folderID forKey:@"folderID"];
         
         props = temp.copy;
+        
     }
     
-    [self.session POST:@"/folder" queryParams:@{@"userID": [self userID]} parameters:props success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session POST:@"/folder" queryParams:@{@"userID": [self userID]} parameters:props success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         error = [self errorFromResponse:error.userInfo];
         
         if (errorCB)
@@ -1737,7 +1725,9 @@ NSArray <NSString *> * _defaultsKeys;
         params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
     }
     
-    [self.session GET:path parameters:params success:^(NSArray <NSDictionary *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session GET:path parameters:params success:^(NSArray <NSDictionary *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         NSArray <FeedItem *> *items = [responseObject rz_map:^id(NSDictionary *obj, NSUInteger idx, NSArray *array) {
             return [FeedItem instanceFromDictionary:obj];
@@ -1769,7 +1759,9 @@ NSArray <NSString *> * _defaultsKeys;
     
     path = formattedString(@"/folder/%@/allread", folderID);
     
-    [self.session GET:path parameters:@{@"userID": userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session GET:path parameters:@{@"userID": userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         self.totalUnread = MAX(0, self.totalUnread - folder.unreadCount.integerValue);
         
@@ -1820,7 +1812,9 @@ NSArray <NSString *> * _defaultsKeys;
                              @"tag": tag
                              };
     
-    [self.session GET:@"/1.2/tagfeed" parameters:params success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session GET:@"/1.2/tagfeed" parameters:params success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (response.statusCode == 304) {
             if (successCB) {
@@ -1865,9 +1859,11 @@ NSArray <NSString *> * _defaultsKeys;
 
 #pragma mark - Filters
 
-- (void)getFiltersWithSuccess:(successBlock)successCB error:(errorBlock)errorCB
-{
-    [self.session GET:@"/user/filters" parameters:@{@"userID": [self userID]} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+- (void)getFiltersWithSuccess:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    DZURLSession *session = self.currentSession;
+    
+    [session GET:@"/user/filters" parameters:@{@"userID": [self userID]} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         NSArray <NSString *> *filters = [responseObject valueForKey:@"filters"];
         
@@ -1886,10 +1882,11 @@ NSArray <NSString *> * _defaultsKeys;
     }];
 }
 
-- (void)addFilter:(NSString *)word success:(successBlock)successCB error:(errorBlock)errorCB
-{
+- (void)addFilter:(NSString *)word success:(successBlock)successCB error:(errorBlock)errorCB {
     
-    [self.session PUT:@"/user/filters" queryParams:@{@"userID": [self userID]} parameters:@{@"word" : word} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session PUT:@"/user/filters" queryParams:@{@"userID": [self userID]} parameters:@{@"word" : word} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         id retval = [responseObject valueForKey:@"status"];
         
@@ -1908,10 +1905,11 @@ NSArray <NSString *> * _defaultsKeys;
     
 }
 
-- (void)removeFilter:(NSString *)word success:(successBlock)successCB error:(errorBlock)errorCB
-{
+- (void)removeFilter:(NSString *)word success:(successBlock)successCB error:(errorBlock)errorCB {
     
-    [self.session DELETE:@"/user/filters" parameters:@{@"userID": [self userID], @"word": word} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session DELETE:@"/user/filters" parameters:@{@"userID": [self userID], @"word": word} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         id retval = [responseObject valueForKey:@"status"];
         
@@ -1932,15 +1930,17 @@ NSArray <NSString *> * _defaultsKeys;
 
 #pragma mark - Subscriptions
 
-- (void)addPushToken:(NSString *)token success:(successBlock)successCB error:(errorBlock)errorCB
-{
+- (void)addPushToken:(NSString *)token success:(successBlock)successCB error:(errorBlock)errorCB {
+    
     if (token == nil)
         return;
     
     if ([self userID] == nil)
         return;
     
-    [self.session PUT:@"/user/token" queryParams:@{@"userID": [self userID]} parameters:@{@"token": token} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session PUT:@"/user/token" queryParams:@{@"userID": [self userID]} parameters:@{@"token": token} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         error = [self errorFromResponse:error.userInfo];
         
@@ -1955,7 +1955,9 @@ NSArray <NSString *> * _defaultsKeys;
 
 - (void)getAllWebSubWithSuccess:(successBlock)successCB error:(errorBlock)errorCB {
     
-    [self.session GET:@"/user/subscriptions" parameters:@{@"userID": self.userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session GET:@"/user/subscriptions" parameters:@{@"userID": self.userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (!successCB) {
             return;
@@ -1984,9 +1986,11 @@ NSArray <NSString *> * _defaultsKeys;
     
 }
 
-- (void)subscribe:(Feed *)feed success:(successBlock)successCB error:(errorBlock)errorCB
-{
-    [self.session PUT:@"/user/subscriptions" queryParams:@{@"userID": [self userID], @"feedID": feed.feedID} parameters:@{} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+- (void)subscribe:(Feed *)feed success:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    DZURLSession *session = self.currentSession;
+    
+    [session PUT:@"/user/subscriptions" queryParams:@{@"userID": [self userID], @"feedID": feed.feedID} parameters:@{} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         error = [self errorFromResponse:error.userInfo];
         
@@ -2001,7 +2005,9 @@ NSArray <NSString *> * _defaultsKeys;
 
 - (void)unsubscribe:(Feed *)feed success:(successBlock)successCB error:(errorBlock)errorCB {
     
-    [self.session DELETE:@"/user/subscriptions" parameters:@{@"userID": [self userID], @"feedID": feed.feedID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session DELETE:@"/user/subscriptions" parameters:@{@"userID": [self userID], @"feedID": feed.feedID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         feed.subscribed = NO;
         
@@ -2052,7 +2058,9 @@ NSArray <NSString *> * _defaultsKeys;
                            @"isTrial": @(isTrial)
                            };
     
-    [self.session POST:@"/store/legacy" parameters:body success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session POST:@"/store/legacy" parameters:body success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
@@ -2106,7 +2114,9 @@ NSArray <NSString *> * _defaultsKeys;
     
     weakify(self);
     
-    [self.session POST:@"/1.1/store" queryParams:@{@"userID": [self userID]} parameters:@{@"receipt": receiptString} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session POST:@"/1.1/store" queryParams:@{@"userID": [self userID]} parameters:@{@"receipt": receiptString} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
       
         strongify(self);
         
@@ -2173,8 +2183,10 @@ NSArray <NSString *> * _defaultsKeys;
 - (void)getSubscriptionWithSuccess:(successBlock)successCB error:(errorBlock)errorCB {
 
     weakify(self);
+    
+    DZURLSession *session = self.currentSession;
 
-    [self.session GET:@"/store" parameters:@{@"userID": self.user.userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [session GET:@"/store" parameters:@{@"userID": self.user.userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
@@ -2257,7 +2269,9 @@ NSArray <NSString *> * _defaultsKeys;
 
 - (void)getOPMLWithSuccess:(successBlock)successCB error:(errorBlock)errorCB {
     
-    [self.session GET:@"/user/opml" parameters:@{@"userID": [MyFeedsManager userID]} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session GET:@"/user/opml" parameters:@{@"userID": [MyFeedsManager userID]} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         NSString *xmlData = [responseObject valueForKey:@"file"];
         
@@ -2297,20 +2311,7 @@ NSArray <NSString *> * _defaultsKeys;
                             @"userID": self.userID
                             };
     
-    __block DZURLSession *session = self.session;
-    
-    runOnMainQueueWithoutDeadlocking(^{
-        
-        if (UIApplication.sharedApplication.applicationState == UIApplicationStateBackground) {
-            
-            // use the background session for sync.
-            NSLog(@"Setup getSync task in background mode");
-            
-            session = self.backgroundSession;
-            
-        }
-        
-    });
+    DZURLSession *session = self.currentSession;
     
     [session GET:@"/2.2/sync" parameters:query success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
@@ -2438,20 +2439,7 @@ NSArray <NSString *> * _defaultsKeys;
         params = @{@"userID": MyFeedsManager.userID};
     }
     
-    __block DZURLSession *session = self.session;
-    
-    runOnMainQueueWithoutDeadlocking(^{
-        
-        if (UIApplication.sharedApplication.applicationState == UIApplicationStateBackground) {
-            
-            // use the background session for sync.
-            NSLog(@"Setup getSync task in background mode");
-            
-            session = self.backgroundSession;
-            
-        }
-        
-    });
+    DZURLSession *session = self.currentSession;
     
     // Get the existing items
     [session GET:@"/user/settings" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -2575,20 +2563,7 @@ NSArray <NSString *> * _defaultsKeys;
     
     NSArray <NSDictionary *> * settingItems = [self _formatSettings:settings];
     
-    __block DZURLSession *session = self.session;
-    
-    runOnMainQueueWithoutDeadlocking(^{
-        
-        if (UIApplication.sharedApplication.applicationState == UIApplicationStateBackground) {
-            
-            // use the background session for sync.
-            NSLog(@"Setup getSync task in background mode");
-            
-            session = self.backgroundSession;
-            
-        }
-        
-    });
+    DZURLSession *session = self.currentSession;
     
     [session PUT:@"/user/settings" queryParams:@{@"userID": self.userID} parameters:@{@"settings": settingItems} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
@@ -2607,20 +2582,7 @@ NSArray <NSString *> * _defaultsKeys;
     NSArray *items = [self _formatSettings:@[setting]];
     NSDictionary *item = items.firstObject;
     
-    __block DZURLSession *session = self.session;
-    
-    runOnMainQueueWithoutDeadlocking(^{
-        
-        if (UIApplication.sharedApplication.applicationState == UIApplicationStateBackground) {
-            
-            // use the background session for sync.
-            NSLog(@"Setup getSync task in background mode");
-            
-            session = self.backgroundSession;
-            
-        }
-        
-    });
+    DZURLSession *session = self.currentSession;
     
     [session POST:@"/user/settings" queryParams:@{@"userID": self.userID} parameters:item success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
@@ -2657,20 +2619,7 @@ NSArray <NSString *> * _defaultsKeys;
     
     NSString *path = [NSString stringWithFormat:@"/2.2/feeds/%@", feedID];
     
-    __block DZURLSession *session = self.session;
-    
-    runOnMainQueueWithoutDeadlocking(^{
-        
-        if (UIApplication.sharedApplication.applicationState == UIApplicationStateBackground) {
-            
-            // use the background session for sync.
-            NSLog(@"Setup sync Articles task in background mode");
-            
-            session = self.backgroundSession;
-            
-        }
-        
-    });
+    DZURLSession *session = self.currentSession;
     
     NSMutableURLRequest *req = [session requestWithURI:path method:@"GET" params:params].mutableCopy;
     
@@ -2743,7 +2692,9 @@ NSArray <NSString *> * _defaultsKeys;
     
     NSDictionary *queryParams = @{@"userID": self.userID};
     
-    return [self.session POST:@"/1.2/search" queryParams:queryParams parameters:body success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    return [session POST:@"/1.2/search" queryParams:queryParams parameters:body success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         NSArray <NSDictionary *> *feedObjs = [responseObject valueForKey:@"feeds"];
         
@@ -2783,7 +2734,9 @@ NSArray <NSString *> * _defaultsKeys;
     
     NSString *path = [NSString stringWithFormat:@"/1.8/feed/%@/search", feedID];
     
-    return [self.session POST:path queryParams:queryParams parameters:body success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    return [session POST:path queryParams:queryParams parameters:body success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         NSArray <NSDictionary *> *articleObjs = [responseObject valueForKey:@"articles"];
         
@@ -2819,7 +2772,9 @@ NSArray <NSString *> * _defaultsKeys;
     
     NSString *path = [NSString stringWithFormat:@"/1.8/unread/search"];
     
-    return [self.session POST:path queryParams:queryParams parameters:body success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    return [session POST:path queryParams:queryParams parameters:body success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         NSArray <NSDictionary *> *articleObjs = [responseObject valueForKey:@"articles"];
         
@@ -2860,7 +2815,9 @@ NSArray <NSString *> * _defaultsKeys;
     
     NSString *path = [NSString stringWithFormat:@"/1.8/today/search"];
     
-    return [self.session POST:path queryParams:queryParams parameters:body success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    return [session POST:path queryParams:queryParams parameters:body success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         NSArray <NSDictionary *> *articleObjs = [responseObject valueForKey:@"articles"];
         
@@ -2896,7 +2853,9 @@ NSArray <NSString *> * _defaultsKeys;
     
     NSString *path = [NSString stringWithFormat:@"/1.8/folder/%@/search", folderID];
     
-    return [self.session POST:path queryParams:queryParams parameters:body success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    return [session POST:path queryParams:queryParams parameters:body success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         NSArray <NSDictionary *> *articleObjs = [responseObject valueForKey:@"articles"];
         
@@ -3152,6 +3111,27 @@ NSArray <NSString *> * _defaultsKeys;
     }
     
     return _reachability;
+}
+
+- (DZURLSession *)currentSession {
+    
+    __block DZURLSession *session = self.session;
+    
+    runOnMainQueueWithoutDeadlocking(^{
+        
+        if (UIApplication.sharedApplication.applicationState == UIApplicationStateBackground) {
+            
+            // use the background session for sync.
+            NSLog(@"Setup get feeds task in background mode");
+            
+            session = self.backgroundSession;
+            
+        }
+        
+    });
+    
+    return session;
+    
 }
 
 - (DZURLSession *)session {

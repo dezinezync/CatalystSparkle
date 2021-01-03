@@ -300,7 +300,9 @@
     
     NSDictionary *params = @{@"articles": identifiers ?: @[], @"userID": self.userID};
     
-    [self.session POST:path parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session POST:path parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         NSLog(@"Marked %@ for %@", read ? @"read" : @"unread", identifiers);
 
@@ -319,7 +321,9 @@
     
     NSString *path = formattedString(@"/article/%@/bookmark", identifier);
     
-    [self.session POST:path parameters:@{@"bookmark": @(bookmarked), @"userID": self.userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session POST:path parameters:@{@"bookmark": @(bookmarked), @"userID": self.userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         NSLog(@"Marked %@ for %@", bookmarked ? @"bookmark" : @"unboomark", identifier);
         
@@ -332,6 +336,6 @@
         
     }];
         
-    }
+}
 
 @end

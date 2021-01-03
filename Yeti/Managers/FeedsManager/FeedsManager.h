@@ -48,7 +48,11 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 @property (atomic, strong, readonly) YTSubscription * _Nullable subscription;
 
-@property (nonatomic, strong, readonly) DZURLSession * _Nonnull session, * _Nonnull backgroundSession;
+@property (nonatomic, strong, readonly) DZURLSession * _Nonnull session;
+@property (nonatomic, strong, readonly) DZURLSession * _Nonnull backgroundSession;
+
+/// Returns either the session (foreground) or backgroundSession (background) 
+@property (nonatomic, strong, readonly) DZURLSession * _Nonnull currentSession;
 
 @property (nonatomic, strong, readonly) User * _Nullable user;
 
