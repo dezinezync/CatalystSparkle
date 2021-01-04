@@ -17,6 +17,8 @@
 #import "UIColor+HEX.h"
 #import "AddFeedVC.h"
 
+#import <CoreSpotlight/CoreSpotlight.h>
+
 #define backgroundRefreshIdentifier @"com.yeti.refresh"
 
 @interface UIViewController (ElytraStateRestoration)
@@ -192,6 +194,32 @@
         }
         
     }];
+    
+}
+
+- (void)scene:(UIScene *)scene continueUserActivity:(NSUserActivity *)userActivity {
+    
+    if ([userActivity.activityType isEqualToString:CSSearchableItemActionType]) {
+        
+        NSString *uniqueIdentifier = [userActivity.userInfo valueForKey:CSSearchableItemActivityIdentifier];
+        
+        if (uniqueIdentifier == nil) {
+            return;
+        }
+        
+        if ([uniqueIdentifier containsString:@"feed:"]) {
+            
+            NSString *feedID = [uniqueIdentifier stringByReplacingOccurrencesOfString:@"feed:" withString:@""];
+            
+            NSURL *url = [NSURL URLWithFormat:@"elytra://feed/%@", feedID];
+            
+            runOnMainQueueWithoutDeadlocking(^{
+                [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
+            });
+            
+        }
+        
+    }
     
 }
 

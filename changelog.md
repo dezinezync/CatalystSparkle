@@ -2,7 +2,13 @@
 
 This build includes support for Local Syncing. If something breaks, the app crashes or does not work as expected, roll back to Build 85. 
 
-Please run "Force Resync" or delete the app and install again before using the first time. 
+Please run "Force Resync" or delete the app and install again before using the first time.
+
+## Build 126
+
+- Fixes directional marking read bug which caused all articles to get marked as read. h/t Gui. 
+
+- Added Feeds to the iOS Search Index. You can now directly open feeds by their names (or custom names if you have one set). I'll eventually expand this to your bookmarks and other articles as well. 
 
 ## Build 125
 

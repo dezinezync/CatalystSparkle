@@ -33,6 +33,8 @@
 
 #import "Elytra-Swift.h"
 
+#import <CoreSpotlight/CoreSpotlight.h>
+
 FeedsManager * _Nonnull MyFeedsManager = nil;
 
 NSArray <NSString *> * _defaultsKeys;
@@ -1205,6 +1207,10 @@ NSArray <NSString *> * _defaultsKeys;
     [session DELETE:formattedString(@"/feeds/%@", feedID) parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         [MyDBManager removeAllArticlesFor:feedID];
+        
+        NSString *identifier = [NSString stringWithFormat:@"feed:%@", feedID];
+        
+        [CSSearchableIndex.defaultSearchableIndex deleteSearchableItemsWithDomainIdentifiers:@[identifier] completionHandler:nil];
         
         if (response.statusCode != 304) {
             if (successCB) {

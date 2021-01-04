@@ -67,7 +67,11 @@ extern NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInte
 extern DBManager * MyDBManager;
 
 @interface DBManager : NSObject {
+    
     YapDatabaseCloudCore * _cloudCoreExtension;
+    
+    BOOL _indexingFeeds;
+    
 }
 
 + (void)initialize;

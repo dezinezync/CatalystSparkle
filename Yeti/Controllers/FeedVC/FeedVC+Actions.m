@@ -592,6 +592,35 @@
             // get all items from and after this index which are unread.
             [tnx enumerateKeysAndMetadataInGroup:GROUP_ARTICLES withOptions:options range:NSMakeRange(0, MyFeedsManager.totalUnread) usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, NSDictionary *  _Nullable metadata, NSUInteger index, BOOL * _Nonnull stop) {
                 
+                BOOL stopping = NO;
+                
+                if ([key isEqualToString:localIdentifier]) {
+                    stopping = YES;
+                }
+                
+                if (stopping == NO) {
+                    
+                    if ((direction == 1 && isDescending) || (direction == 2 && isDescending == NO)) {
+                        
+                        if (key.integerValue > localIdentifier.integerValue) {
+                            
+                            stopping = YES;
+                            
+                        }
+                        
+                    }
+                    else {
+                        
+                        if (localIdentifier.integerValue < key.integerValue) {
+                            
+                            stopping = YES;
+                            
+                        }
+                        
+                    }
+                    
+                }
+                
                 if (metadata != nil && ([([metadata valueForKey:@"read"] ?: @(NO)) boolValue] == NO)) {
                     
                     [unreads addObject:@(key.integerValue)];
@@ -599,9 +628,7 @@
                     
                 }
                 
-                if ([key isEqualToString:localIdentifier]) {
-                    *stop = YES;
-                }
+                *stop = stopping;
                 
             }];
             

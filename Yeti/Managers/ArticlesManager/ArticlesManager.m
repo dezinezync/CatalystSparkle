@@ -8,6 +8,7 @@
 
 #import "ArticlesManager.h"
 #import <DZkit/NSArray+RZArrayCandy.h>
+#import "DBManager+Spotlight.h"
 
 static ArticlesManager * SharedArticleManager = nil;
 
@@ -157,6 +158,9 @@ static ArticlesManager * SharedArticleManager = nil;
     if (ArticlesManager.shared.feeds && _updatingStores == NO) {
         [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:self userInfo:nil];
     }
+    
+    [MyDBManager indexFeeds];
+    
 }
 
 - (void)setFolders:(NSArray<Folder *> *)folders {

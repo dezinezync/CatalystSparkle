@@ -90,6 +90,7 @@
 		F022B0D820DC2D9500030185 /* AccentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F022B0D620DC2D9500030185 /* AccentCell.m */; };
 		F022B0DA20DC2D9500030185 /* AccentCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F022B0D720DC2D9500030185 /* AccentCell.xib */; };
 		F022B0DF20DC30DE00030185 /* AccentButton.m in Sources */ = {isa = PBXBuildFile; fileRef = F022B0DE20DC30DE00030185 /* AccentButton.m */; };
+		F0272BF425A2C05900578A32 /* DBManager+Spotlight.m in Sources */ = {isa = PBXBuildFile; fileRef = F0272BF325A2C05900578A32 /* DBManager+Spotlight.m */; };
 		F02A483A25265210001063E9 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = F02A483925265210001063E9 /* SDWebImageSwiftUI */; };
 		F02A4894252653C7001063E9 /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = F02A4893252653C7001063E9 /* SDWebImage */; };
 		F02AFA9024CC00F80002A699 /* Coordinator.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EE6CD824CABEE000E987FC /* Coordinator.m */; };
@@ -865,6 +866,8 @@
 		F02459CA20590E6D002906C3 /* SearchResults.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SearchResults.m; sourceTree = "<group>"; };
 		F02459CC20590F03002906C3 /* FeedsSearchResults.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedsSearchResults.h; sourceTree = "<group>"; };
 		F02459CD20590F03002906C3 /* FeedsSearchResults.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedsSearchResults.m; sourceTree = "<group>"; };
+		F0272BF225A2C05900578A32 /* DBManager+Spotlight.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DBManager+Spotlight.h"; sourceTree = "<group>"; };
+		F0272BF325A2C05900578A32 /* DBManager+Spotlight.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "DBManager+Spotlight.m"; sourceTree = "<group>"; };
 		F02B701E24EA7E5C00DD607F /* IDMPhotoBrowser.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = IDMPhotoBrowser.bundle; sourceTree = "<group>"; };
 		F02B701F24EA7E5C00DD607F /* IDMCaptionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDMCaptionView.h; sourceTree = "<group>"; };
 		F02B702024EA7E5C00DD607F /* IDMPBLocalizations.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = IDMPBLocalizations.bundle; sourceTree = "<group>"; };
@@ -2336,6 +2339,8 @@
 				F093322024EC14DB0066FA41 /* SyncChange.m */,
 				F093322A24EC14DB0066FA41 /* DBManager+CloudCore.h */,
 				F093322C24EC14DC0066FA41 /* DBManager+CloudCore.m */,
+				F0272BF225A2C05900578A32 /* DBManager+Spotlight.h */,
+				F0272BF325A2C05900578A32 /* DBManager+Spotlight.m */,
 				F093323524EC14DD0066FA41 /* Operations */,
 				F093322B24EC14DC0066FA41 /* ChangeSet.h */,
 				F093322F24EC14DC0066FA41 /* ChangeSet.m */,
@@ -3499,6 +3504,7 @@
 				F09D3D5F250649110037E3B4 /* SceneDelegate+Catalyst.m in Sources */,
 				F067D35D23F43B350034B968 /* Customization.m in Sources */,
 				F07889C125035E65007F3C55 /* UITableView+Sugar.m in Sources */,
+				F0272BF425A2C05900578A32 /* DBManager+Spotlight.m in Sources */,
 				F050E0B22154C16600225C6A /* StoreFooter.m in Sources */,
 				F032A75D244D7D8C0024AC63 /* YetiTheme.m in Sources */,
 				F070C34C1FBADF8D00912CCF /* FeedsCell.m in Sources */,
