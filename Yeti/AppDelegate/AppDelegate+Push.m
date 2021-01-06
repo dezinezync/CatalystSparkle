@@ -44,9 +44,60 @@
 
 #pragma mark - <UNUserNotificationCenterDelegate>
 
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler
-{
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
+    
     completionHandler(UNNotificationPresentationOptionList|UNNotificationPresentationOptionSound);
+    
+}
+
+- (BOOL)application:(UIApplication *)application didReceiveRemoteNotification:(nonnull NSDictionary *)userInfo fetchCompletionHandler:(nonnull void (^)(UIBackgroundFetchResult))completionHandler {
+    
+    NSDictionary *types = [userInfo valueForKey:@"types"];
+    
+    BOOL isReads = [[types valueForKey:@"reads"] boolValue];
+    
+    if (isReads) {
+        
+        [MyDBManager setValue:@(NO) forKey:@"syncSetup"];
+        MyDBManager.backgroundFetchHandler = completionHandler;
+        [MyDBManager setupSync];
+        
+        return YES;
+        
+    }
+    
+    BOOL isFeeds = [[types valueForKey:@"feeds"] boolValue];
+    
+    if (isFeeds) {
+        
+        self.coordinator.sidebarVC.backgroundFetchHandler = completionHandler;
+        
+        [self.coordinator prepareFeedsForFullResync];
+        
+        return YES;
+        
+    }
+    
+    BOOL isSubscription = [[types valueForKey:@"subscription"] boolValue];
+    
+    if (isSubscription) {
+        
+        [MyFeedsManager getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            completionHandler(response.statusCode == 304 ? UIBackgroundFetchResultNoData : UIBackgroundFetchResultNewData);
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            completionHandler(UIBackgroundFetchResultFailed);
+            
+        }];
+        
+        return YES;
+        
+    }
+    
+    return NO;
+    
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)(void))completionHandler {

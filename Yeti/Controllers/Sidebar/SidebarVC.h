@@ -50,6 +50,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak) Feed *alertFeed;
 @property (nonatomic, strong) NSIndexPath *alertIndexPath;
 
+#pragma mark - Background Fetch
+
+@property (nonatomic, copy, nullable) void(^backgroundFetchHandler)(UIBackgroundFetchResult result);
+
 @end
 
 NS_ASSUME_NONNULL_END

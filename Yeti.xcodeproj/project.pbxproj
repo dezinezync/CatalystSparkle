@@ -187,6 +187,8 @@
 		F06B766420C27CD000FBCDE7 /* YTNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = F06B766320C27CD000FBCDE7 /* YTNavigationController.m */; };
 		F06C666522B2ABBA00D425E9 /* UIViewController+Stateful.m in Sources */ = {isa = PBXBuildFile; fileRef = F06C666422B2ABBA00D425E9 /* UIViewController+Stateful.m */; };
 		F06F82C02529E66900683052 /* Credits.html in Resources */ = {isa = PBXBuildFile; fileRef = F06F82BF2529E66900683052 /* Credits.html */; };
+		F06F8E2125A479CD0033BC67 /* PushRequestVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06F8E1F25A479CD0033BC67 /* PushRequestVC.swift */; };
+		F06F8E2225A479CD0033BC67 /* PushRequestVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F06F8E2025A479CD0033BC67 /* PushRequestVC.xib */; };
 		F070C2DE1FBABC3600912CCF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C2DD1FBABC3600912CCF /* AppDelegate.m */; };
 		F070C2E61FBABC3600912CCF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F070C2E51FBABC3600912CCF /* Assets.xcassets */; };
 		F070C2E91FBABC3600912CCF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F070C2E71FBABC3600912CCF /* LaunchScreen.storyboard */; };
@@ -1019,6 +1021,8 @@
 		F06C666422B2ABBA00D425E9 /* UIViewController+Stateful.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Stateful.m"; sourceTree = "<group>"; };
 		F06E0F2A2134656A00CEC644 /* changelog.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = changelog.md; sourceTree = SOURCE_ROOT; };
 		F06F82BF2529E66900683052 /* Credits.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = Credits.html; sourceTree = "<group>"; };
+		F06F8E1F25A479CD0033BC67 /* PushRequestVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushRequestVC.swift; sourceTree = "<group>"; };
+		F06F8E2025A479CD0033BC67 /* PushRequestVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PushRequestVC.xib; sourceTree = "<group>"; };
 		F06F913F20D3E55A00A358B0 /* SubscriptionView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SubscriptionView.h; sourceTree = "<group>"; };
 		F06F914020D3E55A00A358B0 /* SubscriptionView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SubscriptionView.m; sourceTree = "<group>"; };
 		F06F914420D3E56400A358B0 /* SubscriptionView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SubscriptionView.xib; sourceTree = "<group>"; };
@@ -2019,6 +2023,8 @@
 				F044B3C62338A6E900DD8E90 /* BookmarksMigrationVC.h */,
 				F044B3C72338A6E900DD8E90 /* BookmarksMigrationVC.m */,
 				F044B3C82338A6E900DD8E90 /* BookmarksMigrationVC.xib */,
+				F06F8E1F25A479CD0033BC67 /* PushRequestVC.swift */,
+				F06F8E2025A479CD0033BC67 /* PushRequestVC.xib */,
 			);
 			path = Root;
 			sourceTree = "<group>";
@@ -3119,6 +3125,7 @@
 				F07CD39E22B266E9005BCDE7 /* OpenDyslexic-Bold.ttf in Resources */,
 				F0A5AE9420C19CB400CFA1D2 /* IBMPlexSerif-SemiBold.ttf in Resources */,
 				F032A773244D89AF0024AC63 /* dark.json in Resources */,
+				F06F8E2225A479CD0033BC67 /* PushRequestVC.xib in Resources */,
 				F09E96472055342000E61681 /* hljs.js in Resources */,
 				F01E6E2424AC6C2500D1BD6E /* red-dark~ipad@2x.png in Resources */,
 				F0469DF220A0514100163C4E /* dark.css in Resources */,
@@ -3516,6 +3523,7 @@
 				F05C7A9F20D8E1F3007D6B5C /* TableHeader.m in Sources */,
 				F0F10A99244C8020009FC108 /* DTTimePeriod.m in Sources */,
 				F093321024EC14CF0066FA41 /* FeedsManagerErrors.m in Sources */,
+				F06F8E2125A479CD0033BC67 /* PushRequestVC.swift in Sources */,
 				F093320E24EC14CF0066FA41 /* FeedsManager.m in Sources */,
 				F0123C4C224D216300EDFF92 /* ArticleAuthorView.m in Sources */,
 				F0B0EA3F24EC20D800D675B4 /* NSString+HTML.m in Sources */,

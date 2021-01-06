@@ -657,7 +657,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
                 
                 [self.navigationController setToolbarHidden:YES animated:YES];
                 
-                [self.mainCoordinator registerForNotifications:nil];
+//                [self.mainCoordinator registerForNotifications:nil];
                 
             });
             
@@ -1044,8 +1044,16 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         
         [MyFeedsManager getFeedsWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
+            if (self == nil) {
+                return;
+            }
+            
             if (self->_needsUpdateOfStructs) {
                 self->_needsUpdateOfStructs = NO;
+            }
+            
+            if (self.backgroundFetchHandler != nil) {
+                self.backgroundFetchHandler(UIBackgroundFetchResultNewData);
             }
             
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -1059,6 +1067,10 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             });
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            if (self.backgroundFetchHandler != nil) {
+                self.backgroundFetchHandler(UIBackgroundFetchResultFailed);
+            }
             
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 
@@ -1083,6 +1095,12 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     }
     
     if ([MyDBManager isSyncing]) {
+        return;
+    }
+    
+    if (self.backgroundFetchHandler != nil) {
+        // we only need to update feeds. 
+        self.backgroundFetchHandler = nil;
         return;
     }
     

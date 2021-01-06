@@ -187,6 +187,11 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
             
             if (progress >= 0.99f) {
                 
+                if (self.backgroundFetchHandler) {
+                    self.backgroundFetchHandler(UIBackgroundFetchResultNoData);
+                    self.backgroundFetchHandler = nil;
+                }
+                
                 if (self->_inProgressSyncToken != nil) {
                     
                     [MyDBManager.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
@@ -1403,23 +1408,7 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
        
         [MyFeedsManager getSync:token success:^(ChangeSet *changeSet, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
-#ifdef DEBUG
-      
-            if (changeSet == nil) {
-                changeSet = [ChangeSet new];
-            }
-            
-            if (changeSet.feedsWithNewArticles == nil) {
-                changeSet.feedsWithNewArticles = @[];
-            }
-            
-            if ([changeSet.feedsWithNewArticles containsObject:@(1)] == NO) {
-                changeSet.feedsWithNewArticles = [changeSet.feedsWithNewArticles arrayByAddingObject:@1];
-            }
-            
-#endif
-            
-            if (changeSet == nil) {
+            if (response.statusCode > 299 || changeSet == nil) {
                 
                 if (self.syncProgressBlock) {
                     

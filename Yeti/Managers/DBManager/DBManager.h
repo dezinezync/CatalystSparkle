@@ -155,6 +155,8 @@ extern DBManager * MyDBManager;
 
 @property (nonatomic, copy, nullable) void (^backgroundCompletionHandler)(void);
 
+@property (nonatomic, copy, nullable) void(^backgroundFetchHandler)(UIBackgroundFetchResult result);
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -29,6 +29,8 @@
 #import <UserNotifications/UserNotifications.h>
 #import "Keychain.h"
 
+#import "Elytra-Swift.h"
+
 NSString* deviceName() {
     struct utsname systemInfo;
     uname(&systemInfo);
@@ -109,6 +111,8 @@ NSString* deviceName() {
             [self.splitViewController setViewController:emptyVC forColumn:UISplitViewControllerColumnSecondary];
             
         }
+        
+        [self checkForPushNotifications];
         
     });
     
@@ -510,6 +514,8 @@ NSString* deviceName() {
 
 - (void)registerForNotifications:(void (^)(BOOL, NSError * _Nullable))completion {
     
+    BOOL isImmediate = [NSThread.callStackSymbols.description containsString:@"PushRequestVC"];
+    
     runOnMainQueueWithoutDeadlocking(^{
         
         if (UIApplication.sharedApplication.applicationState == UIApplicationStateBackground) {
@@ -534,6 +540,13 @@ NSString* deviceName() {
            
             if (settings.authorizationStatus == UNAuthorizationStatusDenied) {
                 // no permission, ignore.
+                
+                if (completion) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        completion(NO, nil);
+                    });
+                }
+                
                 return;
             }
             else if (settings.authorizationStatus == UNAuthorizationStatusNotDetermined) {
@@ -549,39 +562,103 @@ NSString* deviceName() {
                     
                 }
                 
-                self.registerNotificationsTimer = [NSTimer scheduledTimerWithTimeInterval:5 repeats:NO block:^(NSTimer * _Nonnull timer) {
-                   
-                    [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:UNAuthorizationOptionBadge|UNAuthorizationOptionAlert|UNAuthorizationOptionSound completionHandler:^(BOOL granted, NSError * _Nullable error) {
-                        
-                        if (error) {
-                            NSLog(@"Error authorizing for push notifications: %@",error);
-                        }
-                        
-                        else if (granted) {
+                NSTimeInterval time = isImmediate ? 0 : 5;
+                
+                runOnMainQueueWithoutDeadlocking(^{
+                    
+                    self.registerNotificationsTimer = [NSTimer scheduledTimerWithTimeInterval:time repeats:NO block:^(NSTimer * _Nonnull timer) {
+                       
+                        [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:UNAuthorizationOptionBadge|UNAuthorizationOptionAlert|UNAuthorizationOptionSound completionHandler:^(BOOL granted, NSError * _Nullable error) {
                             
-                            [Keychain add:kIsSubscribingToPushNotifications boolean:YES];
+                            if (error) {
+                                NSLog(@"Error authorizing for push notifications: %@", error);
+                            }
                             
-                            dispatch_async(dispatch_get_main_queue(), ^{
-                                [UIApplication.sharedApplication registerForRemoteNotifications];
-                            });
+                            else if (granted) {
+                                
+                                [Keychain add:kIsSubscribingToPushNotifications boolean:YES];
+                                
+                                dispatch_async(dispatch_get_main_queue(), ^{
+                                    [UIApplication.sharedApplication registerForRemoteNotifications];
+                                });
+                                
+                            }
                             
-                        }
-                        
-                        if (completion) {
-                            dispatch_async(dispatch_get_main_queue(), ^{
-                                completion(granted, error);
-                            });
-                        }
+                            if (completion) {
+                                dispatch_async(dispatch_get_main_queue(), ^{
+                                    completion(granted, error);
+                                });
+                            }
+                            
+                        }];
                         
                     }];
                     
-                }];
+                });
+                
+            }
+            else {
+                if (completion) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        completion(YES, nil);
+                    });
+                }
+            }
+            
+        }];
+        
+    });
+    
+}
+
+- (void)checkForPushNotifications {
+    
+    runOnMainQueueWithoutDeadlocking(^{
+        
+        BOOL didAsk = [NSUserDefaults.standardUserDefaults boolForKey:@"pushRequest"];
+        
+        if (didAsk) {
+            return;
+        }
+        
+        if (UIApplication.sharedApplication.applicationState == UIApplicationStateBackground) {
+            return;
+        }
+        
+        if (UIApplication.sharedApplication.isRegisteredForRemoteNotifications == YES) {
+            return;
+        }
+        
+        [UNUserNotificationCenter.currentNotificationCenter getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
+           
+            if (settings.authorizationStatus == UNAuthorizationStatusDenied) {
+                // no permission, ignore.
+                return;
+            }
+            else if (settings.authorizationStatus == UNAuthorizationStatusNotDetermined) {
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    PushRequestVC *vc = [[PushRequestVC alloc] initWithNibName:@"PushRequestVC" bundle:nil];
+                    vc.mainCoordinator = self;
+                    vc.modalPresentationStyle = UIModalPresentationOverFullScreen;
+                    
+                    [self.splitViewController presentViewController:vc animated:YES completion:nil];
+                    
+                });
                 
             }
             
         }];
         
     });
+    
+}
+
+- (void)didTapCloseForPushRequest {
+    
+    [NSUserDefaults.standardUserDefaults setBool:YES forKey:@"pushRequest"];
+    [NSUserDefaults.standardUserDefaults synchronize];
     
 }
 

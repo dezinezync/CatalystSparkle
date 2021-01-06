@@ -75,6 +75,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)registerForNotifications:(void(^ _Nullable)(BOOL granted, NSError * _Nullable error))completion;
 
+- (void)checkForPushNotifications;
+
+- (void)didTapCloseForPushRequest;
+
 #if TARGET_OS_MACCATALYST
 
 - (void)showAttributions;
