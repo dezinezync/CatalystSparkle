@@ -561,6 +561,7 @@
     }
     
     BOOL isDescending = [sorting isEqualToString:YTSortAllDesc] || [sorting isEqualToString:YTSortUnreadDesc];
+    isDescending = (direction == 1 && isDescending) || (direction == 2 && isDescending == NO);
     
     weakify(self);
     
@@ -574,12 +575,7 @@
             
             NSEnumerationOptions options = kNilOptions;
             
-            if ((direction == 1 && isDescending) || (direction == 2 && isDescending == NO)) {
-                
-                // get all items from and before this index which are unread.
-                
-            }
-            else {
+            if (isDescending == NO) {
                 
                 // get all items from and after this index which are unread.
                 // enumerating backwards on our forward index will have the same effect.
@@ -600,9 +596,9 @@
                 
                 if (stopping == NO) {
                     
-                    if ((direction == 1 && isDescending) || (direction == 2 && isDescending == NO)) {
+                    if (isDescending) {
                         
-                        if (key.integerValue > localIdentifier.integerValue) {
+                        if (localIdentifier.integerValue > key.integerValue) {
                             
                             stopping = YES;
                             
@@ -611,7 +607,7 @@
                     }
                     else {
                         
-                        if (localIdentifier.integerValue < key.integerValue) {
+                        if (key.integerValue < localIdentifier.integerValue) {
                             
                             stopping = YES;
                             

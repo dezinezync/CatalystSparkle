@@ -1286,11 +1286,24 @@ NSArray <NSString *> * _defaultsKeys;
     
     NSURLRequest *request = [NSURLRequest requestWithURL:originalURL];
     
-    DZURLSession *session = self.currentSession;
+    NSURLSession *session = NSURLSession.sharedSession;
     
-    [session GET:request success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    NSURLSessionDataTask *task;
+    
+    task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         
-        NSString *html = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
+        if (error) {
+            
+            if (errorCB) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    errorCB(error, (NSHTTPURLResponse *)response, task);
+                });
+            }
+            
+            return;
+        }
+        
+        NSString *html = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         NSString *canonical = nil;
         
         // HTML
@@ -1298,20 +1311,32 @@ NSArray <NSString *> * _defaultsKeys;
         
         NSScanner *scanner = [[NSScanner alloc] initWithString:html];
         
-        [scanner scanUpToString:startString intoString:nil];
-        
-        scanner.scanLocation += startString.length;
-        
-        [scanner scanUpToString:@"\"" intoString:&canonical];
+        do {
+            
+            canonical = nil;
+            
+            [scanner scanUpToString:startString intoString:nil];
+            
+            scanner.scanLocation += startString.length;
+            
+            [scanner scanUpToString:@"\"" intoString:&canonical];
+            
+        } while ([canonical isEqualToString:originalURL.absoluteString]);
         
         scanner = nil;
         html = nil;
         
         if (successCB) {
-            successCB(canonical, response, task);
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                successCB(canonical, (NSHTTPURLResponse *)response, task);
+            });
+            
         }
         
-    } error:errorCB];
+    }];
+    
+    [task resume];
     
 }
 

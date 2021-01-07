@@ -4,6 +4,12 @@ This build includes support for Local Syncing. If something breaks, the app cras
 
 Please run "Force Resync" or delete the app and install again before using the first time.
 
+## Build 128
+
+- Fixes another bug with the Directional Marking Read feature.
+
+- Fixes an issue for adding Youtube Channel feeds. Youtube recently changed their markup which was causing issues. 
+
 ## Build 127
 
 - Push Notifications Request Form. If you already have push notifications enabled, you won't see this. This is per device. 

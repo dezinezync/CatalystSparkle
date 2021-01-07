@@ -991,7 +991,10 @@
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
            
-            [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:@"An error occurred when trying to fetch the Youtube URL."];
+            [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription];
+            
+            self.searchBar.userInteractionEnabled = YES;
+            self.cancelButton.enabled = YES;
             
         }];
     
