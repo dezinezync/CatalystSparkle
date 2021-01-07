@@ -13,6 +13,7 @@ import UIKit
     @IBOutlet weak var contentView: UIView!
     @IBOutlet weak var shadowView: UIView!
     @IBOutlet weak var backgroundView: UIImageView!
+    @IBOutlet weak var enableButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,12 +22,17 @@ import UIKit
         contentView.translatesAutoresizingMaskIntoConstraints = false
         shadowView.translatesAutoresizingMaskIntoConstraints = false
         
+        contentView.layer.cornerCurve = .continuous
+        shadowView.layer.cornerCurve = .continuous
+        
         shadowView.clipsToBounds = false
         shadowView.layer.shadowColor = UIColor.black.cgColor
         shadowView.layer.shadowOffset = CGSize(width: 0, height: 20)
         shadowView.layer.shadowRadius = 40
 //        shadowView.layer.shadowPath = UIBezierPath.init(roundedRect: shadowView.frame, cornerRadius: 32).cgPath
-        shadowView.layer.shadowOpacity = 0.34
+        shadowView.layer.shadowOpacity = 0.54
+        
+        enableButton.layer.cornerCurve = .continuous
         
         view.alpha = 0
         close()

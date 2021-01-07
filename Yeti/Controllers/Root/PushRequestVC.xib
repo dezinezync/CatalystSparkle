@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <device id="retina6_1" orientation="portrait" appearance="dark"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="Image references" minToolsVersion="12.0"/>
@@ -14,6 +14,7 @@
             <connections>
                 <outlet property="backgroundView" destination="aVf-0v-4Tr" id="yTD-Q5-EXu"/>
                 <outlet property="contentView" destination="gfR-jV-uX2" id="KPp-x0-ZWc"/>
+                <outlet property="enableButton" destination="05p-vO-3Wh" id="CwZ-nY-TrU"/>
                 <outlet property="shadowView" destination="5wm-wd-I2j" id="ZIE-Ji-wRm"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
@@ -24,7 +25,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5wm-wd-I2j">
-                    <rect key="frame" x="12" y="542" width="390" height="296"/>
+                    <rect key="frame" x="12" y="540" width="390" height="298"/>
                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
@@ -33,10 +34,10 @@
                     </userDefinedRuntimeAttributes>
                 </view>
                 <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gfR-jV-uX2">
-                    <rect key="frame" x="12" y="542" width="390" height="296"/>
+                    <rect key="frame" x="12" y="540" width="390" height="298"/>
                     <subviews>
                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bg-push" translatesAutoresizingMaskIntoConstraints="NO" id="aVf-0v-4Tr">
-                            <rect key="frame" x="0.0" y="0.0" width="390" height="296"/>
+                            <rect key="frame" x="0.0" y="0.0" width="390" height="298"/>
                         </imageView>
                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="07x-KO-2W9">
                             <rect key="frame" x="12" y="20" width="366" height="264"/>
@@ -47,7 +48,7 @@
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xH9-bS-Bv3">
-                                    <rect key="frame" x="0.0" y="50" width="366" height="152.5"/>
+                                    <rect key="frame" x="0.0" y="44.5" width="366" height="152.5"/>
                                     <string key="text">You may enable Push Notifications to receive near realtime updates from feeds you subscribe to.
 
 Push Notifications are also used for keeping your devices in-sync with each other in realtime.</string>
@@ -55,12 +56,21 @@ Push Notifications are also used for keeping your devices in-sync with each othe
                                     <color key="textColor" systemColor="secondaryLabelColor"/>
                                     <nil key="highlightedColor"/>
                                 </label>
-                                <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" horizontalCompressionResistancePriority="751" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="05p-vO-3Wh">
-                                    <rect key="frame" x="0.0" y="232" width="366" height="32"/>
+                                <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="249" horizontalCompressionResistancePriority="751" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="05p-vO-3Wh">
+                                    <rect key="frame" x="0.0" y="221" width="366" height="43"/>
+                                    <color key="backgroundColor" systemColor="systemRedColor"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="43" id="hAb-8J-L9g"/>
+                                    </constraints>
                                     <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="16"/>
                                     <state key="normal" title="Enable Notifications">
-                                        <color key="titleColor" systemColor="systemRedColor"/>
+                                        <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </state>
+                                    <userDefinedRuntimeAttributes>
+                                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                            <integer key="value" value="16"/>
+                                        </userDefinedRuntimeAttribute>
+                                    </userDefinedRuntimeAttributes>
                                     <connections>
                                         <action selector="didTapEnable:" destination="-1" eventType="touchUpInside" id="hFd-Ug-CDe"/>
                                     </connections>
@@ -93,7 +103,7 @@ Push Notifications are also used for keeping your devices in-sync with each othe
                         <constraint firstItem="07x-KO-2W9" firstAttribute="top" secondItem="gfR-jV-uX2" secondAttribute="top" constant="20" id="Ri9-tw-em5"/>
                         <constraint firstAttribute="bottom" secondItem="aVf-0v-4Tr" secondAttribute="bottom" id="TmG-3h-wRM"/>
                         <constraint firstItem="05p-vO-3Wh" firstAttribute="width" secondItem="gfR-jV-uX2" secondAttribute="width" constant="-24" id="WdI-uK-IwP"/>
-                        <constraint firstAttribute="bottom" secondItem="07x-KO-2W9" secondAttribute="bottom" constant="12" id="dhw-KI-8hG"/>
+                        <constraint firstAttribute="bottom" secondItem="07x-KO-2W9" secondAttribute="bottom" constant="14" id="dhw-KI-8hG"/>
                         <constraint firstItem="UkM-pJ-FKk" firstAttribute="top" secondItem="gfR-jV-uX2" secondAttribute="top" constant="12" id="eYH-Yt-XoG"/>
                         <constraint firstAttribute="trailing" secondItem="07x-KO-2W9" secondAttribute="trailing" constant="12" id="iG9-g9-w8e"/>
                         <constraint firstAttribute="trailing" secondItem="aVf-0v-4Tr" secondAttribute="trailing" id="mCV-2B-l1o"/>

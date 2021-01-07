@@ -4,6 +4,10 @@ This build includes support for Local Syncing. If something breaks, the app cras
 
 Please run "Force Resync" or delete the app and install again before using the first time.
 
+## Build 129 
+
+- fixes dark mode for push request modal
+
 ## Build 128
 
 - Fixes another bug with the Directional Marking Read feature.

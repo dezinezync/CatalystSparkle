@@ -235,7 +235,7 @@
         
         weakify(self);
        
-        self.batchKVSTimer = [NSTimer scheduledTimerWithTimeInterval:5 repeats:NO block:^(NSTimer * _Nonnull timer) {
+        self.batchKVSTimer = [NSTimer scheduledTimerWithTimeInterval:2 repeats:NO block:^(NSTimer * _Nonnull timer) {
             
             strongify(self);
             
