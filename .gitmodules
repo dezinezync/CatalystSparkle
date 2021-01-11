@@ -34,3 +34,6 @@
 [submodule "elytramac/Vendors/Preferences"]
 	path = elytramac/Vendors/Preferences
 	url = git@github.com:dezinezync/Preferences.git
+[submodule "Yeti/Vendors/AWS"]
+	path = Yeti/Vendors/AWS
+	url = git@github.com:aws-amplify/aws-sdk-ios.git

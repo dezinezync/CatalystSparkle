@@ -34,12 +34,17 @@
 #import "Elytra-Swift.h"
 
 #import <CoreSpotlight/CoreSpotlight.h>
+#import "DZLoggingJSONResponseParser.h"
 
 FeedsManager * _Nonnull MyFeedsManager = nil;
 
 NSArray <NSString *> * _defaultsKeys;
 
-@interface FeedsManager () <UIStateRestoring, UIObjectRestoration>
+@interface FeedsManager () <UIStateRestoring, UIObjectRestoration> {
+    
+    NSString * _Nullable _debugLogsSequenceToken;
+    
+}
 
 @property (nonatomic, strong, readwrite) DZURLSession * _Nonnull session, * _Nullable backgroundSession;
 @property (nonatomic, strong, readwrite) Reachability * _Nonnull reachability;
@@ -50,6 +55,8 @@ NSArray <NSString *> * _defaultsKeys;
 @property (nonatomic, strong) NSString *appFullVersion, *appMajorVersion;
 
 @property (nonatomic, strong) NSTimer *widgetCountersUpdateTimer;
+
+@property (atomic, strong) NSMutableArray <AWSLogsInputLogEvent *> * _Nonnull CWLogEvents;
 
 @end
 
@@ -79,6 +86,8 @@ NSArray <NSString *> * _defaultsKeys;
 - (instancetype)init {
     
     if (self = [super init]) {
+        
+        [self setupLogger];
         
         [self setupNotifications];
         
@@ -3200,7 +3209,7 @@ NSArray <NSString *> * _defaultsKeys;
 #endif
         session.useOMGUserAgent = YES;
         session.useActivityManager = YES;
-        session.responseParser = [DZJSONResponseParser new];
+        session.responseParser = [DZLoggingJSONResponseParser new];
 
         weakify(self);
         session.requestModifier = ^NSMutableURLRequest *(NSMutableURLRequest *request) {
@@ -3230,6 +3239,22 @@ NSArray <NSString *> * _defaultsKeys;
             
             if (self.deviceID != nil) {
                 [request setValue:self.deviceID forHTTPHeaderField:@"x-device"];
+            }
+            
+            if (self.debugLoggingEnabled) {
+                
+                NSMutableDictionary *dict = @{
+                    @"url": request.URL.absoluteString,
+                    @"method": request.HTTPMethod,
+                    @"headers": request.allHTTPHeaderFields,
+                }.mutableCopy;
+                
+                if (request.HTTPBody != nil) {
+                    dict[@"body"] = [[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding];
+                }
+                
+                CWLogData(dict);
+                
             }
             
             return request;
@@ -3280,7 +3305,7 @@ NSArray <NSString *> * _defaultsKeys;
         session.baseURL = self.session.baseURL;
         session.useOMGUserAgent = YES;
         session.useActivityManager = YES;
-        session.responseParser = [DZJSONResponseParser new];
+        session.responseParser = [DZLoggingJSONResponseParser new];
         session.isBackgroundSession = YES;
         
         session.requestModifier = self.session.requestModifier;
@@ -4245,5 +4270,248 @@ NSString *const kUnreadLastUpdateKey = @"key.unreadLastUpdate";
     [activity addUserInfoEntriesFromDictionary:@{@"feedsManager":dict}];
     
 }
+
+#pragma mark - Debug Logging
+
+- (void)setupLogger {
+    
+    self.CWLogEvents = [NSMutableArray new];
+    
+    AWSStaticCredentialsProvider *credentials = [[AWSStaticCredentialsProvider alloc] initWithAccessKey:@"AKIAQRG4X7J2SKTRQHGU" secretKey:@"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"];
+    
+    AWSServiceConfiguration *config = [[AWSServiceConfiguration alloc] initWithRegion:AWSRegionUSEast1 credentialsProvider:credentials];
+
+    [AWSServiceManager defaultServiceManager].defaultServiceConfiguration = config;
+    
+}
+
+- (void)setDebugLoggingEnabled:(BOOL)debugLoggingEnabled {
+    
+    if (NSThread.isMainThread == NO) {
+        return [self performSelectorOnMainThread:@selector(setDebugLoggingEnabled:) withObject:@(debugLoggingEnabled) waitUntilDone:NO];
+    }
+    
+    BOOL changing = !(_debugLoggingEnabled && debugLoggingEnabled);
+    
+    self->_debugLoggingEnabled = debugLoggingEnabled;
+    
+    if (changing && debugLoggingEnabled == NO && self.CWLogEvents.count > 0) {
+        
+        // flush immediately.
+        [self logCWEvents];
+        
+    }
+    
+}
+
+- (void)logCWEvents {
+    
+    if (MyFeedsManager->_debugLogsSequenceToken == nil) {
+        
+        AWSLogsDescribeLogStreamsRequest *describeReq = [AWSLogsDescribeLogStreamsRequest new];
+        describeReq.logGroupName = @"Elytra";
+        describeReq.logStreamNamePrefix = @"userD";
+        
+        [AWSLogs.defaultLogs describeLogStreams:describeReq completionHandler:^(AWSLogsDescribeLogStreamsResponse * _Nullable response, NSError * _Nullable error) {
+            
+            AWSLogsLogStream *logstream = nil;
+            
+            for (AWSLogsLogStream *stream in response.logStreams) {
+                
+                if ([stream.logStreamName isEqualToString:@"userDebugging"]) {
+                    
+                    logstream = stream;
+                    
+                }
+               
+            }
+            
+            if (logstream != nil) {
+                
+                MyFeedsManager->_debugLogsSequenceToken = logstream.uploadSequenceToken ?: @"";
+                
+                [self logCWEvents];
+                
+            }
+            else {
+                NSLog(@"userDebugging stream not found.");
+                
+                AWSLogsCreateLogStreamRequest *req = [[AWSLogsCreateLogStreamRequest alloc] init];
+                req.logGroupName = @"Elytra";
+                req.logStreamName = @"userDebugging";
+                
+                [AWSLogs.defaultLogs createLogStream:req completionHandler:^(NSError * _Nullable error) {
+                   
+                    if (error != nil && error.code != 8) {
+                        NSLogDebug(@"Error creating log stream: %@", error);
+                    }
+                    else {
+                        MyFeedsManager->_debugLogsSequenceToken = @"";
+                        [self logCWEvents];
+                    }
+                    
+                }];
+                
+            }
+            
+        }];
+        
+        return;
+        
+    }
+    
+    NSArray <AWSLogsInputLogEvent *> *events = self.CWLogEvents.copy;
+    self.CWLogEvents = [NSMutableArray new];
+    
+    AWSLogsPutLogEventsRequest *req = [[AWSLogsPutLogEventsRequest alloc] init];
+    req.logGroupName = @"Elytra";
+    req.logStreamName = @"userDebugging";
+    req.logEvents = events;
+    
+    if ([_debugLogsSequenceToken isEqualToString:@""] == NO) {
+        req.sequenceToken = MyFeedsManager->_debugLogsSequenceToken;
+    }
+    else {
+        req.sequenceToken = nil;
+    }
+    
+    [AWSLogs.defaultLogs putLogEvents:req completionHandler:^(AWSLogsPutLogEventsResponse * _Nullable response, NSError * _Nullable error) {
+        
+        if (error != nil) {
+            NSLog(@"Error putting log events: %@", error);
+            
+            if (error.code == 4) {
+                MyFeedsManager->_debugLogsSequenceToken = [error.userInfo valueForKey:@"expectedSequenceToken"];
+                
+                [self.CWLogEvents addObjectsFromArray:events];
+                
+                return [CoalescingQueue.standard add:MyFeedsManager :@selector(logCWEvents)];
+                
+            }
+            
+        }
+        
+        if (response.nextSequenceToken) {
+            
+            MyFeedsManager->_debugLogsSequenceToken = response.nextSequenceToken;
+            
+        }
+        
+    }];
+    
+}
+
+void CWLog (NSString * line) {
+    
+    if (line == nil || [line isBlank]) {
+        return;
+    }
+    
+    if (MyFeedsManager.isDebuggingLoggingEnabled == NO) {
+        return;
+    }
+    
+    if (MyFeedsManager.user == nil) {
+        return;
+    }
+    
+    if (MyFeedsManager.user.uuid == nil) {
+        return;
+    }
+    
+    if (MyFeedsManager.user.userID == nil) {
+        return;
+    }
+#if !TARGET_IPHONE_SIMULATOR
+    if (MyFeedsManager.deviceID == nil) {
+        return;
+    }
+#endif
+    AWSLogsInputLogEvent *event = [[AWSLogsInputLogEvent alloc] init];
+    
+    NSError *error = nil;
+    
+    NSData *data = [NSJSONSerialization dataWithJSONObject:@{
+        @"uuid": MyFeedsManager.user.uuid,
+        @"userID": MyFeedsManager.user.userID,
+        @"deviceID": MyFeedsManager.deviceID ?: @"Simulator",
+        @"message": line
+    } options:kNilOptions error:&error];
+    
+    if (error != nil) {
+        return;
+    }
+    
+    NSString *message = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    
+    event.message = message;
+    
+    NSTimeInterval timestamp = [NSDate.date timeIntervalSince1970] * 1000;
+    event.timestamp = @(timestamp);
+    
+    [MyFeedsManager.CWLogEvents addObject:event];
+    
+    [CoalescingQueue.standard add:MyFeedsManager :@selector(logCWEvents)];
+    
+    NSLog(@"%@", line);
+    
+}
+
+void CWLogData (NSDictionary *object) {
+    
+    if (object == nil || object.allKeys.count == 0) {
+        return;
+    }
+    
+    if (MyFeedsManager.isDebuggingLoggingEnabled == NO) {
+        return;
+    }
+    
+    if (MyFeedsManager.user == nil) {
+        return;
+    }
+    
+    if (MyFeedsManager.user.uuid == nil) {
+        return;
+    }
+    
+    if (MyFeedsManager.user.userID == nil) {
+        return;
+    }
+#if !TARGET_IPHONE_SIMULATOR
+    if (MyFeedsManager.deviceID == nil) {
+        return;
+    }
+#endif
+    AWSLogsInputLogEvent *event = [[AWSLogsInputLogEvent alloc] init];
+    
+    NSError *error = nil;
+    
+    NSData *data = [NSJSONSerialization dataWithJSONObject:@{
+        @"uuid": MyFeedsManager.user.uuid,
+        @"userID": MyFeedsManager.user.userID,
+        @"deviceID": MyFeedsManager.deviceID ?: @"Simulator",
+        @"message": object
+    } options:kNilOptions error:&error];
+    
+    if (error != nil) {
+        return;
+    }
+    
+    NSString *message = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    
+    event.message = message;
+    
+    NSTimeInterval timestamp = [NSDate.date timeIntervalSince1970] * 1000;
+    event.timestamp = @(timestamp);
+    
+    [MyFeedsManager.CWLogEvents addObject:event];
+    
+    [CoalescingQueue.standard add:MyFeedsManager :@selector(logCWEvents)];
+    
+    NSLog(@"%@", object);
+    
+}
+
 
 @end

@@ -25,6 +25,8 @@
 #define kUserID @"userID"
 #define kUUIDString @"UUIDString"
 
+#import <AWSLogs/AWSLogs.h>
+
 @class KVSItem;
 @class FeedsManager;
 
@@ -247,6 +249,14 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 @property (atomic, strong) NSTimer * _Nullable batchKVSTimer;
 
 @property (nonatomic, strong) NSMutableOrderedSet <KVSItem *> * _Nullable KVSItems;
+
+#pragma mark - Debug Logging
+
+@property (nonatomic, strong, readonly) AWSLogs * _Nonnull logger;
+@property (atomic, assign, getter=isDebuggingLoggingEnabled) BOOL debugLoggingEnabled;
+
+void CWLog(NSString * _Nullable line);
+void CWLogData(NSDictionary * _Nullable data);
 
 @end
 
