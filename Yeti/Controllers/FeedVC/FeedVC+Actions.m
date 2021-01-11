@@ -589,13 +589,15 @@
             [tnx enumerateKeysAndMetadataInGroup:GROUP_ARTICLES withOptions:options range:NSMakeRange(0, MyFeedsManager.totalUnread) usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, NSDictionary *  _Nullable metadata, NSUInteger index, BOOL * _Nonnull stop) {
                 
                 BOOL stopping = NO;
-                
+                // this triggers when the actioned article
+                // is unread
                 if ([key isEqualToString:localIdentifier]) {
                     stopping = YES;
                 }
                 
                 if (stopping == NO) {
-                    
+                    // this is triggered when the actioned
+                    // article is read and is used as an anchor
                     if (isDescending) {
                         
                         if (localIdentifier.integerValue > key.integerValue) {
@@ -634,42 +636,40 @@
                 return;
             }
             
-            [MyFeedsManager markRead:feed articleID:item.identifier direction:direction sortType:sorting success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-              
-                dispatch_async(MyDBManager.readQueue, ^{
-                    
-                    [MyDBManager.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
-                        
-                        for (NSUInteger idx = 0; idx < unreads.count; idx+=2) {
-                            
-                            NSNumber *identifier = unreads[idx];
-                            NSMutableDictionary *metadata = [unreads[idx + 1] mutableCopy];
-                            
-                            id feedID = [metadata valueForKey:@"feedID"];
-                            NSString *collection = [NSString stringWithFormat:@"%@:%@", LOCAL_ARTICLES_COLLECTION, feedID];
-                            
-                            FeedItem * object = [transaction objectForKey:identifier.stringValue inCollection:collection];
-                            
-                            object.read = YES;
-                            [metadata setValue:@(YES) forKey:@"read"];
-                            
-                            [transaction setObject:object forKey:identifier.stringValue inCollection:collection withMetadata:metadata];
-                            
-                        }
-                        
-                        strongify(self);
-                        
-                        [self reloadCellsFrom:indexPath direction:(options == NSEnumerationReverse)];
-                        
-                    }];
-                    
-                });
-                
-            } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-               
-                [AlertManager showGenericAlertWithTitle:@"Error Marking Read" message:error.localizedDescription fromVC:self];
-                
+            NSArray <NSNumber *> *identifiers = [unreads rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
+                return [obj isKindOfClass:NSNumber.class];
             }];
+            
+            [MyFeedsManager markArticlesAsRead:identifiers];
+
+            dispatch_async(MyDBManager.readQueue, ^{
+
+                [MyDBManager.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+
+                    for (NSUInteger idx = 0; idx < unreads.count; idx+=2) {
+
+                        NSNumber *identifier = unreads[idx];
+                        NSMutableDictionary *metadata = [unreads[idx + 1] mutableCopy];
+
+                        id feedID = [metadata valueForKey:@"feedID"];
+                        NSString *collection = [NSString stringWithFormat:@"%@:%@", LOCAL_ARTICLES_COLLECTION, feedID];
+
+                        FeedItem * object = [transaction objectForKey:identifier.stringValue inCollection:collection];
+
+                        object.read = YES;
+                        [metadata setValue:@(YES) forKey:@"read"];
+
+                        [transaction setObject:object forKey:identifier.stringValue inCollection:collection withMetadata:metadata];
+
+                    }
+
+                    strongify(self);
+
+                    [self reloadCellsFrom:indexPath direction:(options == NSEnumerationReverse)];
+
+                }];
+
+            });
             
         }];
         

@@ -4,7 +4,11 @@ This build includes support for Local Syncing. If something breaks, the app cras
 
 Please run "Force Resync" or delete the app and install again before using the first time.
 
-## Build 131
+## Build 133
+
+- Patches and fixes directional marking. This has been the longest running bug in Elytra, H/T to Gui for helping me finally fix this one. 
+
+## Build 131, 132
 
 - Added debug logging to iOS and iPadOS apps. To start or stop the logging session, open Settings inside Elytra, scroll to the footer, then tap on the Dezine Zync logo five times.  
 

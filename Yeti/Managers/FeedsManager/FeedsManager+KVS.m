@@ -160,17 +160,41 @@
         return;
     }
     
-    KVSItem *instance = [KVSItem new];
-    instance.changeType = KVSChangeTypeRead;
-    instance.identifiers = identifiers;
+    NSUInteger const limit = 100;
     
-    if (self.KVSItems == nil) {
-        self.KVSItems = [NSMutableOrderedSet new];
+    if (identifiers.count > 100) {
+        
+        NSUInteger counter = 0;
+        NSUInteger total = identifiers.count;
+        
+        while (counter < total) {
+            
+            NSUInteger inLimit = (counter + limit) > total ? (total - counter) : limit;
+            
+            NSArray *subarray = [identifiers subarrayWithRange:NSMakeRange(counter, inLimit)];
+            
+            [self markArticlesAsRead:subarray];
+            
+            counter += limit;
+            
+        }
+        
     }
-    
-    [self.KVSItems addObject:instance];
-    
-    [self trackChanges];
+    else {
+        
+        KVSItem *instance = [KVSItem new];
+        instance.changeType = KVSChangeTypeRead;
+        instance.identifiers = identifiers;
+
+        if (self.KVSItems == nil) {
+            self.KVSItems = [NSMutableOrderedSet new];
+        }
+
+        [self.KVSItems addObject:instance];
+
+        [self trackChanges];
+        
+    }
     
 }
 

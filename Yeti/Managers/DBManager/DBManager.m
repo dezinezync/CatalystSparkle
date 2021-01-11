@@ -2331,6 +2331,7 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         [transaction removeAllObjectsInCollection:LOCAL_ARTICLES_COLLECTION];
         [transaction removeAllObjectsInCollection:LOCAL_FEEDS_COLLECTION];
         [transaction removeAllObjectsInCollection:LOCAL_FOLDERS_COLLECTION];
+        [transaction removeAllObjectsInCollection:SYNC_COLLECTION];
         
     }];
     
