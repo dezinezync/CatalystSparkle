@@ -4,6 +4,10 @@ This build includes support for Local Syncing. If something breaks, the app cras
 
 Please run "Force Resync" or delete the app and install again before using the first time.
 
+## Build 131
+
+- Added debug logging to iOS and iPadOS apps. To start or stop the logging session, open Settings inside Elytra, scroll to the footer, then tap on the Dezine Zync logo five times.  
+
 ## Build 129 
 
 - fixes dark mode for push request modal
