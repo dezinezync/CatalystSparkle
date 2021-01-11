@@ -134,6 +134,8 @@
 		F044B3CA2338A6E900DD8E90 /* BookmarksMigrationVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F044B3C82338A6E900DD8E90 /* BookmarksMigrationVC.xib */; };
 		F0469DF220A0514100163C4E /* dark.css in Resources */ = {isa = PBXBuildFile; fileRef = F0469DF120A0514100163C4E /* dark.css */; };
 		F0469DF420A0528000163C4E /* black.css in Resources */ = {isa = PBXBuildFile; fileRef = F0469DF320A0528000163C4E /* black.css */; };
+		F0472FCC25AC298A002227C0 /* AWSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F09B93A025ABF417004440E3 /* AWSCore.framework */; };
+		F0472FCD25AC298A002227C0 /* AWSCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F09B93A025ABF417004440E3 /* AWSCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F047CB6F2579F98E00395DC2 /* UIControlSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = F047CB6E2579F98E00395DC2 /* UIControlSubscription.swift */; };
 		F047F4E220C25FB900626968 /* Spectral-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4D420C25FB800626968 /* Spectral-Regular.ttf */; };
 		F047F4E620C25FB900626968 /* Spectral-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4D620C25FB800626968 /* Spectral-MediumItalic.ttf */; };
@@ -1517,6 +1519,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				F0F3920E257E5BE20040518C /* DZNetworking.framework in Embed Frameworks */,
+				F0472FCD25AC298A002227C0 /* AWSCore.framework in Embed Frameworks */,
 				F0B4827D2455F65000EE5AA2 /* DZKit.framework in Embed Frameworks */,
 				F0E0E6EF2457FF2400DFFD17 /* JLRoutes.framework in Embed Frameworks */,
 				F09B950D25ABF45E004440E3 /* AWSLogs.framework in Embed Frameworks */,
@@ -2184,6 +2187,7 @@
 				F0F3920D257E5BE20040518C /* DZNetworking.framework in Frameworks */,
 				F09B950C25ABF45E004440E3 /* AWSLogs.framework in Frameworks */,
 				F08C5E62238660B00055946F /* DZThemeKit.framework in Frameworks */,
+				F0472FCC25AC298A002227C0 /* AWSCore.framework in Frameworks */,
 				F0B4827E2455F65600EE5AA2 /* YapDatabase.framework in Frameworks */,
 				F02A4894252653C7001063E9 /* SDWebImage in Frameworks */,
 				F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */,
