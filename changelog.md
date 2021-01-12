@@ -4,6 +4,12 @@ This build includes support for Local Syncing. If something breaks, the app cras
 
 Please run "Force Resync" or delete the app and install again before using the first time.
 
+## Build 134
+
+- Minor patch for directional marking read. Debugging mode only. 
+
+- Patches receipt validation. Going forward, your Testflight subscription and purchases will only be valid in Testflight. AppStore receipts cannot be used in Testflight and vice-versa. 
+
 ## Build 133
 
 - Patches and fixes directional marking. This has been the longest running bug in Elytra, H/T to Gui for helping me finally fix this one. 

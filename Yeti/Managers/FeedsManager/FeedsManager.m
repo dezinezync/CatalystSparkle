@@ -2226,7 +2226,7 @@ NSArray <NSString *> * _defaultsKeys;
     
     DZURLSession *session = self.currentSession;
 
-    [session GET:@"/store" parameters:@{@"userID": self.user.userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [session GET:@"/store" parameters:@{@"userID": self.user.userID, @"env": NSBundle.mainBundle.configurationString} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
@@ -3202,7 +3202,7 @@ NSArray <NSString *> * _defaultsKeys;
 
         DZURLSession *session = [[DZURLSession alloc] initWithSessionConfiguration:defaultConfig];
         
-        session.baseURL = [NSURL URLWithString:@"http://127.0.0.1:3000"];
+        session.baseURL = [NSURL URLWithString:@"http://192.168.1.90:3000"];
         session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
 #ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://api.elytra.app"];
@@ -3405,6 +3405,12 @@ NSArray <NSString *> * _defaultsKeys;
                 if ([nav.viewControllers.firstObject isKindOfClass:NSClassFromString(@"LaunchVC")]) {
                     return;
                 }
+                
+            }
+            
+            if ([error.localizedDescription isEqualToString:@"No subscription found for this account."]) {
+                
+                return [MyAppDelegate.coordinator showSubscriptionsInterface];
                 
             }
             
@@ -3654,15 +3660,17 @@ NSArray <NSString *> * _defaultsKeys;
 - (void)getUserInformation:(successBlock)successCB error:(errorBlock)errorCB {
     weakify(self);
     
-    NSDictionary *params;
+    NSMutableDictionary *params = [NSMutableDictionary new];
     
     if (MyFeedsManager.userID != nil) {
-        params = @{@"userID": MyFeedsManager.userID};
+        params[@"userID"] = MyFeedsManager.userID;
     }
 
     else if (MyFeedsManager.user.uuid) {
-        params = @{@"userID" : MyFeedsManager.user.uuid};
+        params[@"userID"] = MyFeedsManager.user.uuid;
     }
+    
+    params[@"env"] = NSBundle.mainBundle.configurationString;
 
     __unused NSURLSessionTask *task = [self.session GET:@"/user" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
      
@@ -3768,7 +3776,7 @@ NSArray <NSString *> * _defaultsKeys;
     
     weakify(self);
     
-    [self.session PUT:@"/1.7/trial" queryParams:@{} parameters:body success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [self.session PUT:@"/1.7/trial" queryParams:@{@"env": NSBundle.mainBundle.configurationString} parameters:body success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         [self getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             

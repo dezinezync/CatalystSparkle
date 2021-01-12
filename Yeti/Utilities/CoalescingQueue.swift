@@ -7,6 +7,50 @@
 //
 import Foundation
 
+@objc enum AppConfiguration: Int {
+  case Debug
+  case TestFlight
+  case AppStore
+}
+
+extension Bundle {
+    @objc var appConfiguration: AppConfiguration {
+        #if DEBUG
+        return AppConfiguration.Debug
+        #else
+        
+        guard let path = self.appStoreReceiptURL else {
+            return AppConfiguration.Debug
+        }
+        
+        if (path.path.contains("CoreSimulator") || path.path.contains("Debug-maccatalyst")) {
+            return AppConfiguration.Debug
+        }
+        
+        let isTestFlight = path.lastPathComponent == "sandboxReceipt"
+        
+        if (isTestFlight) {
+            return AppConfiguration.TestFlight
+        }
+        return AppConfiguration.AppStore
+        #endif
+    }
+    
+    @objc var configurationString: String {
+        switch self.appConfiguration {
+        case .Debug:
+            return "Sandbox"
+            
+        case .TestFlight:
+            return "ProductionSandbox"
+            
+        default:
+            return "Production"
+        }
+    }
+    
+}
+
 // Use when you want to coalesce calls for something like updating visible table cells.
 // Calls are uniqued. If you add a call with the same target and selector as a previous call, you’ll just get one call.
 // Targets are weakly-held. If a target goes to nil, the call is not performed.
