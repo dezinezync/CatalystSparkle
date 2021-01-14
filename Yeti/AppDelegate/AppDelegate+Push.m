@@ -13,7 +13,7 @@
 
 - (void)registerNotificationCategories {
     
-    UNNotificationAction *viewAction = [UNNotificationAction actionWithIdentifier:@"com.yeti.notification.action.view" title:@"View" options:UNNotificationActionOptionAuthenticationRequired&UNNotificationActionOptionForeground];
+    UNNotificationAction *viewAction = [UNNotificationAction actionWithIdentifier:@"com.yeti.notification.action.view" title:@"View" options:UNNotificationActionOptionForeground];
     
     UNNotificationAction *cancel = [UNNotificationAction actionWithIdentifier:@"com.yeti.notification.action.cancel" title:@"Cancel" options:kNilOptions];
     
