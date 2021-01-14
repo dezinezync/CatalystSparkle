@@ -46,7 +46,7 @@
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
     
-    completionHandler(UNNotificationPresentationOptionList|UNNotificationPresentationOptionSound);
+    completionHandler(UNNotificationPresentationOptionBanner|UNNotificationPresentationOptionSound);
     
 }
 
@@ -91,6 +91,31 @@
             completionHandler(UIBackgroundFetchResultFailed);
             
         }];
+        
+        return YES;
+        
+    }
+    
+    BOOL isArticle = [[types valueForKey:@"article"] boolValue];
+    
+    if (isArticle) {
+        
+        NSNumber *articleID = [userInfo valueForKey:@"articleID"];
+        NSNumber *feedID = [userInfo valueForKey:@"feedID"];
+        
+        if (articleID != nil && feedID != nil) {
+            
+            [MyFeedsManager getArticle:articleID feedID:feedID noAuth:NO success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                
+                completionHandler(UIBackgroundFetchResultNewData);
+                
+            } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+               
+                completionHandler(UIBackgroundFetchResultFailed);
+                
+            }];
+            
+        }
         
         return YES;
         

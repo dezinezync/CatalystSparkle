@@ -4,6 +4,12 @@ This build includes support for Local Syncing. If something breaks, the app cras
 
 Please run "Force Resync" or delete the app and install again before using the first time.
 
+## Build 135 
+
+- Remote Push Notifications for new articles now download and cache the article for immediate use.  
+
+- Remote Push Notifications view button now works as expected.
+
 ## Build 134
 
 - Minor patch for directional marking read. Debugging mode only. 

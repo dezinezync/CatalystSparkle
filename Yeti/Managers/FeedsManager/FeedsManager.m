@@ -866,7 +866,7 @@ NSArray <NSString *> * _defaultsKeys;
             
             FeedItem *item = [FeedItem instanceFromDictionary:responseObject];
             
-            item.read = NO;
+//            item.read = NO;
             
             [MyDBManager addArticle:item strip:NO];
             

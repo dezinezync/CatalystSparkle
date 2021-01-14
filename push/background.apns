@@ -1,6 +1,11 @@
 {
     "Simulator Target Bundle": "com.dezinezync.elytra",
     "aps": {
-        "content-available": 1
-    }
+        "content-available": 1,
+        "alert": {},
+        "category": "NOTE_CATEGORY_ARTICLE"
+    },
+    "types": {"type": "article"},
+    "articleID": "16895326",
+    "feedID": "18"
 }
