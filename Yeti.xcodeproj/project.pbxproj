@@ -345,6 +345,7 @@
 		F0C8953525622CA0002F365E /* UITextField+CursorPosition.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C8953425622CA0002F365E /* UITextField+CursorPosition.m */; };
 		F0C9F7D6215250980078FB8F /* FeedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C9F7D5215250980078FB8F /* FeedCell.m */; };
 		F0CA4589211DB99400D08E40 /* dark~ipad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0CA4587211DB99400D08E40 /* dark~ipad@2x.png */; };
+		F0CA799725AF4B4900DACA1B /* IdentityVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F064A5352157678900A385AD /* IdentityVC.m */; };
 		F0CCD2192098923A00920AE4 /* SplitVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CCD2182098923A00920AE4 /* SplitVC.m */; };
 		F0CDA0AD2474E72000DC1217 /* UnreadVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CDA0AC2474E72000DC1217 /* UnreadVC.m */; };
 		F0CDA0CB24750BCC00DC1217 /* FeedVC+ContextMenus.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CDA0CA24750BCC00DC1217 /* FeedVC+ContextMenus.m */; };
@@ -5193,6 +5194,7 @@
 				F0E5F50824CEC854007E6D1E /* PhotosController.m in Sources */,
 				F0CDA0AD2474E72000DC1217 /* UnreadVC.m in Sources */,
 				F04416E720E618F8008AB1D3 /* CollectionHeader.m in Sources */,
+				F0CA799725AF4B4900DACA1B /* IdentityVC.m in Sources */,
 				F00F646C24EC1DE700E5727C /* TweetImage.m in Sources */,
 				F0AF314420D287F400E074D6 /* IntroViewDefault.m in Sources */,
 				F089FFA2252AFAD1004D4EB9 /* SidebarVC+DragAndDrop.m in Sources */,

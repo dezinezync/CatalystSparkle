@@ -69,32 +69,64 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    
     [super viewWillAppear:animated];
     
     weakify(self);
     
     self.button.enabled = NO;
     
-    [[MyFeedsManager userIDManager] setupAccountWithSuccess:^(YTUserID * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Creating Your Account" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    
+    [avc.view.heightAnchor constraintGreaterThanOrEqualToConstant:82.f].active = YES;
+    
+    UIActivityIndicatorView *activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleMedium];
+    activity.translatesAutoresizingMaskIntoConstraints = NO;
+    activity.userInteractionEnabled = NO;
+    [activity startAnimating];
+    
+    [avc.view addSubview:activity];
+    
+    [activity.centerXAnchor constraintEqualToAnchor:avc.view.centerXAnchor].active = YES;
+    [activity.bottomAnchor constraintEqualToAnchor:avc.view.bottomAnchor constant:-12.f].active = YES;
+    
+    [self presentViewController:avc animated:YES completion:nil];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         
-        dispatch_async(dispatch_get_main_queue(), ^{
+        User *user = [User new];
+        user.uuid = NSUUID.UUID.UUIDString;
+        
+        [MyFeedsManager createUser:user.uuid success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
-            strongify(self);
+            NSLog(@"%@", responseObject);
             
-            [UIView animateWithDuration:0.3 animations:^{
+            NSDictionary *userObj = [responseObject objectForKey:@"user"];
+            NSNumber *userID = [userObj objectForKey:@"id"];
+            
+            user.userID = userID;
+            
+            [MyDBManager setUser:user completion:^{
+                    
+                strongify(self);
                 
-                self.input.text = responseObject.UUIDString;
+                self.input.text = user.uuid;
+                
                 self.button.enabled = YES;
+                
+                if (self.presentedViewController) {
+                    [self.presentedViewController dismissViewControllerAnimated:YES completion:nil];
+                }
                 
             }];
             
-        });
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+           
+            [AlertManager showGenericAlertWithTitle:@"Creating Account Failed" message:error.localizedDescription];
+            
+        }];
         
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        [AlertManager showGenericAlertWithTitle:@"Set Up Failed" message:error.localizedDescription];
-        
-    }];
+    });
 
 }
 
@@ -147,98 +179,9 @@
 
 - (IBAction)didDoubleTap:(UITapGestureRecognizer *)sender {
     
-    UIViewController *vc = self.navigationController;
-    
-    UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Replace Account ID" message:nil preferredStyle:UIAlertControllerStyleAlert];
-    
-    [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
-    
-    weakify(self);
-    
-    UIAlertAction *confirm = [UIAlertAction actionWithTitle:@"Confirm" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        
-        strongify(self);
-        
-        self.oldUUID = MyFeedsManager.user.uuid;
-        self.oldUserID = MyFeedsManager.userID;
-        
-        MyFeedsManager.userIDManager.UUID = [[NSUUID alloc] initWithUUIDString:self.textField.text];
-        MyFeedsManager.userID = nil;
-        
-        self.textField.enabled = NO;
-        
-        weakify(self);
-        
-        [MyFeedsManager getUserInformation:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            NSDictionary *user = [responseObject valueForKey:@"user"];
-            NSLogDebug(@"Got existing user: %@", user);
-            
-            MyFeedsManager.userID = @([[user valueForKey:@"id"] integerValue]);
-            MyFeedsManager.userIDManager.UUID = [[NSUUID alloc] initWithUUIDString:[user valueForKey:@"uuid"]];
-            
-            [Keychain add:kUserID string:MyFeedsManager.userID.stringValue];
-            [Keychain add:kAccountID string:MyFeedsManager.userIDManager.UUID.UUIDString];
-            
-            [avc dismissViewControllerAnimated:YES completion:nil];
-            
-            strongify(self);
-            self.input.text = MyFeedsManager.user.uuid;
-            
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            MyFeedsManager.userIDManager.UUID = [[NSUUID alloc] initWithUUIDString:self.oldUUID];
-            MyFeedsManager.userID = self.oldUserID;
-            
-            strongify(self);
-            self.oldUUID = nil;
-            self.oldUserID = nil;
-            
-            [avc dismissViewControllerAnimated:YES completion:nil];
-            
-            if (vc != nil) {
-                [AlertManager showGenericAlertWithTitle:@"Invalid Account" message:@"An account with the provided Account ID was not found." fromVC:vc];
-            }
-            
-        }];
-        
-    }];
-    
-    confirm.enabled = NO;
-    
-    [avc addAction:confirm];
-    self.confirmAction = confirm;
-    
-    [avc addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
-        
-        [textField setPlaceholder:@"Existing Account ID"];
-        [textField setFont:[UIFont systemFontOfSize:12.f]];
-        
-        strongify(self);
-        textField.delegate = self;
-        self.textField = textField;
-        
-    }];
-    
-    if (vc != nil) {
-        [vc presentViewController:avc animated:YES completion:^{
-            if (self.textField != nil) {
-                [self.textField becomeFirstResponder];
-            }
-        }];
-    }
-    
 }
 
 - (void)copyUUID:(id)sender {
-    
-    if (MyFeedsManager.userIDManager.UUID == nil) {
-        return;
-    }
-    
-    [[UIPasteboard generalPasteboard] setString:MyFeedsManager.user.uuid];
-    
-    [AlertManager showGenericAlertWithTitle:@"Copied" message:@"Your Account ID has been copied to the clipboard."];
     
 }
 
@@ -255,22 +198,12 @@
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
     
-    if (self.textField == nil) {
-        self.textField = textField;
-    }
-    
-    NSString *newText = [textField.text stringByReplacingCharactersInRange:range withString:string];
-    
-    if (self.confirmAction != nil) {
-        self.confirmAction.enabled = (newText.length == 36);
-    }
-    
-    return newText.length <= 36;
+    return NO;
     
 }
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
-    return textField == self.textField;
+    return NO; 
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {

@@ -14,6 +14,7 @@
 
 #import "FeedsManager.h"
 #import "DBManager.h"
+#import "IdentityVC.h"
 #import <DZKit/AlertManager.h>
 
 #import "RecommendationsVC.h"
@@ -121,9 +122,11 @@
 }
 - (IBAction)didTapExplore:(UIButton *)sender {
     
-    RecommendationsVC *vc = [[RecommendationsVC alloc] initWithNibName:NSStringFromClass(RecommendationsVC.class) bundle:nil];
-    vc.mainCoordinator = self.mainCoordinator;
-    vc.noAuth = YES;
+    IdentityVC *vc = [[IdentityVC alloc] initWithNibName:NSStringFromClass(IdentityVC.class) bundle:nil];
+    
+//    RecommendationsVC *vc = [[RecommendationsVC alloc] initWithNibName:NSStringFromClass(RecommendationsVC.class) bundle:nil];
+//    vc.mainCoordinator = self.mainCoordinator;
+//    vc.noAuth = YES;
     
     [self.navigationController pushViewController:vc animated:YES];
     
