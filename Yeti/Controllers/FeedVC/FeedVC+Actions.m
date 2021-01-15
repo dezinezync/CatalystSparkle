@@ -591,33 +591,35 @@
                 
                 // this triggers when the actioned article
                 // is unread
-                if ([key isEqualToString:localIdentifier]) {
+                if ([key isEqualToString:localIdentifier] && [[metadata valueForKey:@"read"] boolValue] == YES) {
+                    
                     stopping = YES;
+                    
                 }
                 
-//                if (stopping == NO) {
-//                    // this is triggered when the actioned
-//                    // article is read and is used as an anchor
-//                    if (isDescending) {
-//
-//                        if (localIdentifier.integerValue < key.integerValue) {
-//
-//                            stopping = YES;
-//
-//                        }
-//
-//                    }
-//                    else {
-//
-//                        if (key.integerValue > localIdentifier.integerValue) {
-//
-//                            stopping = YES;
-//
-//                        }
-//
-//                    }
-//
-//                }
+                if (stopping == NO) {
+                    // this is triggered when the actioned
+                    // article is read and is used as an anchor
+                    if (isDescending) {
+
+                        if (localIdentifier.integerValue > key.integerValue) {
+
+                            stopping = YES;
+
+                        }
+
+                    }
+                    else {
+
+                        if (key.integerValue > localIdentifier.integerValue) {
+
+                            stopping = YES;
+
+                        }
+
+                    }
+
+                }
                 
                 if (metadata != nil && ([([metadata valueForKey:@"read"] ?: @(NO)) boolValue] == NO)) {
                     
