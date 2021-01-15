@@ -3250,7 +3250,18 @@ NSArray <NSString *> * _defaultsKeys;
                 }.mutableCopy;
                 
                 if (request.HTTPBody != nil) {
-                    dict[@"body"] = [[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding];
+                    
+                    NSError *error = nil;
+                    
+                    id obj = [NSJSONSerialization JSONObjectWithData:request.HTTPBody options:kNilOptions error:&error];
+                    
+                    if (error != nil) {
+                        dict[@"body"] = @{@"error": error.localizedDescription};
+                    }
+                    else {
+                        dict[@"body"] = obj;
+                    }
+                    
                 }
                 
                 CWLogData(dict);

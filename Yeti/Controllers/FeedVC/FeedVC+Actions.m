@@ -576,48 +576,48 @@
             NSEnumerationOptions options = kNilOptions;
             
             if (isDescending == NO) {
-                
+
                 // get all items from and after this index which are unread.
                 // enumerating backwards on our forward index will have the same effect.
                 options = NSEnumerationReverse;
-                
+
             }
             
             NSMutableArray <id> *unreads = @[].mutableCopy;
             
-            // get all items from and after this index which are unread.
             [tnx enumerateKeysAndMetadataInGroup:GROUP_ARTICLES withOptions:options range:NSMakeRange(0, MyFeedsManager.totalUnread) usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, NSDictionary *  _Nullable metadata, NSUInteger index, BOOL * _Nonnull stop) {
                 
                 BOOL stopping = NO;
+                
                 // this triggers when the actioned article
                 // is unread
                 if ([key isEqualToString:localIdentifier]) {
                     stopping = YES;
                 }
                 
-                if (stopping == NO) {
-                    // this is triggered when the actioned
-                    // article is read and is used as an anchor
-                    if (isDescending) {
-                        
-                        if (localIdentifier.integerValue > key.integerValue) {
-                            
-                            stopping = YES;
-                            
-                        }
-                        
-                    }
-                    else {
-                        
-                        if (key.integerValue < localIdentifier.integerValue) {
-                            
-                            stopping = YES;
-                            
-                        }
-                        
-                    }
-                    
-                }
+//                if (stopping == NO) {
+//                    // this is triggered when the actioned
+//                    // article is read and is used as an anchor
+//                    if (isDescending) {
+//
+//                        if (localIdentifier.integerValue < key.integerValue) {
+//
+//                            stopping = YES;
+//
+//                        }
+//
+//                    }
+//                    else {
+//
+//                        if (key.integerValue > localIdentifier.integerValue) {
+//
+//                            stopping = YES;
+//
+//                        }
+//
+//                    }
+//
+//                }
                 
                 if (metadata != nil && ([([metadata valueForKey:@"read"] ?: @(NO)) boolValue] == NO)) {
                     

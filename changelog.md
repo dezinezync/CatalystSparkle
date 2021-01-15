@@ -4,6 +4,12 @@ This build includes support for Local Syncing. If something breaks, the app cras
 
 Please run "Force Resync" or delete the app and install again before using the first time.
 
+## Build 136
+
+- Fixes directional marking read for A14 and AnX devices. H/T Gui 
+
+- Local Notifications and Safari Reader Mode settings are now persisted after you do a full or partial force-resync. 
+
 ## Build 135 
 
 - Remote Push Notifications for new articles now download and cache the article for immediate use.  

@@ -19,7 +19,6 @@
 
 #import <UserNotifications/UserNotifications.h>
 
-// @TODO: Remove before submitting to production.
 #import "Keychain.h"
 
 #define FEEDS_META_COLLECTION @"feedsMetadata"
@@ -55,6 +54,8 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     
     NSString * _Nullable _inProgressSyncToken;
     ChangeSet * _Nullable _inProgressChangeSet;
+    
+    NSDictionary <NSNumber *, NSDictionary *> * _Nullable _preSyncFeedMetadata;
 }
 
 @property (nonatomic, copy) internalProgressBlock internalSyncBlock;
@@ -449,30 +450,43 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
             NSAssert(key != nil, @"Expected feed to have a feedID.");
 #endif
             
-            NSMutableDictionary *existing = (id)[self metadataForFeed:feed];
+            NSMutableDictionary *existing = nil;
             
-            NSMutableDictionary *metadata = @{@"id": feed.feedID,
-                                              @"url": feed.url,
-                                              @"title": feed.title ?: @"",
-            }.mutableCopy;
-            
-            if (feed.folderID) {
-                metadata[@"folderID"] = feed.folderID;
-            }
-            
-            if (existing != nil) {
+            if (self->_preSyncFeedMetadata != nil && self->_preSyncFeedMetadata[feed.feedID] != nil) {
                 
-                existing = [existing mutableCopy];
+                existing = (id)(self->_preSyncFeedMetadata[feed.feedID]);
                 
-                [existing addEntriesFromDictionary:metadata];
             }
             else {
-                existing = metadata;
+                
+                existing = (id)[self metadataForFeed:feed];
+                
+                NSMutableDictionary *metadata = @{@"id": feed.feedID,
+                                                  @"url": feed.url,
+                                                  @"title": feed.title ?: @"",
+                }.mutableCopy;
+                
+                if (feed.folderID) {
+                    metadata[@"folderID"] = feed.folderID;
+                }
+                
+                if (existing != nil) {
+                    
+                    existing = [existing mutableCopy];
+                    
+                    [existing addEntriesFromDictionary:metadata];
+                }
+                else {
+                    existing = metadata;
+                }
+                
             }
             
             [transaction setObject:feed forKey:key inCollection:LOCAL_FEEDS_COLLECTION withMetadata:existing.copy];
             
         }
+        
+        self->_preSyncFeedMetadata = nil;
         
     }];
     
@@ -774,8 +788,6 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     NSLog(@"databasePath: %@", databasePath);
     
     // Configure custom class mappings for NSCoding.
-    // In a previous version of the app, the "MyTodo" class was named "MyTodoItem".
-    // We renamed the class in a recent version.
     
     [NSKeyedUnarchiver setClass:Feed.class forClassName:@"Feed"];
     [NSKeyedUnarchiver setClass:FeedItem.class forClassName:@"FeedItem"];
@@ -1065,8 +1077,6 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         [_database registerExtension:view withName:DB_BOOKMARKED_VIEW];
         
     }
-    
-    // @TODO: Remove before submitting to production
     
     NSError *error = nil;
     
@@ -2324,13 +2334,13 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     
     /* during a re-sync, we remove all local refs to feeds and folders. */
     
+    [self purgeFeedsForResync];
+    
     [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
        
         [transaction removeAllObjectsInCollection:LOCAL_ARTICLES_FULLTEXT_COLLECTION];
         [transaction removeAllObjectsInCollection:LOCAL_ARTICLES_CONTENT_COLLECTION];
         [transaction removeAllObjectsInCollection:LOCAL_ARTICLES_COLLECTION];
-        [transaction removeAllObjectsInCollection:LOCAL_FEEDS_COLLECTION];
-        [transaction removeAllObjectsInCollection:LOCAL_FOLDERS_COLLECTION];
         [transaction removeAllObjectsInCollection:SYNC_COLLECTION];
         
     }];
@@ -2338,6 +2348,33 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
 }
 
 - (void)purgeFeedsForResync {
+    
+    NSMutableDictionary <NSNumber *, NSDictionary *> *preSyncMetadata = [[NSMutableDictionary alloc] initWithCapacity:ArticlesManager.shared.feeds.count];
+    
+    for (Feed *feed in ArticlesManager.shared.feeds) {
+        
+        NSDictionary * metadata = [self metadataForFeed:feed];
+        
+        if (metadata != nil) {
+            
+            // only store if its push or safari settings are enabled.
+            if ([metadata[kFeedLocalNotifications] boolValue] || [metadata[kFeedSafariReaderMode] boolValue]) {
+                
+                preSyncMetadata[feed.feedID] = metadata;
+                
+            }
+            
+        }
+        
+    }
+    
+    if (preSyncMetadata.allKeys.count) {
+        self->_preSyncFeedMetadata = preSyncMetadata;
+    }
+    
+    ArticlesManager.shared.folders = nil;
+    
+    ArticlesManager.shared.feeds = nil;
     
     [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
        

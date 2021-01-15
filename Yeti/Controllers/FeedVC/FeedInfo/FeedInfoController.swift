@@ -140,10 +140,12 @@ import SDWebImage
             }
             else if (indexPath.row == 1) {
                 
-                cell.label.text = "Push Notifications"
+                let realtime = (self.feed?.isHubSubscribed == true || (self.feed?.rpcCount?.intValue ?? 0) > 2)
+                
+                cell.label.text = realtime ? "Push Notifications" : "Local Notifications"
                 cell.toggle.addTarget(self, action: #selector(didTogglePush(toggle:)), for: .valueChanged)
                 
-                if (self.feed?.isHubSubscribed == true || (self.feed?.rpcCount?.intValue ?? 0) > 2) {
+                if (realtime) {
                     
                     // realtime
                     cell.toggle.setOn(self.feed?.isSubscribed ?? false, animated: false)
@@ -221,13 +223,12 @@ import SDWebImage
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         
         if (section == 0) {
-            let devString = "Toggling Push Notifications (near real-time) has no effect at the moment. However, your preference will be saved. Real-time notifications will continue to work."
             
             let isRealtime = (self.feed?.isHubSubscribed ?? false) || (self.feed?.rpcCount?.intValue ?? 0) > 2;
             
             let mainString = isRealtime ? "This feed supports real-time notifications." : "Notifications for this feed will be near real-time."
             
-            return "\(mainString)\n\n\(devString)"
+            return mainString
             
         }
         else {
