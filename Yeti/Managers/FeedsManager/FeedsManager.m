@@ -4161,6 +4161,10 @@ NSArray <NSString *> * _defaultsKeys;
         
     }
     
+    if (dataRep == nil) {
+        return;
+    }
+    
     if ([dataRep writeToFile:path atomically:YES] == NO) {
         
         NSLog(@"Failed to write data to %@", path);
