@@ -6,6 +6,8 @@ Please run "Force Resync" or delete the app and install again before using the f
 
 ## Build 139 
 
+- Fixed Navigation Bar buttons not appearing in some contexts. 
+
 - Fixes a bug with Local Notifications & Reader Mode preferences would get deleted. 
 
 ## Build 138 

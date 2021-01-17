@@ -53,15 +53,15 @@
     search.accessibilityLabel = @"Search";
 
     // these are assigned in reverse order
-    NSMutableArray *rightItems = @[search].mutableCopy;
+    NSMutableArray *lefItems = @[search].mutableCopy;
     
     if (PrefsManager.sharedInstance.hideBookmarks == NO) {
-        [rightItems addObject:bookmark];
+        [lefItems addObject:bookmark];
     }
     
-    [rightItems addObject:read];
+    [lefItems addObject:read];
     
-    return rightItems;
+    return lefItems;
     
 }
 
@@ -175,8 +175,8 @@
 - (void)setupToolbar:(UITraitCollection *)newCollection {
     
     if (PrefsManager.sharedInstance.useToolbar == NO) {
-        
-        self.navigationItem.rightBarButtonItems = [self.commonNavBarItems arrayByAddingObjectsFromArray:self.leftBarButtonItems];
+        NSArray <UIBarButtonItem *> *items = [self.commonNavBarItems arrayByAddingObjectsFromArray:self.leftBarButtonItems];
+        self.navigationItem.rightBarButtonItems = items;
         self.navigationController.toolbarHidden = YES;
         
     }
