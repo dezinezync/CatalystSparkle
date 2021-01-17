@@ -4,6 +4,10 @@ This build includes support for Local Syncing. If something breaks, the app cras
 
 Please run "Force Resync" or delete the app and install again before using the first time.
 
+## Build 139 
+
+- Fixes a bug with Local Notifications & Reader Mode preferences would get deleted. 
+
 ## Build 138 
 
 - Fixes a crash when writing the widgets data to disk when the app has just been sent to the background.  

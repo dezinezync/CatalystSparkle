@@ -450,39 +450,9 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
             NSAssert(key != nil, @"Expected feed to have a feedID.");
 #endif
             
-            NSMutableDictionary *existing = nil;
+            NSDictionary *metadata = [self _metadataForFeed:feed];
             
-            if (self->_preSyncFeedMetadata != nil && self->_preSyncFeedMetadata[feed.feedID] != nil) {
-                
-                existing = (id)(self->_preSyncFeedMetadata[feed.feedID]);
-                
-            }
-            else {
-                
-                existing = (id)[self metadataForFeed:feed];
-                
-                NSMutableDictionary *metadata = @{@"id": feed.feedID,
-                                                  @"url": feed.url,
-                                                  @"title": feed.title ?: @"",
-                }.mutableCopy;
-                
-                if (feed.folderID) {
-                    metadata[@"folderID"] = feed.folderID;
-                }
-                
-                if (existing != nil) {
-                    
-                    existing = [existing mutableCopy];
-                    
-                    [existing addEntriesFromDictionary:metadata];
-                }
-                else {
-                    existing = metadata;
-                }
-                
-            }
-            
-            [transaction setObject:feed forKey:key inCollection:LOCAL_FEEDS_COLLECTION withMetadata:existing.copy];
+            [transaction setObject:feed forKey:key inCollection:LOCAL_FEEDS_COLLECTION withMetadata:metadata];
             
         }
         
@@ -491,6 +461,44 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     }];
     
     NSLogDebug(@"Updated local cache of feeds");
+    
+}
+
+- (NSDictionary *)_metadataForFeed:(Feed *)feed {
+    
+    NSMutableDictionary *existing = nil;
+    
+    if (self->_preSyncFeedMetadata != nil && self->_preSyncFeedMetadata[feed.feedID] != nil) {
+        
+        existing = (id)(self->_preSyncFeedMetadata[feed.feedID]);
+        
+    }
+    else {
+        
+        existing = (id)[self metadataForFeed:feed];
+        
+        NSMutableDictionary *metadata = @{@"id": feed.feedID,
+                                          @"url": feed.url,
+                                          @"title": feed.title ?: @"",
+        }.mutableCopy;
+        
+        if (feed.folderID) {
+            metadata[@"folderID"] = feed.folderID;
+        }
+        
+        if (existing != nil) {
+            
+            existing = [existing mutableCopy];
+            
+            [existing addEntriesFromDictionary:metadata];
+        }
+        else {
+            existing = metadata;
+        }
+        
+    }
+    
+    return existing.copy;
     
 }
 
@@ -503,6 +511,10 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         metadata = [transaction metadataForKey:feed.feedID.stringValue inCollection:LOCAL_FEEDS_COLLECTION];
         
     }];
+    
+    if (metadata == nil) {
+        metadata = [self _metadataForFeed:feed];
+    }
     
     return metadata;
     
