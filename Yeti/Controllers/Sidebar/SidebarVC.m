@@ -617,7 +617,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             [self.syncProgressView setProgress:progress animated:YES];
             
         }
-        else if (progress >= 0.99f) {
+        else if (progress >= 0.999f) {
             
             [self.syncProgressView setProgress:progress animated:YES];
             
@@ -628,29 +628,35 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             }
             
             if (self->_refreshing) {
+                
+                dispatch_async(MyDBManager.readQueue, ^{
+                    [MyFeedsManager updateBookmarksFromServer];
+                });
+                
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), MyDBManager.readQueue, ^{
+                    [MyDBManager cleanupDatabase];
+                });
+                
+                if (self.mainCoordinator.feedVC != nil
+                    && ([self.mainCoordinator.feedVC isKindOfClass:UnreadVC.class] || [self.mainCoordinator.feedVC isKindOfClass:NSClassFromString(@"TodayVC")])) {
+                    
+                    UnreadVC *instance = (id)self.mainCoordinator.feedVC;
+                    UIRefreshControl *refreshControl = instance.refreshControl;
+                    
+                    if (refreshControl) {
+                        [instance didBeginRefreshing:refreshControl];
+                    }
+                    
+                    [(FeedVC *)instance updateTitleView];
+                    
+                }
+                
                 self->_refreshing = NO;
+                
             }
             
             if ([self.refreshControl isRefreshing]) {
                 [self.refreshControl endRefreshing];
-            }
-            
-            dispatch_async(MyDBManager.readQueue, ^{
-                [MyFeedsManager updateBookmarksFromServer];
-            });
-            
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), MyDBManager.readQueue, ^{
-                [MyDBManager cleanupDatabase];
-            });
-            
-            if (self.mainCoordinator.feedVC != nil
-                && ([self.mainCoordinator.feedVC isKindOfClass:UnreadVC.class] || [self.mainCoordinator.feedVC isKindOfClass:NSClassFromString(@"TodayVC")])) {
-                
-                UnreadVC *instance = (id)self.mainCoordinator.feedVC;
-                UIRefreshControl *refreshControl = instance.refreshControl;
-                
-                [instance didBeginRefreshing:refreshControl];
-                
             }
             
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{

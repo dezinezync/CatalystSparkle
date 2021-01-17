@@ -155,9 +155,15 @@
                 
             }];
             
+            UIAction *feedInfo = [UIAction actionWithTitle:@"Feed Info" image:[UIImage systemImageNamed:@"info.circle.fill"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+               
+                [self.mainCoordinator showFeedInfo:feed from:self];
+                
+            }];
+            
             delete.attributes = UIMenuElementAttributesDestructive;
             
-            NSArray <UIAction *> *actions = @[(UIAction *)share, rename, move, delete];
+            NSArray <UIAction *> *actions = @[(UIAction *)share, rename, feedInfo, move, delete];
             
             UIMenu *menu = [UIMenu menuWithTitle:@"Feed Menu" children:actions];
             
