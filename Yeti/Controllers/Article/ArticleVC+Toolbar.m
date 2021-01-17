@@ -22,12 +22,17 @@
 #import "CustomizeVC.h"
 
 #import "YetiConstants.h"
+#import "UITextField+CursorPosition.h"
 
 #import <DZAppdelegate/UIApplication+KeyWindow.h>
 
 @implementation ArticleVC (Toolbar)
 
 - (NSArray <UIBarButtonItem *> *)leftBarButtonItems {
+    
+    if (self.noAuth) {
+        return @[];
+    }
     
     UIImage * readImage = [UIImage systemImageNamed:@"smallcircle.fill.circle"],
             * bookmarkImage = [UIImage systemImageNamed:(self.item.isBookmarked ? @"bookmark.fill" : @"bookmark")],
@@ -48,19 +53,23 @@
     search.accessibilityLabel = @"Search";
 
     // these are assigned in reverse order
-    NSMutableArray *rightItems = @[search].mutableCopy;
+    NSMutableArray *lefItems = @[search].mutableCopy;
     
     if (PrefsManager.sharedInstance.hideBookmarks == NO) {
-        [rightItems addObject:bookmark];
+        [lefItems addObject:bookmark];
     }
     
-    [rightItems addObject:read];
+    [lefItems addObject:read];
     
-    return rightItems;
+    return lefItems;
     
 }
 
 - (NSArray <UIBarButtonItem *> *)rightBarButtonItems {
+    
+    if (self.noAuth) {
+        return @[];
+    }
     
     if (self.providerDelegate == nil) {
         return @[];
@@ -93,6 +102,10 @@
 }
 
 - (NSArray <UIBarButtonItem *> *)commonNavBarItems {
+    
+    if (self.noAuth) {
+        return @[];
+    }
     
     UIImage * shareImage = [UIImage systemImageNamed:@"square.and.arrow.up"],
             * browserImage = [UIImage systemImageNamed:@"safari"],
@@ -159,11 +172,11 @@
 }
 
 
-- (void)setupToolbar:(UITraitCollection *)newCollection
-{
+- (void)setupToolbar:(UITraitCollection *)newCollection {
+    
     if (PrefsManager.sharedInstance.useToolbar == NO) {
-        
-        self.navigationItem.rightBarButtonItems = [self.commonNavBarItems arrayByAddingObjectsFromArray:self.leftBarButtonItems];
+        NSArray <UIBarButtonItem *> *items = [self.commonNavBarItems arrayByAddingObjectsFromArray:self.leftBarButtonItems];
+        self.navigationItem.rightBarButtonItems = items;
         self.navigationController.toolbarHidden = YES;
         
     }
@@ -186,6 +199,13 @@
 #pragma mark - Actions
 
 - (void)didTapClose {
+    
+    if (self.searchBar.isFirstResponder) {
+        
+        self.searchBar.searchTextField.cursorPosition = 0;
+        
+        return;
+    }
     
     [self.mainCoordinator showEmptyVC];
     
@@ -293,13 +313,6 @@
             }
         };
         
-//        if (self.item.isBookmarked) {
-//            [self.bookmarksManager addBookmark:self.item completion:bookmarkCallback];
-//        }
-//        else {
-//            [self.bookmarksManager removeBookmark:self.item completion:bookmarkCallback];
-//        }
-        
         bookmarkCallback(YES);
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -365,6 +378,13 @@
 
 - (void)openInBrowser {
     
+    if (self.searchBar.isFirstResponder) {
+        
+        self.searchBar.searchTextField.cursorPosition = self.searchBar.text != nil ? self.searchBar.text.length : 0;
+        
+        return;
+    }
+    
     NSURL *URL = formattedURL(@"yeti://external?link=%@", self.item.articleURL);
     
 #if TARGET_OS_MACCATALYST
@@ -373,6 +393,16 @@
         URL = formattedURL(@"%@&shift=1", URL.absoluteString);
         
     }
+#else
+    Feed *feed = [ArticlesManager.shared feedForID:self.currentArticle.feedID];
+    NSDictionary *metadata = [MyDBManager metadataForFeed:feed];
+    
+    if (metadata && [(metadata[kFeedSafariReaderMode] ?: @(NO)) boolValue] == YES) {
+        
+        URL = formattedURL(@"%@&ytreader=1", URL.absoluteString);
+        
+    }
+    
 #endif
     [[UIApplication sharedApplication] openURL:URL options:@{} completionHandler:nil];
     
@@ -417,6 +447,9 @@
     _showSearchBar = NO;
     [self.searchBar resignFirstResponder];
     [self.searchBar setText:nil];
+    
+    _searchingRects = nil;
+    [self removeSearchResultViewFromSuperview];
     
     [self.searchView removeFromSuperview];
     
@@ -625,10 +658,9 @@
 
 #pragma mark - <UISearchBarDelegate>
 
-- (BOOL)searchBarShouldEndEditing:(UISearchBar *)searchBar
-{
-    _searchingRects = nil;
-    [self removeSearchResultViewFromSuperview];
+- (BOOL)searchBarShouldEndEditing:(UISearchBar *)searchBar {
+//    _searchingRects = nil;
+//    [self removeSearchResultViewFromSuperview];
     return YES;
 }
 

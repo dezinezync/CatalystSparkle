@@ -15,12 +15,15 @@ NS_ASSUME_NONNULL_BEGIN
 typedef NSArray * _Nonnull(^preProcessorBlock)(NSArray * _Nonnull);
 typedef void (^genericSuccessBlock)(void);
 typedef void (^genericErrorBlock)(NSError *error);
+typedef void (^dbFetchBlock)(void(^ completion)(NSArray * _Nullable items));
 
 @interface PagingManager : NSObject <NSSecureCoding>
 
 - (instancetype)initWithPath:(NSString * _Nonnull)path queryParams:(NSDictionary * _Nonnull)queryParams itemsKey:(NSString * _Nullable)itemsKey;
 
 - (instancetype)initWithPath:(NSString * _Nonnull)path queryParams:(NSDictionary * _Nonnull)queryParams body:(NSDictionary * _Nullable)body itemsKey:(NSString * _Nonnull)itemsKey method:(NSString * _Nonnull)method;
+
+@property (nonatomic, assign) BOOL fromDB;
 
 /// The base path to request the data on
 @property (nonatomic, copy, readonly) NSString *path;
@@ -32,7 +35,7 @@ typedef void (^genericErrorBlock)(NSError *error);
 @property (nonatomic, copy, readonly) NSString *itemsKey;
 
 /// The latest page that has been loaded.
-@property (nonatomic, assign, readonly) NSInteger page;
+@property (atomic, assign, readonly) NSInteger page;
 
 /// The total number of items available on this resrouce.
 @property (nonatomic, assign, readonly) NSInteger total;
@@ -51,6 +54,8 @@ typedef void (^genericErrorBlock)(NSError *error);
 
 /// The error callback to call when an network or misc. error occurs.
 @property (nonatomic, copy) genericErrorBlock _Nullable errorCB;
+
+@property (nonatomic, copy) dbFetchBlock _Nullable dbFetchingCB;
 
 - (void)loadNextPage;
 

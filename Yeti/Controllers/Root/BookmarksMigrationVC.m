@@ -121,7 +121,7 @@
     
     _migrating = YES;
     
-    NSArray <FeedItem *> * oldBookmarks = ArticlesManager.shared.bookmarks;
+    NSArray <FeedItem *> * oldBookmarks = @[];
     
     if (oldBookmarks.count == 0) {
         
@@ -143,8 +143,6 @@
     }];
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        
-        [MyFeedsManager _removeAllLocalBookmarks];
         
         self.label.text = @"Migration Completed";
         

@@ -8,6 +8,7 @@
 
 #import "FeedVC+Actions.h"
 #import "ArticleVC.h"
+#import "Elytra-Swift.h"
 
 #import <DZKit/AlertManager.h>
 #import "Keychain.h"
@@ -59,7 +60,6 @@
         
         ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
         vc.providerDelegate = (id<ArticleProvider>)self;
-        vc.bookmarksManager = self.bookmarksManager;
         
         [self _showArticleVC:vc];
         
@@ -168,39 +168,92 @@
     BOOL showPrompt = SharedPrefs.showMarkReadPrompts;
     
     void(^markReadInline)(void) = ^(void) {
-        [MyFeedsManager markFeedRead:self.feed success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        [MyDBManager.uiConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+            
+            YapDatabaseFilteredViewTransaction *txn = [transaction ext:self.filteringViewName];
+            
+            if (txn == nil) {
+                return;
+            }
+            
+            NSUInteger capacity = [txn numberOfItemsInGroup:GROUP_ARTICLES];
+            
+            NSMutableSet <FeedItem *> *items = [NSMutableSet setWithCapacity:capacity];
+            
+            // get all the unread items from this view
+            [txn enumerateKeysInGroup:GROUP_ARTICLES usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, NSUInteger index, BOOL * _Nonnull stop) {
+                
+                NSDictionary *metadata = [transaction metadataForKey:key inCollection:collection];
+                
+                if (metadata == nil) {
+                    return;
+                }
+                
+                if ([([metadata valueForKey:@"read"] ?: @(NO)) boolValue] == NO) {
+                    
+                    FeedItem *item = [transaction objectForKey:key inCollection:collection];
+                    
+                    if (item != nil) {
+                        [items addObject:item];
+                    }
+                    
+                }
+                
+            }];
+            
+            NSLogDebug(@"Marking as read %@", @(items.count));
+            
+            [MyFeedsManager articles:items.allObjects markAsRead:YES];
             
             dispatch_async(dispatch_get_main_queue(), ^{
+
                 if (self != nil && [self tableView] != nil) {
                     // if we're in the unread section
                     if (self.type == FeedVCTypeUnread || self.sortingOption == YTSortUnreadAsc || self.sortingOption == YTSortUnreadDesc) {
                         
+                        if ([self respondsToSelector:@selector(didFinishAllReadActionSuccessfully:)]) {
+                            [self didFinishAllReadActionSuccessfully:items.count];
+                        }
+
                         self.controllerState = StateLoading;
-                        
+
                         NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
                         [snapshot appendSectionsWithIdentifiers:@[@0]];
-                        
+
                         [self.DS applySnapshot:snapshot animatingDifferences:YES];
-                        
+
                         self.controllerState = StateLoaded;
-                        
+
                     }
                     else {
+                        
                         [self _markVisibleRowsRead];
-                        [self _didFinishAllReadActionSuccessfully];
+                        
+                        if ([self respondsToSelector:@selector(didFinishAllReadActionSuccessfully:)]) {
+                            [self didFinishAllReadActionSuccessfully:items.count];
+                        }
+                        
                     }
                 }
+                
             });
             
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            [AlertManager showGenericAlertWithTitle:@"Error Marking all Read" message:error.localizedDescription];
-            
         }];
+        
+//        [MyFeedsManager markFeedRead:self.feed success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//
+//        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//            [AlertManager showGenericAlertWithTitle:@"Error Marking all Read" message:error.localizedDescription];
+//
+//        }];
     };
     
     if (showPrompt) {
-        UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:@"Mark all Articles as read including back-dated articles?" preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:@"Mark all Articles as read?" preferredStyle:UIAlertControllerStyleAlert];
         
         [avc addAction:[UIAlertAction actionWithTitle:@"Mark all Read" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             
@@ -211,6 +264,7 @@
         [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
         
         [self presentAllReadController:avc fromSender:sender];
+        
     }
     else {
         [self.feedbackGenerator selectionChanged];
@@ -220,12 +274,9 @@
     }
 }
 
-- (void)_didFinishAllReadActionSuccessfully {
+- (void)didFinishAllReadActionSuccessfully:(NSUInteger)count {
     
-    if (self.feed != nil && self.feed.unread.unsignedIntegerValue > 0) {
-        MyFeedsManager.totalUnread -= self.feed.unread.unsignedIntegerValue;
-        self.feed.unread = @(0);
-    }
+    
     
 }
 
@@ -281,7 +332,7 @@
             sender.enabled = YES;
         });
         
-        [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:UNAuthorizationOptionBadge|UNAuthorizationOptionAlert|UNAuthorizationOptionSound completionHandler:^(BOOL granted, NSError * _Nullable error) {
+        [self.mainCoordinator registerForNotifications:^(BOOL granted, NSError * _Nullable error) {
             
             if (error) {
                 NSLog(@"Error authorizing for push notifications: %@",error);
@@ -297,6 +348,9 @@
                     [UIApplication.sharedApplication registerForRemoteNotifications];
                 });
                 
+#if TARGET_OS_SIMULATOR
+                [self subscribedToFeed:self.feed];
+#endif
                 [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(subscribedToFeed:) name:SubscribedToFeed object:nil];
             }
             
@@ -316,7 +370,7 @@
     }
     
     // add subscription
-    [MyFeedsManager subsribe:self.feed success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [MyFeedsManager subscribe:self.feed success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         strongify(self);
         
@@ -395,8 +449,11 @@
 // this is push notifications
 - (void)subscribedToFeed:(NSNotification *)note {
     
+#if TARGET_OS_SIMULATOR
+    Feed *obj = (id)note;
+#else
     Feed *obj = note.object;
-    
+#endif
     if (!obj)
         return;
     
@@ -414,7 +471,7 @@
         
         self.feed.subscribed = YES;
         
-        UIBarButtonItem *sender = [self.navigationItem.rightBarButtonItems lastObject];
+        UIBarButtonItem *sender = [self.navigationItem.rightBarButtonItems objectAtIndex:(self.navigationItem.rightBarButtonItems.count - 2)];
         
         sender.image = [UIImage systemImageNamed:@"bell.fill"];
         sender.accessibilityValue = @"Unsubscribe from notifications";
@@ -429,25 +486,38 @@
 //}
 
 - (void)presentAllReadController:(UIAlertController *)avc fromSender:(id)sender {
-#if !TARGET_OS_MACCATALYST
-    if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad || self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+
+    if (self.splitViewController.traitCollection.userInterfaceIdiom != UIUserInterfaceIdiomPhone) {
         
         UIPopoverPresentationController *pvc = avc.popoverPresentationController;
-        
+#if TARGET_OS_MACCATALYST
+        if ([sender isKindOfClass:NSToolbarItem.class]) {
+            
+            pvc.sourceView = self.view;
+            CGRect frame = self.view.frame;
+            
+//            frame.origin.x -= [avc preferredContentSize].width;
+            pvc.sourceRect = frame;
+            
+        }
+        else if ([sender isKindOfClass:UIGestureRecognizer.class]) {
+#else
         if ([sender isKindOfClass:UIGestureRecognizer.class]) {
+#endif
             UIView *view = [(UITapGestureRecognizer *)sender view];
             pvc.sourceView = self.view;
             CGRect frame = [view convertRect:view.frame toView:self.view];
             
             frame.origin.x -= [avc preferredContentSize].width;
             pvc.sourceRect = frame;
+            
         }
         else {
             pvc.barButtonItem = sender;
         }
         
     }
-#endif
+
     [self presentViewController:avc animated:YES completion:nil];
     
 }
@@ -466,7 +536,7 @@
 
 - (void)markAllDirectional:(NSInteger)direction indexPath:(NSIndexPath *)indexPath {
     
-    YetiSortOption sorting = self.sortingOption;
+    YetiSortOption sorting = self.sortingOption ?: SharedPrefs.sortingOption;
     
     NSString *feed = nil;
     
@@ -490,103 +560,187 @@
         return;
     }
     
-    [MyFeedsManager markRead:feed articleID:item.identifier direction:direction sortType:sorting success:^(NSNumber * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    BOOL isDescending = [sorting isEqualToString:YTSortAllDesc] || [sorting isEqualToString:YTSortUnreadDesc];
+    isDescending = (direction == 1 && isDescending) || (direction == 2 && isDescending == NO);
+    
+    weakify(self);
+    
+    dispatch_async(MyDBManager.readQueue, ^{
         
-        if (responseObject.integerValue == 0) {
-            return;
-        }
-        
-        NSMutableArray <FeedItem *> *affectedIndices = @[].mutableCopy;
-        
-        if (item.isRead == NO) {
+        [MyDBManager.uiConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
             
-            item.read = YES;
+            NSString *localIdentifier = item.identifier.stringValue;
             
-            [affectedIndices addObject:item];
+            YapDatabaseFilteredViewTransaction *tnx = [transaction ext:self.filteringViewName];
             
-        }
-        
-        BOOL isDescending = [sorting isEqualToString:YTSortAllDesc] || [sorting isEqualToString:YTSortUnreadDesc];
-        
-        if ((direction == 1 && isDescending) || (direction == 2 && isDescending == NO)) {
+            NSEnumerationOptions options = kNilOptions;
             
-            // mark all items above this item
-            for (NSInteger idx = indexPath.row; idx > 0; idx--) {
+            if (isDescending == NO) {
+
+                // get all items from and after this index which are unread.
+                // enumerating backwards on our forward index will have the same effect.
+                options = NSEnumerationReverse;
+
+            }
+            
+            NSMutableArray <id> *unreads = @[].mutableCopy;
+            
+            [tnx enumerateKeysAndMetadataInGroup:GROUP_ARTICLES withOptions:options range:NSMakeRange(0, MyFeedsManager.totalUnread) usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, NSDictionary *  _Nullable metadata, NSUInteger index, BOOL * _Nonnull stop) {
                 
-                NSInteger row = indexPath.row - idx;
+                BOOL stopping = NO;
                 
-                if (row < 0) {
-                    continue;
-                }
-                
-                NSIndexPath *indexPathNew = [NSIndexPath indexPathForRow:row inSection:indexPath.section];
-                
-                FeedItem *newItem = [self.DS itemIdentifierForIndexPath:indexPathNew];
-                
-                if (newItem && newItem.isRead == NO) {
+                // this triggers when the actioned article
+                // is unread
+                if ([key isEqualToString:localIdentifier] && [[metadata valueForKey:@"read"] boolValue] == YES) {
                     
-                    newItem.read = YES;
-                    
-                    [affectedIndices addObject:newItem];
+                    stopping = YES;
                     
                 }
                 
+                if (stopping == NO) {
+                    // this is triggered when the actioned
+                    // article is read and is used as an anchor
+                    if (isDescending) {
+
+                        if (localIdentifier.integerValue > key.integerValue) {
+
+                            stopping = YES;
+
+                        }
+
+                    }
+                    else {
+
+                        if (key.integerValue > localIdentifier.integerValue) {
+
+                            stopping = YES;
+
+                        }
+
+                    }
+
+                }
+                
+                if (metadata != nil && ([([metadata valueForKey:@"read"] ?: @(NO)) boolValue] == NO)) {
+                    
+                    [unreads addObject:@(key.integerValue)];
+                    [unreads addObject:metadata];
+                    
+                }
+                
+                *stop = stopping;
+                
+            }];
+            
+            NSLogDebug(@"IDs: %@", unreads);
+            
+            if (unreads.count == 0) {
+                return;
+            }
+            
+            NSArray <NSNumber *> *identifiers = [unreads rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
+                return [obj isKindOfClass:NSNumber.class];
+            }];
+            
+            [MyFeedsManager markArticlesAsRead:identifiers];
+
+            dispatch_async(MyDBManager.readQueue, ^{
+
+                [MyDBManager.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+
+                    for (NSUInteger idx = 0; idx < unreads.count; idx+=2) {
+
+                        NSNumber *identifier = unreads[idx];
+                        NSMutableDictionary *metadata = [unreads[idx + 1] mutableCopy];
+
+                        id feedID = [metadata valueForKey:@"feedID"];
+                        NSString *collection = [NSString stringWithFormat:@"%@:%@", LOCAL_ARTICLES_COLLECTION, feedID];
+
+                        FeedItem * object = [transaction objectForKey:identifier.stringValue inCollection:collection];
+
+                        object.read = YES;
+                        [metadata setValue:@(YES) forKey:@"read"];
+
+                        [transaction setObject:object forKey:identifier.stringValue inCollection:collection withMetadata:metadata];
+
+                    }
+
+                    strongify(self);
+
+                    [self reloadCellsFrom:indexPath direction:(options == NSEnumerationReverse)];
+
+                }];
+
+            });
+            
+        }];
+        
+    });
+
+}
+    
+- (void)reloadCellsFrom:(NSIndexPath *)indexPath direction:(BOOL)down {
+ 
+    NSDiffableDataSourceSnapshot *snapshot = self.DS.snapshot;
+    
+    NSMutableArray <FeedItem *> * identifiers = [NSMutableArray arrayWithCapacity:snapshot.numberOfItems];
+    
+    if (down) {
+        
+        // all current cells till end of dataset
+        for (NSUInteger idx = indexPath.row; idx < snapshot.numberOfItems; idx++) {
+            
+            NSIndexPath *ip = [NSIndexPath indexPathForRow:idx inSection:indexPath.section];
+            
+            FeedItem * object = [self.DS itemIdentifierForIndexPath:ip];
+            
+            if (object != nil && object.isRead == NO) {
+                object.read = YES;
+                [identifiers addObject:object];
             }
             
         }
-        else {
+        
+    }
+    else {
+        
+        // current upto the 0th index
+        for (NSUInteger idx = 0; idx <= indexPath.row; idx++) {
             
-            // mark all items below this item
-            id lastItem = [[[self.DS snapshot] itemIdentifiers] lastObject];
-            NSIndexPath *lastItemIndexPath = [self.DS indexPathForItemIdentifier:lastItem];
+            NSIndexPath *ip = [NSIndexPath indexPathForRow:idx inSection:indexPath.section];
             
-            for (NSInteger idx = 1; idx <= lastItemIndexPath.row; idx++) {
-                
-                NSInteger row = indexPath.row + idx;
-                
-                if (row > lastItemIndexPath.row) {
-                    continue;
-                }
-                
-                NSIndexPath *indexPathNew = [NSIndexPath indexPathForRow:row inSection:indexPath.section];
-                
-                FeedItem *newItem = [self.DS itemIdentifierForIndexPath:indexPathNew];
-                
-                if (newItem && newItem.isRead == NO) {
-                    
-                    newItem.read = YES;
-                    
-                    [affectedIndices addObject:newItem];
-                    
-                }
-                
+            FeedItem * object = [self.DS itemIdentifierForIndexPath:ip];
+            object.read = YES;
+            
+            if (object != nil && object.isRead == NO) {
+                object.read = YES;
             }
             
+            [identifiers addObject:object];
+            
         }
         
-        NSLogDebug(@"Affected indices: %@", affectedIndices);
-        
-        if (affectedIndices.count == 0) {
-            return;
-        }
-        
-        NSDiffableDataSourceSnapshot *snapshot = [self.DS snapshot];
-        
-        [snapshot reloadItemsWithIdentifiers:affectedIndices];
-        
-        [self.DS applySnapshot:snapshot animatingDifferences:YES];
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-       
-        [AlertManager showGenericAlertWithTitle:@"Error Marking Read" message:error.localizedDescription fromVC:self];
-        
-    }];
+    }
+    
+    [snapshot reloadItemsWithIdentifiers:identifiers];
+    
+    [self.DS applySnapshot:snapshot animatingDifferences:YES];
     
 }
 
 - (void)didTapBack {
     
     [self.navigationController popToRootViewControllerAnimated:YES];
+    
+}
+
+- (void)didTapTitleView {
+    
+    FeedInfoController *instance = [[FeedInfoController alloc] initWithFeed:self.feed];
+    
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:instance];
+    
+    [self presentViewController:nav animated:YES completion:nil];
     
 }
 

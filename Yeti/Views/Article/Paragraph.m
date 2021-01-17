@@ -16,9 +16,31 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <DZAppdelegate/UIApplication+KeyWindow.h>
 
+@implementation Link
+
++ (instancetype)withURL:(NSURL *)url location:(NSUInteger)location length:(NSUInteger)length {
+    
+    Link *instance = [Link new];
+    instance.url = url;
+    instance.location = location;
+    instance.length = length;
+    
+    return instance;
+    
+}
+
+- (NSUInteger)hash {
+    
+    return self.url.hash + self.location + self.length;
+    
+}
+
+@end
+
 @interface Paragraph () <UIGestureRecognizerDelegate>
 
 @property (nonatomic, copy) NSAttributedString *cachedAttributedText;
+@property (nonatomic, strong, readwrite) NSMutableSet *links;
 
 @end
 
@@ -133,6 +155,8 @@ static NSParagraphStyle * _paragraphStyle = nil;
         
         self.textContainer.widthTracksTextView = YES;
         self.textContainer.heightTracksTextView = YES;
+        
+        self.links = [NSMutableSet new];
         
 //        [self updateStyle:nil];
     }
@@ -260,6 +284,10 @@ static NSParagraphStyle * _paragraphStyle = nil;
                     range.range = NSMakeRange(location, attrs.length - location);
                 }
                 
+                if (range.range.length > NSNotFound) {
+                    range.range = NSMakeRange(location, 0);
+                }
+                
                 [attrs enumerateAttribute:NSFontAttributeName inRange:range.range options:kNilOptions usingBlock:^(UIFont *  _Nullable value, NSRange range, BOOL * _Nonnull stop) {
                    
                     if ([value.description containsString:@"bold"]) {
@@ -287,10 +315,19 @@ static NSParagraphStyle * _paragraphStyle = nil;
                 [dict setObject:@(-6) forKey:NSBaselineOffsetAttributeName];
             }
             else if ([range.element isEqualToString:@"anchor"] && range.url) {
+                
                 NSURL *URL = [NSURL URLWithString:range.url];
+                
                 if (URL) {
                     [dict setObject:URL forKey:NSLinkAttributeName];
                 }
+                
+                Link *link = [Link withURL:URL location:range.range.location length:range.range.length];
+                
+                if ([self.links containsObject:link] == NO) {
+                    [self.links addObject:link];
+                }
+                
             }
             else if ([range.element isEqualToString:@"mark"]) {
                 [dict setObject:[self.tintColor colorWithAlphaComponent:0.35f] forKey:NSBackgroundColorAttributeName];

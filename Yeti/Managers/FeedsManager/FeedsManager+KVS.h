@@ -8,14 +8,16 @@
 
 #import "FeedsManager.h"
 
-@interface FeedsManager (KVS)
+// Key-Value Sync
+
+@interface FeedsManager (KVS) 
 
 - (void)article:(FeedItem * _Nonnull)item markAsRead:(BOOL)read;
 
 - (void)articles:(NSArray <FeedItem *> * _Nonnull)items markAsRead:(BOOL)read;
 
-- (void)article:(FeedItem * _Nonnull)item markAsBookmarked:(BOOL)bookmarked success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+- (void)markArticlesAsRead:(NSArray <NSNumber *> * _Nonnull)identifiers;
 
-- (void)_removeAllLocalBookmarks;
+- (void)article:(FeedItem * _Nonnull)item markAsBookmarked:(BOOL)bookmarked success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 @end

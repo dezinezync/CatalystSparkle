@@ -218,7 +218,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
 #if !TARGET_OS_MACCATALYST
     self.navigationController.navigationBar.prefersLargeTitles = YES;
-    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
+    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
     
     if (SharedPrefs.useToolbar) {
         
@@ -232,6 +232,12 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     }
     
 #endif
+    
+    if (MyFeedsManager.additionalFeedsToSync != nil && MyFeedsManager.additionalFeedsToSync.count > 0) {
+        
+        [MyDBManager fetchNewArticlesFor:MyFeedsManager.additionalFeedsToSync.allObjects since:@"new"];
+        
+    }
     
 }
 
@@ -428,6 +434,26 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
                 
                 NSArray <Feed *> *feeds = [folder.feeds.allObjects sortedArrayUsingDescriptors:@[alphaSort]];
                 
+                if (feeds.count < folder.feedIDs.count) {
+                    
+                    NSPointerArray *pointers = [NSPointerArray weakObjectsPointerArray];
+                    
+                    for (NSNumber *feedID in folder.feedIDs.allObjects) {
+                        
+                        Feed *feed = [ArticlesManager.shared feedForID:feedID];
+                        
+                        if (feed != nil) {
+                            [pointers addPointer:(__bridge void *)feed];
+                        }
+                        
+                    }
+                    
+                    folder.feeds = pointers;
+                    
+                    feeds = [folder.feeds.allObjects sortedArrayUsingDescriptors:@[alphaSort]];
+                    
+                }
+                
                 [foldersSnapshot appendItems:feeds intoParentItem:folder];
                 
                 if (sectionSnapshot != nil && sectionSnapshot.items.count) {
@@ -555,7 +581,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     if (SharedPrefs.hideBookmarks == NO) {
         
-        [_bookmarksManager addObserver:self name:BookmarksDidUpdateNotification callback:^{
+        [NSNotificationCenter.defaultCenter addObserverForName:BookmarksDidUpdate object:nil queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification * _Nonnull note) {
             
             [MyFeedsManager updateSharedUnreadCounters];
             
@@ -577,6 +603,8 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     MyDBManager.syncProgressBlock = ^(CGFloat progress) {
         
+        strongify(self);
+        
         NSLogDebug(@"Sync Progress: %@", @(progress));
         
         if (progress == 0.f) {
@@ -589,11 +617,15 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             [self.syncProgressView setProgress:progress animated:YES];
             
         }
-        else if (progress >= 0.95f) {
+        else if (progress >= 0.99f) {
             
             [self.syncProgressView setProgress:progress animated:YES];
             
             self.progressLabel.text = @"Syncing Complete.";
+            
+            if (MyFeedsManager.additionalFeedsToSync != nil) {
+                MyFeedsManager.additionalFeedsToSync = nil;
+            }
             
             if (self->_refreshing) {
                 self->_refreshing = NO;
@@ -602,6 +634,14 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             if ([self.refreshControl isRefreshing]) {
                 [self.refreshControl endRefreshing];
             }
+            
+            dispatch_async(MyDBManager.readQueue, ^{
+                [MyFeedsManager updateBookmarksFromServer];
+            });
+            
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), MyDBManager.readQueue, ^{
+                [MyDBManager cleanupDatabase];
+            });
             
             if (self.mainCoordinator.feedVC != nil
                 && ([self.mainCoordinator.feedVC isKindOfClass:UnreadVC.class] || [self.mainCoordinator.feedVC isKindOfClass:NSClassFromString(@"TodayVC")])) {
@@ -616,6 +656,8 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 
                 [self.navigationController setToolbarHidden:YES animated:YES];
+                
+//                [self.mainCoordinator registerForNotifications:nil];
                 
             });
             
@@ -936,6 +978,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     if ([item isKindOfClass:Folder.class] == YES) {
         
+        [self.mainCoordinator showFolderFeed:item];
         
         return;
     }
@@ -970,9 +1013,9 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     if (self->_refreshing) {
         return;
     }
-    
+
     self->_fetchingCounters = NO;
-    
+
     [self sync];
     
 }
@@ -1001,8 +1044,16 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         
         [MyFeedsManager getFeedsWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
+            if (self == nil) {
+                return;
+            }
+            
             if (self->_needsUpdateOfStructs) {
                 self->_needsUpdateOfStructs = NO;
+            }
+            
+            if (self.backgroundFetchHandler != nil) {
+                self.backgroundFetchHandler(UIBackgroundFetchResultNewData);
             }
             
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -1016,6 +1067,10 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             });
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            if (self.backgroundFetchHandler != nil) {
+                self.backgroundFetchHandler(UIBackgroundFetchResultFailed);
+            }
             
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 
@@ -1043,6 +1098,12 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         return;
     }
     
+    if (self.backgroundFetchHandler != nil) {
+        // we only need to update feeds. 
+        self.backgroundFetchHandler = nil;
+        return;
+    }
+    
     if ([self.refreshControl isRefreshing] == NO) {
 
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -1055,7 +1116,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     _refreshing = YES;
     
-    [self fetchLatestCounters];
+//    [self fetchLatestCounters];
     [self updateSharedData];
     
     [MyDBManager setValue:@(NO) forKey:@"syncSetup"];
@@ -1142,7 +1203,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     weakify(self);
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_async(MyDBManager.readQueue, ^{
         
         strongify(self);
        
@@ -1154,11 +1215,16 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
 
 - (void)updateSharedUnreadsData {
     
+    if (NSThread.isMainThread == NO) {
+        [self performSelectorOnMainThread:@selector(updateSharedUnreadsData) withObject:nil waitUntilDone:NO];
+        return;
+    }
+    
     NSTimeInterval interval = 0;
     
     if (self.unreadWidgetsTimer != nil) {
         
-        interval = 5;
+        interval = 2;
         
         [self.unreadWidgetsTimer invalidate];
         
@@ -1180,9 +1246,19 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
 
 - (void)_updateSharedUnreadsData {
     
-    [MyFeedsManager getUnreadForPage:1 limit:6 sorting:YTSortUnreadDesc success:^(NSArray <FeedItem *> * items, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [MyDBManager.uiConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
         
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        YapDatabaseAutoViewTransaction *txn = [transaction ext:UNREADS_FEED_EXT];
+        
+        NSMutableArray <FeedItem *> *items = [NSMutableArray arrayWithCapacity:6];
+        
+        [txn enumerateKeysAndObjectsInGroup:GROUP_ARTICLES withOptions:kNilOptions range:NSMakeRange(0, 10) usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nonnull object, NSUInteger index, BOOL * _Nonnull stop) {
+            
+            [items addObject:object];
+            
+        }];
+        
+        dispatch_async(MyDBManager.readQueue, ^{
            
             NSMutableArray <NSMutableDictionary *> *list = [NSMutableArray arrayWithCapacity:items.count];
             
@@ -1226,7 +1302,12 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
                 
                 NSString *title = item.articleTitle;
                 NSNumber *date = @(item.timestamp.timeIntervalSince1970);
-                NSString *author = item.author ?: @"";
+                
+                if (item.author != nil && [item.author isKindOfClass:NSDictionary.class]) {
+                    item.author = [item.author valueForKey:@"name"];
+                }
+                
+                NSString *author = [(item.author ?: @"") stringByStrippingHTML];
                 NSString *blog = item.blogTitle;
                 NSString *imageURL = item.coverImage;
                 NSNumber *identifier = item.identifier;
@@ -1243,7 +1324,11 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
                     blog = @"";
                 }
                 
-                if ((title == nil || [title isBlank]) && item.content != nil && item.content.count > 0) {
+                if ((title == nil || [title isBlank])) {
+                    
+                    if (item.content == nil || item.content.count == 0) {
+                        item.content = [MyDBManager contentForArticle:item.identifier];
+                    }
                     
                     NSString * titleContent = [item textFromContent];
                     
@@ -1278,16 +1363,17 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
                 
             }
             
+            [list sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"date" ascending:NO]]];
+            
             NSDictionary *data = @{@"entries": list, @"date": @([NSDate.date timeIntervalSince1970])};
             
             [MyFeedsManager writeToSharedFile:@"articles.json" data:data];
             
             [WidgetManager reloadTimelineWithName:@"UnreadsWidget"];
-
             
         });
         
-    } error:nil];
+    }];
     
 }
 
@@ -1349,6 +1435,18 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         
     }
     
+    NSNumber *selectedFolder = [sidebar valueForKey:@"selectedFolder"];
+    
+    if (selectedFolder != nil) {
+        
+        Folder *item = [ArticlesManager.shared folderForID:selectedFolder];
+        
+        if (item != nil) {
+            indexPath = [self.DS indexPathForItemIdentifier:(id)item];
+        }
+        
+    }
+    
     if (indexPath != nil) {
         
         weakify(self);
@@ -1403,6 +1501,9 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             
             if ([item isKindOfClass:CustomFeed.class]) {
                 [sidebar setObject:@([(CustomFeed *)item feedType]) forKey:@"selectedCustom"];
+            }
+            else if ([item isKindOfClass:Folder.class]) {
+                [sidebar setObject:item.folderID forKey:@"selectedFolder"];
             }
             else {
                 [sidebar setObject:item.feedID forKey:@"selectedItem"];

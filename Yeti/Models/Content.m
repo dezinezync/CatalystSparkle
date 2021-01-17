@@ -55,7 +55,7 @@
         self.content = [decoder decodeObjectOfClass:[NSString class] forKey:@"content"];
         self.ranges = [decoder decodeObjectOfClasses:[NSSet setWithObjects:NSArray.class, Range.class, nil] forKey:@"ranges"];
         self.type = [decoder decodeObjectOfClass:[NSString class] forKey:@"type"];
-        self.identifier = [decoder decodeObjectOfClass:[NSString class] forKey:@"identifier"];
+        self.identifier = [decoder decodeObjectOfClasses:[NSSet setWithObjects:NSArray.class, NSString.class, nil] forKey:@"identifier"];
         self.alt = [decoder decodeObjectOfClass:[NSString class] forKey:@"alt"];
         self.url = [decoder decodeObjectOfClass:[NSString class] forKey:@"url"];
         self.items = [decoder decodeObjectOfClasses:[NSSet setWithObjects:NSArray.class, Content.class, nil] forKey:@"items"];
@@ -87,8 +87,7 @@
 
 }
 
-- (void)setAttributesFromDictionary:(NSDictionary *)aDictionary
-{
+- (void)setAttributesFromDictionary:(NSDictionary *)aDictionary {
 
     if (![aDictionary isKindOfClass:[NSDictionary class]]) {
         return;

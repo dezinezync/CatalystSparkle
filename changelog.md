@@ -1,25 +1,119 @@
-# v2.1.3
+# v2.2.0
 
-RC Build for iOS 14.2. 
+This build includes support for Local Syncing. If something breaks, the app crashes or does not work as expected, roll back to Build 85. 
 
-## Build 74 
+Please run "Force Resync" or delete the app and install again before using the first time.
 
-- Fixed an issue where if the Unread or Today interfaces are open, and you refresh the main interface the Articles timeline would not update. 
+## Build 139 
 
-- Fixed an issue where default placeholders for favicons would not appear.
+- Fixed Navigation Bar buttons not appearing in some contexts. 
 
-- Fixed an issue with title and timestamps not appearing for  micro.blog posts. 
+- Fixes a bug with Local Notifications & Reader Mode preferences would get deleted. 
 
-## Build 73
+## Build 138 
 
-- Micro.blog articles in the list now correctly show the favicon when one is available. 
+- Fixes a crash when writing the widgets data to disk when the app has just been sent to the background.  
 
-- Fixed a bug where Micro.blog articles in the list would become blank after scrolling out of frame. 
+## Build 136
 
-## Build 72
+- Fixes directional marking read for A14 and AnX devices. H/T Gui 
 
-- Fixed an issue where if an Image provides multiple options, sometimes an invalid URL would be selected and therefore the image would not load at all. 
+- Local Notifications and Safari Reader Mode settings are now persisted after you do a full or partial force-resync. 
 
-- Fixed an issue where if you've selected the "Unread" sorting option or are in the unreads feed and refresh the timeline, an incorrect article would be selected. 
+## Build 135 
 
-- Improved the performance of "Force Re-Sync".
+- Remote Push Notifications for new articles now download and cache the article for immediate use.  
+
+- Remote Push Notifications view button now works as expected.
+
+## Build 134
+
+- Minor patch for directional marking read. Debugging mode only. 
+
+- Patches receipt validation. Going forward, your Testflight subscription and purchases will only be valid in Testflight. AppStore receipts cannot be used in Testflight and vice-versa. 
+
+## Build 133
+
+- Patches and fixes directional marking. This has been the longest running bug in Elytra, H/T to Gui for helping me finally fix this one. 
+
+## Build 131, 132
+
+- Added debug logging to iOS and iPadOS apps. To start or stop the logging session, open Settings inside Elytra, scroll to the footer, then tap on the Dezine Zync logo five times.  
+
+## Build 129 
+
+- fixes dark mode for push request modal
+
+## Build 128
+
+- Fixes another bug with the Directional Marking Read feature.
+
+- Fixes an issue for adding Youtube Channel feeds. Youtube recently changed their markup which was causing issues. 
+
+## Build 127
+
+- Push Notifications Request Form. If you already have push notifications enabled, you won't see this. This is per device. 
+
+-  Includes support for background push notifications to keep all your devices in sync without needing manual refreshing. 
+
+## Build 126
+
+- Fixes directional marking read bug which caused all articles to get marked as read. h/t Gui. 
+
+- Added Feeds to the iOS Search Index. You can now directly open feeds by their names (or custom names if you have one set). I'll eventually expand this to your bookmarks and other articles as well. 
+
+## Build 125
+
+- If you mark articles as read through the various modes and then shift the app to the background or switch to another app, the app now correctly syncs this information. Previously, this would not run until the app was brought to the foreground or if the app was terminated by the OS.  
+
+- Preliminary support & implementation of local search based on the new local sync system. 
+
+## Build 124 
+
+- Fixes custom feeds not loading up when launching the app. 
+
+## Build 123
+
+- Fixes marking read across all feed views. 
+
+- Improved performance of marking articles as read. Marking up to a 1000 articles now takes the same amount of time, CPU and battery resources as 10. 
+
+- Marking articles as read or unread is now a coalesced to reduce network and battery usage. So it may sometimes take a second or two for changes to reflect across devices. An improvement around this should come in the next build next week.   
+
+## Build 122
+
+- Added context menu to the Full-Text button. Provides an option to delete the existing cache and to delete it and redownload (the latter option is useful when debugging for updated cache options).
+
+## Build 121
+
+- Improved performance for devices older than the A12 series when fetching, sorting and filtering articles inside feeds. 
+
+- Improved performance for filtering articles.
+
+- Improved accuracy of the unread counts across devices. 
+
+- Removed the Mark all including back-dated articles option. Two mark read options were confusing. Now things are simpler. Just one. 
+
+- macOS: Fixed a crash that would occur when Marking as Read inside a Folder view. 
+
+## Build 120
+
+- Added a context menu option to force-resync under Settings. Now you can also only force refresh the feeds and folders if the app goes out of sync on any device. 
+
+- Fixed an issue where custom feed names were not immediately applied and would require an app-restart. Now, when you sync and new updates are available from other devices, the changes are applied immediately after syncing finishes. 
+
+## Build 117
+
+- Massively improved local filtering. Relative to the previous implementation, the new implementation is 300% faster. :D 
+
+- Filtering is now stricter. It'll match "sponsor" but will not match "sponsored". 
+
+- Fixed an issue with certain CJK paragraph blocks rendering incorrectly when certain linebreak characters are used in the paragraph text.  
+
+- Fixed an issue with filters incorrectly hiding articles when matching against CJK based filters. 
+
+- Fixed an issue with line-heights in the articles list for multi-lined article titles with favicons. 
+
+- Fixed an issue where the "no articles" label would appear over the articles. 
+
+- macOS: Fixes a long standing issue where the article's list would not draw a separator between two articles. 

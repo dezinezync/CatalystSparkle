@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *changeToken;
 @property (nonatomic, strong) NSArray <SyncChange *> *customFeeds;
 @property (nonatomic, strong) NSArray <NSNumber *> * feedsWithNewArticles;
+@property (nonatomic, strong) NSDictionary <NSString *, NSNumber *> * reads;
 
 // The following is automatically managed by FeedsManager. 
 //@property (nonatomic, strong) NSArray <Feed *> * feeds;

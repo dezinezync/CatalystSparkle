@@ -25,6 +25,7 @@
 #import <UIKit/NSToolbar+UIKitAdditions.h>
 #import <UIKit/UIMenuSystem.h>
 #import <AppKit/NSToolbarItemGroup.h>
+#import <DZKit/DZMessagingController.h>
 
 @implementation AppDelegate (Catalyst)
 
@@ -37,7 +38,9 @@
     
     self.appKitBundle = macBundle;
     
-    __unused BOOL unused = [self.appKitBundle load];
+    if ([self.appKitBundle load] == NO) {
+        return;
+    }
     
     Class appKitGlueClass = [self.appKitBundle classNamed:@"AppKitGlue"];
 
@@ -78,7 +81,10 @@
     
     UIKeyCommand *refresh = [UIKeyCommand commandWithTitle:@"Refresh" image:nil action:@selector(refreshAll) input:@"r" modifierFlags:UIKeyModifierCommand propertyList:nil];
     
-    UIMenu *newFeedMenu = [UIMenu menuWithTitle:@"New Items" image:nil identifier:@"NewFeedInlineMenuItem" options:UIMenuOptionsDisplayInline children:@[newFeed, newFolder, refresh]];
+    UIKeyCommand *hardRefresh = [UIKeyCommand commandWithTitle:@"Force Re-Sync" image:nil action:@selector(__refreshAll) input:@"r" modifierFlags:UIKeyModifierCommand|UIKeyModifierAlternate propertyList:nil];
+    hardRefresh.attributes = UIMenuElementAttributesHidden;
+    
+    UIMenu *newFeedMenu = [UIMenu menuWithTitle:@"New Items" image:nil identifier:@"NewFeedInlineMenuItem" options:UIMenuOptionsDisplayInline children:@[newFeed, newFolder, refresh, hardRefresh]];
     
     UICommand *importSubscriptions = [UICommand commandWithTitle:@"Import Subscriptions" image:nil action:@selector(didClickImportSubscriptions) propertyList:nil];
     
@@ -199,6 +205,12 @@
     
     [builder insertSiblingMenu:subsMenu afterMenuForIdentifier:UIMenuAbout];
     
+    UICommand *contactsupport = [UICommand commandWithTitle:@"Email Support" image:nil action:@selector(contactSupport) propertyList:nil];
+    
+    UIMenu *helpMenu = [UIMenu menuWithTitle:@"" image:nil identifier:@"SupportMenu" options:UIMenuOptionsDisplayInline children:@[contactsupport]];
+    
+    [builder insertChildMenu:helpMenu atEndOfMenuForIdentifier:UIMenuHelp];
+    
 }
 
 - (void)buildMenuWithBuilder:(id<UIMenuBuilder>)builder {
@@ -208,6 +220,35 @@
     }
     
     [self ct_setupMenu:builder];
+    
+}
+
+- (void)validateCommand:(UICommand *)command {
+    
+    Class aClass = NSClassFromString([NSString stringWithFormat:@"%@%@%@", @"NSE", @"ve", @"nt"]);
+    
+    BOOL hideOptionals = ((NSUInteger)[aClass performSelector:NSSelectorFromString(@"modifierFlags")] & (1 << 19)) != (1 << 19);
+    
+    if ([command.title isEqualToString:@"Force Re-Sync"]) {
+        
+        command.attributes = hideOptionals ? UIMenuElementAttributesHidden : 0;
+        
+    }
+    else if ([command.title isEqualToString:@"Refresh"]) {
+        
+        command.attributes = hideOptionals ? 0 : UIMenuElementAttributesHidden;
+        
+    }
+    
+}
+
+- (void)contactSupport {
+    [self.coordinator showContactInterface];
+}
+
+- (void)__refreshAll {
+    
+    [self.coordinator prepareDataForFullResync];
     
 }
 

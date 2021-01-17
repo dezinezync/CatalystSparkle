@@ -27,8 +27,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak) SplitVC *splitViewController;
 
-@property (nonatomic, strong) BookmarksManager *bookmarksManager;
-
 #pragma mark - Controller References
 
 @property (nonatomic, weak) SidebarVC *sidebarVC;
@@ -68,6 +66,18 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)showRenameFolderVC:(Folder *)folder;
 
 - (void)showSettingsVC;
+
+- (void)showContactInterface;
+
+- (void)prepareDataForFullResync;
+
+- (void)prepareFeedsForFullResync;
+
+- (void)registerForNotifications:(void(^ _Nullable)(BOOL granted, NSError * _Nullable error))completion;
+
+- (void)checkForPushNotifications;
+
+- (void)didTapCloseForPushRequest;
 
 #if TARGET_OS_MACCATALYST
 

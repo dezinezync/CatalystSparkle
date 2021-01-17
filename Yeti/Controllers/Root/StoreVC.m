@@ -304,7 +304,7 @@
     NSMutableParagraphStyle *para = [NSParagraphStyle defaultParagraphStyle].mutableCopy;
     para.lineSpacing = 1.5f;
     
-    NSString *additionalText = @"\n\nYour Subscription Includes:\n- No limit on number of Feeds & Folders\n- Real-Time Push Notifications\n- Available on iPhone, iPad and macOS (Coming soon)\n- Feed Recommendations updated hourly\n- Integrated Syncing across all your devices\n- Support Indie Development";
+    NSString *additionalText = @"\n\nYour Subscription Includes:\n- No limit on number of Feeds & Folders\n- Real-Time Push Notifications\n- Available on iOS, iPadOS and macOS\n- Feed Recommendations updated hourly\n- Integrated Syncing across all your devices\n- Support Indie Development";
     
     NSDictionary *bottomLineAttributes = @{NSForegroundColorAttributeName: tableHeader.textColor,
                                            NSFontAttributeName: [UIFont preferredFontForTextStyle:UIFontTextStyleBody],

@@ -779,6 +779,13 @@
     if (!URL)
         return;
     
+    if ([UIApplication.sharedApplication canOpenURL:URL] == NO) {
+        // not supported. Open in browser.
+        
+        URL = formattedURL(@"https://twitter.com/i/web/status/%@", status);
+        
+    }
+    
     [UIApplication.sharedApplication openURL:URL options:@{} completionHandler:nil];
 }
 
@@ -795,16 +802,26 @@
     NSURL *URL;
     
     if ([browserScheme isEqualToString:@"safari"]) {
+        
         URL = [NSURL URLWithString:uri];
         
         if (URL == nil || [URL host] == nil)
             return;
         
-        SFSafariViewController *sfvc = [[SFSafariViewController alloc] initWithURL:URL];
+        SFSafariViewControllerConfiguration *config = [SFSafariViewControllerConfiguration new];
+        
+        if ([URL.absoluteString containsString:@"&ytreader=1"]) {
+            
+            URL = [NSURL URLWithString:[URL.absoluteString stringByReplacingOccurrencesOfString:@"&ytreader=1" withString:@""]];
+            
+            config.entersReaderIfAvailable = YES;
+        }
+        
+        SFSafariViewController *sfvc = [[SFSafariViewController alloc] initWithURL:URL configuration:config];
+        
+        sfvc.preferredControlTintColor = SharedPrefs.tintColor;
         
         SceneDelegate *delegate = (SceneDelegate *)(UIApplication.sharedApplication.connectedScenes.allObjects.firstObject.delegate);
-        
-        sfvc.preferredControlTintColor = delegate.window.tintColor;
         
         // get the top VC
         UISplitViewController *splitVC = (UISplitViewController *)[[delegate window] rootViewController];

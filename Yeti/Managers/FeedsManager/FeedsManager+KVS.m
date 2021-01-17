@@ -13,6 +13,7 @@
 #import "YetiConstants.h"
 
 #import <DZKit/DZUtilities.h>
+#import "Elytra-Swift.h"
 
 @implementation FeedsManager (KVS)
 
@@ -35,7 +36,7 @@
         return;
     }
     
-    NSArray *articles = [items rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
+    NSArray <NSNumber *> *articles = [items rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
         return obj.identifier;
     }];
     
@@ -52,204 +53,313 @@
     }] rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
         return [obj isKindOfClass:Feed.class];
     }];
-
-    NSString *path = formattedString(@"/article/%@", read ? @"true" : @"false");
     
-    NSDictionary *params = @{@"articles": articles ?: @[], @"userID": self.userID};
+    KVSItem *instance = [KVSItem new];
+    instance.changeType = read ? KVSChangeTypeRead : KVSChangeTypeUnread;
+    instance.identifiers = articles;
     
-    weakify(self);
-    
-    [self.session POST:path parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    if (self.KVSItems == nil) {
+        self.KVSItems = [NSMutableOrderedSet new];
+        [self.KVSItems addObject:instance];
+    }
+    else {
         
-        strongify(self);
-
-        for (FeedItem *item in items) {
-            
-            item.read = read;
-            
-            if (feeds.count > 0 && [NSCalendar.currentCalendar isDateInToday:item.timestamp]) {
-                
-                // adjust value for Today as well
-                if (read == YES) {
-                    self.totalToday = self.totalToday - items.count;
-                }
-                else {
-                    self.totalToday = self.totalToday + items.count;
-                }
-                
+        __block NSUInteger index = NSNotFound;
+        
+        // find an item with the same changeType
+        KVSItem *existing = [self.KVSItems.objectEnumerator.allObjects rz_find:^BOOL(KVSItem *obj, NSUInteger idx, NSArray *array) {
+           
+            if (obj.changeType == instance.changeType && obj.identifiers.count <= 100) {
+                index = idx;
+                return YES;
             }
             
-            // save it back to the DB so the read state is persisted.
-            [MyDBManager addArticle:item];
+            return NO;
+            
+        }];
+        
+        if (index != NSNotFound && index < (self.KVSItems.count - 1)) {
+            // within range
+            // so ensure next one is not of the opposing type
+            
+            KVSItem *item = self.KVSItems[index + 1];
+            
+            if (item != nil && item.changeType != instance.changeType) {
+                index = NSNotFound;
+            }
             
         }
         
-        // only post the notification if it's affecting a feed or folder
-        // this avoids reducing or incrementing the count for unsubscribed feeds
-        if (feeds.count > 0) {
+        if (existing && index != NSNotFound) {
+            // add it to the same
+            existing.identifiers = [existing.identifiers arrayByAddingObjectsFromArray:instance.identifiers];
+        }
+        else {
+            [self.KVSItems addObject:instance];
+        }
+        
+    }
+    
+    [self trackChanges];
+    
+    for (FeedItem *item in items) {
+        
+        item.read = read;
+        
+        if (feeds.count > 0 && [NSCalendar.currentCalendar isDateInToday:item.timestamp]) {
             
+            // adjust value for Today as well
             if (read == YES) {
-                self.totalUnread = self.totalUnread - items.count;
+                self.totalToday = self.totalToday - items.count;
             }
             else {
-                self.totalUnread = self.totalUnread + items.count;
+                self.totalToday = self.totalToday + items.count;
             }
             
-            for (Feed *feed in feeds) {
-                
-                NSInteger current = [feed.unread integerValue];
-                
-                NSArray <FeedItem *> *articlesForFeed = [items rz_filter:^BOOL(FeedItem *objx, NSUInteger idxx, NSArray *array) {
-                    return objx.feedID.integerValue == feed.feedID.integerValue;
-                }];
-                
-                NSInteger affectedArticles = articlesForFeed.count;
-                
-                NSInteger updated = MAX(0, current + (read ? (-1 * affectedArticles) : affectedArticles));
-                
-                feed.unread = @(updated);
-                
-            }
+        }
         
+        // save it back to the DB so the read state is persisted.
+        [MyDBManager addArticle:item strip:NO];
+        
+    }
+    
+    // only post the notification if it's affecting a feed or folder
+    // this avoids reducing or incrementing the count for unsubscribed feeds
+    if (feeds.count > 0) {
+        
+        if (read == YES) {
+            self.totalUnread = self.totalUnread - items.count;
+        }
+        else {
+            self.totalUnread = self.totalUnread + items.count;
+        }
+        
+        for (Feed *feed in feeds) {
+            
+            NSInteger current = [feed.unread integerValue];
+            
+            NSArray <FeedItem *> *articlesForFeed = [items rz_filter:^BOOL(FeedItem *objx, NSUInteger idxx, NSArray *array) {
+                return objx.feedID.integerValue == feed.feedID.integerValue;
+            }];
+            
+            NSInteger affectedArticles = articlesForFeed.count;
+            
+            NSInteger updated = MAX(0, current + (read ? (-1 * affectedArticles) : affectedArticles));
+            
+            feed.unread = @(updated);
+            
+        }
+    
+    }
+
+}
+
+- (void)markArticlesAsRead:(NSArray<NSNumber *> *)identifiers {
+    
+    if (identifiers.count == 0) {
+        return;
+    }
+    
+    NSUInteger const limit = 100;
+    
+    if (identifiers.count > 100) {
+        
+        NSUInteger counter = 0;
+        NSUInteger total = identifiers.count;
+        
+        while (counter < total) {
+            
+            NSUInteger inLimit = (counter + limit) > total ? (total - counter) : limit;
+            
+            NSArray *subarray = [identifiers subarrayWithRange:NSMakeRange(counter, inLimit)];
+            
+            [self markArticlesAsRead:subarray];
+            
+            counter += limit;
+            
+        }
+        
+    }
+    else {
+        
+        KVSItem *instance = [KVSItem new];
+        instance.changeType = KVSChangeTypeRead;
+        instance.identifiers = identifiers;
+
+        if (self.KVSItems == nil) {
+            self.KVSItems = [NSMutableOrderedSet new];
         }
 
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        [self.KVSItems addObject:instance];
 
-        // silently handle
-        error = [self errorFromResponse:error.userInfo];
-
-        NSLog(@"error marking %@ as read: %@", articles, error.localizedDescription);
-
-    }];
+        [self trackChanges];
+        
+    }
+    
 }
 
 - (void)article:(FeedItem *)item markAsBookmarked:(BOOL)bookmarked success:(successBlock)successCB error:(errorBlock)errorCB {
     
-    NSString *path = formattedString(@"/article/%@/bookmark", item.identifier);
+    item.bookmarked = bookmarked;
     
-    [self.session POST:path parameters:@{@"bookmark": @(bookmarked), @"userID": self.userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        item.bookmarked = bookmarked;
-        
-        if (successCB) {
-            asyncMain(^{
-                successCB(responseObject, response, task);
-            });
-        }
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        // silently handle
-        error = [self errorFromResponse:error.userInfo];
-        
-        if (errorCB) {
-            errorCB(error, response, task);
-        }
-        else {
-            NSLog(@"error marking %@ as bookmarked: %@", item, error.localizedDescription);
-        }
-        
-    }];
-}
-
-- (void)_removeAllLocalBookmarks {
+    [MyDBManager addArticle:item strip:NO];
     
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0]; // Get documents folder
-    NSString *directory = [documentsDirectory stringByAppendingPathComponent:@"bookmarks"];
+    KVSItem *instance = [KVSItem new];
+    instance.changeType = bookmarked ? KVSChangeTypeBookmark : KVSChangeTypeUnbookmark;
+    instance.identifiers = @[item.identifier];
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-       
-        NSFileManager *manager = [NSFileManager defaultManager];
-        NSError *error = nil;
-        if (![manager removeItemAtPath:directory error:&error]) {
-            NSLog(@"Error deleting directory %@", directory);
-        }
-        
-    });
+    if (self.KVSItems == nil) {
+        self.KVSItems = [NSMutableOrderedSet new];
+    }
+    
+    [self.KVSItems addObject:instance];
+    
+    [self trackChanges];
+    
+    if (bookmarked) {
+        self.totalBookmarks++;
+    }
+    else {
+        self.totalBookmarks--;
+    }
+    
+    if (successCB) {
+        asyncMain(^{
+            successCB(@(YES), nil, nil);
+        });
+    }
     
 }
 
 #pragma mark -
 
-//+ (void)load {
-//    if([NSUbiquitousKeyValueStore defaultStore]) {  // is iCloud enabled
-//        
-//        [[NSNotificationCenter defaultCenter] addObserver:self
-//                                                 selector:@selector(updateFromiCloud:)
-//                                                     name:NSUbiquitousKeyValueStoreDidChangeExternallyNotification
-//                                                   object:nil];
-//        
-//        [[NSNotificationCenter defaultCenter] addObserver:self
-//                                                 selector:@selector(updateToiCloud:)
-//                                                     name:NSUserDefaultsDidChangeNotification
-//                                                   object:nil];
-//    } else {
-//        NSLog(@"iCloud not enabled");
-//    }
-//}
-//
-//+ (void) updateToiCloud:(NSNotification*) notificationObject {
-//    
-//    NSDictionary *dict = [[NSUserDefaults standardUserDefaults] dictionaryRepresentation];
-//    
-//    NSUbiquitousKeyValueStore *store = [NSUbiquitousKeyValueStore defaultStore];
-//    
-//    @try {
-//        [dict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) { @autoreleasepool {
-//            [store setObject:obj forKey:key];
-//        } }];
-//    }
-//    @catch (NSException *exc) {
-//        NSLog(@"updateToiCloud: %@", exc);
-//    }
-//    
-//    [[NSUbiquitousKeyValueStore defaultStore] synchronize];
-//}
-//
-//+ (void) updateFromiCloud:(NSNotification*) notificationObject {
-//    
-//    NSUbiquitousKeyValueStore *iCloudStore = [NSUbiquitousKeyValueStore defaultStore];
-//    NSDictionary *dict = [iCloudStore dictionaryRepresentation];
-//    
-//    // prevent NSUserDefaultsDidChangeNotification from being posted while we update from iCloud
-//    
-//    [[NSNotificationCenter defaultCenter] removeObserver:self
-//                                                    name:NSUserDefaultsDidChangeNotification
-//                                                  object:nil];
-//    
-//    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-//    
-//    @try {
-//        [dict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) { @autoreleasepool {
-//            [defaults setObject:obj forKey:key];
-//        } }];
-//    }
-//    @catch (NSException *exc) {
-//        NSLog(@"updateToiCloud: %@", exc);
-//    }
-//    
-//    [[NSUserDefaults standardUserDefaults] synchronize];
-//    
-//    // enable NSUserDefaultsDidChangeNotification notifications again
-//    
-//    [[NSNotificationCenter defaultCenter] addObserver:self
-//                                             selector:@selector(updateToiCloud:)
-//                                                 name:NSUserDefaultsDidChangeNotification
-//                                               object:nil];
-//    
-////    [[NSNotificationCenter defaultCenter] postNotificationName:kMKiCloudSyncNotification object:nil];
-//}
-//
-//+ (void) dealloc {
-//    
-//    [[NSNotificationCenter defaultCenter] removeObserver:self
-//                                                    name:NSUbiquitousKeyValueStoreDidChangeExternallyNotification
-//                                                  object:nil];
-//    
-//    [[NSNotificationCenter defaultCenter] removeObserver:self
-//                                                    name:NSUserDefaultsDidChangeNotification
-//                                                  object:nil];
-//}
+- (void)trackChanges {
+    
+    if (self.KVSItems == nil) {
+        return;
+    }
+    
+    if (self.batchKVSTimer != nil) {
+        
+        // invalidate the existing timer.
+        
+        if ([self.batchKVSTimer isValid]) {
+            [self.batchKVSTimer invalidate];
+        }
+        
+        self.batchKVSTimer = nil;
+        
+    }
+    
+    weakify(self);
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        strongify(self);
+        
+        weakify(self);
+       
+        self.batchKVSTimer = [NSTimer scheduledTimerWithTimeInterval:2 repeats:NO block:^(NSTimer * _Nonnull timer) {
+            
+            strongify(self);
+            
+            [self flushChanges];
+            
+        }];
+        
+    });
+    
+}
+
+- (void)flushChanges {
+    
+    if (self.KVSItems == nil) {
+        return;
+    }
+    
+    if (self.KVSItems.count == 0) {
+        // no changes to flush.
+        return;
+    }
+    
+    // make a copy
+    NSMutableOrderedSet *set = [self.KVSItems mutableCopy];
+    
+    // setup a new instance immediately
+    // so all future calls are scheduled
+    // on a separate instance and doesn't
+    // get lost in this call.
+    self.KVSItems = [NSMutableOrderedSet new];
+    
+    for (KVSItem *instance in set) {
+        
+        if (instance.changeType == KVSChangeTypeUnread || instance.changeType == KVSChangeTypeRead) {
+            
+            if (instance.identifiers.count) {
+                
+                [self markRead:instance.changeType == KVSChangeTypeRead identifiers:instance.identifiers];
+                
+            }
+            
+        }
+        else {
+            
+            if (instance.identifiers.count) {
+                [self markBookmark:instance.changeType == KVSChangeTypeBookmark identifier:instance.identifiers.firstObject];
+            }
+            
+        }
+        
+    }
+    
+}
+
+- (void)markRead:(BOOL)read identifiers:(NSArray <NSNumber *> *)identifiers {
+    
+    if (identifiers == nil || (identifiers != nil && identifiers.count == 0)) {
+        return;
+    }
+    
+    NSString *path = formattedString(@"/article/%@", read ? @"true" : @"false");
+    
+    NSDictionary *params = @{@"articles": identifiers ?: @[], @"userID": self.userID};
+    
+    DZURLSession *session = self.currentSession;
+    
+    [session POST:path parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        NSLog(@"Marked %@ for %@", read ? @"read" : @"unread", identifiers);
+
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+
+        // silently handle
+        error = [self errorFromResponse:error.userInfo];
+
+        NSLog(@"error marking %@ as read: %@", identifiers, error);
+
+    }];
+    
+}
+    
+- (void)markBookmark:(BOOL)bookmarked identifier:(NSNumber *)identifier {
+    
+    NSString *path = formattedString(@"/article/%@/bookmark", identifier);
+    
+    DZURLSession *session = self.currentSession;
+    
+    [session POST:path parameters:@{@"bookmark": @(bookmarked), @"userID": self.userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        NSLog(@"Marked %@ for %@", bookmarked ? @"bookmark" : @"unboomark", identifier);
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        // silently handle
+        error = [self errorFromResponse:error.userInfo];
+        
+        NSLog(@"error marking %@ as bookmarked: %@", identifier, error);
+        
+    }];
+        
+}
 
 @end

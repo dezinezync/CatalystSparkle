@@ -6,6 +6,7 @@
 //  Copyright © 2020 Dezine Zync Studios. All rights reserved.
 //
 
+#import "Elytra-Swift.h"
 #import "FeedVC+DragAndDrop.h"
 #import "ArticlesManager.h"
 #import "FeedItem.h"
@@ -32,6 +33,11 @@
 
 #define emptyViewTag 386728
 
+#define kFeedDBView @"feedDBView"
+#define kFeedDBFilteredView @"feedDBFilteredView"
+
+static NSUInteger _filteringTag = 0;
+
 @interface FeedVC () {
     
     BOOL _shouldShowHeader;
@@ -54,14 +60,35 @@
 
 @property (nonatomic, strong) UISearchController *searchController;
 
+@property (nonatomic, strong) FeedTitleView *titleView;
+
 /// Special handling for specific feeds
 @property (assign) BOOL isiOSIconGallery;
+
+@property (nonatomic, strong) YapDatabaseAutoView *dbView;
+@property (nonatomic, strong) YapDatabaseFilteredView *dbFilteredView;
 
 @end
 
 #define ArticlesSection @0
 
 @implementation FeedVC
+
++ (NSUInteger)filteringTag {
+    return _filteringTag;
+}
+
++ (void)setFilteringTag:(NSUInteger)filteringTag {
+    
+    @synchronized (FeedVC.class) {
+        
+        if (_filteringTag != filteringTag) {
+            _filteringTag = filteringTag;
+        }
+        
+    }
+    
+}
 
 + (UINavigationController *)instanceInNavigationController {
     
@@ -127,16 +154,18 @@
     
 #if !TARGET_OS_MACCATALYST
         
-    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
+    if (self.type == FeedVCTypeNatural) {
+        self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeNever;
+    }
+    else {
+        self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
+    }
 
 #endif 
     
     [self dz_smoothlyDeselectRows:self.tableView];
     
-    if (self.pagingManager.page == 1 && [self.DS.snapshot numberOfItems] == 0) {
-        self.controllerState = StateLoaded;
-        [self loadNextPage];
-    }
+    [self updateTitleView];
     
 #if TARGET_OS_MACCATALYST
     
@@ -169,17 +198,96 @@
 
 - (void)dealloc {
     
-    @try {
-        [NSNotificationCenter.defaultCenter removeObserver:self];
-    }
-    @catch (NSException *exc) {
-        NSLog(@"Exception when deallocating %@: %@", self.class, exc);
-    }
+    [NSNotificationCenter.defaultCenter removeObserver:self];
     
 }
 
 - (BOOL)definesPresentationContext {
     return YES;
+}
+
+- (void)setupDatabases:(YetiSortOption)sortingOption {
+    
+    weakify(self);
+    weakify(sortingOption);
+    
+    NSString *baseView = DB_BASE_ARTICLES_VIEW;
+    
+    if ([sortingOption isEqualToString:YTSortUnreadAsc] || [sortingOption isEqualToString:YTSortUnreadDesc]) {
+        
+        baseView = UNREADS_FEED_EXT;
+        
+    }
+        
+    YapDatabaseViewFiltering *filter = [YapDatabaseViewFiltering withMetadataBlock:^BOOL(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection, NSString * _Nonnull key, NSDictionary * _Nullable metadata) {
+            
+        strongify(self);
+        
+        if (!self) {
+            return NO;
+        }
+        
+        if (self.feed == nil) {
+            return NO;
+        }
+        
+        // article metadata is an NSDictionary
+        if (metadata == nil) {
+            return NO;
+        }
+        
+        NSNumber *feedID = [metadata valueForKey:@"feedID"];
+        
+        if (feedID == nil) {
+            return NO;
+        }
+        
+        BOOL checkOne = [feedID isEqualToNumber:self.feed.feedID];
+        
+        if (checkOne == NO) {
+            return NO;
+        }
+    
+        strongify(sortingOption);
+        
+        if ([sortingOption isEqualToString:YTSortUnreadAsc] || [sortingOption isEqualToString:YTSortUnreadDesc]) {
+        
+            BOOL checkTwo = [([metadata valueForKey:@"read"] ?: @(NO)) boolValue] == NO;
+            
+            if (checkTwo == YES) {
+                
+                // check date, should be within 14 days
+                NSTimeInterval timestamp = [[metadata valueForKey:@"timestamp"] doubleValue];
+                NSTimeInterval now = [NSDate.date timeIntervalSince1970];
+                
+                if ((now - timestamp) > 1209600) {
+                    checkTwo = NO;
+                }
+                
+            }
+            
+            return checkTwo;
+            
+        }
+        
+        return YES;
+        
+    }];
+    
+    self.dbFilteredView = [MyDBManager.database registeredExtension:kFeedDBFilteredView];
+    
+    if (self.dbFilteredView != nil) {
+        
+        [MyDBManager.database unregisterExtensionWithName:kFeedDBFilteredView];
+        
+    }
+    
+    YapDatabaseFilteredView *filteredView = [[YapDatabaseFilteredView alloc] initWithParentViewName:baseView filtering:filter versionTag:[NSString stringWithFormat:@"%u",(uint)self.class.filteringTag++]];
+    
+    self.dbFilteredView = filteredView;
+    
+    [MyDBManager.database registerExtension:self.dbFilteredView withName:kFeedDBFilteredView];
+    
 }
 
 #pragma mark - Setups
@@ -197,12 +305,22 @@
         
         self.extendedLayoutIncludesOpaqueBars = YES;
         
-        self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
+        if (self.type == FeedVCTypeNatural && self.isExploring == NO) {
+            
+            self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeNever;
+            
+            self.navigationItem.titleView = self.titleView;
+            
+        }
+        else {
+            self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
+        }
+        
     }
     
     self.navigationItem.hidesSearchBarWhenScrolling = NO;
     
-    if (self.isExploring == YES || self.isFromAddFeed == YES) {
+    if (self.noAuth == NO && (self.isExploring == YES || self.isFromAddFeed == YES)) {
         // check if the user is subscribed to this feed
         Feed *existing = [MyFeedsManager feedForID:self.feed.feedID];
         if (!existing) {
@@ -245,14 +363,7 @@
         
     }
     
-    weakify(self);
-    
-    [self.bookmarksManager addObserver:self name:BookmarksDidUpdateNotification callback:^{
-       
-        strongify(self);
-        [self didUpdateBookmarks];
-        
-    }];
+    [notificationCenter addObserver:self selector:@selector(didUpdateBookmarks) name:BookmarksDidUpdate object:nil];
     
     [notificationCenter addObserver:self selector:@selector(didChangeContentCategory) name:ArticleCoverImagesPreferenceUpdated object:nil];
     
@@ -374,14 +485,17 @@
     }
     
     self.tableView.tableFooterView = [UIView new];
-    self.tableView.estimatedRowHeight =  150.f;
+    self.tableView.estimatedRowHeight =  120.f;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
     
-    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomMac) {
-        self.tableView.contentInset = UIEdgeInsetsMake(10.f, 0, 10.f, 0);
-    }
-    
+#if TARGET_OS_MACCATALYST
+    self.tableView.tableHeaderView = [UIView new];
+    self.tableView.separatorInset = UIEdgeInsetsMake(0, 16.f, 0, 16.f);
+#else
     self.tableView.separatorInset = UIEdgeInsetsZero;
+#endif
+    
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     
     [ArticleCell registerOnTableView:self.tableView];
 //    [self.tableView registerClass:UITableViewCell.class forCellReuseIdentifier:@"cell"];
@@ -401,7 +515,11 @@
 
 - (void)setupDatasource {
     
+    weakify(self);
+    
     self.DS = [[UITableViewDiffableDataSource alloc] initWithTableView:self.tableView cellProvider:^UITableViewCell * _Nullable(UITableView * tableView, NSIndexPath * indexPath, FeedItem * article) {
+        
+        strongify(self);
         
         ArticleCell *cell = [tableView dequeueReusableCellWithIdentifier:kArticleCell forIndexPath:indexPath];
         
@@ -412,6 +530,19 @@
             cell.coverImage.layer.cornerRadius = cell.coverImage.bounds.size.width * (180.f / 1024.f);
             cell.coverImage.layer.cornerCurve = kCACornerCurveContinuous;
             cell.coverImage.layer.masksToBounds = YES;
+            
+        }
+        
+        if (article.articleTitle == nil || [article.articleTitle isBlank]) {
+            // assume microblog
+            
+            if (article.content == nil || (article.content != nil && article.content.count == 0)) {
+                
+                NSArray *content = [MyDBManager contentForArticle:article.identifier];
+                
+                article.content = content;
+                
+            }
             
         }
         
@@ -492,6 +623,10 @@
 
 #pragma mark - Getters
 
+- (NSString *)filteringViewName {
+    return kFeedDBFilteredView;
+}
+
 - (BOOL)showsSortingButton {
     
     return YES;
@@ -559,9 +694,17 @@
 
 - (PagingManager *)pagingManager {
     
-    if (_pagingManager == nil && MyFeedsManager.userID != nil) {
+    if (_pagingManager == nil && (MyFeedsManager.userID != nil || self.noAuth == YES)) {
         
-        NSMutableDictionary *params = @{@"userID": MyFeedsManager.userID, @"limit": @10}.mutableCopy;
+        NSMutableDictionary *params = @{@"limit": @10}.mutableCopy;
+        
+        if (MyFeedsManager.userID != nil) {
+            params[@"userID"] = MyFeedsManager.userID;
+        }
+        
+        if (self.noAuth) {
+            params[@"noauth"] = @(self.noAuth);
+        }
         
         params[@"sortType"] = @([(NSNumber *)(_sortingOption ?: @0 ) integerValue]);
         
@@ -573,6 +716,53 @@
         
         PagingManager * pagingManager = [[PagingManager alloc] initWithPath:path queryParams:params itemsKey:@"articles"];
         
+        if (self.noAuth == NO && self.isExploring == NO) {
+            
+            pagingManager.fromDB = YES;
+            
+            weakify(self);
+            
+            pagingManager.dbFetchingCB = ^(void (^ _Nonnull completion)(NSArray * _Nullable)) {
+                
+                strongify(self);
+                
+                self.controllerState = StateLoading;
+                
+                dispatch_async(MyDBManager.readQueue, ^{
+                    
+                    [MyDBManager.countsConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+                        
+                        YapDatabaseViewTransaction *ext = [transaction extension:kFeedDBFilteredView];
+                        
+                        if (ext == nil) {
+                            return completion(nil);
+                        }
+                        
+                        NSRange range = NSMakeRange(((self.pagingManager.page - 1) * 20) - 1, 20);
+                        
+                        if (self.pagingManager.page == 1) {
+                            range.location = 0;
+                        }
+                        
+                        NSMutableArray <FeedItem *> *items = [NSMutableArray arrayWithCapacity:20];
+                        
+                        [ext enumerateKeysAndObjectsInGroup:GROUP_ARTICLES withOptions:kNilOptions range:range usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nonnull object, NSUInteger index, BOOL * _Nonnull stop) {
+                           
+                            [items addObject:object];
+                            
+                        }];
+                        
+                        completion(items);
+                        
+                    }];
+
+                    
+                });
+                
+            };
+            
+        }
+        
         _pagingManager = pagingManager;
     }
     
@@ -581,9 +771,7 @@
         _pagingManager.preProcessorCB = ^NSArray * _Nonnull(NSArray * _Nonnull items) {
           
             NSArray *retval = [items rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-                FeedItem *item = [FeedItem instanceFromDictionary:obj];
-//                item.read = NO;
-                return item;
+                return [obj isKindOfClass:NSDictionary.class] ? [FeedItem instanceFromDictionary:obj] : obj;
             }];
             
             return retval;
@@ -621,9 +809,13 @@
             
             });
             
-            [self setupData];
+            runOnMainQueueWithoutDeadlocking(^{
+                [self setupData];
+            });
             
-            self.controllerState = StateLoaded;
+            runOnMainQueueWithoutDeadlocking(^{
+                self.controllerState = StateLoaded;
+            });
             
 #if TARGET_OS_MACCATALYST
             if (self->_isRefreshing) {
@@ -665,48 +857,31 @@
     
 }
 
-
-#pragma mark - State
-
-- (void)updateTitleView {
-    
-    if (self.traitCollection.userInterfaceIdiom != UIUserInterfaceIdiomMac) {
-        return;
-    }
-    
-    if (NSThread.isMainThread == NO) {
+- (NSUInteger)totalItemsForTitle {
         
-        return [self performSelectorOnMainThread:@selector(updateTitleView) withObject:nil waitUntilDone:NO];
-        
-    }
-    
-    if (self.mainCoordinator.innerWindow != nil) {
-        
-        [self.mainCoordinator.innerWindow performSelector:@selector(setTitle:) withObject:self.title];
-        
-        NSString *subtitle = [self subtitle];
-        
-        SEL selector = NSSelectorFromString(@"setSubtitle:");
-        
-        DZS_SILENCE_CALL_TO_UNKNOWN_SELECTOR([self.mainCoordinator.innerWindow performSelector:selector withObject:subtitle];)
-        
-    }
-    
-}
-
-- (NSString *)subtitle {
-    
-    if (self.isExploring) {
-        
-        return [NSString stringWithFormat:@"%@ Article%@", @(self.pagingManager.total), self.pagingManager.total == 1 ? @"" : @"s"];
+    @synchronized (self) {
+            
+        if (self->_totalItemsForTitle == 0) {
+            
+            __block NSUInteger count = 0;
+            
+            [MyDBManager.countsConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+                
+                YapDatabaseFilteredViewTransaction *tnx = [transaction ext:kFeedDBFilteredView];
+                
+                if (tnx != nil) {
+                    count = [tnx numberOfItemsInGroup:GROUP_ARTICLES];
+                }
+                
+            }];
+            
+            _totalItemsForTitle = count;
+            
+        }
+            
+        return _totalItemsForTitle;
         
     }
-    
-    NSString *totalArticles = [NSString stringWithFormat:@"%@ Article%@, ", @(self.pagingManager.total), self.pagingManager.total == 1 ? @"" : @"s"];
-    
-    NSString *unread = [NSString stringWithFormat:@"%@ Unread", self.feed.unread];
-    
-    return [totalArticles stringByAppendingString:unread];
     
 }
 
@@ -718,8 +893,8 @@
         searchController.searchResultsUpdater = self;
         searchController.searchBar.placeholder = @"Search Articles";
         searchController.automaticallyShowsCancelButton = YES;
-        searchController.automaticallyShowsScopeBar = YES;
-        searchController.searchBar.scopeButtonTitles = @[@"Local", @"Server"];
+//        searchController.automaticallyShowsScopeBar = YES;
+//        searchController.searchBar.scopeButtonTitles = @[@"Local", @"Server"];
         searchController.obscuresBackgroundDuringPresentation = NO;
         
         _searchController = searchController;
@@ -727,6 +902,103 @@
     }
     
     return _searchController;
+    
+}
+
+- (UIView *)titleView {
+    
+    if (_titleView == nil) {
+        
+        FeedTitleView *view = [[FeedTitleView alloc] initWithFrame:CGRectMake(0, 0, 200.f, 32.f)];
+        
+        view.titleLabel.text = self.feed.displayTitle;
+        
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapTitleView)];
+        tap.numberOfTapsRequired = 1;
+        
+        [view addGestureRecognizer:tap];
+        
+        if (self.feed.faviconImage != nil) {
+            view.faviconView.image = self.feed.faviconImage;
+        }
+        else {
+            
+            NSString *path = [self.feed.faviconURI pathForImageProxy:NO maxWidth:16.f quality:0.9f];
+            
+            if (path) {
+                [view.faviconView sd_setImageWithURL:[NSURL URLWithString:path]];
+            }
+            
+        }
+        
+        _titleView = view;
+        
+    }
+    
+    return _titleView;
+    
+}
+
+#pragma mark - State
+
+- (void)updateiOSTitleView {
+    
+    self.titleView.countLabel.text = formattedString(@"%@ Unread%@", self.feed.unread ?: @(0), self.feed.unread.integerValue == 1 ? @"" : @"s");
+    
+}
+
+- (void)updateTitleView {
+    
+    if (NSThread.isMainThread == NO) {
+        return [self performSelectorOnMainThread:@selector(updateTitleView) withObject:nil waitUntilDone:NO];
+    }
+    
+    if (self.traitCollection.userInterfaceIdiom != UIUserInterfaceIdiomMac) {
+        
+        if (self.type == FeedVCTypeNatural) {
+            [self updateiOSTitleView];
+        }
+        
+        return;
+    }
+    
+    if (!self.title) {
+        return;
+    }
+    
+    if (self.mainCoordinator.innerWindow != nil) {
+        
+        [self.mainCoordinator.innerWindow performSelector:@selector(setTitle:) withObject:self.title];
+        
+        dispatch_async(MyDBManager.readQueue, ^{
+            
+            NSString *subtitle = [self subtitle];
+            
+            SEL selector = NSSelectorFromString(@"setSubtitle:");
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                DZS_SILENCE_CALL_TO_UNKNOWN_SELECTOR([self.mainCoordinator.innerWindow performSelector:selector withObject:subtitle];)
+            });
+            
+        });
+        
+    }
+    
+}
+
+- (NSString *)subtitle {
+    
+    if (self.isExploring) {
+        
+        return [NSString stringWithFormat:@"%@ Article%@", @(self.totalItemsForTitle), self.totalItemsForTitle == 1 ? @"" : @"s"];
+        
+    }
+    
+    NSString *totalArticles = [NSString stringWithFormat:@"%@ Article%@, ", @(self.totalItemsForTitle), self.totalItemsForTitle == 1 ? @"" : @"s"];
+    
+    NSString *unread = [NSString stringWithFormat:@"%@ Unread", self.feed.unread];
+    
+    return [totalArticles stringByAppendingString:unread];
     
 }
 
@@ -744,31 +1016,23 @@
     if(_controllerState != controllerState)
     {
         
-        @synchronized (self) {
-            self->_controllerState = controllerState;
-        }
+        self->_controllerState = controllerState;
         
         if (self.DS.snapshot == nil || self.DS.snapshot.numberOfItems == 0) {
             // we can be in any state
             // but we should only show the empty view
             // when there is no data
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self addEmptyView];
-            });
+            [self addEmptyView];
         }
         else {
             // we have data, so the state doesn't matter
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self removeEmptyView];
-            });
+            [self removeEmptyView];
         }
         
     }
     else if (controllerState != StateErrored) {
         // we have data, so the state doesn't matter
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self removeEmptyView];
-        });
+        [self removeEmptyView];
     }
     
 }
@@ -824,8 +1088,13 @@
     UIView *buffer = [self.view viewWithTag:emptyViewTag];
     
     while (buffer != nil && buffer.superview) {
-        [buffer removeFromSuperview];
+        buffer.tag = 0;
         
+        if ([buffer isKindOfClass:UIActivityIndicatorView.class]) {
+            [(UIActivityIndicatorView *)buffer stopAnimating];
+        }
+        
+        [buffer removeFromSuperview];
         buffer = [self.view viewWithTag:emptyViewTag];
     }
 }
@@ -849,12 +1118,12 @@
     
     // since the Datasource is asking for this view
     // it will be presenting it.
-    BOOL dataCheck = self.controllerState == StateLoading && self.pagingManager.page <= 1;
-    
+    BOOL dataCheck = (self.controllerState == StateLoading && self.pagingManager.page <= 1);
+
     if (dataCheck) {
         self.activityIndicatorView.hidden = NO;
         [self.activityIndicatorView startAnimating];
-        
+
         return self.activityIndicatorView;
     }
     
@@ -1026,7 +1295,7 @@
     
     ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
     vc.providerDelegate = self;
-    vc.bookmarksManager = self.bookmarksManager;
+    vc.noAuth = self.noAuth;
     
     [self _showArticleVC:vc];
     
@@ -1112,35 +1381,99 @@
 
 - (void)setSortingOption:(YetiSortOption)option {
     
-    BOOL changed = _sortingOption != option;
+    if (self.sortingOption == option) {
+        return;
+    }
     
     _sortingOption = option;
     
-    if (changed) {
+    [SharedPrefs setValue:option forKey:propSel(sortingOption)];
+    
+    weakify(option);
+    weakify(self);
+    
+    dispatch_async(MyDBManager.readQueue, ^{
         
-        [SharedPrefs setValue:option forKey:propSel(sortingOption)];
+        YapDatabaseViewSorting *sorting = [YapDatabaseViewSorting withMetadataBlock:^NSComparisonResult(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection1, NSString * _Nonnull key1, id  _Nullable metadata, NSString * _Nonnull collection2, NSString * _Nonnull key2, id  _Nullable metadata2) {
+            
+            NSTimeInterval timestamp1 = [[metadata valueForKey:@"timestamp"] doubleValue];
+            NSTimeInterval timestamp2 = [[metadata2 valueForKey:@"timestamp"] doubleValue];
+            
+            NSComparisonResult result = NSTimeIntervalCompare(timestamp1, timestamp2);
+
+            if (result == NSOrderedSame) {
+                return result;
+            }
+
+            strongify(option);
+
+            if ([option isEqualToString:YTSortAllDesc]  || [option isEqualToString:YTSortUnreadDesc]) {
+
+                if (result == NSOrderedDescending) {
+                    return NSOrderedAscending;
+                }
+
+                return NSOrderedDescending;
+
+            }
+
+            return result;
+            
+        }];
+        
+        strongify(self);
+        
+        [MyDBManager.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+           
+            YapDatabaseAutoViewTransaction *txn = [transaction ext:DB_FEED_VIEW];
+            
+            if (txn == nil) {
+                return;
+            }
+            
+            [txn setSorting:sorting versionTag:[NSString stringWithFormat:@"%u",(uint)self->_sortingVersionTag++]];
+            
+        }];
         
         if ([self respondsToSelector:@selector(_setSortingOption:)]) {
             
             [self _setSortingOption:option];
             
-            NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
-            [self.DS applySnapshot:snapshot animatingDifferences:YES];
-            
-            self.controllerState = StateLoaded;
-            
-            [self loadNextPage];
-            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
+                [self.DS applySnapshot:snapshot animatingDifferences:YES];
+                
+                self.controllerState = StateDefault;
+                
+                [self loadNextPage];
+                
+            });
             
         }
         
-    }
+    });
     
 }
 
 - (void)_setSortingOption:(YetiSortOption)option {
     
+    [self setupDatabases:option];
+    
     self.pagingManager = nil;
+    self.totalItemsForTitle = 0;
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self updateTitleView];
+    });
+    
+}
+
+- (void)setTotalItemsForTitle:(NSUInteger)value {
+    
+    @synchronized (self) {
+        self->_totalItemsForTitle = value;
+    }
     
 }
 

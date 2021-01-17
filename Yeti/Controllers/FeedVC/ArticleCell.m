@@ -337,7 +337,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     
     NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:formattedString(@"  %@", self.titleLabel.text) attributes:attributes];
     
-    NSTextAttachment *attachment = [[NSTextAttachment alloc] init];
+    NSTextAttachment *attachment = [NSTextAttachment new];
     
     Feed *feed = [MyFeedsManager feedForID:self.article.feedID];
     
@@ -366,8 +366,10 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     CGFloat expected = 7.f;  // from the above, so A:B :: C:D
     CGFloat yOffset = (baseline / fontSize) * expected * -1.f;
     
+    yOffset += 6.f;
+    
 #if TARGET_OS_MACCATALYST
-    attachment.bounds = CGRectMake(0, yOffset + 4.f, 16.f, 16.f);
+    attachment.bounds = CGRectMake(0, yOffset, 16.f, 16.f);
 #else
     attachment.bounds = CGRectMake(0, yOffset, 24, 24);
 #endif
@@ -394,7 +396,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     
     UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithFont:self.titleLabel.font];
     
-    attachment.image = [UIImage systemImageNamed:@"rectangle.on.rectangle.angled" withConfiguration:config];
+    attachment.image = [UIImage systemImageNamed:@"square.dashed" withConfiguration:config];
     
     [self.titleLabel setNeedsDisplay];
     

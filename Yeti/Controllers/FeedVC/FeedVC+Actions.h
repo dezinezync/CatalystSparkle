@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)didLongPressOnAllRead:(id)sender;
 
-- (void)_didFinishAllReadActionSuccessfully;
+- (void)didFinishAllReadActionSuccessfully:(NSUInteger)count;
 
 - (void)didTapNotifications:(UIBarButtonItem *)sender;
 
@@ -37,6 +37,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)markAllOlderRead:(NSIndexPath *)indexPath;
 
 - (void)didTapBack;
+
+- (void)didTapTitleView;
 
 @end
 

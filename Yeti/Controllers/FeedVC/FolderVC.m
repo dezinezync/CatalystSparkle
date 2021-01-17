@@ -9,9 +9,15 @@
 #import "FolderVC.h"
 #import <DZKit/AlertManager.h>
 
+#define kFolderDBView @"folderdDBView"
+#define kFolderDBFilteredView @"folderDBFilteredView"
+
 @interface FolderVC ()
 
 @property (nonatomic, strong) PagingManager *folderFeedsManager;
+
+@property (nonatomic, strong) YapDatabaseAutoView *dbView;
+@property (nonatomic, strong) YapDatabaseFilteredView *dbFilteredView;
 
 @end
 
@@ -52,6 +58,85 @@
     
     self.refreshControl = refreshControl;
 #endif
+    
+}
+
+- (void)dealloc {
+    
+    [NSNotificationCenter.defaultCenter removeObserver:self];
+    
+}
+
+- (void)setupDatabases:(YetiSortOption)sortingOption {
+    
+    weakify(self);
+    weakify(sortingOption);
+    
+    NSString *baseView = DB_BASE_ARTICLES_VIEW;
+    
+    if ([sortingOption isEqualToString:YTSortUnreadAsc] || [sortingOption isEqualToString:YTSortUnreadDesc]) {
+        
+        baseView = UNREADS_FEED_EXT;
+        
+    }
+    
+    YapDatabaseViewFiltering *filter = [YapDatabaseViewFiltering withMetadataBlock:^BOOL(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection, NSString * _Nonnull key, NSDictionary * _Nullable metadata) {
+        
+        strongify(self);
+        
+        if (!self) {
+            return NO;
+        }
+        
+        if (!metadata) {
+            return NO;
+        }
+        
+        // article metadata is an NSDictionary
+        NSNumber *feedID = [metadata valueForKey:@"feedID"];
+        
+        if ([self.folder.feedIDs containsObject:feedID] == NO) {
+            return NO;
+        }
+        
+        BOOL checkTwo = YES;
+        
+        strongify(sortingOption);
+        
+        if ([sortingOption isEqualToString:YTSortUnreadAsc] || [sortingOption isEqualToString:YTSortUnreadDesc]) {
+            
+            checkTwo = [([metadata valueForKey:@"read"] ?: @(NO)) boolValue] == NO;
+            
+        }
+        
+        if (checkTwo == YES) {
+            // check date, should be within 14 days
+            NSTimeInterval timestamp = [[metadata valueForKey:@"timestamp"] doubleValue];
+            NSTimeInterval now = [NSDate.date timeIntervalSince1970];
+            
+            if ((now - timestamp) > 1209600) {
+                checkTwo = NO;
+            }
+        }
+        
+        return checkTwo;
+        
+    }];
+    
+    self.dbFilteredView = [MyDBManager.database registeredExtension:kFolderDBFilteredView];
+    
+    if (self.dbFilteredView != nil) {
+        
+        [MyDBManager.database unregisterExtensionWithName:kFolderDBFilteredView];
+        
+    }
+    
+    YapDatabaseFilteredView *filteredView = [[YapDatabaseFilteredView alloc] initWithParentViewName:baseView filtering:filter versionTag:[NSString stringWithFormat:@"%u",(uint)self.class.filteringTag++]];
+    
+    self.dbFilteredView = filteredView;
+    
+    [MyDBManager.database registerExtension:self.dbFilteredView withName:kFolderDBFilteredView];
+    
 }
 
 #pragma mark - Setters
@@ -73,6 +158,10 @@
 
 #pragma mark - Subclassed
 
+- (NSString *)filteringViewName {
+    return kFolderDBFilteredView;
+}
+
 - (PagingManager *)folderFeedsManager {
     
     if (_folderFeedsManager == nil && _folder != nil) {
@@ -89,6 +178,49 @@
         
         PagingManager * pagingManager = [[PagingManager alloc] initWithPath:path queryParams:params itemsKey:@"articles"];
         
+        pagingManager.fromDB = YES;
+        
+        weakify(self);
+        
+        pagingManager.dbFetchingCB = ^(void (^ _Nonnull completion)(NSArray * _Nullable)) {
+            
+            strongify(self);
+            
+            self.controllerState = StateLoading;
+            
+            dispatch_async(MyDBManager.readQueue, ^{
+                
+                [MyDBManager.countsConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+                    
+                    YapDatabaseViewTransaction *ext = [transaction extension:kFolderDBFilteredView];
+                    
+                    if (ext == nil) {
+                        return completion(nil);
+                    }
+                    
+                    NSRange range = NSMakeRange(((self.pagingManager.page - 1) * 20) - 1, 20);
+                    
+                    if (self.pagingManager.page == 1) {
+                        range.location = 0;
+                    }
+                    
+                    NSMutableArray <FeedItem *> *items = [NSMutableArray arrayWithCapacity:20];
+                    
+                    [ext enumerateKeysAndObjectsInGroup:GROUP_ARTICLES withOptions:kNilOptions range:range usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nonnull object, NSUInteger index, BOOL * _Nonnull stop) {
+                       
+                        [items addObject:object];
+                        
+                    }];
+                    
+                    completion(items);
+                    
+                }];
+
+                
+            });
+            
+        };
+        
         _folderFeedsManager = pagingManager;
     }
     
@@ -96,7 +228,7 @@
         _folderFeedsManager.preProcessorCB = ^NSArray * _Nonnull(NSArray * _Nonnull items) {
           
             NSArray *retval = [items rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-                return [FeedItem instanceFromDictionary:obj];
+                return [obj isKindOfClass:NSDictionary.class] ? [FeedItem instanceFromDictionary:obj] : obj;
             }];
             
             return retval;
@@ -116,7 +248,9 @@
             
             [self setupData];
             
-            self.controllerState = StateLoaded;
+            runOnMainQueueWithoutDeadlocking(^{
+                self.controllerState = StateLoaded;
+            });
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 
@@ -135,9 +269,9 @@
                     }
                     
 #if TARGET_OS_MACCATALYST
-            if (self->_isRefreshing) {
-                self->_isRefreshing = NO;
-            }
+                    if (self->_isRefreshing) {
+                        self->_isRefreshing = NO;
+                    }
 #endif
                 
                 }
@@ -195,8 +329,13 @@
 
 - (void)_setSortingOption:(YetiSortOption)option {
     
+    [self setupDatabases:option];
+    
     self.folderFeedsManager = nil;
+    self.totalItemsForTitle = 0;
     self.pagingManager = self.folderFeedsManager;
+    
+    [self updateTitleView];
     
 }
 
@@ -218,7 +357,7 @@
 
 - (NSString *)subtitle {
     
-    NSString *totalArticles = [NSString stringWithFormat:@"%@ Article%@, ", @(self.pagingManager.total), self.pagingManager.total == 1 ? @"" : @"s"];
+    NSString *totalArticles = [NSString stringWithFormat:@"%@ Article%@, ", @(self.totalItemsForTitle), self.totalItemsForTitle == 1 ? @"" : @"s"];
     
     NSString *unread = [NSString stringWithFormat:@"%@ Unread", self.folder.unreadCount];
     
@@ -226,71 +365,99 @@
     
 }
 
+- (NSUInteger)totalItemsForTitle {
+        
+    @synchronized (self) {
+            
+        if (self->_totalItemsForTitle == 0) {
+            
+            __block NSUInteger count = 0;
+            
+            [MyDBManager.countsConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+                
+                YapDatabaseFilteredViewTransaction *tnx = [transaction ext:kFolderDBFilteredView];
+                
+                if (tnx != nil) {
+                    count = [tnx numberOfItemsInGroup:GROUP_ARTICLES];
+                }
+                
+            }];
+            
+            _totalItemsForTitle = count;
+            
+        }
+            
+        return _totalItemsForTitle;
+        
+    }
+    
+}
+
 #pragma mark - Actions
 
-- (void)didLongPressOnAllRead:(id)sender {
-    
-    BOOL showPrompt = SharedPrefs.showMarkReadPrompts;
-    
-    void(^markReadInline)(void) = ^(void) {
-        
-        [MyFeedsManager markFolderRead:self.folder success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                
-                if (self != nil && [self tableView] != nil) {
-                    // if we're in the unread section
-                    if (self.sortingOption == YTSortUnreadAsc || self.sortingOption == YTSortUnreadDesc) {
-                        
-                        self.controllerState = StateLoading;
-                        
-                        NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
-                        [snapshot appendSectionsWithIdentifiers:@[@0]];
-                        
-                        [self.DS applySnapshot:snapshot animatingDifferences:YES];
-                        
-                        self.controllerState = StateLoaded;
-                        
-                    }
-                    else {
-                        [self _markVisibleRowsRead];
-                        [self _didFinishAllReadActionSuccessfully];
-                    }
-                }
-            });
-            
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            [AlertManager showGenericAlertWithTitle:@"Error Marking all Read" message:error.localizedDescription];
-            
-        }];
-        
-    };
-    
-    if (showPrompt) {
-        UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:@"Mark all Articles as read including back-dated articles?" preferredStyle:UIAlertControllerStyleActionSheet];
-        
-        [avc addAction:[UIAlertAction actionWithTitle:@"Mark all Read" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            
-            markReadInline();
-            
-        }]];
-        
-        [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
-        
-        [self presentAllReadController:avc fromSender:sender];
-    }
-    else {
-        [self.feedbackGenerator selectionChanged];
-        [self.feedbackGenerator prepare];
-        
-        markReadInline();
-    }
-}
-
-- (void)_didFinishAllReadActionSuccessfully {
-    
-}
+//- (void)didLongPressOnAllRead:(id)sender {
+//    
+//    BOOL showPrompt = SharedPrefs.showMarkReadPrompts;
+//    
+//    void(^markReadInline)(void) = ^(void) {
+//        
+//        [MyFeedsManager markFolderRead:self.folder success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//            
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                
+//                if (self != nil && [self tableView] != nil) {
+//                    // if we're in the unread section
+//                    if (self.sortingOption == YTSortUnreadAsc || self.sortingOption == YTSortUnreadDesc) {
+//                        
+//                        self.controllerState = StateLoading;
+//                        
+//                        NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
+//                        [snapshot appendSectionsWithIdentifiers:@[@0]];
+//                        
+//                        [self.DS applySnapshot:snapshot animatingDifferences:YES];
+//                        
+//                        self.controllerState = StateLoaded;
+//                        
+//                    }
+//                    else {
+//                        [self _markVisibleRowsRead];
+//                        [self _didFinishAllReadActionSuccessfully];
+//                    }
+//                }
+//            });
+//            
+//        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//            
+//            [AlertManager showGenericAlertWithTitle:@"Error Marking all Read" message:error.localizedDescription];
+//            
+//        }];
+//        
+//    };
+//    
+//    if (showPrompt) {
+//        UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:@"Mark all Articles as read?" preferredStyle:UIAlertControllerStyleAlert];
+//        
+//        [avc addAction:[UIAlertAction actionWithTitle:@"Mark all Read" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+//            
+//            markReadInline();
+//            
+//        }]];
+//        
+//        [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+//        
+//        [self presentAllReadController:avc fromSender:sender];
+//    }
+//    else {
+//        [self.feedbackGenerator selectionChanged];
+//        [self.feedbackGenerator prepare];
+//        
+//        markReadInline();
+//    }
+//}
+//
+//- (void)_didFinishAllReadActionSuccessfully {
+//    
+//}
 
 #pragma mark - State Restoration
 

@@ -15,7 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong) NSString * _Nonnull uuid;
 @property (nonatomic, strong) NSNumber * _Nonnull userID;
-@property (nonatomic, strong) Subscription * _Nullable subscription;
+@property (nonatomic, strong) YTSubscription * _Nullable subscription;
+@property (nonatomic, strong) NSSet <NSString *> * _Nonnull filters;
 
 + (instancetype)instanceFromDictionary:(NSDictionary * _Nonnull)attrs;
 

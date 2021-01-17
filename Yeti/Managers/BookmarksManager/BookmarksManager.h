@@ -18,6 +18,7 @@ FOUNDATION_EXPORT NSNotificationName const BookmarksDidUpdateNotification;
 
 extern NSErrorDomain const BookmarksManagerErrorDomain;
 
+__attribute__((deprecated))
 @interface BookmarksManager : NSObject {
 @public
     // when set to YES, it disables dispatching any new notifications for changes.

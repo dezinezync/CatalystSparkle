@@ -24,11 +24,8 @@
 #import <DZKit/DZView.h>
 #import "DZWebViewController.h"
 #import <DZKit/UIViewController+AnimatedDeselect.h>
-#import <DZKit/DZMessagingController.h>
 
 #import "DBManager+CloudCore.h"
-
-#import <sys/utsname.h>
 
 #if TARGET_OS_MACCATALYST
 typedef NS_ENUM(NSUInteger, SectionOneRows) {
@@ -47,14 +44,6 @@ typedef NS_ENUM(NSUInteger, SectionOneRows) {
     SectionMisc = 5
 };
 #endif
-
-NSString* deviceName() {
-    struct utsname systemInfo;
-    uname(&systemInfo);
-    
-    return [NSString stringWithCString:systemInfo.machine
-                              encoding:NSUTF8StringEncoding];
-}
 
 @interface SettingsVC () <SettingsChanges> {
     BOOL _settingsUpdated;
@@ -407,27 +396,9 @@ NSString* deviceName() {
         
         [tableView deselectRowAtIndexPath:indexPath animated:NO];
         
-        SidebarVC *instance = self.mainCoordinator.sidebarVC;
+        [self.mainCoordinator prepareDataForFullResync];
         
-        if (instance != nil) {
-            
-            ArticlesManager.shared.folders = nil;
-            
-            ArticlesManager.shared.feeds = nil;
-            
-            [DBManager.sharedInstance purgeDataForResync];
-            
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.625 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                
-//                [instance performSelector:NSSelectorFromString(@"") withObject:instance.refreshControl];
-                
-                [instance beginRefreshingAll:instance.refreshControl];
-                
-            });
-            
-            [self.navigationController dismissViewControllerAnimated:YES completion:nil];
-            
-        }
+        [self.navigationController dismissViewControllerAnimated:YES completion:nil];
         
         return;
         
@@ -568,6 +539,46 @@ NSString* deviceName() {
     }
 }
 
+- (UIContextMenuConfiguration *)tableView:(UITableView *)tableView contextMenuConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath point:(CGPoint)point {
+ 
+    if (indexPath.section == 0 && indexPath.row == 3) {
+        
+        weakify(self);
+        
+        UIContextMenuConfiguration *config = [UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:nil actionProvider:^UIMenu * _Nullable(NSArray<UIMenuElement *> * _Nonnull suggestedActions) {
+           
+            UIAction *resyncAll = [UIAction actionWithTitle:@"Resync All" image:nil identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                
+                strongify(self);
+                
+                [self.mainCoordinator prepareDataForFullResync];
+                
+                [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+                
+            }];
+            
+            UIAction *resyncFeeds = [UIAction actionWithTitle:@"Resync Feeds" image:nil identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                
+                strongify(self);
+                
+                [self.mainCoordinator prepareFeedsForFullResync];
+                
+                [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+                
+            }];
+           
+            return [UIMenu menuWithChildren:@[resyncAll, resyncFeeds]];
+            
+        }];
+        
+        return config;
+    
+    }
+    
+    return nil;
+}
+    
+
 #pragma mark - <SettingsChanges>
 
 - (void)didChangeSettings
@@ -580,28 +591,7 @@ NSString* deviceName() {
 
 - (void)showContactInterface {
     
-    DZMessagingAttachment *attachment = [[DZMessagingAttachment alloc] init];
-    attachment.fileName = @"debugInfo.txt";
-    attachment.mimeType = @"text/plain";
-    
-    UIDevice *device = [UIDevice currentDevice];
-    NSString *model = deviceName();
-    NSString *iOSVersion = formattedString(@"%@ %@", device.systemName, device.systemVersion);
-    NSString *deviceUUID = MyFeedsManager.deviceID;
-    
-    NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
-    NSString *appVersion = [infoDict objectForKey:@"CFBundleShortVersionString"];
-    NSString *buildNumber = [infoDict objectForKey:@"CFBundleVersion"];
-    
-    NSString *formatted = formattedString(@"Model: %@ %@\nDevice UUID: %@\nAccount ID: %@\nApp: %@ (%@)", model, iOSVersion, deviceUUID, MyFeedsManager.user.uuid, appVersion, buildNumber);
-    
-    attachment.data = [formatted dataUsingEncoding:NSUTF8StringEncoding];
-    
-    [DZMessagingController presentEmailWithBody:@""
-                                        subject:@"Elytra Support"
-                                     recipients:@[@"support@elytra.app"]
-                                    attachments:@[attachment]
-                                 fromController:self];
+    [self.mainCoordinator showContactInterface];
     
 }
 
@@ -636,51 +626,77 @@ NSString* deviceName() {
         _byLabel.autoresizingMask = dz.autoresizingMask;
         _byLabel.backgroundColor = self.tableView.backgroundColor;
         
-        [MyDBManager.uiConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        formatter.dateFormat = @"YYYY-MM-dd HH:mm:ss";
+        
+        NSDate *date = MyFeedsManager.unreadLastUpdate ?: NSDate.date;
+        
+        formatter.dateStyle = NSDateFormatterShortStyle;
+        formatter.timeStyle = NSDateFormatterShortStyle;
+        formatter.timeZone = [NSTimeZone localTimeZone];
+        
+        NSString *formatted = [formatter stringFromDate:date];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
             
-            NSString *token = [transaction objectForKey:syncToken inCollection:SYNC_COLLECTION];
+            _byLabel.text = formattedString(@"A Dezine Zync App.\nLast Synced: %@", formatted);
+            [_byLabel sizeToFit];
+            [_byLabel setNeedsLayout];
+            [_byLabel layoutIfNeeded];
             
-            if (token != nil) {
-                NSString *dateString = [token decodeBase64];
-                
-                NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-                formatter.dateFormat = @"YYYY-MM-dd HH:mm:ss";
-                
-                NSDate *date = [formatter dateFromString:dateString];
-                
-                formatter.dateStyle = NSDateFormatterShortStyle;
-                formatter.timeStyle = NSDateFormatterShortStyle;
-                formatter.timeZone = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
-                
-                NSString *formatted = [formatter stringFromDate:date];
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    
-                    _byLabel.text = formattedString(@"A Dezine Zync App.\nLast Synced: %@", formatted);
-                    [_byLabel sizeToFit];
-                    [_byLabel setNeedsLayout];
-                    [_byLabel layoutIfNeeded];
-                    
-                });
-            }
-            else {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    
-                    _byLabel.text = @"A Dezine Zync App.";
-                    [_byLabel sizeToFit];
-                    [_byLabel setNeedsLayout];
-                    [_byLabel layoutIfNeeded];
-                    
-                });
-                
-            }
-            
-        }];
+        });
         
         [_footerView addSubview:_byLabel];
+        
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(toggleCWLogging)];
+        tap.numberOfTapsRequired = 5;
+        
+        [_footerView addGestureRecognizer:tap];
+        
     }
     
     return _footerView;
+    
+}
+
+- (void)toggleCWLogging {
+    
+    BOOL isEnabled = MyFeedsManager.debugLoggingEnabled;
+    
+    UIAlertController *avc = nil;
+    
+    if (isEnabled) {
+        
+        avc = [UIAlertController alertControllerWithTitle:@"Stop Debug Session" message:@"Are you sure you want to stop the debug session?" preferredStyle:UIAlertControllerStyleAlert];
+        
+        [avc addAction:[UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            CWLog(@"Debug Logging Session Ended");
+            
+            MyFeedsManager.debugLoggingEnabled = NO;
+            
+        }]];
+        
+        [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+        
+    }
+    else {
+        
+        avc = [UIAlertController alertControllerWithTitle:@"Start Debug Session" message:@"Are you sure you want to start the debug session?" preferredStyle:UIAlertControllerStyleAlert];
+        
+        [avc addAction:[UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            MyFeedsManager.debugLoggingEnabled = YES;
+            
+            CWLog(@"Debug Logging Session Started");
+            
+        }]];
+        
+        [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+        
+    }
+    
+    [self presentViewController:avc animated:YES completion:nil];
     
 }
 

@@ -14,7 +14,10 @@
 
 #import "FeedsManager.h"
 #import "DBManager.h"
+#import "IdentityVC.h"
 #import <DZKit/AlertManager.h>
+
+#import "RecommendationsVC.h"
 
 #import <AuthenticationServices/AuthenticationServices.h>
 
@@ -99,6 +102,8 @@
 #if !TARGET_OS_MACCATALYST
     // 4800
     return [self processUUID:@"000768.e759fc828ab249ad98ceefc5f80279b3.1145"];
+    // Expired account, 6506
+//    return [self processUUID:@"001713.e2309676d2be41f99cd394575b53effd.1544"];
 #endif
 #endif
     
@@ -115,6 +120,17 @@
     [controller performRequests];
     
 }
+- (IBAction)didTapExplore:(UIButton *)sender {
+    
+    IdentityVC *vc = [[IdentityVC alloc] initWithNibName:NSStringFromClass(IdentityVC.class) bundle:nil];
+    
+//    RecommendationsVC *vc = [[RecommendationsVC alloc] initWithNibName:NSStringFromClass(RecommendationsVC.class) bundle:nil];
+//    vc.mainCoordinator = self.mainCoordinator;
+//    vc.noAuth = YES;
+    
+    [self.navigationController pushViewController:vc animated:YES];
+    
+}
 
 - (void)processUUID:(NSString *)uuid {
     
@@ -122,54 +138,56 @@
     
     [MyFeedsManager getUserInformationFor:uuid success:^(User *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
-        [MyDBManager setUser:responseObject];
-        
-        if ((MyFeedsManager.user.subscription == nil
-            || MyFeedsManager.user.subscription.expiry == nil)
-            && [Keychain boolFor:kHasShownOnboarding error:nil] == NO) {
+        [MyDBManager setUser:responseObject completion:^{
             
-            TrialVC *vc = [[TrialVC alloc] initWithNibName:NSStringFromClass(TrialVC.class) bundle:nil];
-            
-            [self showViewController:vc sender:self];
-            
-            return;
-            
-        }
-        
-        if (MyFeedsManager.user.subscription != nil && MyFeedsManager.user.subscription.hasExpired == NO) {
-            
-            [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
-            
-            [Keychain add:kHasShownOnboarding boolean:YES];
-            
-            [self.navigationController dismissViewControllerAnimated:YES completion:nil];
-            
-            return;
-            
-        }
-        
-        // existing User
-        [MyFeedsManager getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            BOOL expired = [MyFeedsManager.user subscription] != nil && [MyFeedsManager.user.subscription hasExpired] == YES;
-            
-            [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
-            
-            [self.navigationController dismissViewControllerAnimated:YES completion:^{
+            if ((MyFeedsManager.user.subscription == nil
+                || MyFeedsManager.user.subscription.expiry == nil)
+                && [Keychain boolFor:kHasShownOnboarding error:nil] == NO) {
                 
-                if (expired) {
+                TrialVC *vc = [[TrialVC alloc] initWithNibName:NSStringFromClass(TrialVC.class) bundle:nil];
+                
+                [self showViewController:vc sender:self];
+                
+                return;
+                
+            }
+            
+            if (MyFeedsManager.user.subscription != nil && MyFeedsManager.user.subscription.hasExpired == NO) {
+                
+                [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
+                
+                [Keychain add:kHasShownOnboarding boolean:YES];
+                
+                [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+                
+                return;
+                
+            }
+            
+            // existing User
+            [MyFeedsManager getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                
+                BOOL expired = [MyFeedsManager.user subscription] != nil && [MyFeedsManager.user.subscription hasExpired] == YES;
+                
+                [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
+                
+                [self.navigationController dismissViewControllerAnimated:YES completion:^{
                     
-                    [self.mainCoordinator showSubscriptionsInterface];
+                    if (expired) {
+                        
+                        [self.mainCoordinator showSubscriptionsInterface];
+                        
+                    }
                     
-                }
+                }];
+                
+            } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                
+                [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
+                
+                [self.navigationController dismissViewControllerAnimated:YES completion:nil];
                 
             }];
-            
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
-            
-            [self.navigationController dismissViewControllerAnimated:YES completion:nil];
             
         }];
         
@@ -190,11 +208,13 @@
                 
                 user.userID = userID;
                 
-                [MyDBManager setUser:user];
-                
-                TrialVC *vc = [[TrialVC alloc] initWithNibName:NSStringFromClass(TrialVC.class) bundle:nil];
-                
-                [self showViewController:vc sender:self];
+                [MyDBManager setUser:user completion:^{
+                        
+                    TrialVC *vc = [[TrialVC alloc] initWithNibName:NSStringFromClass(TrialVC.class) bundle:nil];
+                    
+                    [self showViewController:vc sender:self];
+                    
+                }];
                 
             } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                

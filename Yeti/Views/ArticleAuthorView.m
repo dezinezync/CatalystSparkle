@@ -9,8 +9,9 @@
 #import "ArticleAuthorView.h"
 #import "TypeFactory.h"
 #import "YetiConstants.h"
+#import "Coordinator.h"
 
-@interface ArticleAuthorView () {
+@interface ArticleAuthorView () <UIContextMenuInteractionDelegate> {
     BOOL _didAddHorizontalConstraints;
 }
 
@@ -65,6 +66,9 @@
         self.activityView.hidden = YES;
         self.activityIndicator.hidden = YES;
         
+        UIContextMenuInteraction *interaction = [[UIContextMenuInteraction alloc] initWithDelegate:self];
+        [self.mercurialButton addInteraction:interaction];
+        
     }
     
     return self;
@@ -100,8 +104,8 @@
     self.mercurialButton.tintColor = mercurialed ? self.tintColor : UIColor.systemGrayColor;
     
     if (mercurialed) {
-        self.mercurialButton.accessibilityLabel = @"Full Text Loaded";
-        self.mercurialButton.accessibilityValue = @"Full Text Loaded";
+        self.mercurialButton.accessibilityLabel = @"Load Article Text";
+        self.mercurialButton.accessibilityValue = @"Full Article Text";
     }
     else {
         self.mercurialButton.accessibilityLabel = @"Load Full Text";
@@ -115,10 +119,6 @@
 #pragma mark -
 
 - (IBAction)mercurialButton:(id)sender {
-    
-    if (self.mercurialed == YES) {
-        return;
-    }
     
     // disable it so the action does not trigger twice.
     {
@@ -146,17 +146,12 @@
                         self.mercurialed = YES;
                     }
                     
-                    // if the action was completed, then we disable
-                    // the button, which is the opposite of completed.
-                    {
-                        [self.activityIndicator stopAnimating];
-                        self.activityView.hidden = YES;
-                        self.activityIndicator.hidden = YES;
-                        
-                        self.mercurialButton.enabled = !completed;
-                        self.mercurialButton.hidden = NO;
-                        
-                    }
+                    [self.activityIndicator stopAnimating];
+                    self.activityView.hidden = YES;
+                    self.activityIndicator.hidden = YES;
+                    
+                    self.mercurialButton.enabled = YES;
+                    self.mercurialButton.hidden = NO;
                     
                 });
                 
@@ -169,6 +164,73 @@
         // nothing else to do
         // re-enable the button
         self.mercurialButton.enabled = YES;
+    }
+    
+}
+
+#pragma mark - <UIContextMenuInteractionDelegate>
+
+- (nullable UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location {
+    
+    UIContextMenuConfiguration *config = nil;
+    
+    if (self.mercurialed) {
+        
+        weakify(self);
+        
+        config = [UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:nil actionProvider:^UIMenu * _Nullable(NSArray<UIMenuElement *> * _Nonnull suggestedActions) {
+           
+            UIAction *delete = [UIAction actionWithTitle:@"Delete Full Text Copy" image:[UIImage systemImageNamed:@"trash"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                
+                strongify(self);
+                
+                [self deleteCache];
+                
+            }];
+            
+            UIAction *deleteAndDownload = [UIAction actionWithTitle:@"Delete and Redownload" image:[UIImage systemImageNamed:@"arrow.triangle.2.circlepath.circle"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                
+                strongify(self);
+                
+                [self deleteCache];
+                
+                // tap button again
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    
+                    [self mercurialButton:self.mercurialButton];
+                    
+                });
+                
+            }];
+            
+            return [UIMenu menuWithTitle:@"Full-Text Content Options" children:@[delete, deleteAndDownload]];
+            
+        }];
+        
+    }
+    
+    return config;
+    
+}
+
+- (void)deleteCache {
+    
+    SEL aSel = NSSelectorFromString(@"item");
+    
+    if (self.delegate != nil && [self.delegate respondsToSelector:aSel]) {
+        
+        FeedItem *item = DZS_SILENCE_CALL_TO_UNKNOWN_SELECTOR([self.delegate performSelector:aSel];);
+        
+        if (item == nil) {
+            return;
+        }
+        
+        [MyDBManager deleteArticleFullText:item.identifier];
+        
+        [self mercurialButton:self.mercurialButton];
+        
+        item.mercury = NO;
+        
     }
     
 }

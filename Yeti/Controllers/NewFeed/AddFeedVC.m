@@ -88,6 +88,13 @@
     
     self.title = @"Add Feed";
     
+    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+        
+        self.navigationController.modalPresentationStyle = UIModalPresentationFullScreen;
+        self.modalPresentationStyle = UIModalPresentationFullScreen;
+        
+    }
+    
     self.navigationController.navigationBar.prefersLargeTitles = NO;
     self.navigationController.view.backgroundColor = UIColor.systemBackgroundColor;
     self.navigationController.navigationBar.translucent = YES;
@@ -409,9 +416,9 @@
     
     [self.DS applySnapshot:snapshot animatingDifferences:YES];
     
-    if (self.searchBar.selectedScopeButtonIndex == 0) {
-        [self.navigationItem.searchController setActive:NO];
-    }
+//    if (self.searchBar.selectedScopeButtonIndex == 0) {
+//        [self.navigationItem.searchController setActive:NO];
+//    }
     
 }
 
@@ -560,6 +567,12 @@
 
 - (void)checkPasteboard {
     
+    if (_hasProcessedPasteboard) {
+        return;
+    }
+    
+    UISearchBar *searchBar = self.navigationItem.searchController.searchBar;
+    
     if (UIPasteboard.generalPasteboard.hasURLs == YES || UIPasteboard.generalPasteboard.hasStrings == YES) {
         
         NSURL * url = UIPasteboard.generalPasteboard.URL;
@@ -579,7 +592,11 @@
                     
                     text = [text stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet.URLQueryAllowedCharacterSet];
                     
-                    url = [NSURL URLWithString:text];
+                    if ([[NSURLComponents alloc] initWithString:text].host != nil) {
+                            
+                        url = [NSURL URLWithString:text];
+                        
+                    }
                     
                 }
                 
@@ -589,8 +606,6 @@
         
         if (url != nil) {
             
-            UISearchBar *searchBar = self.navigationItem.searchController.searchBar;
-            
             searchBar.searchTextField.text = url.absoluteString;
             [self searchBarTextDidEndEditing:searchBar];
             
@@ -599,7 +614,13 @@
     }
     
     dispatch_async(dispatch_get_main_queue(), ^{
+        
+        self->_hasProcessedPasteboard = YES;
+        
         [self.navigationItem.searchController setActive:YES];
+        
+        [self updateRecommendationState:searchBar.text];
+        
     });
     
 }
@@ -733,13 +754,18 @@
             return NO;
         }
         
-        if (query.length < 3) {
+        if (query.length < 2) {
             return NO;
         }
         
         if (self.searchBar.selectedScopeButtonIndex == 0) {
             
             [self searchByURL:searchBar.text];
+            
+        }
+        else {
+            
+            [self searchBarTextDidEndEditing:searchBar];
             
         }
         
@@ -790,6 +816,12 @@
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
     
+    [self updateRecommendationState:searchText];
+    
+}
+
+- (void)updateRecommendationState:(NSString *)searchText {
+    
     self.recommendationsView.hidden = ([searchText isBlank] == NO);
     
 }
@@ -802,11 +834,22 @@
         return;
     }
     
-    if (query.length < 3) {
+    if (query.length < 2) {
         return;
     }
     
     if (searchBar.selectedScopeButtonIndex == 0) {
+        return;
+    }
+    
+    if ([self.query isEqualToString:[query stringByStrippingWhitespace]]) {
+        return;
+    }
+    else {
+        self.controllerState = StateDefault;
+    }
+    
+    if (self.isLoadingNext) {
         return;
     }
     
@@ -822,6 +865,8 @@
 }
 
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
+    
+    searchBar.text = nil;
     
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
     
@@ -920,6 +965,8 @@
         return;
     }
     
+    [self updateRecommendationState:text];
+    
     self.searchBar.userInteractionEnabled = NO;
     self.cancelButton.enabled = NO;
     
@@ -935,11 +982,19 @@
         
         [MyFeedsManager _checkYoutubeFeed:url success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
-            [self searchByURL:responseObject];
+            if ([responseObject isKindOfClass:NSURL.class]) {
+                [self searchByURL:[(NSURL *)responseObject absoluteString]];
+            }
+            else {
+                [self searchByURL:responseObject];
+            }
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
            
-            [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:@"An error occurred when trying to fetch the Youtube URL."];
+            [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription];
+            
+            self.searchBar.userInteractionEnabled = YES;
+            self.cancelButton.enabled = YES;
             
         }];
     

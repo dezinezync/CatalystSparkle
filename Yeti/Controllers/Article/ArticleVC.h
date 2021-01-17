@@ -14,8 +14,6 @@
 
 #import "BarPositioning.h"
 
-#import "BookmarksManager.h"
-
 /*
 #import <NYTPhotoViewer/NYTPhotosViewController.h>
 #import <NYTPhotoViewer/NYTPhotoViewerArrayDataSource.h>
@@ -38,6 +36,8 @@
 #endif
 }
 
+@property (nonatomic, assign) BOOL noAuth;
+
 - (instancetype _Nonnull)initWithItem:(FeedItem * _Nonnull)item;
 
 @property (nonatomic, strong) FeedItem * _Nullable item;
@@ -55,8 +55,6 @@
 
 @property (nonatomic, weak) UISearchBar * _Nullable searchBar;
 @property (nonatomic, weak) UIButton * _Nullable searchPrevButton, * _Nullable searchNextButton;
-
-@property (nonatomic, weak) BookmarksManager * _Nullable bookmarksManager;
 
 @property (nonatomic, strong, readonly) NSPointerArray * _Nullable images;
 

@@ -8,9 +8,15 @@
 
 #import "TodayVC.h"
 
-@interface TodayVC ()
+#define kTodayDBView @"todayDBView"
+#define kTodayDBFilteredView @"todayDBFilteredView"
+
+@interface TodayVC () 
 
 @property (nonatomic, strong) PagingManager *todayManager;
+
+@property (nonatomic, strong) YapDatabaseAutoView *dbView;
+@property (nonatomic, strong) YapDatabaseFilteredView *dbFilteredView;
 
 @end
 
@@ -36,6 +42,7 @@
     [super viewDidLoad];
     
     self.title = @"Today";
+    self.controllerState = StateLoading;
     self.pagingManager = self.todayManager;
     
 #if !TARGET_OS_MACCATALYST
@@ -55,16 +62,110 @@
     
 }
 
+- (void)setupDatabases:(YetiSortOption)sortingOption {
+    
+    weakify(self);
+    weakify(sortingOption);
+    
+    NSString *baseView = DB_BASE_ARTICLES_VIEW;
+    
+    if ([sortingOption isEqualToString:YTSortUnreadAsc] || [sortingOption isEqualToString:YTSortUnreadDesc]) {
+        
+        baseView = UNREADS_FEED_EXT;
+        
+    }
+    
+    YapDatabaseViewFiltering *filter = [YapDatabaseViewFiltering withRowBlock:^BOOL(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection, NSString * _Nonnull key, FeedItem *  _Nonnull object, NSDictionary * _Nullable metadata) {
+        
+        strongify(self);
+        
+        if (!self) {
+            return NO;
+        }
+        
+        NSTimeInterval interval = [[metadata valueForKey:@"timestamp"] doubleValue];
+        NSDate *date = [NSDate dateWithTimeIntervalSince1970:interval];
+        
+        BOOL checkOne = [NSCalendar.currentCalendar isDateInToday:date];
+        
+        if (!checkOne) {
+            return NO;
+        }
+        
+        BOOL checkTwo = YES;
+        
+        strongify(sortingOption);
+        
+        if ([sortingOption isEqualToString:YTSortUnreadAsc] || [sortingOption isEqualToString:YTSortUnreadDesc]) {
+            
+            checkTwo = [([metadata valueForKey:@"read"] ?: @(NO)) boolValue] == NO;
+            
+        }
+        
+        if (checkTwo == YES) {
+            // check date, should be within 14 days
+            NSTimeInterval timestamp = [[metadata valueForKey:@"timestamp"] doubleValue];
+            NSTimeInterval now = [NSDate.date timeIntervalSince1970];
+            
+            if ((now - timestamp) > 1209600) {
+                checkTwo = NO;
+            }
+        }
+        
+        return checkTwo;
+        
+    }];
+    
+    self.dbFilteredView = [MyDBManager.database registeredExtension:kTodayDBFilteredView];
+    
+    if (self.dbFilteredView != nil) {
+        
+        [MyDBManager.database unregisterExtensionWithName:kTodayDBFilteredView];
+        
+    }
+    
+    YapDatabaseFilteredView *filteredView = [[YapDatabaseFilteredView alloc] initWithParentViewName:baseView filtering:filter versionTag:[NSString stringWithFormat:@"%u",(uint)self.class.filteringTag++]];
+    
+    self.dbFilteredView = filteredView;
+    
+    [MyDBManager.database registerExtension:self.dbFilteredView withName:kTodayDBFilteredView];
+    
+}
+
 #pragma mark - Subclassed
+
+- (NSString *)filteringViewName {
+    return kTodayDBFilteredView;
+}
 
 - (NSString *)subtitle {
     
-    NSString *totalArticles = [NSString stringWithFormat:@"%@ Article%@, ", @(self.todayManager.total), self.todayManager.total == 1 ? @"" : @"s"];
+    NSString *totalArticles = [NSString stringWithFormat:@"%@ Article%@, ", @(self.totalItemsForTitle), self.todayManager.total == 1 ? @"" : @"s"];
     
     NSString *unread = [NSString stringWithFormat:@"%@ Unread", @(MyFeedsManager.totalToday)];
     
     return [totalArticles stringByAppendingString:unread];
     
+}
+
+- (NSUInteger)totalItemsForTitle {
+        
+    @synchronized (self) {
+            
+        if (self->_totalItemsForTitle == 0) {
+            
+            _totalItemsForTitle = MAX(self.todayManager.total, MyFeedsManager.totalToday);
+            
+        }
+            
+        return _totalItemsForTitle;
+        
+    }
+    
+}
+
+- (PagingManager *)pagingManager {
+    return self.todayManager;
 }
 
 - (PagingManager *)todayManager {
@@ -86,6 +187,55 @@
         
         PagingManager * todayManager = [[PagingManager alloc] initWithPath:@"/1.7/today" queryParams:params itemsKey:@"articles"];
         
+        todayManager.fromDB = YES;
+        
+        weakify(self);
+        
+        todayManager.dbFetchingCB = ^(void (^ _Nonnull completion)(NSArray * _Nullable)) {
+          
+            strongify(self);
+            
+            self.controllerState = StateLoading;
+            
+            dispatch_async(MyDBManager.readQueue, ^{
+                
+                [MyDBManager.uiConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+                    
+                    YapDatabaseViewTransaction *ext = [transaction extension:kTodayDBFilteredView];
+                    
+                    if (ext == nil) {
+                        
+                        if (completion) {
+                            completion(nil);
+                        }
+                        
+                        return;
+                        
+                    }
+                    
+                    NSRange range = NSMakeRange(((self.todayManager.page - 1) * 20) - 1, 20);
+                    
+                    if (self.todayManager.page == 1) {
+                        range.location = 0;
+                    }
+                    
+                    NSMutableArray <FeedItem *> *items = [NSMutableArray arrayWithCapacity:20];
+                    
+                    [ext enumerateKeysAndObjectsInGroup:GROUP_ARTICLES withOptions:kNilOptions range:range usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nonnull object, NSUInteger index, BOOL * _Nonnull stop) {
+                       
+                        [items addObject:object];
+                        
+                    }];
+                    
+                    completion(items);
+                    
+                }];
+
+                
+            });
+            
+        };
+        
         _todayManager = todayManager;
     }
     
@@ -93,7 +243,7 @@
         _todayManager.preProcessorCB = ^NSArray * _Nonnull(NSArray * _Nonnull items) {
           
             NSArray *retval = [items rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-                return [FeedItem instanceFromDictionary:obj];
+                return [obj isKindOfClass:NSDictionary.class] ? [FeedItem instanceFromDictionary:obj] : obj;
             }];
             
             return retval;
@@ -119,7 +269,9 @@
             
             [self setupData];
             
-            self.controllerState = StateLoaded;
+            runOnMainQueueWithoutDeadlocking(^{
+                self.controllerState = StateLoaded;
+            });
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (self.refreshControl != nil && self.refreshControl.isRefreshing) {
@@ -176,7 +328,6 @@
     if (sender != nil) {
 #endif
         self.todayManager = nil;
-        self.pagingManager = self.todayManager;
         [self loadNextPage];
 #if !TARGET_OS_MACCATALYST
     }
@@ -194,8 +345,14 @@
 
 - (void)_setSortingOption:(YetiSortOption)option {
     
+    [self setupDatabases:option];
+    
     self.todayManager = nil;
     self.pagingManager = self.todayManager;
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self updateTitleView];
+    });
     
 }
 

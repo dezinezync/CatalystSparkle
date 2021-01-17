@@ -24,7 +24,11 @@
 
 @interface SplitVC () <UIGestureRecognizerDelegate>
 
+#if TARGET_OS_MACCATALYST
+
 - (void)setupDisplayModes:(CGSize)size;
+
+#endif
 
 @property (nonatomic, weak) TwoFingerPanGestureRecognizer *twoFingerPan;
 
@@ -57,6 +61,9 @@
         self.preferredSupplementaryColumnWidth = 320.f;
         self.minimumSupplementaryColumnWidth = 320.f;
         self.maximumSupplementaryColumnWidth = 375.f;
+#else
+        self.minimumPrimaryColumnWidth = 298.f;
+        self.minimumSupplementaryColumnWidth = 375.f;
 #endif
       
         self.preferredSplitBehavior = UISplitViewControllerSplitBehaviorDisplace;
@@ -208,33 +215,31 @@
 
 - (void)checkIfBookmarksShouldBeMigrated {
     
-    BOOL migrated = [Keychain boolFor:BookmarksMigratedKey error:nil];
-
-    if (migrated == YES) {
-        return;
-    }
-    
-    BookmarksMigrationVC *vc = [[BookmarksMigrationVC alloc] initWithNibName:NSStringFromClass(BookmarksMigrationVC.class) bundle:nil];
-    
-    vc.bookmarksManager = self.mainCoordinator.bookmarksManager;
-    
-    weakify(vc);
-    
-    vc.completionBlock = ^(BOOL success) {
-        
-        strongify(vc);
-      
-        if (success == YES) {
-            [Keychain add:BookmarksMigratedKey boolean:YES];
-        }
-        
-        [vc.navigationController dismissViewControllerAnimated:YES completion:nil];
-        
-    };
-    
-    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-    
-    [self presentViewController:nav animated:YES completion:nil];
+//    BOOL migrated = [Keychain boolFor:BookmarksMigratedKey error:nil];
+//
+//    if (migrated == YES) {
+//        return;
+//    }
+//    
+//    BookmarksMigrationVC *vc = [[BookmarksMigrationVC alloc] initWithNibName:NSStringFromClass(BookmarksMigrationVC.class) bundle:nil];
+//    
+//    weakify(vc);
+//    
+//    vc.completionBlock = ^(BOOL success) {
+//        
+//        strongify(vc);
+//      
+//        if (success == YES) {
+//            [Keychain add:BookmarksMigratedKey boolean:YES];
+//        }
+//        
+//        [vc.navigationController dismissViewControllerAnimated:YES completion:nil];
+//        
+//    };
+//    
+//    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+//    
+//    [self presentViewController:nav animated:YES completion:nil];
     
 }
 
@@ -396,16 +401,38 @@
     
     [activity addUserInfoEntriesFromDictionary:@{@"controllers": controllers}];
     
-    if (self.mainCoordinator.sidebarVC) {
-        [self.mainCoordinator.sidebarVC saveRestorationActivity:activity];
+    SEL selector = @selector(saveRestorationActivity:);
+    
+    if (self.mainCoordinator.sidebarVC != nil && [self.mainCoordinator.sidebarVC respondsToSelector:selector]) {
+        
+        @try {
+            [self.mainCoordinator.sidebarVC saveRestorationActivity:activity];
+        } @catch (NSException *exception) {
+            
+        } @finally {
+            
+        }
+        
     }
     
-    if (self.mainCoordinator.feedVC) {
-        [self.mainCoordinator.feedVC saveRestorationActivity:activity];
+    if (self.mainCoordinator.feedVC != nil && [self.mainCoordinator.feedVC respondsToSelector:selector]) {
+        @try {
+            [self.mainCoordinator.feedVC saveRestorationActivity:activity];
+        } @catch (NSException *exception) {
+            
+        } @finally {
+            
+        }
     }
     
-    if (self.mainCoordinator.articleVC) {
-        [self.mainCoordinator.articleVC saveRestorationActivity:activity];
+    if (self.mainCoordinator.articleVC != nil && [self.mainCoordinator.articleVC respondsToSelector:selector]) {
+        @try {
+            [self.mainCoordinator.articleVC saveRestorationActivity:activity];
+        } @catch (NSException *exception) {
+            
+        } @finally {
+            
+        }
     }
     
     return activity;
@@ -487,13 +514,12 @@
     // collapseSecondaryViewController:forSplitViewController causes the
     // UINavigationController to be pushed on the the stack of the primary
     // navgiation controller.
-    if([[primaryViewController topViewController] isKindOfClass:UINavigationController.class]) {
+    if ([[primaryViewController topViewController] isKindOfClass:UINavigationController.class]) {
         return [primaryViewController popViewControllerAnimated:NO];
     }
     else if ([[primaryViewController topViewController] isKindOfClass:ArticleVC.class]) {
 
         ArticleVC *vc = (ArticleVC *)[primaryViewController popViewControllerAnimated:NO];
-//        vc.navigationItem.leftBarButtonItem = self.displayModeButtonItem;
 
         UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
         nav.restorationIdentifier = @"ArticleDetailNav";
@@ -562,6 +588,17 @@
         return YES;
         
     }
+    else if ([NSStringFromSelector(aSelector) isEqualToString:@"didLongPressOnAllRead:"]) {
+        
+        if (self.mainCoordinator.feedVC != nil) {
+            
+            return [self.mainCoordinator.feedVC respondsToSelector:aSelector];
+            
+        }
+        
+        return NO;
+        
+    }
     
     return [super respondsToSelector:aSelector];
     
@@ -588,6 +625,11 @@
         return [self.mainCoordinator methodSignatureForSelector:selector];
         
     }
+    else if ([NSStringFromSelector(selector) isEqualToString:@"didLongPressOnAllRead:"] && self.mainCoordinator.feedVC != nil) {
+        
+        return [self.mainCoordinator.feedVC methodSignatureForSelector:selector];
+        
+    }
     
     return [super methodSignatureForSelector:selector];
 }
@@ -604,6 +646,10 @@
     }
     else if (anInvocation.selector == NSSelectorFromString(@"showSubscriptionsInterface")) {
         [anInvocation invokeWithTarget:self.mainCoordinator];
+        return;
+    }
+    else if (anInvocation.selector == NSSelectorFromString(@"didLongPressOnAllRead:") && self.mainCoordinator.feedVC != nil) {
+        [anInvocation invokeWithTarget:self.mainCoordinator.feedVC];
         return;
     }
     
