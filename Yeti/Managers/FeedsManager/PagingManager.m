@@ -131,6 +131,42 @@
         params[@"total"] = @(self.total);
     }
     
+    if (self.fromDB) {
+        
+        if (self.dbFetchingCB != nil) {
+         
+            self.dbFetchingCB(^(NSArray * _Nullable items) {
+                
+                self.loading = NO;
+                
+                if (items == nil) {
+                    self.hasNextPage = NO;
+                }
+                else {
+                
+                    if (self.preProcessorCB) {
+                        items = self.preProcessorCB(items);
+                    }
+                    
+                    self.page = [params[@"page"] integerValue] + 1;
+                   
+                    self.hasNextPage = (items.count == 20);
+                    
+                    [self.uniqueItems addObjectsFromArray:items];
+                    
+                }
+                
+                if (self.successCB) {
+                    self.successCB();
+                }
+                
+            });
+            
+        }
+        
+        return;
+    }
+    
     NSString *path = self.path;
     
     NSString *url = [NSURL URLWithString:path relativeToURL:MyFeedsManager.session.baseURL].absoluteString;;

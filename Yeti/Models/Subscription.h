@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface Subscription : NSObject <NSSecureCoding>
+@interface YTSubscription : NSObject <NSSecureCoding>
 
 @property (nonatomic, copy) NSNumber *identifer;
 @property (nonatomic, copy) NSString *environment;

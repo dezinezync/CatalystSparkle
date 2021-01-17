@@ -26,6 +26,10 @@
 #import "OPMLVC.h"
 #import <DZKit/DZMessagingController.h>
 #import <sys/utsname.h>
+#import <UserNotifications/UserNotifications.h>
+#import "Keychain.h"
+
+#import "Elytra-Swift.h"
 
 NSString* deviceName() {
     struct utsname systemInfo;
@@ -38,6 +42,7 @@ NSString* deviceName() {
 @interface MainCoordinator ()
 
 @property (nonatomic, strong) NewFolderController *folderController;
+@property (nonatomic, strong) NSTimer *registerNotificationsTimer;
 
 @end
 
@@ -48,9 +53,6 @@ NSString* deviceName() {
     if (self = [super init]) {
         
         self.childCoordinators = [NSMutableArray arrayWithCapacity:3];
-        self.bookmarksManager = [[BookmarksManager alloc] init];
-        
-        MyFeedsManager.bookmarksManager = self.bookmarksManager;
         
     }
     
@@ -66,7 +68,6 @@ NSString* deviceName() {
     
     SidebarVC *sidebar = [[SidebarVC alloc] initWithDefaultLayout];
     sidebar.mainCoordinator = self;
-    sidebar.bookmarksManager = self.bookmarksManager;
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:sidebar];
     
@@ -111,6 +112,8 @@ NSString* deviceName() {
             
         }
         
+        [self checkForPushNotifications];
+        
     });
     
 }
@@ -121,7 +124,11 @@ NSString* deviceName() {
         return;
     }
     
-    if (feed.feedType == FeedVCTypeUnread) {
+    if (feed.feedType == FeedVCTypeUnread && (self.feedVC == nil || [self.feedVC isKindOfClass:UnreadVC.class] == NO)) {
+        
+        if (self.feedVC != nil) {
+            self.feedVC = nil;
+        }
         
         UnreadVC *unreadVC = [[UnreadVC alloc] init];
         
@@ -273,6 +280,7 @@ NSString* deviceName() {
     UINavigationController *nav = [AddFeedVC instanceInNavController];
     
     nav.viewControllers.firstObject.mainCoordinator = self;
+    nav.modalPresentationStyle = UIModalPresentationFullScreen;
     
     [self.splitViewController presentViewController:nav animated:YES completion:nil];
     
@@ -424,6 +432,8 @@ NSString* deviceName() {
     }];
     
 }
+    
+#endif
 
 - (void)showContactInterface {
     
@@ -453,8 +463,196 @@ NSString* deviceName() {
                                  fromController:self.splitViewController];
     
 }
+
+- (void)prepareDataForFullResync {
     
-#endif
+    SidebarVC *instance = self.sidebarVC;
+    
+    if (instance != nil) {
+        
+        [DBManager.sharedInstance purgeDataForResync];
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.625 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+//                [instance performSelector:NSSelectorFromString(@"") withObject:instance.refreshControl];
+            
+            [instance beginRefreshingAll:instance.refreshControl];
+            
+        });
+        
+    }
+    
+}
+
+- (void)prepareFeedsForFullResync {
+    
+    SidebarVC *instance = self.sidebarVC;
+    
+    if (instance != nil) {
+        
+        [DBManager.sharedInstance purgeFeedsForResync];
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+//                [instance performSelector:NSSelectorFromString(@"") withObject:instance.refreshControl];
+            
+            [instance beginRefreshingAll:instance.refreshControl];
+            
+        });
+        
+    }
+    
+}
+
+- (void)registerForNotifications:(void (^)(BOOL, NSError * _Nullable))completion {
+    
+    BOOL isImmediate = [NSThread.callStackSymbols.description containsString:@"PushRequestVC"];
+    
+    runOnMainQueueWithoutDeadlocking(^{
+        
+        if (UIApplication.sharedApplication.applicationState == UIApplicationStateBackground) {
+            
+            if (completion) {
+                completion(YES, nil);
+            }
+            
+            return;
+        }
+        
+        if (UIApplication.sharedApplication.isRegisteredForRemoteNotifications == YES) {
+            
+            if (completion) {
+                completion(YES, nil);
+            }
+            
+            return;
+        }
+        
+        [UNUserNotificationCenter.currentNotificationCenter getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
+           
+            if (settings.authorizationStatus == UNAuthorizationStatusDenied) {
+                // no permission, ignore.
+                
+                if (completion) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        completion(NO, nil);
+                    });
+                }
+                
+                return;
+            }
+            else if (settings.authorizationStatus == UNAuthorizationStatusNotDetermined) {
+                // no requested yet. Ask
+                
+                if (self.registerNotificationsTimer != nil) {
+                    
+                    if (self.registerNotificationsTimer.isValid) {
+                        [self.registerNotificationsTimer invalidate];
+                    }
+                    
+                    self.registerNotificationsTimer = nil;
+                    
+                }
+                
+                NSTimeInterval time = isImmediate ? 0 : 5;
+                
+                runOnMainQueueWithoutDeadlocking(^{
+                    
+                    self.registerNotificationsTimer = [NSTimer scheduledTimerWithTimeInterval:time repeats:NO block:^(NSTimer * _Nonnull timer) {
+                       
+                        [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:UNAuthorizationOptionBadge|UNAuthorizationOptionAlert|UNAuthorizationOptionSound completionHandler:^(BOOL granted, NSError * _Nullable error) {
+                            
+                            if (error) {
+                                NSLog(@"Error authorizing for push notifications: %@", error);
+                            }
+                            
+                            else if (granted) {
+                                
+                                [Keychain add:kIsSubscribingToPushNotifications boolean:YES];
+                                
+                                dispatch_async(dispatch_get_main_queue(), ^{
+                                    [UIApplication.sharedApplication registerForRemoteNotifications];
+                                });
+                                
+                            }
+                            
+                            if (completion) {
+                                dispatch_async(dispatch_get_main_queue(), ^{
+                                    completion(granted, error);
+                                });
+                            }
+                            
+                        }];
+                        
+                    }];
+                    
+                });
+                
+            }
+            else {
+                if (completion) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        completion(YES, nil);
+                    });
+                }
+            }
+            
+        }];
+        
+    });
+    
+}
+
+- (void)checkForPushNotifications {
+    
+    runOnMainQueueWithoutDeadlocking(^{
+        
+        BOOL didAsk = [NSUserDefaults.standardUserDefaults boolForKey:@"pushRequest"];
+        
+        if (didAsk) {
+            return;
+        }
+        
+        if (UIApplication.sharedApplication.applicationState == UIApplicationStateBackground) {
+            return;
+        }
+        
+        if (UIApplication.sharedApplication.isRegisteredForRemoteNotifications == YES) {
+            return;
+        }
+        
+        [UNUserNotificationCenter.currentNotificationCenter getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
+           
+            if (settings.authorizationStatus == UNAuthorizationStatusDenied) {
+                // no permission, ignore.
+                return;
+            }
+            else if (settings.authorizationStatus == UNAuthorizationStatusNotDetermined) {
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    PushRequestVC *vc = [[PushRequestVC alloc] initWithNibName:@"PushRequestVC" bundle:nil];
+                    vc.mainCoordinator = self;
+                    vc.modalPresentationStyle = UIModalPresentationOverFullScreen;
+                    
+                    [self.splitViewController presentViewController:vc animated:YES completion:nil];
+                    
+                });
+                
+            }
+            
+        }];
+        
+    });
+    
+}
+
+- (void)didTapCloseForPushRequest {
+    
+    [NSUserDefaults.standardUserDefaults setBool:YES forKey:@"pushRequest"];
+    [NSUserDefaults.standardUserDefaults synchronize];
+    
+}
 
 #pragma mark - Helpers
 
@@ -498,8 +696,6 @@ NSString* deviceName() {
     if ([controller isKindOfClass:FeedVC.class]) {
         
         self.feedVC = (FeedVC *)controller;
-        
-        [(FeedVC *)controller setBookmarksManager:self.bookmarksManager];
         
     }
     

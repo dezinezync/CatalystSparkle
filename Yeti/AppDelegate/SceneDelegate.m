@@ -17,6 +17,8 @@
 #import "UIColor+HEX.h"
 #import "AddFeedVC.h"
 
+#import <CoreSpotlight/CoreSpotlight.h>
+
 #define backgroundRefreshIdentifier @"com.yeti.refresh"
 
 @interface UIViewController (ElytraStateRestoration)
@@ -159,6 +161,9 @@
     // Called as the scene transitions from the foreground to the background.
     // Use this method to save data, release shared resources, and store enough scene-specific state information
     // to restore the scene back to its current state.
+    
+    [MyDBManager setFeeds:ArticlesManager.shared.feeds];
+    
     [BGTaskScheduler.sharedScheduler getPendingTaskRequestsWithCompletionHandler:^(NSArray<BGTaskRequest *> * _Nonnull taskRequests) {
         
         BOOL cancelling = NO;
@@ -175,20 +180,46 @@
         
         if (cancelling == YES) {
             
-#ifdef DEBUG
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-
-            dispatch_async(self.bgTaskDispatchQueue, ^{
-                [[BGTaskScheduler sharedScheduler] performSelector:NSSelectorFromString(@"_simulateLaunchForTaskWithIdentifier:") withObject:backgroundRefreshIdentifier];
-            });
-
-#pragma clang diagnostic pop
-#endif
+//#ifdef DEBUG
+//#pragma clang diagnostic push
+//#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+//
+//            dispatch_async(self.bgTaskDispatchQueue, ^{
+//                [[BGTaskScheduler sharedScheduler] performSelector:NSSelectorFromString(@"_simulateLaunchForTaskWithIdentifier:") withObject:backgroundRefreshIdentifier];
+//            });
+//
+//#pragma clang diagnostic pop
+//#endif
             
         }
         
     }];
+    
+}
+
+- (void)scene:(UIScene *)scene continueUserActivity:(NSUserActivity *)userActivity {
+    
+    if ([userActivity.activityType isEqualToString:CSSearchableItemActionType]) {
+        
+        NSString *uniqueIdentifier = [userActivity.userInfo valueForKey:CSSearchableItemActivityIdentifier];
+        
+        if (uniqueIdentifier == nil) {
+            return;
+        }
+        
+        if ([uniqueIdentifier containsString:@"feed:"]) {
+            
+            NSString *feedID = [uniqueIdentifier stringByReplacingOccurrencesOfString:@"feed:" withString:@""];
+            
+            NSURL *url = [NSURL URLWithFormat:@"elytra://feed/%@", feedID];
+            
+            runOnMainQueueWithoutDeadlocking(^{
+                [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
+            });
+            
+        }
+        
+    }
     
 }
 

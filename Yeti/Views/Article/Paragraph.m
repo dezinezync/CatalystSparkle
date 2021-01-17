@@ -284,6 +284,10 @@ static NSParagraphStyle * _paragraphStyle = nil;
                     range.range = NSMakeRange(location, attrs.length - location);
                 }
                 
+                if (range.range.length > NSNotFound) {
+                    range.range = NSMakeRange(location, 0);
+                }
+                
                 [attrs enumerateAttribute:NSFontAttributeName inRange:range.range options:kNilOptions usingBlock:^(UIFont *  _Nullable value, NSRange range, BOOL * _Nonnull stop) {
                    
                     if ([value.description containsString:@"bold"]) {

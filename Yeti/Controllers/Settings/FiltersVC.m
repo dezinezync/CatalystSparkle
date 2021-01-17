@@ -61,17 +61,35 @@ NSString *const kFiltersCell = @"filterCell";
     
     weakify(self);
     
-    [MyFeedsManager getFiltersWithSuccess:^(NSArray <NSString *> *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    if (MyFeedsManager.user.filters != nil) {
+     
+        [self setupData:MyFeedsManager.user.filters.allObjects.reverseObjectEnumerator.allObjects];
         
-        strongify(self);
+    }
+    else {
         
-        [self setupData:[responseObject reverseObjectEnumerator].allObjects];
+        [MyFeedsManager getFiltersWithSuccess:^(NSArray <NSString *> *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            if (responseObject == nil) {
+                responseObject = @[];
+            }
+            
+            User *user = MyFeedsManager.user;
+            user.filters = [NSSet setWithArray:responseObject];
+            
+            [MyDBManager setUser:user];
+            
+            strongify(self);
+            
+            [self setupData:MyFeedsManager.user.filters.allObjects.reverseObjectEnumerator.allObjects];
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+           
+            [AlertManager showGenericAlertWithTitle:@"Failed to Load Filters" message:error.localizedDescription];
+            
+        }];
         
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-       
-        [AlertManager showGenericAlertWithTitle:@"Failed to Load Filters" message:error.localizedDescription];
-        
-    }];
+    }
     
 }
 
@@ -170,6 +188,11 @@ NSString *const kFiltersCell = @"filterCell";
                 return ![obj isEqualToString:keyword];
             }];
             
+            User *user = MyFeedsManager.user;
+            user.filters = [NSSet setWithArray:keywords];
+            
+            [MyDBManager setUser:user];
+            
             [self setupData:keywords];
             
         }
@@ -266,7 +289,14 @@ NSString *const kFiltersCell = @"filterCell";
         [textField becomeFirstResponder];
     });
     
-    [MyFeedsManager addFilter:keyword success:nil error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [MyFeedsManager addFilter:keyword success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+     
+        User *user = MyFeedsManager.user;
+        user.filters = [NSSet setWithArray:data];
+        
+        [MyDBManager setUser:user];
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
        
         [AlertManager showGenericAlertWithTitle:@"Failed to add Filter" message:error.localizedDescription];
         

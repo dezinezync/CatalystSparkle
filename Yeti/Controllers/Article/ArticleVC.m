@@ -636,6 +636,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 - (void)setState:(ArticleState)state {
     
+    [self setState:state isChangingArticle:YES];
+    
+}
+
+- (void)setState:(ArticleState)state isChangingArticle:(BOOL)isChangingArticle {
+    
     if (_state == state) {
         return;
     }
@@ -711,8 +717,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                 self.loader.transform = CGAffineTransformMakeScale(1.f, 1.f);
                 self.loader.alpha = 1.f;
                 
-                [self setupHelperViewActions];
-                [self setupToolbar:self.traitCollection];
+                if (isChangingArticle) {
+                    
+                    [self setupHelperViewActions];
+                    [self setupToolbar:self.traitCollection];
+                    
+                }
                 
             }];
             
@@ -755,11 +765,13 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     return self.item;
 }
 
-- (void)setupArticle:(FeedItem *)article
-{
+- (void)setupArticle:(FeedItem *)article {
+    
     if (!article)
         return;
     
+    /* This block may not be necessary with local storage
+     *
     if (self.item) {
         
         if (self.item.isBookmarked == NO) {
@@ -777,6 +789,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             }
         }
     }
+    */
     
     BOOL isChangingArticle = self.item && self.item.identifier.integerValue != article.identifier.integerValue;
     
@@ -785,7 +798,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     NSDate *start = NSDate.date;
     
     if (self.item.content && self.item.content.count) {
-        self.state = ArticleStateLoading;
+        
+        [self setState:ArticleStateLoading isChangingArticle:isChangingArticle];
         
         [self _setupArticle:self.item start:start isChangingArticle:isChangingArticle];
         return;
@@ -1158,7 +1172,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         NSLogDebug(@"ScrollView contentsize: %@", NSStringFromCGSize(contentSize));
         
-        self.state = ArticleStateLoaded;
+        [self setState:ArticleStateLoaded isChangingArticle:isChangingArticle];
+        
     });
     
     if (isChangingArticle && self.providerDelegate) {
@@ -1286,11 +1301,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     authorView.frame = frame;
 #endif
-    authorView.mercurialed = self.item.mercury;
     
-    if (self.item.mercury) {
-        authorView.mercurialButton.enabled = NO;
-    }
+    // Hide full-text button for Youtube videos.
+    authorView.mercurialButton.hidden = ([self.item.articleURL containsString:@"youtube.com/watch"]);
+    
+    authorView.mercurialed = self.item.mercury;
     
     [self.stackView addArrangedSubview:authorView];
     
@@ -1300,7 +1315,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         (self.providerDelegate != nil && [self.providerDelegate isMemberOfClass:FeedVC.class] == NO)) {
         
         // the blog label should redirect to the blog
-        authorView.blogLabel.textColor = self.view.tintColor;
+        authorView.blogLabel.textColor = SharedPrefs.tintColor;
         [authorView.blogLabel setNeedsDisplay];
         
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnBlogLabel:)];
@@ -2346,13 +2361,14 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                 UIImageView *imageView = [[UIImageView alloc] initWithFrame:playerController.contentOverlayView.bounds];
                 imageView.contentMode = UIViewContentModeScaleAspectFill;
                 imageView.autoUpdateFrameOrConstraints = NO;
+                imageView.translatesAutoresizingMaskIntoConstraints = NO;
 
                 [playerController.contentOverlayView addSubview:imageView];
 
                 [imageView.widthAnchor constraintEqualToAnchor:playerController.contentOverlayView.widthAnchor multiplier:1.f].active = YES;
                 [imageView.heightAnchor constraintEqualToAnchor:playerController.contentOverlayView.heightAnchor multiplier:1.f].active = YES;
                 [imageView.leadingAnchor constraintEqualToAnchor:playerController.contentOverlayView.leadingAnchor].active = YES;
-                [imageView.trailingAnchor constraintEqualToAnchor:playerController.contentOverlayView.trailingAnchor].active = YES;
+                [imageView.topAnchor constraintEqualToAnchor:playerController.contentOverlayView.topAnchor].active = YES;
 
                 NSString *thumbnail = videoInfo.coverImage;
                 
@@ -2578,32 +2594,35 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     // this will only mark that and return
     if (self.item.mercury == YES) {
         
-        if (completionHandler) {
-            completionHandler(YES);
+        NSArray <Content *> *content = [MyDBManager contentForArticle:self.item.identifier];
+        
+        if (content != nil) {
+            
+            runOnMainQueueWithoutDeadlocking(^{
+               
+                self.item.content = content;
+                self.item.mercury = NO;
+                
+                [self setupArticle:self.item];
+                
+            });
+         
+            if (completionHandler) {
+                completionHandler(YES);
+            }
+            
+        }
+        else {
+            
+            if (completionHandler) {
+                completionHandler(NO);
+            }
+            
         }
         
         return;
     }
-    
-    Feed *feed = [ArticlesManager.shared feedForID:self.item.feedID];
-    
-    // if the GUID doesn't contain the OG URL, we'll error out anyways
-    BOOL isFeedProxyed = [self.item.articleURL containsString:@"feedburner"] || [self.item.articleURL containsString:@"feedproxy.google"];
-    
-    NSString *compareTo = isFeedProxyed ? self.item.guid : self.item.articleURL;
-    
-    if ([compareTo containsString:feed.extra.url] == NO) {
-        
-        if (completionHandler) {
-            completionHandler(NO);
-        }
-        
-        [AlertManager showGenericAlertWithTitle:@"Not Supported" message:@"Fetching full-text for externally linked articles is not supported at the moment."];
-        
-        return;
-        
-    }
-    
+
     [MyFeedsManager getMercurialArticle:self.item.identifier success:^(FeedItem * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         self.item.mercury = responseObject.mercury;
@@ -2623,9 +2642,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         if (responseObject.enclosures && responseObject.enclosures.count) {
             self.item.enclosures = responseObject.enclosures;
         }
-        
-        // persist to disk with updated state
-        [MyDBManager addArticle:self.item];
         
         [self setupArticle:self.item];
         

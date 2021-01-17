@@ -64,7 +64,7 @@
     
     UICellAccessoryOutlineDisclosure *disclosure = [UICellAccessoryOutlineDisclosure new];
     
-    disclosure.style = UICellAccessoryOutlineDisclosureStyleHeader;
+    disclosure.style = UICellAccessoryOutlineDisclosureStyleCell;
     
     self.accessories = @[disclosure];
     
@@ -74,10 +74,10 @@
     
     UIListContentConfiguration *updatedContent = (id)[self contentConfiguration];
     
+    UIBackgroundConfiguration *backgroundConfig = self.backgroundConfiguration;
+    
     if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
         
-        UIBackgroundConfiguration *backgroundConfig = self.backgroundConfiguration;
-    
         backgroundConfig.backgroundColor = UIColor.systemBackgroundColor;
         
         self.backgroundConfiguration = backgroundConfig;
@@ -93,6 +93,17 @@
         updatedContent.image = [UIImage systemImageNamed:@"folder.fill"];
         
     }
+    
+//#if !TARGET_OS_MACCATALYST
+    if (state.isSelected) {
+        backgroundConfig.backgroundColor = UIColor.tertiarySystemFillColor;
+    }
+    else {
+        backgroundConfig.backgroundColor = UIColor.clearColor;
+    }
+//#endif
+    
+    self.backgroundConfiguration = backgroundConfig;
     
     self.contentConfiguration = updatedContent;
     

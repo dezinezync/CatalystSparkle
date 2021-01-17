@@ -396,27 +396,9 @@ typedef NS_ENUM(NSUInteger, SectionOneRows) {
         
         [tableView deselectRowAtIndexPath:indexPath animated:NO];
         
-        SidebarVC *instance = self.mainCoordinator.sidebarVC;
+        [self.mainCoordinator prepareDataForFullResync];
         
-        if (instance != nil) {
-            
-            ArticlesManager.shared.folders = nil;
-            
-            ArticlesManager.shared.feeds = nil;
-            
-            [DBManager.sharedInstance purgeDataForResync];
-            
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.625 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                
-//                [instance performSelector:NSSelectorFromString(@"") withObject:instance.refreshControl];
-                
-                [instance beginRefreshingAll:instance.refreshControl];
-                
-            });
-            
-            [self.navigationController dismissViewControllerAnimated:YES completion:nil];
-            
-        }
+        [self.navigationController dismissViewControllerAnimated:YES completion:nil];
         
         return;
         
@@ -557,6 +539,46 @@ typedef NS_ENUM(NSUInteger, SectionOneRows) {
     }
 }
 
+- (UIContextMenuConfiguration *)tableView:(UITableView *)tableView contextMenuConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath point:(CGPoint)point {
+ 
+    if (indexPath.section == 0 && indexPath.row == 3) {
+        
+        weakify(self);
+        
+        UIContextMenuConfiguration *config = [UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:nil actionProvider:^UIMenu * _Nullable(NSArray<UIMenuElement *> * _Nonnull suggestedActions) {
+           
+            UIAction *resyncAll = [UIAction actionWithTitle:@"Resync All" image:nil identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                
+                strongify(self);
+                
+                [self.mainCoordinator prepareDataForFullResync];
+                
+                [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+                
+            }];
+            
+            UIAction *resyncFeeds = [UIAction actionWithTitle:@"Resync Feeds" image:nil identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                
+                strongify(self);
+                
+                [self.mainCoordinator prepareFeedsForFullResync];
+                
+                [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+                
+            }];
+           
+            return [UIMenu menuWithChildren:@[resyncAll, resyncFeeds]];
+            
+        }];
+        
+        return config;
+    
+    }
+    
+    return nil;
+}
+    
+
 #pragma mark - <SettingsChanges>
 
 - (void)didChangeSettings
@@ -625,9 +647,56 @@ typedef NS_ENUM(NSUInteger, SectionOneRows) {
         });
         
         [_footerView addSubview:_byLabel];
+        
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(toggleCWLogging)];
+        tap.numberOfTapsRequired = 5;
+        
+        [_footerView addGestureRecognizer:tap];
+        
     }
     
     return _footerView;
+    
+}
+
+- (void)toggleCWLogging {
+    
+    BOOL isEnabled = MyFeedsManager.debugLoggingEnabled;
+    
+    UIAlertController *avc = nil;
+    
+    if (isEnabled) {
+        
+        avc = [UIAlertController alertControllerWithTitle:@"Stop Debug Session" message:@"Are you sure you want to stop the debug session?" preferredStyle:UIAlertControllerStyleAlert];
+        
+        [avc addAction:[UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            CWLog(@"Debug Logging Session Ended");
+            
+            MyFeedsManager.debugLoggingEnabled = NO;
+            
+        }]];
+        
+        [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+        
+    }
+    else {
+        
+        avc = [UIAlertController alertControllerWithTitle:@"Start Debug Session" message:@"Are you sure you want to start the debug session?" preferredStyle:UIAlertControllerStyleAlert];
+        
+        [avc addAction:[UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            MyFeedsManager.debugLoggingEnabled = YES;
+            
+            CWLog(@"Debug Logging Session Started");
+            
+        }]];
+        
+        [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+        
+    }
+    
+    [self presentViewController:avc animated:YES completion:nil];
     
 }
 

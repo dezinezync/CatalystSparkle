@@ -27,8 +27,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong, readonly) UICollectionViewDiffableDataSource <NSNumber *, Feed *> *DS;
 
-@property (nonatomic, weak) BookmarksManager *bookmarksManager;
-
 @property (nonatomic, weak) UIRefreshControl *refreshControl;
 
 - (instancetype)initWithDefaultLayout;
@@ -51,6 +49,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak) UIAlertAction *alertDoneAction;
 @property (nonatomic, weak) Feed *alertFeed;
 @property (nonatomic, strong) NSIndexPath *alertIndexPath;
+
+#pragma mark - Background Fetch
+
+@property (nonatomic, copy, nullable) void(^backgroundFetchHandler)(UIBackgroundFetchResult result);
 
 @end
 

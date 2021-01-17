@@ -32,7 +32,7 @@ extension Preferences.PaneIdentifier {
         hidesToolbarForSingleItem: true
     )
 
-    @objc public func preferencesMenuItemActionHandler(_ sender: NSMenuItem) {
+    @objc public func show() {
         preferencesWindowController.show()
     }
 

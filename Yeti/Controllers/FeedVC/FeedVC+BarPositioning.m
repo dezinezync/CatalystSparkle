@@ -18,11 +18,11 @@
         return @[];
     }
  
-    UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"text.badge.checkmark"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAllRead:)];
-    allRead.accessibilityValue = @"Mark all articles as read";
-    allRead.accessibilityHint = @"Mark all current articles as read.";
-    allRead.title = @"Mark Read";
-    allRead.width = 32.f;
+//    UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"text.badge.checkmark"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAllRead:)];
+//    allRead.accessibilityValue = @"Mark all articles as read";
+//    allRead.accessibilityHint = @"Mark all current articles as read.";
+//    allRead.title = @"Mark Read";
+//    allRead.width = 32.f;
     
     UIBarButtonItem *allReadBackDated = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"checkmark"] style:UIBarButtonItemStylePlain target:self action:@selector(didLongPressOnAllRead:)];
     allReadBackDated.accessibilityValue = @"Mark all articles as read";
@@ -62,6 +62,8 @@
     
     UIImage *sortingImage = [self.mainCoordinator imageForSortingOption:option];
     
+    weakify(self);
+    
     enabledOptions = [enabledOptions rz_map:^id(YetiSortOption obj, NSUInteger idx, NSArray *array) {
         
         UIAction *__action = nil;
@@ -70,6 +72,8 @@
             
             __action = [UIAction actionWithTitle:@"Unread - Latest First" image:[self.mainCoordinator imageForSortingOption:YTSortUnreadDesc] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
                
+                strongify(self);
+                
                 [self updateSortingOptionTo:YTSortUnreadDesc sender:action.sender];
                 
             }];
@@ -79,6 +83,8 @@
         else if ([obj isEqualToString:YTSortUnreadAsc]) {
             
             __action = [UIAction actionWithTitle:@"Unread - Oldest First" image:[self.mainCoordinator imageForSortingOption:YTSortUnreadAsc] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                
+                strongify(self);
                 
                 [self updateSortingOptionTo:YTSortUnreadAsc sender:action.sender];
                 
@@ -90,6 +96,8 @@
             
             __action = [UIAction actionWithTitle:@"All - Latest First" image:[self.mainCoordinator imageForSortingOption:YTSortAllDesc] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
                 
+                strongify(self);
+                
                 [self updateSortingOptionTo:YTSortAllDesc sender:action.sender];
                 
             }];
@@ -99,6 +107,8 @@
         else {
             
             __action = [UIAction actionWithTitle:@"All - Oldest First" image:[self.mainCoordinator imageForSortingOption:YTSortAllAsc] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                
+                strongify(self);
                 
                 [self updateSortingOptionTo:YTSortAllAsc sender:action.sender];
                 
@@ -121,7 +131,7 @@
     BOOL isPushFromRPC = self.feed.rpcCount > 0;
     
     if (isPushFromHub == NO && isPushFromRPC == NO) {
-        NSMutableArray *buttons = @[allReadBackDated, allRead].mutableCopy;
+        NSMutableArray *buttons = @[allReadBackDated].mutableCopy;
         
         if ([self showsSortingButton]) {
             [buttons addObject:sorting];
@@ -138,7 +148,7 @@
         notifications.accessibilityHint = self.feed.isSubscribed ? @"Unsubscribe from notifications" : @"Subscribe to notifications";
         notifications.width = 32.f;
         
-        NSMutableArray *buttons = @[allReadBackDated, allRead, notifications].mutableCopy;
+        NSMutableArray *buttons = @[allReadBackDated, notifications].mutableCopy;
         
         if ([self showsSortingButton]) {
             [buttons addObject:sorting];

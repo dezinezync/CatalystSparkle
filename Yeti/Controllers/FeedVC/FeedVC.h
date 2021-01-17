@@ -20,7 +20,6 @@
 
 #import "CustomFeed.h"
 
-#import "BookmarksManager.h"
 #import "BarPositioning.h"
 
 #import "FeedHeaderView.h"
@@ -28,11 +27,17 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface FeedVC : UITableViewController < ControllerState, ScrollLoading, UnreadCountObservor > {
-#if TARGET_OS_MACCATALYST
 @public
+#if TARGET_OS_MACCATALYST
     BOOL _isRefreshing;
 #endif
+    // the following two keys are used by the Controller's DB Views.
+    NSUInteger _sortingVersionTag;
+    
+    NSUInteger _totalItemsForTitle;
 }
+
+@property (class, atomic, assign) NSUInteger filteringTag;
 
 @property (nonatomic, weak) Feed * _Nullable feed;
 @property (nonatomic, assign) BOOL noAuth;
@@ -44,8 +49,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype _Nullable)initWithFeed:(Feed * _Nonnull)feed;
 
 @property (nonatomic, assign) FeedVCType type;
-
-@property (nonatomic, weak) BookmarksManager * _Nullable bookmarksManager;
 
 @property (atomic, assign) StateType controllerState;
 
@@ -74,6 +77,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSString *)subtitle;
 
+@property (atomic, assign) NSUInteger totalItemsForTitle;
+
 - (void)updateTitleView;
 
 #pragma mark - State
@@ -85,6 +90,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)continueActivity:(NSUserActivity *)activity;
 
 - (void)saveRestorationActivity:(NSUserActivity * _Nonnull)activity;
+
+- (NSString *)filteringViewName;
 
 #pragma mark -
 

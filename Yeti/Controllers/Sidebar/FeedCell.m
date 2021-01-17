@@ -17,6 +17,10 @@
 
 - (void)configure:(Feed *)item indexPath:(nonnull NSIndexPath *)indexPath {
     
+#if TARGET_OS_MACCATALYST
+    self.indentationWidth = 36.f;
+#endif
+    
     self.feed = item;
     
     if (self.feed == nil) {
@@ -26,6 +30,8 @@
     BOOL shouldIndent = self.isExploring == NO && indexPath.section != 2;
     
     UIListContentConfiguration *content = self.isExploring ? [UIListContentConfiguration subtitleCellConfiguration] : [UIListContentConfiguration sidebarCellConfiguration];
+    
+    content.imageProperties.accessibilityIgnoresInvertColors = YES;
     
     content.text = item.displayTitle;
     
@@ -157,32 +163,17 @@
 
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             
-            SDWebImageOptions imageDownloadOptions = SDWebImageDownloaderUseNSURLCache|SDWebImageRetryFailed;
+            SDWebImageOptions imageDownloadOptions = SDWebImageDownloaderUseNSURLCache|SDWebImageDownloaderScaleDownLargeImages;
 
             __unused SDWebImageCombinedOperation *op = [SDWebImageManager.sharedManager loadImageWithURL:[NSURL URLWithString:url] options:imageDownloadOptions progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
                 
                 strongify(self);
                 
-                if (self.feed == nil) {
-                    [self _setupDefaultIcon];;
+                if (self.feed == nil || self.DS == nil || feed.faviconImage != nil || image == nil) {
+                    return [self _setupDefaultIcon];
                 }
                 
-                if (self.DS == nil) {
-                    [self _setupDefaultIcon];;
-                }
-                
-                if (feed.faviconImage != nil) {
-                    [self _setupDefaultIcon];;
-                }
-
-                if (image != nil) {
-
-                    feed.faviconImage = image;
-
-                }
-                else {
-                    [self _setupDefaultIcon];
-                }
+                feed.faviconImage = image;
                 
                 [self updateCellFaviconImageFor:feed];
 
@@ -261,6 +252,10 @@
     }
     
     UIListContentConfiguration *content = (id)[cell contentConfiguration];
+    
+    if (feed.faviconImage.size.width > feed.faviconImage.size.height) {
+        // @TODO: Center the image here and let it overflow horizontally.
+    }
         
     content.image = feed.faviconImage;
     

@@ -8,8 +8,9 @@
 
 #import "Subscription.h"
 #import "Keychain.h"
+#import <DZKit/NSArray+RZArrayCandy.h>
 
-@implementation Subscription
+@implementation YTSubscription
 
 + (BOOL)supportsSecureCoding {
     return YES;
@@ -17,7 +18,7 @@
 
 + (instancetype)instanceFromDictionary:(NSDictionary *)attrs {
     
-    Subscription *instance = [[Subscription alloc] initWithDictionary:attrs];
+    YTSubscription *instance = [[YTSubscription alloc] initWithDictionary:attrs];
     
     return instance;
     
@@ -37,13 +38,13 @@
 
 - (instancetype)initWithCoder:(NSCoder *)decoder {
     if (self = [super init]) {
-        self.identifer = [decoder decodeObjectForKey:propSel(identifer)];
-        self.environment = [decoder decodeObjectForKey:propSel(environment)];
+        self.identifer = [decoder decodeObjectOfClass:NSNumber.class forKey:propSel(identifer)];
+        self.environment = [decoder  decodeObjectOfClass:NSString.class forKey:propSel(environment)];
         self.expiry = [NSDate dateWithTimeIntervalSince1970:[decoder decodeDoubleForKey:propSel(expiry)]];
         self.created = [NSDate dateWithTimeIntervalSince1970:[decoder decodeDoubleForKey:propSel(created)]];
-        self.status = [decoder decodeObjectForKey:propSel(status)];
-        self.lifetime = [decoder decodeBoolForKey:propSel(lifetime)];
-        self.external = [decoder decodeBoolForKey:propSel(external)];
+        self.status = [decoder  decodeObjectOfClass:NSNumber.class  forKey:propSel(status)];
+        self.lifetime = [decoder decodeBoolForKey:@"lifetime"];
+        self.external = [decoder decodeBoolForKey:@"external"];
     }
     
     return self;
@@ -124,6 +125,26 @@
                 if ([items isKindOfClass:NSArray.class]) {
                     
                     NSSortDescriptor *sortByPeriodEnd = [NSSortDescriptor sortDescriptorWithKey:@"current_period_end" ascending:YES];
+                    
+                    items = [items rz_map:^id(NSDictionary *obj, NSUInteger idx, NSArray *array) {
+                        
+                        if ([obj isKindOfClass:NSString.class]) {
+                            
+                            NSData *data = [(NSString *)obj dataUsingEncoding:NSUTF8StringEncoding];
+                            
+                            id val = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
+                            
+                            if (val == nil) {
+                                return [NSDictionary new];
+                            }
+                            
+                            return val;
+                        }
+                        else {
+                            return obj;
+                        }
+                        
+                    }];
                     
                     items = [items sortedArrayUsingDescriptors:@[sortByPeriodEnd]];
                     

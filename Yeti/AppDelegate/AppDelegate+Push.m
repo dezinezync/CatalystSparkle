@@ -13,7 +13,7 @@
 
 - (void)registerNotificationCategories {
     
-    UNNotificationAction *viewAction = [UNNotificationAction actionWithIdentifier:@"com.yeti.notification.action.view" title:@"View" options:UNNotificationActionOptionAuthenticationRequired&UNNotificationActionOptionForeground];
+    UNNotificationAction *viewAction = [UNNotificationAction actionWithIdentifier:@"com.yeti.notification.action.view" title:@"View" options:UNNotificationActionOptionForeground];
     
     UNNotificationAction *cancel = [UNNotificationAction actionWithIdentifier:@"com.yeti.notification.action.cancel" title:@"Cancel" options:kNilOptions];
     
@@ -44,9 +44,85 @@
 
 #pragma mark - <UNUserNotificationCenterDelegate>
 
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler
-{
-    completionHandler(UNNotificationPresentationOptionList|UNNotificationPresentationOptionSound);
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
+    
+    completionHandler(UNNotificationPresentationOptionBanner|UNNotificationPresentationOptionSound);
+    
+}
+
+- (BOOL)application:(UIApplication *)application didReceiveRemoteNotification:(nonnull NSDictionary *)userInfo fetchCompletionHandler:(nonnull void (^)(UIBackgroundFetchResult))completionHandler {
+    
+    NSDictionary *types = [userInfo valueForKey:@"types"];
+    
+    BOOL isReads = [[types valueForKey:@"reads"] boolValue];
+    
+    if (isReads) {
+        
+        [MyDBManager setValue:@(NO) forKey:@"syncSetup"];
+        MyDBManager.backgroundFetchHandler = completionHandler;
+        [MyDBManager setupSync];
+        
+        return YES;
+        
+    }
+    
+    BOOL isFeeds = [[types valueForKey:@"feeds"] boolValue];
+    
+    if (isFeeds) {
+        
+        self.coordinator.sidebarVC.backgroundFetchHandler = completionHandler;
+        
+        [self.coordinator prepareFeedsForFullResync];
+        
+        return YES;
+        
+    }
+    
+    BOOL isSubscription = [[types valueForKey:@"subscription"] boolValue];
+    
+    if (isSubscription) {
+        
+        [MyFeedsManager getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            completionHandler(response.statusCode == 304 ? UIBackgroundFetchResultNoData : UIBackgroundFetchResultNewData);
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            completionHandler(UIBackgroundFetchResultFailed);
+            
+        }];
+        
+        return YES;
+        
+    }
+    
+    BOOL isArticle = [[types valueForKey:@"article"] boolValue];
+    
+    if (isArticle) {
+        
+        NSNumber *articleID = [userInfo valueForKey:@"articleID"];
+        NSNumber *feedID = [userInfo valueForKey:@"feedID"];
+        
+        if (articleID != nil && feedID != nil) {
+            
+            [MyFeedsManager getArticle:articleID feedID:feedID noAuth:NO success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                
+                completionHandler(UIBackgroundFetchResultNewData);
+                
+            } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+               
+                completionHandler(UIBackgroundFetchResultFailed);
+                
+            }];
+            
+        }
+        
+        return YES;
+        
+    }
+    
+    return NO;
+    
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)(void))completionHandler {

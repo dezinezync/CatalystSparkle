@@ -23,12 +23,12 @@
 - (id)initWithCoder:(NSCoder *)decoder
 {
     if ((self = [super initWithCoder:decoder])) {
-        self.icons = [decoder decodeObjectOfClass:NSDictionary.class forKey:propSel(icons)];
+        self.icons = [decoder decodeObjectOfClasses:[NSSet setWithObjects:NSDictionary.class, NSNumber.class, NSString.class, nil] forKey:propSel(icons)];
 //        self.descriptionText = [decoder decodeObjectForKey:@"descriptionText"];
 //        self.feedlinks = [decoder decodeObjectForKey:@"feedlinks"];
 //        self.feeds = [decoder decodeObjectForKey:@"feeds"];
         self.icon = [decoder decodeObjectOfClass:NSString.class forKey:@"icon"];
-        self.keywords = [decoder decodeObjectOfClass:NSArray.class forKey:@"keywords"];
+        self.keywords = [decoder decodeObjectOfClasses:[NSSet setWithObjects:NSArray.class, NSString.class, nil] forKey:@"keywords"];
         self.opengraph = [decoder decodeObjectOfClass:MetaOpenGraph.class forKey:@"opengraph"];
         self.title = [decoder decodeObjectOfClass:NSString.class forKey:@"title"];
         self.url = [decoder decodeObjectOfClass:NSURL.class forKey:@"url"];

@@ -8,6 +8,7 @@
 
 #import "ArticlesManager.h"
 #import <DZkit/NSArray+RZArrayCandy.h>
+#import "DBManager+Spotlight.h"
 
 static ArticlesManager * SharedArticleManager = nil;
 
@@ -106,73 +107,6 @@ static ArticlesManager * SharedArticleManager = nil;
         
 }
 
-- (NSArray <FeedItem *> *)bookmarks {
-    
-    if (_bookmarks == nil || _bookmarks.count == 0) {
-        
-        NSFileManager *manager = [NSFileManager defaultManager];
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-        NSString *documentsDirectory = [paths objectAtIndex:0]; // Get documents folder
-        NSString *directory = [documentsDirectory stringByAppendingPathComponent:@"bookmarks"];
-        BOOL isDir;
-        
-        if (![manager fileExistsAtPath:directory isDirectory:&isDir]) {
-            NSError *error = nil;
-            if (![manager createDirectoryAtPath:directory withIntermediateDirectories:YES attributes:nil error:&error]) {
-                NSLog(@"Error creating bookmarks directory: %@", error);
-            }
-        }
-        
-        NSDirectoryEnumerator *enumerator = [manager enumeratorAtPath:directory];
-        NSArray *objects = enumerator.allObjects;
-//            NSLogDebug(@"Have %@ bookmarks", @(objects.count));
-        
-        NSMutableArray <FeedItem *> *bookmarkedItems = [NSMutableArray arrayWithCapacity:objects.count+1];
-        
-        NSError *error = nil;
-        
-        for (NSString *path in objects) { @autoreleasepool {
-            error = nil;
-            NSString *filePath = [directory stringByAppendingPathComponent:path];
-            FeedItem *item = nil;
-            
-            @try {
-                NSData *fileData = [[NSData alloc] initWithContentsOfFile:filePath];
-                
-                if (fileData != nil) {
-                    
-                    item = [NSKeyedUnarchiver unarchivedObjectOfClass:FeedItem.class fromData:fileData error:&error];
-                    
-                    if (error != nil) {
-                        NSLog(@"Error loading bookmark file from: %@\n%@", filePath, error);
-                    }
-                    
-                    if (item == nil) {
-                        // it could be archived using the old API. Try that.
-                        item = [NSKeyedUnarchiver unarchiveObjectWithData:fileData];
-                    }
-                    
-                }
-            }
-            @catch (NSException *exception) {
-                NSLog(@"Bookmark load exception: %@", exception);
-            }
-            
-            if (item) {
-                [bookmarkedItems addObject:item];
-            }
-        } }
-        
-        _bookmarks = [[bookmarkedItems sortedArrayUsingSelector:@selector(compare:)] rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
-            obj.bookmarked = YES;
-            return obj;
-        }];
-    }
-    
-    return _bookmarks;
-    
-}
-
 - (Folder *)folderForID:(NSNumber *)folderID {
     
     Folder *folder = [self.folders rz_find:^BOOL(Folder *obj, NSUInteger idx, NSArray *array) {
@@ -186,6 +120,10 @@ static ArticlesManager * SharedArticleManager = nil;
 }
 
 - (Feed *)feedForID:(NSNumber *)feedID {
+    
+    if (feedID == nil) {
+        return nil;
+    }
     
     Feed * filtered = [ArticlesManager.shared.feeds rz_find:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
        
@@ -220,6 +158,9 @@ static ArticlesManager * SharedArticleManager = nil;
     if (ArticlesManager.shared.feeds && _updatingStores == NO) {
         [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:self userInfo:nil];
     }
+    
+    [MyDBManager indexFeeds];
+    
 }
 
 - (void)setFolders:(NSArray<Folder *> *)folders {

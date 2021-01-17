@@ -20,12 +20,14 @@
 
 #import "YetiConstants.h"
 #import "ArticlesManager.h"
-#import "BookmarksManager.h"
 
 #define kAccountID @"YTUserID"
 #define kUserID @"userID"
 #define kUUIDString @"UUIDString"
 
+#import <AWSLogs/AWSLogs.h>
+
+@class KVSItem;
 @class FeedsManager;
 
 extern FeedsManager * _Nonnull MyFeedsManager;
@@ -34,18 +36,25 @@ extern FeedsManager * _Nonnull MyFeedsManager;
     
     NSString *_pushToken;
     
-    Subscription * _subscription;
+    YTSubscription * _subscription;
     
     NSNumber * _userID;
     
     NSUInteger _totalToday;
+    
+    NSUInteger _totalBookmarks;
+    
 }
 
 @property (nonatomic, copy, readonly) NSString * _Nullable deviceID;
 
-@property (atomic, strong, readonly) Subscription * _Nullable subscription;
+@property (atomic, strong, readonly) YTSubscription * _Nullable subscription;
 
-@property (nonatomic, strong, readonly) DZURLSession * _Nonnull session, * _Nonnull backgroundSession;
+@property (nonatomic, strong, readonly) DZURLSession * _Nonnull session;
+@property (nonatomic, strong, readonly) DZURLSession * _Nonnull backgroundSession;
+
+/// Returns either the session (foreground) or backgroundSession (background) 
+@property (nonatomic, strong, readonly) DZURLSession * _Nonnull currentSession;
 
 @property (nonatomic, strong, readonly) User * _Nullable user;
 
@@ -55,9 +64,9 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 @property (nonatomic, weak) Feed * _Nullable subsribeAfterPushEnabled;
 
-@property (nonatomic, copy) NSNumber * _Nonnull bookmarksCount;
-
-@property (nonatomic, weak) BookmarksManager * _Nullable bookmarksManager;
+// these are feeds which we need to sync completely
+// as the user has just added them. 
+@property (nonatomic, strong) NSMutableSet * _Nullable additionalFeedsToSync;
 
 #pragma mark - Feeds
 
@@ -66,6 +75,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 @property (nonatomic, assign) NSUInteger totalUnread;
 
 @property (atomic, assign) NSUInteger totalToday;
+
+@property (atomic, assign) NSUInteger totalBookmarks;
 
 #pragma mark - Networking
 
@@ -92,6 +103,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 - (void)_checkYoutubeFeed:(NSURL * _Nonnull)url success:(successBlock _Nonnull)successCB error:(errorBlock _Nonnull)errorCB;
 
 - (void)addFeedByID:(NSNumber * _Nonnull)feedID success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
+- (void)updateFeedWithLocalName:(Feed * _Nonnull)feed;
 
 - (void)articlesByAuthor:(NSNumber * _Nonnull)authorID feedID:(NSNumber * _Nonnull)feedID page:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
@@ -123,8 +136,6 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 @property (nonatomic, copy) NSDate * _Nullable unreadLastUpdate;
 
 - (void)getUnreadForPage:(NSInteger)page limit:(NSInteger)limit sorting:(YetiSortOption _Nonnull)sorting success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
-
-- (void)getBookmarksWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)updateBookmarksFromServer;
 
@@ -162,7 +173,7 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)getAllWebSubWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
-- (void)subsribe:(Feed * _Nonnull)feed success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+- (void)subscribe:(Feed * _Nonnull)feed success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)unsubscribe:(Feed * _Nonnull)feed success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
@@ -232,6 +243,20 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 - (void)continueActivity:(NSUserActivity * _Nonnull)activity;
 
 - (void)saveRestorationActivity:(NSUserActivity * _Nonnull)activity;
+
+#pragma mark - KVS
+
+@property (atomic, strong) NSTimer * _Nullable batchKVSTimer;
+
+@property (nonatomic, strong) NSMutableOrderedSet <KVSItem *> * _Nullable KVSItems;
+
+#pragma mark - Debug Logging
+
+@property (nonatomic, strong, readonly) AWSLogs * _Nonnull logger;
+@property (atomic, assign, getter=isDebuggingLoggingEnabled) BOOL debugLoggingEnabled;
+
+void CWLog(NSString * _Nullable line);
+void CWLogData(NSDictionary * _Nullable data);
 
 @end
 

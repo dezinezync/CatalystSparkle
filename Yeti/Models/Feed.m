@@ -3,6 +3,14 @@
 
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZKit/NSString+Extras.h>
+#import "NSString+ImageProxy.h"
+
+NSString *const kFeedSafariReaderMode = @"com.elytra.feed.safariReaderMode";
+NSString *const kFeedLocalNotifications = @"com.elytra.feed.localNotifications";
+
+@interface Feed ()
+
+@end
 
 @implementation Feed
 
@@ -149,7 +157,9 @@
         
     }
     
-    _unread = unread;
+    @synchronized (self) {
+        self->_unread = unread;
+    }
     
     if (self.unreadCountObservor != nil) {
         
@@ -477,6 +487,16 @@
     }
     
     return YES;
+    
+}
+
+- (NSString *)faviconProxyURIForSize:(CGFloat)size {
+    
+    if (self.faviconURI == nil) {
+        return nil;
+    }
+    
+    return [self.faviconURI pathForImageProxy:NO maxWidth:size quality:0.9];
     
 }
 

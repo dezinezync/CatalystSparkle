@@ -20,6 +20,7 @@
 #import "RecommendationsVC.h"
 
 #import "Keychain.h"
+#import "AppDelegate.h"
 
 @interface TrialVC ()
 
@@ -95,31 +96,43 @@
     
     [self setButtonsState:NO];
     
+    weakify(self);
+    
     [MyFeedsManager startUserFreeTrial:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         NSLog(@"Expiry: %@, isTrial: %@", MyFeedsManager.user.subscription.expiry, MyFeedsManager.user.subscription.status.integerValue == 2 ? @"YES" : @"NO");
         
-        dispatch_async(dispatch_get_main_queue(), ^{
-            
-            [Keychain add:kHasShownOnboarding boolean:YES];
-            
-            [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
-            
-            RecommendationsVC *vc = [[RecommendationsVC alloc] initWithNibName:NSStringFromClass(RecommendationsVC.class) bundle:nil];
-            
-            vc.onboarding = YES;
-            
-            [self.navigationController setNavigationBarHidden:YES animated:YES];
-            
-            [self.navigationController setViewControllers:@[vc] animated:YES];
-            
-        });
+        strongify(self);
+        
+        return [self didComplete];
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         [AlertManager showGenericAlertWithTitle:@"Error Starting Trial" message:error.localizedDescription];
         
     }];
+    
+}
+
+- (void)didComplete {
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        [Keychain add:kHasShownOnboarding boolean:YES];
+        
+        [MyAppDelegate.coordinator.sidebarVC beginRefreshingAll:nil];
+        
+        [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
+        
+        RecommendationsVC *vc = [[RecommendationsVC alloc] initWithNibName:NSStringFromClass(RecommendationsVC.class) bundle:nil];
+        
+        vc.onboarding = YES;
+        
+        [self.navigationController setNavigationBarHidden:YES animated:YES];
+        
+        [self.navigationController setViewControllers:@[vc] animated:YES];
+        
+    });
     
 }
 

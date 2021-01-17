@@ -17,9 +17,21 @@ extension Text {
     func platformTitleFont () -> Text {
         
         #if canImport(AppKit) || targetEnvironment(macCatalyst)
-        return self.font(.headline).fontWeight(.bold)
+        return self.font(.system(size: 14)).fontWeight(.semibold)
         #elseif canImport(UIKit)
-        return self.font(.subheadline).fontWeight(.semibold)
+        return self.font(.system(size: 15)).fontWeight(.medium)
+        #else
+        return self;
+        #endif
+        
+    }
+    
+    func platformCaptionFont () -> Text {
+        
+        #if canImport(AppKit) || targetEnvironment(macCatalyst)
+        return self.font(.system(size: 13)).fontWeight(.bold)
+        #elseif canImport(UIKit)
+        return self.font(.system(size: 13)).fontWeight(.semibold)
         #else
         return self;
         #endif
@@ -272,8 +284,8 @@ struct ArticleView : View {
                         if (entry.author == entry.blog) {
                             
                             Text(entry.blog)
+                                .platformCaptionFont()
                                 .lineLimit(1)
-                                .font(Font.caption.weight(.semibold))
                                 .foregroundColor(.secondary)
                                 .alignmentGuide(HorizontalAlignment.leading) { _ in 0 }
                             
@@ -281,8 +293,8 @@ struct ArticleView : View {
                         else {
                             
                             Text("\(entry.author) - \(entry.blog)")
+                                .platformCaptionFont()
                                 .lineLimit(1)
-                                .font(Font.caption.weight(.semibold))
                                 .foregroundColor(.secondary)
                                 .alignmentGuide(HorizontalAlignment.leading) { _ in 0 }
                             
@@ -328,7 +340,7 @@ struct UnreadsWidgetEntryView : View {
             VStack (alignment: .leading, spacing: (widgetFamily == .systemMedium ? 4 : 8)) {
                 
                 Text("Recent Unreads")
-                    .font(Font.title3.bold())
+                    .font(.system(size: 17)).fontWeight(.bold)
                     .foregroundColor(Color(UIColor.systemIndigo))
                     .multilineTextAlignment(.leading)
                 
@@ -419,6 +431,7 @@ struct UnreadsWidget_Previews: PreviewProvider {
 
         UnreadsWidgetEntryView(entries: json)
             .previewContext(WidgetPreviewContext(family: .systemMedium))
+            .previewDevice("Mac Catalyst")
             .previewDisplayName("Unreads Medium")
             .environment(\.colorScheme, .dark)
         

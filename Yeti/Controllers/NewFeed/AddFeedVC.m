@@ -88,6 +88,13 @@
     
     self.title = @"Add Feed";
     
+    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+        
+        self.navigationController.modalPresentationStyle = UIModalPresentationFullScreen;
+        self.modalPresentationStyle = UIModalPresentationFullScreen;
+        
+    }
+    
     self.navigationController.navigationBar.prefersLargeTitles = NO;
     self.navigationController.view.backgroundColor = UIColor.systemBackgroundColor;
     self.navigationController.navigationBar.translucent = YES;
@@ -984,7 +991,10 @@
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
            
-            [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:@"An error occurred when trying to fetch the Youtube URL."];
+            [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription];
+            
+            self.searchBar.userInteractionEnabled = YES;
+            self.cancelButton.enabled = YES;
             
         }];
     

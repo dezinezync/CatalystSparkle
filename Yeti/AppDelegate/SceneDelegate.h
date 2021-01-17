@@ -12,9 +12,9 @@
     UIImageSymbolConfiguration * _Nullable _toolbarSymbolConfiguration;
 }
 
-@property (strong, nonatomic) UIWindow * window;
+@property (strong, nonatomic) UIWindow * _Nonnull window;
 
-@property (strong, nonatomic) MainCoordinator *coordinator;
+@property (strong, nonatomic) MainCoordinator * _Nonnull coordinator;
 
 #if TARGET_OS_MACCATALYST
 

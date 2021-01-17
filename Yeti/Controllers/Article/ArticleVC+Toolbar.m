@@ -53,15 +53,15 @@
     search.accessibilityLabel = @"Search";
 
     // these are assigned in reverse order
-    NSMutableArray *rightItems = @[search].mutableCopy;
+    NSMutableArray *lefItems = @[search].mutableCopy;
     
     if (PrefsManager.sharedInstance.hideBookmarks == NO) {
-        [rightItems addObject:bookmark];
+        [lefItems addObject:bookmark];
     }
     
-    [rightItems addObject:read];
+    [lefItems addObject:read];
     
-    return rightItems;
+    return lefItems;
     
 }
 
@@ -172,11 +172,11 @@
 }
 
 
-- (void)setupToolbar:(UITraitCollection *)newCollection
-{
+- (void)setupToolbar:(UITraitCollection *)newCollection {
+    
     if (PrefsManager.sharedInstance.useToolbar == NO) {
-        
-        self.navigationItem.rightBarButtonItems = [self.commonNavBarItems arrayByAddingObjectsFromArray:self.leftBarButtonItems];
+        NSArray <UIBarButtonItem *> *items = [self.commonNavBarItems arrayByAddingObjectsFromArray:self.leftBarButtonItems];
+        self.navigationItem.rightBarButtonItems = items;
         self.navigationController.toolbarHidden = YES;
         
     }
@@ -313,13 +313,6 @@
             }
         };
         
-//        if (self.item.isBookmarked) {
-//            [self.bookmarksManager addBookmark:self.item completion:bookmarkCallback];
-//        }
-//        else {
-//            [self.bookmarksManager removeBookmark:self.item completion:bookmarkCallback];
-//        }
-        
         bookmarkCallback(YES);
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -400,6 +393,16 @@
         URL = formattedURL(@"%@&shift=1", URL.absoluteString);
         
     }
+#else
+    Feed *feed = [ArticlesManager.shared feedForID:self.currentArticle.feedID];
+    NSDictionary *metadata = [MyDBManager metadataForFeed:feed];
+    
+    if (metadata && [(metadata[kFeedSafariReaderMode] ?: @(NO)) boolValue] == YES) {
+        
+        URL = formattedURL(@"%@&ytreader=1", URL.absoluteString);
+        
+    }
+    
 #endif
     [[UIApplication sharedApplication] openURL:URL options:@{} completionHandler:nil];
     

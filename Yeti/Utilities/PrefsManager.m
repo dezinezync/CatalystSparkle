@@ -23,6 +23,10 @@ PrefsManager * SharedPrefs = nil;
 
 @property (nonatomic, weak, readwrite) NSUserDefaults *defaults;
 
+#if TARGET_OS_MACCATALYST
+@property (nonatomic, weak) id defaultsController;
+#endif
+
 @end
 
 @implementation PrefsManager
@@ -206,7 +210,10 @@ PrefsManager * SharedPrefs = nil;
         return;
     }
     
-    if (value == nil || [value isKindOfClass:NSNull.class]) {
+    if ([mapping isEqualToString:kDetailFeedSorting]) {
+        [self.defaults setValue:value forKey:mapping];
+    }
+    else if (value == nil || [value isKindOfClass:NSNull.class]) {
         [self.defaults removeObjectForKey:key];
     }
     else {
@@ -319,6 +326,16 @@ PrefsManager * SharedPrefs = nil;
     
     [defaults addObserver:self forKeyPath:@"AppleHighlightColor" options:NSKeyValueObservingOptionNew context:DefaultsAppleHighlightColorContext];
     
+    if (self.defaultsController == nil) {
+        Class controller = NSClassFromString(@"NSUserDefaultsController");
+        SEL selector = NSSelectorFromString(@"sharedUserDefaultsController");
+        id instance = [controller performSelector:selector];
+        
+        self.defaultsController = instance;
+        
+        [instance addObserver:self forKeyPath:@"values.com.dezinezync.elytra.showMarkReadPrompt" options:NSKeyValueObservingOptionNew context:NULL];
+    }
+    
 #endif
     
     [defaults addObserver:self forKeyPath:badgeAppIconPreference options:NSKeyValueObservingOptionNew context:NULL];
@@ -327,9 +344,9 @@ PrefsManager * SharedPrefs = nil;
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
     
+    id value = [change valueForKey:NSKeyValueChangeNewKey];
+    
     if (object == self.defaults) {
-        
-        id value = [change valueForKey:NSKeyValueChangeNewKey];
         
         if ([keyPath isEqualToString:kShowArticleCoverImages]) {
             
@@ -390,6 +407,11 @@ PrefsManager * SharedPrefs = nil;
             [self setValue:value forKey:keypath(badgeAppIcon)];
             
             [NSNotificationCenter.defaultCenter postNotificationName:BadgeAppIconPreferenceUpdated object:nil];
+            
+        }
+        else if ([keyPath isEqualToString:kShowMarkReadPrompt]) {
+            
+            [self setValue:value forKey:keypath(showMarkReadPrompts)];
             
         }
         else if ([keyPath isEqualToString:@"AppleHighlightColor"] && context == DefaultsAppleHighlightColorContext) {
@@ -477,7 +499,21 @@ PrefsManager * SharedPrefs = nil;
         return;
         
     }
-    
+#if TARGET_OS_MACCATALYST
+    else if (object == self.defaultsController) {
+        
+        value = [self.defaults valueForKey:[keyPath substringFromIndex:7]];
+        
+        if ([keyPath containsString:kShowMarkReadPrompt]) {
+            
+            [self setValue:value forKey:keypath(showMarkReadPrompts)];
+            
+        }
+        
+        return;
+        
+    }
+#endif
     [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     
 }

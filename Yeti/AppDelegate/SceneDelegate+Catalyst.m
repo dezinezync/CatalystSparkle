@@ -264,7 +264,7 @@
         NSMenuToolbarItem *menuToolbarItem = [[NSMenuToolbarItem alloc] initWithItemIdentifier:kSortingMenuToolbarIdentifier];
         menuToolbarItem.showsIndicator = YES;
         menuToolbarItem.itemMenu = menu;
-        menuToolbarItem.image = [UIImage systemImageNamed:@"arrow.up.arrow.down"];
+        menuToolbarItem.image = image;
         
         item = menuToolbarItem;
         
@@ -273,6 +273,7 @@
     }
     else if ([itemIdentifier isEqualToString:kMarkItemsMenuToolbarIdentifier]) {
         
+        /*
         UIAction *markCurrent = [UIAction actionWithTitle:@"Mark Current Read" image:[UIImage systemImageNamed:@"text.badge.checkmark"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
            
             if (self.coordinator.feedVC == nil) {
@@ -301,6 +302,15 @@
         menuToolbarItem.image = [UIImage systemImageNamed:@"checkmark"];
         
         item = menuToolbarItem;
+         */
+        
+        title = @"Mark all Read";
+        
+        image = [UIImage systemImageNamed:@"checkmark"];
+        
+        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:nil action:@selector(didLongPressOnAllRead:)];
+        
+        item = [self toolbarItemWithItemIdentifier:kOpenInBrowserToolbarIdentifier title:title button:button];
         
     }
     
@@ -329,6 +339,8 @@
     return item;
     
 }
+
+#pragma mark - Actions
 
 @end
 

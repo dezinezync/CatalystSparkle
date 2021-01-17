@@ -140,7 +140,7 @@ static AppKitGlue * SharedAppKitGlue = nil;
         self.preferencesController = [PreferencesController new];
     }
     
-    [self.preferencesController preferencesMenuItemActionHandler:nil];
+    [self.preferencesController show];
     
 }
 

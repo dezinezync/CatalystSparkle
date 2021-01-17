@@ -110,7 +110,7 @@ YETI_EXPORT NSString * _Nonnull const kUseToolbar;
 YETI_EXPORT NSString * _Nonnull const kHideBars;
 
 YETI_EXPORT NSString * _Nonnull const kPreviewLines;
-YETI_EXPORT NSNotificationName const PreviewLinesPreferenceUpdated;
+YETI_EXPORT NSNotificationName const _Nonnull PreviewLinesPreferenceUpdated;
 
 YETI_EXPORT NSString * _Nonnull const kUseSystemFontSize;
 YETI_EXPORT NSString * _Nonnull const kFontSize;
@@ -118,13 +118,6 @@ YETI_EXPORT NSString * _Nonnull const kParagraphTitleFont;
 YETI_EXPORT NSString * _Nonnull const kLineSpacing;
 
 extern NSNotificationName _Nonnull UserUpdatedPreferredFontMetrics;
-
-typedef NS_ENUM(NSInteger, FeedType) {
-    FeedTypeFeed,
-    FeedTypeCustom,
-    FeedTypeFolder,
-    FeedTypeTag
-};
 
 YETI_EXPORT NSString * _Nonnull const kUseImageProxy;
 

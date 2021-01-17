@@ -6,6 +6,8 @@
 //  Copyright © 2017 Dezine Zync Studios. All rights reserved.
 //
 
+#import "Elytra-Swift.h"
+
 #import "FeedsManager+KVS.h"
 #import "FeedItem.h"
 
@@ -31,11 +33,18 @@
 
 #import "Elytra-Swift.h"
 
+#import <CoreSpotlight/CoreSpotlight.h>
+#import "DZLoggingJSONResponseParser.h"
+
 FeedsManager * _Nonnull MyFeedsManager = nil;
 
 NSArray <NSString *> * _defaultsKeys;
 
-@interface FeedsManager () <UIStateRestoring, UIObjectRestoration>
+@interface FeedsManager () <UIStateRestoring, UIObjectRestoration> {
+    
+    NSString * _Nullable _debugLogsSequenceToken;
+    
+}
 
 @property (nonatomic, strong, readwrite) DZURLSession * _Nonnull session, * _Nullable backgroundSession;
 @property (nonatomic, strong, readwrite) Reachability * _Nonnull reachability;
@@ -46,6 +55,8 @@ NSArray <NSString *> * _defaultsKeys;
 @property (nonatomic, strong) NSString *appFullVersion, *appMajorVersion;
 
 @property (nonatomic, strong) NSTimer *widgetCountersUpdateTimer;
+
+@property (atomic, strong) NSMutableArray <AWSLogsInputLogEvent *> * _Nonnull CWLogEvents;
 
 @end
 
@@ -76,6 +87,8 @@ NSArray <NSString *> * _defaultsKeys;
     
     if (self = [super init]) {
         
+        [self setupLogger];
+        
         [self setupNotifications];
         
         [DBManager.sharedInstance registerCloudCoreExtension];
@@ -98,6 +111,10 @@ NSArray <NSString *> * _defaultsKeys;
                 [device generateTokenWithCompletionHandler:^(NSData * _Nullable token, NSError * _Nullable error) {
                     
                     NSData *encoded = [token base64EncodedDataWithOptions:kNilOptions];
+                    
+                    if (encoded == nil) {
+                        return;
+                    }
                     
                     NSString *tokenString = [[NSString alloc] initWithData:encoded encoding:NSUTF8StringEncoding];
                     
@@ -130,7 +147,7 @@ NSArray <NSString *> * _defaultsKeys;
     
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     
-    [center addObserver:self selector:@selector(didUpdateBookmarks:) name:BookmarksDidUpdate object:nil];
+//    [center addObserver:self selector:@selector(didUpdateBookmarks:) name:BookmarksDidUpdate object:nil];
     [center addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
     
 }
@@ -241,8 +258,7 @@ NSArray <NSString *> * _defaultsKeys;
     
 }
 
-- (void)getFeedsWithSuccess:(successBlock)successCB error:(errorBlock)errorCB
-{
+- (void)getFeedsWithSuccess:(successBlock)successCB error:(errorBlock)errorCB {
     weakify(self);
     
     if (MyFeedsManager.userID == nil) {
@@ -263,23 +279,11 @@ NSArray <NSString *> * _defaultsKeys;
     
     NSDictionary *params = @{@"userID": MyFeedsManager.userID,
                              @"version": @"1.7",
-                             @"date": todayString
+                             @"date": todayString,
+                             @"hash": @([NSDate.date timeIntervalSince1970])
     };
     
-    __block DZURLSession *session = self.session;
-    
-    runOnMainQueueWithoutDeadlocking(^{
-        
-        if (UIApplication.sharedApplication.applicationState == UIApplicationStateBackground) {
-            
-            // use the background session for sync.
-            NSLog(@"Setup get feeds task in background mode");
-            
-            session = self.backgroundSession;
-            
-        }
-        
-    });
+    DZURLSession *session = self.currentSession;
     
     [session GET:@"/feeds" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
       
@@ -491,7 +495,9 @@ NSArray <NSString *> * _defaultsKeys;
         params[@"sortType"] = @(sorting.integerValue);
     }
     
-    [self.session GET:formattedString(@"/feeds/%@", feed.feedID) parameters:params success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session GET:formattedString(@"/feeds/%@", feed.feedID) parameters:params success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         NSArray <NSDictionary *> * articles = [responseObject valueForKey:@"articles"];
         
@@ -562,8 +568,10 @@ NSArray <NSString *> * _defaultsKeys;
     }
 
     weakify(self);
+    
+    DZURLSession *session = self.currentSession;
 
-    [MyFeedsManager.session PUT:@"/feed?version=2" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [session PUT:@"/feed?version=2" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if ([response statusCode] == 300) {
             
@@ -614,6 +622,12 @@ NSArray <NSString *> * _defaultsKeys;
         
         Feed *feed = [Feed instanceFromDictionary:feedObj];
 //        feed.articles = articles;
+        
+        if (self.additionalFeedsToSync == nil) {
+            self.additionalFeedsToSync = [NSMutableSet new];
+        }
+        
+        [self.additionalFeedsToSync addObject:feed.feedID];
         
         if (successCB)
             successCB(feed, response, task);
@@ -724,11 +738,32 @@ NSArray <NSString *> * _defaultsKeys;
     }
     
     NSDictionary *params = @{@"feedID" : feedID};
+    
     if ([MyFeedsManager userID] != nil) {
         params = @{@"feedID": feedID, @"userID": [self userID]};
     }
+    
+    DZURLSession *session = self.currentSession;
 
-    [MyFeedsManager.session PUT:@"/feed" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [session PUT:@"/feed" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if (response.statusCode == 304) {
+            
+            if (errorCB) {
+                
+                NSError *error = [NSError errorWithDomain:NSURLErrorDomain code:response.statusCode userInfo:@{NSLocalizedDescriptionKey: @"You already have this feed in your list."}];
+                
+                runOnMainQueueWithoutDeadlocking(^{
+                    errorCB(error, response, task);
+                });
+                
+            }
+            
+            /*
+             * @TODO: this means we do not have this feed in our list of feeds so lets fetch it so the error doesn't occur for our user again.
+             */
+            return;
+        }
 
         [Keychain add:YTSubscriptionHasAddedFirstFeed boolean:YES];
 
@@ -741,6 +776,12 @@ NSArray <NSString *> * _defaultsKeys;
         
         Feed *feed = [Feed instanceFromDictionary:feedObj];
 //        feed.articles = articles;
+        
+        if (self.additionalFeedsToSync == nil) {
+            self.additionalFeedsToSync = [NSMutableSet new];
+        }
+        
+        [self.additionalFeedsToSync addObject:feed.feedID];
         
         if (successCB)
             successCB(feed, response, task);
@@ -772,6 +813,31 @@ NSArray <NSString *> * _defaultsKeys;
         
         FeedItem *item = [MyDBManager articleForID:articleID feedID:feedID];
         
+        // check for full-text content first
+        NSArray <Content *> *content = [MyDBManager fullTextContentForArticle:articleID];
+        
+        if (content != nil && content.count > 0) {
+            
+            item.content = content;
+            
+            if (item.mercury == NO) {
+                item.mercury = YES;
+            }
+            
+        }
+        
+        if (item.content == nil) {
+            
+            content = [MyDBManager contentForArticle:articleID];
+            
+            item.content = content;
+            
+            if (item.mercury == YES) {
+                item.mercury = NO;
+            }
+            
+        }
+        
         if (item != nil && item.content && successCB) {
             
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -792,18 +858,24 @@ NSArray <NSString *> * _defaultsKeys;
         params[@"userID"] = MyFeedsManager.userID;
     }
     
-    [self.session GET:path parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session GET:path parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (successCB) {
             
             FeedItem *item = [FeedItem instanceFromDictionary:responseObject];
             
-            item.read = NO;
+//            item.read = NO;
             
-            [MyDBManager addArticle:item];
+            [MyDBManager addArticle:item strip:NO];
             
             dispatch_async(dispatch_get_main_queue(), ^{
+                
+                item.content = item.content ?: [MyDBManager contentForArticle:item.identifier];
+                
                 successCB(item, response, task);
+                
             });
             
         }
@@ -832,7 +904,26 @@ NSArray <NSString *> * _defaultsKeys;
         return;
     }
     
-    NSString *path = formattedString(@"/1.3/mercurial/%@", articleID);
+    NSArray *content = [MyDBManager fullTextContentForArticle:articleID];
+    
+    if (content != nil) {
+        
+        FeedItem *item = [FeedItem new];
+        item.identifier = articleID;
+        item.read = YES;
+        item.bookmarked = NO;
+        item.content = content;
+        item.mercury = YES;
+        
+        runOnMainQueueWithoutDeadlocking(^{
+            successCB(item, nil, nil);
+        });
+        
+        return;
+        
+    }
+    
+    NSString *path = formattedString(@"/2.2/mercurial/%@", articleID);
     
     NSMutableDictionary *params = @{}.mutableCopy;
     
@@ -840,11 +931,32 @@ NSArray <NSString *> * _defaultsKeys;
         params[@"userID"] = MyFeedsManager.userID;
     }
     
-    [self.session GET:path parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session GET:path parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (successCB) {
             
             FeedItem *item = [FeedItem instanceFromDictionary:responseObject];
+            
+            if (item.content == nil || item.content.count == 0) {
+                
+                // treat as an error.
+                if (errorCB) {
+                    
+                    NSError *error = [NSError errorWithDomain:NSURLErrorDomain code:500 userInfo:@{NSLocalizedDescriptionKey: @"An error occurred when trying to extract the full-text from the article."}];
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        errorCB(error, response, task);
+                    });
+                    
+                }
+                
+                return;
+                
+            }
+            
+            [MyDBManager addArticleFullText:item.content identifier:item.identifier];
             
             successCB(item, response, task);
             
@@ -864,8 +976,8 @@ NSArray <NSString *> * _defaultsKeys;
     
 }
 
-- (void)articlesByAuthor:(NSNumber *)authorID feedID:(NSNumber *)feedID page:(NSInteger)page success:(successBlock)successCB error:(errorBlock)errorCB
-{
+- (void)articlesByAuthor:(NSNumber *)authorID feedID:(NSNumber *)feedID page:(NSInteger)page success:(successBlock)successCB error:(errorBlock)errorCB {
+    
     if ([self userID] == nil) {
         if (errorCB) {
             errorCB(nil, nil, nil);
@@ -889,7 +1001,9 @@ NSArray <NSString *> * _defaultsKeys;
         params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
     }
     
-    [self.session GET:path parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session GET:path parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (!successCB)
             return;
@@ -921,12 +1035,14 @@ NSArray <NSString *> * _defaultsKeys;
     NSString *path;
     NSNumber *userID = [self userID] ?: @(0);
     
+    DZURLSession *session = self.currentSession;
+    
     if (feed) {
         NSNumber *feedID = feed.feedID;
         
         path = formattedString(@"/feeds/%@/allread", feedID);
         
-        [self.session GET:path parameters:@{@"userID": userID} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        [session GET:path parameters:@{@"userID": userID} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
             error = [self errorFromResponse:error.userInfo];
             
@@ -941,7 +1057,7 @@ NSArray <NSString *> * _defaultsKeys;
     else {
         path = formattedString(@"/unread/markall?userID=%@", userID);
         
-        [self.session POST:path parameters:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        [session POST:path parameters:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
             NSArray <NSNumber *> *feedIDs = [responseObject valueForKey:@"feeds"];
             
@@ -1010,7 +1126,22 @@ NSArray <NSString *> * _defaultsKeys;
     NSMutableDictionary *params = @{@"count": @(count)}.mutableCopy;
     params[@"noauth"] = @(noAuth);
     
-    [self.session GET:@"/recommendations" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    NSDate *date = NSDate.date;
+    
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSDateComponents *components = [calendar components:NSCalendarUnitMinute|NSCalendarUnitSecond|NSCalendarUnitNanosecond fromDate:date];
+    components.minute = -components.minute;
+    components.second = -components.second;
+    components.nanosecond = -components.nanosecond;
+    
+    date = [calendar dateByAddingComponents:components toDate:date options:0];
+    
+    // this prevents the cached response if the hour has changed.
+    params[@"ts"] = @([date timeIntervalSince1970]);
+    
+    DZURLSession *session = self.currentSession;
+    
+    [session GET:@"/recommendations" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (!successCB)
             return;
@@ -1072,14 +1203,23 @@ NSArray <NSString *> * _defaultsKeys;
     
 }
 
-- (void)removeFeed:(NSNumber *)feedID success:(successBlock)successCB error:(errorBlock)errorCB
-{
+- (void)removeFeed:(NSNumber *)feedID success:(successBlock)successCB error:(errorBlock)errorCB {
+    
     NSDictionary *params = @{};
+    
     if ([self userID] != nil) {
         params = @{@"userID": [self userID]};
     }
     
-    [self.session DELETE:formattedString(@"/feeds/%@", feedID) parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session DELETE:formattedString(@"/feeds/%@", feedID) parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        [MyDBManager removeAllArticlesFor:feedID];
+        
+        NSString *identifier = [NSString stringWithFormat:@"feed:%@", feedID];
+        
+        [CSSearchableIndex.defaultSearchableIndex deleteSearchableItemsWithDomainIdentifiers:@[identifier] completionHandler:nil];
         
         if (response.statusCode != 304) {
             if (successCB) {
@@ -1108,6 +1248,7 @@ NSArray <NSString *> * _defaultsKeys;
 - (void)renameFeed:(Feed *)feed title:(NSString *)title success:(successBlock)successCB error:(errorBlock)errorCB {
     
     NSDictionary *query = @{};
+    
     if ([self userID] != nil) {
         query = @{@"userID": [self userID]};
     }
@@ -1134,7 +1275,9 @@ NSArray <NSString *> * _defaultsKeys;
                            @"title": title
                            };
     
-    [self.session POST:@"/1.2/customFeed" queryParams:query parameters:body success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session POST:@"/1.2/customFeed" queryParams:query parameters:body success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         error = [self errorFromResponse:error.userInfo];
         
@@ -1152,9 +1295,24 @@ NSArray <NSString *> * _defaultsKeys;
     
     NSURLRequest *request = [NSURLRequest requestWithURL:originalURL];
     
-    [self.session GET:request success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    NSURLSession *session = NSURLSession.sharedSession;
+    
+    NSURLSessionDataTask *task;
+    
+    task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         
-        NSString *html = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
+        if (error) {
+            
+            if (errorCB) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    errorCB(error, (NSHTTPURLResponse *)response, task);
+                });
+            }
+            
+            return;
+        }
+        
+        NSString *html = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         NSString *canonical = nil;
         
         // HTML
@@ -1162,20 +1320,32 @@ NSArray <NSString *> * _defaultsKeys;
         
         NSScanner *scanner = [[NSScanner alloc] initWithString:html];
         
-        [scanner scanUpToString:startString intoString:nil];
-        
-        scanner.scanLocation += startString.length;
-        
-        [scanner scanUpToString:@"\"" intoString:&canonical];
+        do {
+            
+            canonical = nil;
+            
+            [scanner scanUpToString:startString intoString:nil];
+            
+            scanner.scanLocation += startString.length;
+            
+            [scanner scanUpToString:@"\"" intoString:&canonical];
+            
+        } while ([canonical isEqualToString:originalURL.absoluteString]);
         
         scanner = nil;
         html = nil;
         
         if (successCB) {
-            successCB(canonical, response, task);
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                successCB(canonical, (NSHTTPURLResponse *)response, task);
+            });
+            
         }
         
-    } error:errorCB];
+    }];
+    
+    [task resume];
     
 }
 
@@ -1199,7 +1369,9 @@ NSArray <NSString *> * _defaultsKeys;
         
     }
     
-    [self.session POST:path parameters:params success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session POST:path parameters:params success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         BOOL status = [[responseObject valueForKey:@"status"] boolValue];
         
@@ -1219,8 +1391,6 @@ NSArray <NSString *> * _defaultsKeys;
         }
         
         NSNumber *changed = [responseObject valueForKey:@"rows"];
-        
-        self.totalUnread = MAX(0, self.totalUnread - changed.integerValue);
         
         if ([feedID isEqualToString:@"unread"] == NO && [feedID isEqualToString:@"today"] == NO) {
             
@@ -1272,35 +1442,14 @@ NSArray <NSString *> * _defaultsKeys;
 
 #pragma mark - Custom Feeds
 
-- (void)updateUnreadArray
-{
-//    NSMutableArray <NSNumber *> * markedRead = @[].mutableCopy;
-//    
-//    NSArray <FeedItem *> *newUnread = [ArticlesManager.shared.unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
-//        BOOL isRead = obj.isRead;
-//        if (isRead) {
-//            [markedRead addObject:obj.identifier];
-//        }
-//        return !isRead;
-//    }];
-//    
-//    if (!markedRead.count)
-//        return;
-//    
-//    ArticlesManager.shared.unread = newUnread;
-//    
-//    // propagate changes to the feeds object as well
-//    [self updateFeedsReadCount:ArticlesManager.shared.feeds markedRead:markedRead];
-//    
-//    for (Folder *folder in ArticlesManager.shared.folders) { @autoreleasepool {
-//       
-//        [self updateFeedsReadCount:folder.feeds.allObjects markedRead:markedRead];
-//        
-//    } }
+- (void)updateUnreadArray {
+    
+    // No longer used.
     
 }
 
 - (void)updateFeedsReadCount:(NSArray <Feed *> *)feeds markedRead:(NSArray <NSNumber *> *)markedRead {
+    
     if (!feeds || feeds.count == 0)
         return;
     
@@ -1309,25 +1458,12 @@ NSArray <NSString *> * _defaultsKeys;
         BOOL marked = NO;
         NSNumber *feedID = obj.feedID.copy;
         
-//        for (FeedItem *item in obj.articles) {
-//            
-//            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF == %d", item.identifier.integerValue];
-//            NSArray *filteredArray = [markedRead filteredArrayUsingPredicate:predicate];
-//            NSLogDebug(@"Index: %@", filteredArray);
-//            
-//            if (filteredArray.count > 0 && !item.read) {
-//                item.read = YES;
-//                
-//                if (!marked)
-//                    marked = YES;
-//            }
-//        }
-        
         if (marked) {
             [[NSNotificationCenter defaultCenter] postNotificationName:FeedDidUpReadCount object:feedID];
         }
         
     }}
+    
 }
 
 - (void)getUnreadForPage:(NSInteger)page limit:(NSInteger)limit sorting:(YetiSortOption)sorting success:(successBlock)successCB error:(errorBlock)errorCB {
@@ -1346,8 +1482,10 @@ NSArray <NSString *> * _defaultsKeys;
         params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
     }
 #endif
+    
+    DZURLSession *session = self.currentSession;
 
-    [self.session GET:@"/unread" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [session GET:@"/unread" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
 
         NSArray <FeedItem *> * items = [[responseObject valueForKey:@"articles"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
             return [FeedItem instanceFromDictionary:obj];
@@ -1370,33 +1508,9 @@ NSArray <NSString *> * _defaultsKeys;
     }];
 }
 
-- (void)getBookmarksWithSuccess:(successBlock)successCB error:(errorBlock)errorCB
-{
-    
-    NSString *existing = @"";
-    
-    if (ArticlesManager.shared.bookmarks.count) {
-        NSArray <FeedItem *> *bookmarks = ArticlesManager.shared.bookmarks;
-        existing = [[bookmarks rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
-            return obj.identifier.stringValue;
-        }] componentsJoinedByString:@","];
-    }
-    
-    [self.session POST:formattedString(@"/bookmarked?userID=%@", MyFeedsManager.userID) parameters:@{@"existing": existing} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        error = [self errorFromResponse:error.userInfo];
-        
-        if (errorCB)
-            errorCB(error, response, task);
-        else {
-            NSLog(@"Unhandled network error: %@", error);
-        }
-    }];
-}
-
 #pragma mark - Folders
 
-- (void)addFolder:(NSString *)title success:(successBlock)successCB error:(errorBlock)errorCB
-{
+- (void)addFolder:(NSString *)title success:(successBlock)successCB error:(errorBlock)errorCB {
     
     if (!title || (title && [title isBlank] == YES)) {
         
@@ -1407,7 +1521,9 @@ NSArray <NSString *> * _defaultsKeys;
         return;
     }
     
-    [self.session PUT:@"/folder" queryParams:@{@"userID": [self userID]} parameters:@{@"title": title} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session PUT:@"/folder" queryParams:@{@"userID": [self userID]} parameters:@{@"title": title} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         id retval = [responseObject valueForKey:@"folder"];
         
@@ -1574,7 +1690,9 @@ NSArray <NSString *> * _defaultsKeys;
     
     NSString *path = formattedString(@"/folder?userID=%@&folderID=%@", [self userID], folder.folderID);
     
-    [self.session DELETE:path parameters:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session DELETE:path parameters:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         [[folder.feeds allObjects] enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             
@@ -1606,14 +1724,18 @@ NSArray <NSString *> * _defaultsKeys;
 - (void)updateFolder:(Folder *)folder properties:(NSDictionary *)props success:(successBlock)successCB error:(errorBlock)errorCB {
     
     if (![props valueForKey:@"folderID"]) {
+        
         NSMutableDictionary *temp = props.mutableCopy;
         
         [temp setValue:folder.folderID forKey:@"folderID"];
         
         props = temp.copy;
+        
     }
     
-    [self.session POST:@"/folder" queryParams:@{@"userID": [self userID]} parameters:props success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session POST:@"/folder" queryParams:@{@"userID": [self userID]} parameters:props success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         error = [self errorFromResponse:error.userInfo];
         
         if (errorCB)
@@ -1643,7 +1765,9 @@ NSArray <NSString *> * _defaultsKeys;
         params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
     }
     
-    [self.session GET:path parameters:params success:^(NSArray <NSDictionary *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session GET:path parameters:params success:^(NSArray <NSDictionary *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         NSArray <FeedItem *> *items = [responseObject rz_map:^id(NSDictionary *obj, NSUInteger idx, NSArray *array) {
             return [FeedItem instanceFromDictionary:obj];
@@ -1675,7 +1799,9 @@ NSArray <NSString *> * _defaultsKeys;
     
     path = formattedString(@"/folder/%@/allread", folderID);
     
-    [self.session GET:path parameters:@{@"userID": userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session GET:path parameters:@{@"userID": userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         self.totalUnread = MAX(0, self.totalUnread - folder.unreadCount.integerValue);
         
@@ -1726,7 +1852,9 @@ NSArray <NSString *> * _defaultsKeys;
                              @"tag": tag
                              };
     
-    [self.session GET:@"/1.2/tagfeed" parameters:params success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session GET:@"/1.2/tagfeed" parameters:params success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (response.statusCode == 304) {
             if (successCB) {
@@ -1771,9 +1899,11 @@ NSArray <NSString *> * _defaultsKeys;
 
 #pragma mark - Filters
 
-- (void)getFiltersWithSuccess:(successBlock)successCB error:(errorBlock)errorCB
-{
-    [self.session GET:@"/user/filters" parameters:@{@"userID": [self userID]} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+- (void)getFiltersWithSuccess:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    DZURLSession *session = self.currentSession;
+    
+    [session GET:@"/user/filters" parameters:@{@"userID": [self userID]} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         NSArray <NSString *> *filters = [responseObject valueForKey:@"filters"];
         
@@ -1792,10 +1922,11 @@ NSArray <NSString *> * _defaultsKeys;
     }];
 }
 
-- (void)addFilter:(NSString *)word success:(successBlock)successCB error:(errorBlock)errorCB
-{
+- (void)addFilter:(NSString *)word success:(successBlock)successCB error:(errorBlock)errorCB {
     
-    [self.session PUT:@"/user/filters" queryParams:@{@"userID": [self userID]} parameters:@{@"word" : word} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session PUT:@"/user/filters" queryParams:@{@"userID": [self userID]} parameters:@{@"word" : word} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         id retval = [responseObject valueForKey:@"status"];
         
@@ -1814,10 +1945,11 @@ NSArray <NSString *> * _defaultsKeys;
     
 }
 
-- (void)removeFilter:(NSString *)word success:(successBlock)successCB error:(errorBlock)errorCB
-{
+- (void)removeFilter:(NSString *)word success:(successBlock)successCB error:(errorBlock)errorCB {
     
-    [self.session DELETE:@"/user/filters" parameters:@{@"userID": [self userID], @"word": word} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session DELETE:@"/user/filters" parameters:@{@"userID": [self userID], @"word": word} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         id retval = [responseObject valueForKey:@"status"];
         
@@ -1838,15 +1970,17 @@ NSArray <NSString *> * _defaultsKeys;
 
 #pragma mark - Subscriptions
 
-- (void)addPushToken:(NSString *)token success:(successBlock)successCB error:(errorBlock)errorCB
-{
+- (void)addPushToken:(NSString *)token success:(successBlock)successCB error:(errorBlock)errorCB {
+    
     if (token == nil)
         return;
     
     if ([self userID] == nil)
         return;
     
-    [self.session PUT:@"/user/token" queryParams:@{@"userID": [self userID]} parameters:@{@"token": token} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session PUT:@"/user/token" queryParams:@{@"userID": [self userID]} parameters:@{@"token": token} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         error = [self errorFromResponse:error.userInfo];
         
@@ -1861,7 +1995,9 @@ NSArray <NSString *> * _defaultsKeys;
 
 - (void)getAllWebSubWithSuccess:(successBlock)successCB error:(errorBlock)errorCB {
     
-    [self.session GET:@"/user/subscriptions" parameters:@{@"userID": self.userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session GET:@"/user/subscriptions" parameters:@{@"userID": self.userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (!successCB) {
             return;
@@ -1890,9 +2026,11 @@ NSArray <NSString *> * _defaultsKeys;
     
 }
 
-- (void)subsribe:(Feed *)feed success:(successBlock)successCB error:(errorBlock)errorCB
-{
-    [self.session PUT:@"/user/subscriptions" queryParams:@{@"userID": [self userID], @"feedID": feed.feedID} parameters:@{} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+- (void)subscribe:(Feed *)feed success:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    DZURLSession *session = self.currentSession;
+    
+    [session PUT:@"/user/subscriptions" queryParams:@{@"userID": [self userID], @"feedID": feed.feedID} parameters:@{} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         error = [self errorFromResponse:error.userInfo];
         
@@ -1907,7 +2045,9 @@ NSArray <NSString *> * _defaultsKeys;
 
 - (void)unsubscribe:(Feed *)feed success:(successBlock)successCB error:(errorBlock)errorCB {
     
-    [self.session DELETE:@"/user/subscriptions" parameters:@{@"userID": [self userID], @"feedID": feed.feedID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session DELETE:@"/user/subscriptions" parameters:@{@"userID": [self userID], @"feedID": feed.feedID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         feed.subscribed = NO;
         
@@ -1958,13 +2098,15 @@ NSArray <NSString *> * _defaultsKeys;
                            @"isTrial": @(isTrial)
                            };
     
-    [self.session POST:@"/store/legacy" parameters:body success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session POST:@"/store/legacy" parameters:body success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
             
             if ([[responseObject valueForKey:@"status"] boolValue]) {
-                Subscription *sub = [Subscription instanceFromDictionary:[responseObject valueForKey:@"subscription"]];
+                YTSubscription *sub = [YTSubscription instanceFromDictionary:[responseObject valueForKey:@"subscription"]];
                 
                 self.user.subscription = sub;
                 
@@ -1975,7 +2117,7 @@ NSArray <NSString *> * _defaultsKeys;
                 }
             }
             else {
-                Subscription *sub = [Subscription new];
+                YTSubscription *sub = [YTSubscription new];
                 NSString *error = [responseObject valueForKey:@"message"] ?: @"An unknown error occurred when updating the subscription.";
                 sub.error = [NSError errorWithDomain:@"Yeti" code:-200 userInfo:@{NSLocalizedDescriptionKey: error}];
                 
@@ -2012,7 +2154,9 @@ NSArray <NSString *> * _defaultsKeys;
     
     weakify(self);
     
-    [self.session POST:@"/1.1/store" queryParams:@{@"userID": [self userID]} parameters:@{@"receipt": receiptString} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session POST:@"/1.1/store" queryParams:@{@"userID": [self userID]} parameters:@{@"receipt": receiptString} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
       
         strongify(self);
         
@@ -2020,7 +2164,7 @@ NSArray <NSString *> * _defaultsKeys;
             strongify(self);
             
 //            if ([[responseObject valueForKey:@"status"] boolValue]) {
-                Subscription *sub = [Subscription instanceFromDictionary:[responseObject valueForKey:@"subscription"]];
+            YTSubscription *sub = [YTSubscription instanceFromDictionary:[responseObject valueForKey:@"subscription"]];
                 
                 self.user.subscription = sub;
             
@@ -2035,7 +2179,7 @@ NSArray <NSString *> * _defaultsKeys;
             [NSNotificationCenter.defaultCenter postNotificationName:YTSubscriptionPurchased object:nil];
 //            }
 //            else {
-//                Subscription *sub = [Subscription new];
+//                YTSubscription *sub = [YTSubscription new];
 //                NSString *error = [responseObject valueForKey:@"message"] ?: @"An unknown error occurred when updating the subscription.";
 //                sub.error = [NSError errorWithDomain:@"Yeti" code:-200 userInfo:@{NSLocalizedDescriptionKey: error}];
 //                
@@ -2055,7 +2199,7 @@ NSArray <NSString *> * _defaultsKeys;
             
             NSLog(@"Subscription Error: %@", error.localizedDescription);
             
-            Subscription *sub = [Subscription new];
+            YTSubscription *sub = [YTSubscription new];
             sub.error = error;
             
             strongify(self);
@@ -2079,8 +2223,10 @@ NSArray <NSString *> * _defaultsKeys;
 - (void)getSubscriptionWithSuccess:(successBlock)successCB error:(errorBlock)errorCB {
 
     weakify(self);
+    
+    DZURLSession *session = self.currentSession;
 
-    [self.session GET:@"/store" parameters:@{@"userID": self.user.userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [session GET:@"/store" parameters:@{@"userID": self.user.userID, @"env": NSBundle.mainBundle.configurationString} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
@@ -2097,7 +2243,7 @@ NSArray <NSString *> * _defaultsKeys;
                     [dict removeObjectForKey:@"stripe"];
                 }
                 
-                Subscription *sub = [Subscription instanceFromDictionary:dict];
+                YTSubscription *sub = [YTSubscription instanceFromDictionary:dict];
                 
                 if (stripeData != nil) {
                     [sub setValue:stripeData forKey:@"stripe"];
@@ -2117,7 +2263,7 @@ NSArray <NSString *> * _defaultsKeys;
 
             }
             else {
-                Subscription *sub = [Subscription new];
+                YTSubscription *sub = [YTSubscription new];
                 NSString *error = [responseObject valueForKey:@"message"] ?: @"An unknown error occurred when updating the subscription.";
                 sub.error = [NSError errorWithDomain:@"Yeti" code:-200 userInfo:@{NSLocalizedDescriptionKey: error}];
                 
@@ -2138,7 +2284,7 @@ NSArray <NSString *> * _defaultsKeys;
            
             NSLog(@"Subscription Error: %@", error.localizedDescription);
             
-            Subscription *sub = [Subscription new];
+            YTSubscription *sub = [YTSubscription new];
             sub.error = error;
             
             strongify(self);
@@ -2163,7 +2309,9 @@ NSArray <NSString *> * _defaultsKeys;
 
 - (void)getOPMLWithSuccess:(successBlock)successCB error:(errorBlock)errorCB {
     
-    [self.session GET:@"/user/opml" parameters:@{@"userID": [MyFeedsManager userID]} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    [session GET:@"/user/opml" parameters:@{@"userID": [MyFeedsManager userID]} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         NSString *xmlData = [responseObject valueForKey:@"file"];
         
@@ -2203,22 +2351,9 @@ NSArray <NSString *> * _defaultsKeys;
                             @"userID": self.userID
                             };
     
-    __block DZURLSession *session = self.session;
+    DZURLSession *session = self.currentSession;
     
-    runOnMainQueueWithoutDeadlocking(^{
-        
-        if (UIApplication.sharedApplication.applicationState == UIApplicationStateBackground) {
-            
-            // use the background session for sync.
-            NSLog(@"Setup getSync task in background mode");
-            
-            session = self.backgroundSession;
-            
-        }
-        
-    });
-    
-    [session GET:@"/1.7/sync" parameters:query success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [session GET:@"/2.2/sync" parameters:query success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (response.statusCode == 304) {
             // nothing changed. exit early
@@ -2232,12 +2367,14 @@ NSArray <NSString *> * _defaultsKeys;
         
         // server will respond with changes and changeToken
         NSString *changeToken = responseObject[@"changeToken"];
-        NSDictionary <NSString *, NSArray *> * changes = responseObject[@"changes"];
+        NSDictionary <NSString *, NSArray *> * changes = responseObject[@"changes"] ?: @{};
+        NSDictionary <NSString *, NSNumber *> *reads = responseObject[@"reads"] ?: @[];
         
         if (successCB) {
             
             ChangeSet *changeSet = [[ChangeSet alloc] init];
             changeSet.changeToken = changeToken;
+            changeSet.reads = reads;
             
             NSArray *customFeeds = [changes valueForKey:@"customFeeds"];
             
@@ -2342,20 +2479,7 @@ NSArray <NSString *> * _defaultsKeys;
         params = @{@"userID": MyFeedsManager.userID};
     }
     
-    __block DZURLSession *session = self.session;
-    
-    runOnMainQueueWithoutDeadlocking(^{
-        
-        if (UIApplication.sharedApplication.applicationState == UIApplicationStateBackground) {
-            
-            // use the background session for sync.
-            NSLog(@"Setup getSync task in background mode");
-            
-            session = self.backgroundSession;
-            
-        }
-        
-    });
+    DZURLSession *session = self.currentSession;
     
     // Get the existing items
     [session GET:@"/user/settings" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -2479,20 +2603,7 @@ NSArray <NSString *> * _defaultsKeys;
     
     NSArray <NSDictionary *> * settingItems = [self _formatSettings:settings];
     
-    __block DZURLSession *session = self.session;
-    
-    runOnMainQueueWithoutDeadlocking(^{
-        
-        if (UIApplication.sharedApplication.applicationState == UIApplicationStateBackground) {
-            
-            // use the background session for sync.
-            NSLog(@"Setup getSync task in background mode");
-            
-            session = self.backgroundSession;
-            
-        }
-        
-    });
+    DZURLSession *session = self.currentSession;
     
     [session PUT:@"/user/settings" queryParams:@{@"userID": self.userID} parameters:@{@"settings": settingItems} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
@@ -2511,20 +2622,7 @@ NSArray <NSString *> * _defaultsKeys;
     NSArray *items = [self _formatSettings:@[setting]];
     NSDictionary *item = items.firstObject;
     
-    __block DZURLSession *session = self.session;
-    
-    runOnMainQueueWithoutDeadlocking(^{
-        
-        if (UIApplication.sharedApplication.applicationState == UIApplicationStateBackground) {
-            
-            // use the background session for sync.
-            NSLog(@"Setup getSync task in background mode");
-            
-            session = self.backgroundSession;
-            
-        }
-        
-    });
+    DZURLSession *session = self.currentSession;
     
     [session POST:@"/user/settings" queryParams:@{@"userID": self.userID} parameters:item success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
@@ -2541,6 +2639,7 @@ NSArray <NSString *> * _defaultsKeys;
 - (void)getSyncArticles:(NSDictionary *)params success:(successBlock)successCB error:(errorBlock)errorCB {
     
     NSNumber *feedID = [params valueForKey:@"feedID"];
+    NSString *etag = [params valueForKey:@"etag"];
     
     if (feedID == nil || feedID.integerValue == 0) {
         
@@ -2558,26 +2657,32 @@ NSArray <NSString *> * _defaultsKeys;
         
     }
     
-    NSString *path = [NSString stringWithFormat:@"/1.7/feeds/%@", feedID];
+    NSString *path = [NSString stringWithFormat:@"/2.2/feeds/%@", feedID];
     
-    __block DZURLSession *session = self.session;
+    DZURLSession *session = self.currentSession;
     
-    runOnMainQueueWithoutDeadlocking(^{
+    NSMutableURLRequest *req = [session requestWithURI:path method:@"GET" params:params].mutableCopy;
+    
+    if (etag != nil) {
         
-        if (UIApplication.sharedApplication.applicationState == UIApplicationStateBackground) {
-            
-            // use the background session for sync.
-            NSLog(@"Setup sync Articles task in background mode");
-            
-            session = self.backgroundSession;
-            
-        }
+        [req setValue:etag forHTTPHeaderField:@"If-None-Match"];
         
-    });
+    }
     
-    [session GET:path parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [session requestWithReq:req success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (!successCB) {
+            return;
+        }
+        
+        if (responseObject == nil) {
+            
+            if (successCB) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    successCB(@[], response, task);
+                });
+            }
+            
             return;
         }
         
@@ -2594,7 +2699,9 @@ NSArray <NSString *> * _defaultsKeys;
         }
         
         if (successCB) {
-            successCB(articles, response, task);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                successCB(articles, response, task);
+            });
         }
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -2625,7 +2732,9 @@ NSArray <NSString *> * _defaultsKeys;
     
     NSDictionary *queryParams = @{@"userID": self.userID};
     
-    return [self.session POST:@"/1.2/search" queryParams:queryParams parameters:body success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    return [session POST:@"/1.2/search" queryParams:queryParams parameters:body success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         NSArray <NSDictionary *> *feedObjs = [responseObject valueForKey:@"feeds"];
         
@@ -2665,7 +2774,9 @@ NSArray <NSString *> * _defaultsKeys;
     
     NSString *path = [NSString stringWithFormat:@"/1.8/feed/%@/search", feedID];
     
-    return [self.session POST:path queryParams:queryParams parameters:body success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    return [session POST:path queryParams:queryParams parameters:body success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         NSArray <NSDictionary *> *articleObjs = [responseObject valueForKey:@"articles"];
         
@@ -2701,7 +2812,9 @@ NSArray <NSString *> * _defaultsKeys;
     
     NSString *path = [NSString stringWithFormat:@"/1.8/unread/search"];
     
-    return [self.session POST:path queryParams:queryParams parameters:body success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    return [session POST:path queryParams:queryParams parameters:body success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         NSArray <NSDictionary *> *articleObjs = [responseObject valueForKey:@"articles"];
         
@@ -2742,7 +2855,9 @@ NSArray <NSString *> * _defaultsKeys;
     
     NSString *path = [NSString stringWithFormat:@"/1.8/today/search"];
     
-    return [self.session POST:path queryParams:queryParams parameters:body success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    return [session POST:path queryParams:queryParams parameters:body success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         NSArray <NSDictionary *> *articleObjs = [responseObject valueForKey:@"articles"];
         
@@ -2778,7 +2893,9 @@ NSArray <NSString *> * _defaultsKeys;
     
     NSString *path = [NSString stringWithFormat:@"/1.8/folder/%@/search", folderID];
     
-    return [self.session POST:path queryParams:queryParams parameters:body success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZURLSession *session = self.currentSession;
+    
+    return [session POST:path queryParams:queryParams parameters:body success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         NSArray <NSDictionary *> *articleObjs = [responseObject valueForKey:@"articles"];
         
@@ -2816,11 +2933,13 @@ NSArray <NSString *> * _defaultsKeys;
         
     }
     
-    if (totalUnread >= 999999999) {
-        self->_totalUnread = 0;
-    }
-    else {
-        self->_totalUnread = MAX(totalUnread, 0);
+    @synchronized (self) {
+        if (totalUnread >= 999999999) {
+            self->_totalUnread = 0;
+        }
+        else {
+            self->_totalUnread = MAX(totalUnread, 0);
+        }
     }
     
     if (SharedPrefs.badgeAppIcon) {
@@ -2857,6 +2976,34 @@ NSArray <NSString *> * _defaultsKeys;
     
 }
 
+- (void)setTotalBookmarks:(NSUInteger)totalBookmarks {
+    
+    if (NSThread.isMainThread == NO) {
+        
+        [self performSelectorOnMainThread:@selector(setTotalBookmarks:) withObject:@(totalBookmarks) waitUntilDone:NO];
+        return;
+        
+    }
+    
+    @synchronized (self) {
+        
+        if (totalBookmarks != _totalBookmarks) {
+            
+            if (totalBookmarks >= 999999999) {
+                self->_totalBookmarks = 0;
+            }
+            else {
+                self->_totalBookmarks = MAX(totalBookmarks, 0);
+            }
+            
+            [NSNotificationCenter.defaultCenter postNotificationName:BookmarksDidUpdate object:self userInfo:nil];
+            
+        }
+        
+    }
+    
+}
+
 //- (void)setBookmarks:(NSArray<FeedItem *> *)bookmarks
 //{
 //    if (bookmarks) {
@@ -2886,7 +3033,7 @@ NSArray <NSString *> * _defaultsKeys;
 
         if (MyFeedsManager.subsribeAfterPushEnabled) {
             
-            [self subsribe:MyFeedsManager.subsribeAfterPushEnabled success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            [self subscribe:MyFeedsManager.subsribeAfterPushEnabled success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                 
                 [[NSNotificationCenter defaultCenter] postNotificationName:SubscribedToFeed object:MyFeedsManager.subsribeAfterPushEnabled];
                 
@@ -2929,6 +3076,10 @@ NSArray <NSString *> * _defaultsKeys;
         return [self performSelectorOnMainThread:@selector(setUser:) withObject:user waitUntilDone:NO];
     }
     
+    if (_user != nil && user != nil && [_user hash] == [user hash]) {
+        return;
+    }
+    
     _user = user;
     
     [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
@@ -2962,6 +3113,14 @@ NSArray <NSString *> * _defaultsKeys;
     
 }
 
+- (NSUInteger)totalBookmarks {
+    
+    @synchronized (self) {
+        return self->_totalBookmarks;
+    }
+    
+}
+
 - (NSString *)appFullVersion {
     
     if (_appFullVersion == nil) {
@@ -2982,7 +3141,7 @@ NSArray <NSString *> * _defaultsKeys;
     
 }
 
-- (Subscription *)subscription {
+- (YTSubscription *)subscription {
     return self.user.subscription;
 }
 
@@ -2992,6 +3151,27 @@ NSArray <NSString *> * _defaultsKeys;
     }
     
     return _reachability;
+}
+
+- (DZURLSession *)currentSession {
+    
+    __block DZURLSession *session = self.session;
+    
+    runOnMainQueueWithoutDeadlocking(^{
+        
+        if (UIApplication.sharedApplication.applicationState == UIApplicationStateBackground) {
+            
+            // use the background session for sync.
+            NSLog(@"Setup get feeds task in background mode");
+            
+            session = self.backgroundSession;
+            
+        }
+        
+    });
+    
+    return session;
+    
 }
 
 - (DZURLSession *)session {
@@ -3022,14 +3202,14 @@ NSArray <NSString *> * _defaultsKeys;
 
         DZURLSession *session = [[DZURLSession alloc] initWithSessionConfiguration:defaultConfig];
         
-        session.baseURL = [NSURL URLWithString:@"http://127.0.0.1:3000"];
-        session.baseURL =  [NSURL URLWithString:@"https://api-acc.elytra.app"];
+        session.baseURL = [NSURL URLWithString:@"http://192.168.1.90:3000"];
+        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
 #ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://api.elytra.app"];
 #endif
         session.useOMGUserAgent = YES;
         session.useActivityManager = YES;
-        session.responseParser = [DZJSONResponseParser new];
+        session.responseParser = [DZLoggingJSONResponseParser new];
 
         weakify(self);
         session.requestModifier = ^NSMutableURLRequest *(NSMutableURLRequest *request) {
@@ -3049,12 +3229,43 @@ NSArray <NSString *> * _defaultsKeys;
             
             NSString *signature = [self hmac:stringToSign withKey:encoded];
             
-            [request setValue:signature forHTTPHeaderField:@"Authorization"];
+            [request setValue:signature forHTTPHeaderField:@"x-authorization"];
             [request setValue:userID.stringValue forHTTPHeaderField:@"x-userid"];
             [request setValue:timecode forHTTPHeaderField:@"x-timestamp"];
             
+            if (request.allHTTPHeaderFields[@"User-Agent"] != nil) {
+                [request setValue:[request valueForHTTPHeaderField:@"User-Agent"] forHTTPHeaderField:@"x-user-agent"];
+            }
+            
             if (self.deviceID != nil) {
                 [request setValue:self.deviceID forHTTPHeaderField:@"x-device"];
+            }
+            
+            if (self.debugLoggingEnabled) {
+                
+                NSMutableDictionary *dict = @{
+                    @"url": request.URL.absoluteString,
+                    @"method": request.HTTPMethod,
+                    @"headers": request.allHTTPHeaderFields,
+                }.mutableCopy;
+                
+                if (request.HTTPBody != nil) {
+                    
+                    NSError *error = nil;
+                    
+                    id obj = [NSJSONSerialization JSONObjectWithData:request.HTTPBody options:kNilOptions error:&error];
+                    
+                    if (error != nil) {
+                        dict[@"body"] = @{@"error": error.localizedDescription};
+                    }
+                    else {
+                        dict[@"body"] = obj;
+                    }
+                    
+                }
+                
+                CWLogData(dict);
+                
             }
             
             return request;
@@ -3105,7 +3316,7 @@ NSArray <NSString *> * _defaultsKeys;
         session.baseURL = self.session.baseURL;
         session.useOMGUserAgent = YES;
         session.useActivityManager = YES;
-        session.responseParser = [DZJSONResponseParser new];
+        session.responseParser = [DZLoggingJSONResponseParser new];
         session.isBackgroundSession = YES;
         
         session.requestModifier = self.session.requestModifier;
@@ -3132,92 +3343,9 @@ NSArray <NSString *> * _defaultsKeys;
     return HMAC;
 }
 
-- (NSNumber *)bookmarksCount {
-    
-    if (!_bookmarksCount) {
-        
-        weakify(self);
-        
-        dispatch_semaphore_t sema = dispatch_semaphore_create(0);
-        
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-            NSFileManager *manager = [NSFileManager defaultManager];
-            NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-            NSString *documentsDirectory = [paths objectAtIndex:0]; // Get documents folder
-            NSString *directory = [documentsDirectory stringByAppendingPathComponent:@"bookmarks"];
-            BOOL isDir;
-            
-            if (![manager fileExistsAtPath:directory isDirectory:&isDir]) {
-                NSError *error = nil;
-                if (![manager createDirectoryAtPath:directory withIntermediateDirectories:YES attributes:nil error:&error]) {
-                    NSLog(@"Error creating bookmarks directory: %@", error);
-                }
-            }
-            
-            NSDirectoryEnumerator *enumerator = [manager enumeratorAtPath:directory];
-            NSArray *objects = enumerator.allObjects;
-            
-            strongify(self);
-            
-            self->_bookmarksCount = @(objects.count);
-            dispatch_semaphore_signal(sema);
-        });
-        
-        dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
-    }
-    
-    return _bookmarksCount;
-}
-
 //#endif
 
 #pragma mark - Notifications
-
-- (void)didUpdateBookmarks:(NSNotification *)note {
-    
-    FeedItem *item = [note object];
-    
-    @synchronized(self) {
-        self->_bookmarksCount = nil;
-    }
-    
-    if (!item) {
-        NSLog(@"A bookmark notification was posted but did not include a FeedItem object.");
-        return;
-    }
-    
-    BOOL isBookmarked = [[[note userInfo] valueForKey:@"bookmarked"] boolValue];
-    
-    if (isBookmarked) {
-        // it was added
-        @try {
-            NSArray *bookmarks = [ArticlesManager.shared.bookmarks arrayByAddingObject:item];
-            @synchronized (self) {
-                ArticlesManager.shared.bookmarks = bookmarks;
-            }
-        }
-        @catch (NSException *exc) {}
-    }
-    else {
-        NSInteger itemID = item.identifier.integerValue;
-        
-        @try {
-            NSArray <FeedItem *> *bookmarks = ArticlesManager.shared.bookmarks;
-            bookmarks = [bookmarks rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
-                return obj.identifier.integerValue != itemID;
-            }];
-            
-            @synchronized (self) {
-                ArticlesManager.shared.bookmarks = bookmarks;
-            }
-        } @catch (NSException *excp) {}
-    }
-    
-    @synchronized (self) {
-        self.bookmarksCount = @(ArticlesManager.shared.bookmarks.count);
-    }
-    
-}
 
 - (void)userDidUpdate {
     
@@ -3225,28 +3353,49 @@ NSArray <NSString *> * _defaultsKeys;
         return;
     }
     
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UserDidUpdate object:nil];
+    // get filters
+    if (self.user.filters == nil || self.user.filters.count == 0) {
+        
+        [self getFiltersWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            if (responseObject == nil) {
+                responseObject = @[];
+            }
+            
+            [NSNotificationCenter.defaultCenter removeObserver:self name:UserDidUpdate object:nil];
+            
+            User *user = self.user;
+            user.filters = [NSSet setWithArray:responseObject];
+            
+            [MyDBManager setUser:user];
+            
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                
+                [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
+                
+            });
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            NSLog(@"Error: Failed to fetch filters for user");
+            
+        }];
+        
+    }
+    else {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+            [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
+            
+        });
+    }
     
-    weakify(self);
-    
-    // user ID can be nil at this point
-    
-    // this is called from the sync block now.
-//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-//        strongify(self);
-//
-//        [self updateBookmarksFromServer];
-//
-//    });
-    
-    if ((self.user.subscription == nil || self.user.subscription.expiry == nil)
-        || (self.user.subscription != nil && [self.user.subscription hasExpired] == YES)) {
+//    if ((self.user.subscription == nil || self.user.subscription.expiry == nil)
+//        || (self.user.subscription != nil && [self.user.subscription hasExpired] == YES)) {
         
         [self getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
          
             NSLog(@"Successfully fetched subscription: %@", self.user.subscription);
-            
-//            [MyDBManager setUser:self.user];
             
             if ([self.user.subscription hasExpired] == YES) {
                 
@@ -3255,8 +3404,6 @@ NSArray <NSString *> * _defaultsKeys;
                 });
                 
             }
-            
-//            [MyDBManager setUser:self.user];
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
@@ -3272,23 +3419,16 @@ NSArray <NSString *> * _defaultsKeys;
                 
             }
             
+            if ([error.localizedDescription isEqualToString:@"No subscription found for this account."]) {
+                
+                return [MyAppDelegate.coordinator showSubscriptionsInterface];
+                
+            }
+            
             [AlertManager showGenericAlertWithTitle:@"Error Fetching Subscription" message:error.localizedDescription];
             
         }];
         
-    }
-//    else {
-//
-//        if ([self.user.subscription hasExpired] == YES) {
-//
-//            self.user.subscription = nil;
-//
-//            [MyDBManager setUser:self.user];
-//
-//            [self performSelectorOnMainThread:@selector(userDidUpdate) withObject:nil waitUntilDone:NO];
-//
-//        }
-//
 //    }
     
 }
@@ -3409,8 +3549,10 @@ NSArray <NSString *> * _defaultsKeys;
     ArticlesManager.shared.feeds = nil;
 //    ArticlesManager.shared.unread = nil;
     self.totalUnread = 0;
+    self.totalBookmarks = 0;
+    self.totalToday = 0;
     
-    [self.bookmarksManager _removeAllBookmarks:nil];
+    [MyDBManager purgeDataForResync];
     
     [MyDBManager setUser:nil];
     
@@ -3529,15 +3671,17 @@ NSArray <NSString *> * _defaultsKeys;
 - (void)getUserInformation:(successBlock)successCB error:(errorBlock)errorCB {
     weakify(self);
     
-    NSDictionary *params;
+    NSMutableDictionary *params = [NSMutableDictionary new];
     
     if (MyFeedsManager.userID != nil) {
-        params = @{@"userID": MyFeedsManager.userID};
+        params[@"userID"] = MyFeedsManager.userID;
     }
 
     else if (MyFeedsManager.user.uuid) {
-        params = @{@"userID" : MyFeedsManager.user.uuid};
+        params[@"userID"] = MyFeedsManager.user.uuid;
     }
+    
+    params[@"env"] = NSBundle.mainBundle.configurationString;
 
     __unused NSURLSessionTask *task = [self.session GET:@"/user" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
      
@@ -3643,7 +3787,7 @@ NSArray <NSString *> * _defaultsKeys;
     
     weakify(self);
     
-    [self.session PUT:@"/1.7/trial" queryParams:@{} parameters:body success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [self.session PUT:@"/1.7/trial" queryParams:@{@"env": NSBundle.mainBundle.configurationString} parameters:body success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         [self getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
@@ -3763,12 +3907,19 @@ NSArray <NSString *> * _defaultsKeys;
         return;
     }
     
-    NSArray <NSString *> *existingArr = [self.bookmarksManager.bookmarks rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
-        return obj.identifier.stringValue;
-    }];
+    __block NSArray <NSString *> *existingArr = [NSArray new];
     
-    // we no longer need the bookmarks in memory. 
-    [self.bookmarksManager setValue:nil forKey:@"_bookmarks"];
+    [MyDBManager.uiConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+       
+        YapDatabaseFilteredViewTransaction *txn = [transaction ext:DB_BOOKMARKED_VIEW];
+        
+        [txn enumerateKeysInGroup:GROUP_ARTICLES usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, NSUInteger index, BOOL * _Nonnull stop) {
+                
+            existingArr = [existingArr arrayByAddingObject:key];
+            
+        }];
+        
+    }];
     
     NSString *existing = [existingArr componentsJoinedByString:@","];
     
@@ -3798,37 +3949,102 @@ NSArray <NSString *> * _defaultsKeys;
         
         strongify(self);
         
-        if (self.bookmarksManager != nil && ((bookmarked && bookmarked.count) || (deleted && deleted.count))) {
+        [MyDBManager.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
             
-            self.bookmarksManager->_migrating = YES;
-            
-            if (deleted && deleted.count) {
+            YapDatabaseFilteredViewTransaction *txn = [transaction ext:DB_BOOKMARKED_VIEW];
+           
+            if (deleted != nil && deleted.count) {
                 
-                for (NSNumber *articleID in deleted) {
+                NSUInteger total = deleted.count;
+                __block NSUInteger counted = 0;
+                
+                NSMutableDictionary <NSString *, NSMutableSet <NSString *> *> *articles = @{}.mutableCopy;
+                
+                [txn enumerateKeysAndMetadataInGroup:GROUP_ARTICLES usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nullable metadata, NSUInteger index, BOOL * _Nonnull stop) {
                     
-                    [self.bookmarksManager removeBookmarkForID:articleID completion:nil];
-                    
-                }
-                
-            }
-            
-            if (bookmarked && bookmarked.count) {
-                
-                bookmarked = [bookmarked rz_filter:^BOOL(NSNumber *obj, NSUInteger idx, NSArray *array) {
+                    if ([deleted containsObject:@(key.integerValue)]) {
+                        
+                        if (articles[collection] == nil) {
+                            articles[collection] = [NSMutableSet setWithCapacity:total];
+                        }
+                        
+                        if ([([metadata valueForKey:@"bookmarked"] ?: @(NO)) boolValue] == YES) {
+                            [articles[collection] addObject:key];
+                        }
+                        
+                        counted++;
+                        
+                    }
                    
-                    return [existingArr indexOfObject:obj.stringValue] == NSNotFound;
+                    if (counted == total) {
+                        *stop = YES;
+                    }
                     
                 }];
                 
-                __block NSUInteger count = bookmarked.count;
+                [articles enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull collection, NSMutableSet<NSString *> * _Nonnull keys, BOOL * _Nonnull stop) {
+                   
+                    for (NSString *key in keys) {
+                        
+                        FeedItem *item = nil;
+                        NSDictionary *metadata = nil;
+                        
+                        [transaction getObject:&item metadata:&metadata forKey:key inCollection:collection];
+                        
+                        if (item != nil && metadata != nil) {
+                            
+                            NSMutableDictionary *dict = metadata.mutableCopy;
+                            
+                            dict[@"bookmarked"] = @(NO);
+                            item.bookmarked = NO;
+                            
+                            [transaction setObject:item forKey:key inCollection:collection withMetadata:dict];
+                            
+                        }
+                        
+                    }
+                    
+                }];
                 
-                if (count == 0) {
+            }
+            
+            if (bookmarked != nil && bookmarked.count) {
+                
+                NSUInteger total = bookmarked.count;
+                __block NSUInteger counted = 0;
+                
+//                NSMutableDictionary <NSString *, NSMutableSet <NSString *> *> *articles = @{}.mutableCopy;
+                
+                NSMutableArray <NSNumber *> *articlesToFetch = [NSMutableArray arrayWithArray:bookmarked];
+                
+                [txn enumerateKeysAndMetadataInGroup:GROUP_ARTICLES usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nullable metadata, NSUInteger index, BOOL * _Nonnull stop) {
                     
+                    NSNumber *objToIdentify = @(key.integerValue);
+                    
+                    if ([articlesToFetch containsObject:objToIdentify] == YES) {
+                        
+                        [articlesToFetch removeObject:objToIdentify];
+                        
+                    }
+                    
+                    counted++;
+                    
+                    // 1. this may not always be the case if we do not have the article on file.
+                    if (counted == total) {
+                        *stop = YES;
+                    }
+                    
+                }];
+                
+                if (articlesToFetch.count == 0) {
+                    // we have all.
                     return [self bookmarksUpdateFromServerCompleted];
-                    
                 }
                 
-                [bookmarked enumerateObjectsUsingBlock:^(NSNumber * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                __block NSUInteger count = articlesToFetch.count;
+                
+                // 2. fetch the articles we dont have.
+                [articlesToFetch enumerateObjectsUsingBlock:^(NSNumber * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                     
                     // this article needs to be downloaded and cached
                     
@@ -3838,7 +4054,9 @@ NSArray <NSString *> * _defaultsKeys;
                         
                         strongify(self);
                         
-                        [self.bookmarksManager addBookmark:responseObject completion:nil];
+                        responseObject.bookmarked = YES;
+                        
+                        [MyDBManager addArticle:responseObject];
                         
                         count--;
                         
@@ -3858,15 +4076,14 @@ NSArray <NSString *> * _defaultsKeys;
                     
                 }];
                 
+                
+                
             }
             else {
                 [self bookmarksUpdateFromServerCompleted];
             }
             
-        }
-        else {
-            [self bookmarksUpdateFromServerCompleted];
-        }
+        }];
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
        
@@ -3879,22 +4096,22 @@ NSArray <NSString *> * _defaultsKeys;
 
 - (void)bookmarksUpdateFromServerCompleted {
     
-    self.bookmarksManager->_migrating = NO;
-    
-    weakify(self);
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        
-        strongify(self);
-        
-        @try {
-           [self.bookmarksManager postNotification:BookmarksDidUpdateNotification object:nil];
-        } @catch (NSException *exception) {
-            NSLog(@"Exception when posting bookmarks notification, %@", exception);
-        } @finally {
-            
-        }
-    });
+//    self.bookmarksManager->_migrating = NO;
+//    
+//    weakify(self);
+//    
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        
+//        strongify(self);
+//        
+//        @try {
+//           [self.bookmarksManager postNotification:BookmarksDidUpdateNotification object:nil];
+//        } @catch (NSException *exception) {
+//            NSLog(@"Exception when posting bookmarks notification, %@", exception);
+//        } @finally {
+//            
+//        }
+//    });
     
 }
 
@@ -3944,6 +4161,10 @@ NSArray <NSString *> * _defaultsKeys;
         
     }
     
+    if (dataRep == nil) {
+        return;
+    }
+    
     if ([dataRep writeToFile:path atomically:YES] == NO) {
         
         NSLog(@"Failed to write data to %@", path);
@@ -3962,7 +4183,7 @@ NSArray <NSString *> * _defaultsKeys;
         
     }
     
-    self.widgetCountersUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:10 repeats:NO block:^(NSTimer * _Nonnull timer) {
+    self.widgetCountersUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:2 repeats:NO block:^(NSTimer * _Nonnull timer) {
         
         NSMutableDictionary *dict = @{}.mutableCopy;
         
@@ -3970,7 +4191,7 @@ NSArray <NSString *> * _defaultsKeys;
         
         dict[@"today"] = @(self.totalToday ?: 0);
         
-        dict[@"bookmarks"] = @(self.bookmarksManager.bookmarksCount ?: 0);
+        dict[@"bookmarks"] = @(self.totalBookmarks ?: 0);
         
         dict[@"date"] = @([NSDate.date timeIntervalSince1970]);
         
@@ -3979,6 +4200,8 @@ NSArray <NSString *> * _defaultsKeys;
         [WidgetManager reloadTimelineWithName:@"CountersWidget"];
         
     }];
+    
+    [[NSRunLoop currentRunLoop] addTimer:self.widgetCountersUpdateTimer forMode:NSRunLoopCommonModes];
     
 }
 
@@ -4010,8 +4233,7 @@ NSString *const kUnreadLastUpdateKey = @"key.unreadLastUpdate";
         [coder encodeObject:ArticlesManager.shared.folders forKey:kFoldersKey];
         [coder encodeObject:ArticlesManager.shared.feeds forKey:kFeedsKey];
 //        [coder encodeObject:self.subscription forKey:kSubscriptionKey];
-        [coder encodeObject:ArticlesManager.shared.bookmarks forKey:kBookmarksKey];
-        [coder encodeObject:self.bookmarksCount forKey:kBookmarksCountKey];
+        [coder encodeInteger:self.totalBookmarks forKey:kBookmarksCountKey];
         [coder encodeInteger:self.totalUnread forKey:ktotalUnreadKey];
 //        [coder encodeObject:ArticlesManager.shared forKey:NSStringFromClass(ArticlesManager.class)];
         
@@ -4036,8 +4258,7 @@ NSString *const kUnreadLastUpdateKey = @"key.unreadLastUpdate";
         ArticlesManager.shared.folders = [coder decodeObjectForKey:kFoldersKey];
         ArticlesManager.shared.feeds = [coder decodeObjectForKey:kFeedsKey];
 //        self.subscription = [coder decodeObjectForKey:kSubscriptionKey];
-        ArticlesManager.shared.bookmarks = [coder decodeObjectForKey:kBookmarksKey];
-        self.bookmarksCount = [coder decodeObjectForKey:kBookmarksCountKey];
+        self.totalBookmarks = [coder decodeIntegerForKey:kBookmarksCountKey];
         self.totalUnread = [coder decodeIntegerForKey:ktotalUnreadKey];
         
         double unreadUpdate = [coder decodeDoubleForKey:kUnreadLastUpdateKey];
@@ -4072,5 +4293,248 @@ NSString *const kUnreadLastUpdateKey = @"key.unreadLastUpdate";
     [activity addUserInfoEntriesFromDictionary:@{@"feedsManager":dict}];
     
 }
+
+#pragma mark - Debug Logging
+
+- (void)setupLogger {
+    
+    self.CWLogEvents = [NSMutableArray new];
+    
+    AWSStaticCredentialsProvider *credentials = [[AWSStaticCredentialsProvider alloc] initWithAccessKey:@"AKIAQRG4X7J2SKTRQHGU" secretKey:@"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"];
+    
+    AWSServiceConfiguration *config = [[AWSServiceConfiguration alloc] initWithRegion:AWSRegionUSEast1 credentialsProvider:credentials];
+
+    [AWSServiceManager defaultServiceManager].defaultServiceConfiguration = config;
+    
+}
+
+- (void)setDebugLoggingEnabled:(BOOL)debugLoggingEnabled {
+    
+    if (NSThread.isMainThread == NO) {
+        return [self performSelectorOnMainThread:@selector(setDebugLoggingEnabled:) withObject:@(debugLoggingEnabled) waitUntilDone:NO];
+    }
+    
+    BOOL changing = !(_debugLoggingEnabled && debugLoggingEnabled);
+    
+    self->_debugLoggingEnabled = debugLoggingEnabled;
+    
+    if (changing && debugLoggingEnabled == NO && self.CWLogEvents.count > 0) {
+        
+        // flush immediately.
+        [self logCWEvents];
+        
+    }
+    
+}
+
+- (void)logCWEvents {
+    
+    if (MyFeedsManager->_debugLogsSequenceToken == nil) {
+        
+        AWSLogsDescribeLogStreamsRequest *describeReq = [AWSLogsDescribeLogStreamsRequest new];
+        describeReq.logGroupName = @"Elytra";
+        describeReq.logStreamNamePrefix = @"userD";
+        
+        [AWSLogs.defaultLogs describeLogStreams:describeReq completionHandler:^(AWSLogsDescribeLogStreamsResponse * _Nullable response, NSError * _Nullable error) {
+            
+            AWSLogsLogStream *logstream = nil;
+            
+            for (AWSLogsLogStream *stream in response.logStreams) {
+                
+                if ([stream.logStreamName isEqualToString:@"userDebugging"]) {
+                    
+                    logstream = stream;
+                    
+                }
+               
+            }
+            
+            if (logstream != nil) {
+                
+                MyFeedsManager->_debugLogsSequenceToken = logstream.uploadSequenceToken ?: @"";
+                
+                [self logCWEvents];
+                
+            }
+            else {
+                NSLog(@"userDebugging stream not found.");
+                
+                AWSLogsCreateLogStreamRequest *req = [[AWSLogsCreateLogStreamRequest alloc] init];
+                req.logGroupName = @"Elytra";
+                req.logStreamName = @"userDebugging";
+                
+                [AWSLogs.defaultLogs createLogStream:req completionHandler:^(NSError * _Nullable error) {
+                   
+                    if (error != nil && error.code != 8) {
+                        NSLogDebug(@"Error creating log stream: %@", error);
+                    }
+                    else {
+                        MyFeedsManager->_debugLogsSequenceToken = @"";
+                        [self logCWEvents];
+                    }
+                    
+                }];
+                
+            }
+            
+        }];
+        
+        return;
+        
+    }
+    
+    NSArray <AWSLogsInputLogEvent *> *events = self.CWLogEvents.copy;
+    self.CWLogEvents = [NSMutableArray new];
+    
+    AWSLogsPutLogEventsRequest *req = [[AWSLogsPutLogEventsRequest alloc] init];
+    req.logGroupName = @"Elytra";
+    req.logStreamName = @"userDebugging";
+    req.logEvents = events;
+    
+    if ([_debugLogsSequenceToken isEqualToString:@""] == NO) {
+        req.sequenceToken = MyFeedsManager->_debugLogsSequenceToken;
+    }
+    else {
+        req.sequenceToken = nil;
+    }
+    
+    [AWSLogs.defaultLogs putLogEvents:req completionHandler:^(AWSLogsPutLogEventsResponse * _Nullable response, NSError * _Nullable error) {
+        
+        if (error != nil) {
+            NSLog(@"Error putting log events: %@", error);
+            
+            if (error.code == 4) {
+                MyFeedsManager->_debugLogsSequenceToken = [error.userInfo valueForKey:@"expectedSequenceToken"];
+                
+                [self.CWLogEvents addObjectsFromArray:events];
+                
+                return [CoalescingQueue.standard add:MyFeedsManager :@selector(logCWEvents)];
+                
+            }
+            
+        }
+        
+        if (response.nextSequenceToken) {
+            
+            MyFeedsManager->_debugLogsSequenceToken = response.nextSequenceToken;
+            
+        }
+        
+    }];
+    
+}
+
+void CWLog (NSString * line) {
+    
+    if (line == nil || [line isBlank]) {
+        return;
+    }
+    
+    if (MyFeedsManager.isDebuggingLoggingEnabled == NO) {
+        return;
+    }
+    
+    if (MyFeedsManager.user == nil) {
+        return;
+    }
+    
+    if (MyFeedsManager.user.uuid == nil) {
+        return;
+    }
+    
+    if (MyFeedsManager.user.userID == nil) {
+        return;
+    }
+#if !TARGET_IPHONE_SIMULATOR
+    if (MyFeedsManager.deviceID == nil) {
+        return;
+    }
+#endif
+    AWSLogsInputLogEvent *event = [[AWSLogsInputLogEvent alloc] init];
+    
+    NSError *error = nil;
+    
+    NSData *data = [NSJSONSerialization dataWithJSONObject:@{
+        @"uuid": MyFeedsManager.user.uuid,
+        @"userID": MyFeedsManager.user.userID,
+        @"deviceID": MyFeedsManager.deviceID ?: @"Simulator",
+        @"message": line
+    } options:kNilOptions error:&error];
+    
+    if (error != nil) {
+        return;
+    }
+    
+    NSString *message = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    
+    event.message = message;
+    
+    NSTimeInterval timestamp = [NSDate.date timeIntervalSince1970] * 1000;
+    event.timestamp = @(timestamp);
+    
+    [MyFeedsManager.CWLogEvents addObject:event];
+    
+    [CoalescingQueue.standard add:MyFeedsManager :@selector(logCWEvents)];
+    
+    NSLog(@"%@", line);
+    
+}
+
+void CWLogData (NSDictionary *object) {
+    
+    if (object == nil || object.allKeys.count == 0) {
+        return;
+    }
+    
+    if (MyFeedsManager.isDebuggingLoggingEnabled == NO) {
+        return;
+    }
+    
+    if (MyFeedsManager.user == nil) {
+        return;
+    }
+    
+    if (MyFeedsManager.user.uuid == nil) {
+        return;
+    }
+    
+    if (MyFeedsManager.user.userID == nil) {
+        return;
+    }
+#if !TARGET_IPHONE_SIMULATOR
+    if (MyFeedsManager.deviceID == nil) {
+        return;
+    }
+#endif
+    AWSLogsInputLogEvent *event = [[AWSLogsInputLogEvent alloc] init];
+    
+    NSError *error = nil;
+    
+    NSData *data = [NSJSONSerialization dataWithJSONObject:@{
+        @"uuid": MyFeedsManager.user.uuid,
+        @"userID": MyFeedsManager.user.userID,
+        @"deviceID": MyFeedsManager.deviceID ?: @"Simulator",
+        @"message": object
+    } options:kNilOptions error:&error];
+    
+    if (error != nil) {
+        return;
+    }
+    
+    NSString *message = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    
+    event.message = message;
+    
+    NSTimeInterval timestamp = [NSDate.date timeIntervalSince1970] * 1000;
+    event.timestamp = @(timestamp);
+    
+    [MyFeedsManager.CWLogEvents addObject:event];
+    
+    [CoalescingQueue.standard add:MyFeedsManager :@selector(logCWEvents)];
+    
+    NSLog(@"%@", object);
+    
+}
+
 
 @end

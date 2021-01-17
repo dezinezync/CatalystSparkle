@@ -44,12 +44,8 @@
         
         if (indexPath.item == 2) {
             
-            BookmarksManager *manager = self.mainCoordinator.bookmarksManager;
-            
-            if (manager.bookmarksCount > 0) {
-                
-                content.secondaryText = [@(manager.bookmarksCount) stringValue];
-                
+            if (MyFeedsManager.totalBookmarks > 0) {
+                content.secondaryText = [@(MyFeedsManager.totalBookmarks) stringValue];
             }
             
         }
