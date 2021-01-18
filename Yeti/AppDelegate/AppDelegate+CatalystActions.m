@@ -69,6 +69,14 @@
     
 }
 
+- (void)openFAQ {
+    
+    NSURL *URL = [NSURL URLWithString:@"https://faq.elytra.app"];
+    
+    [UIApplication.sharedApplication openURL:URL options:nil completionHandler:nil];
+    
+}
+
 - (void)setSortingOptionTo:(YetiSortOption)sortOption {
     
     FeedVC *feedVC = self.coordinator.feedVC;
