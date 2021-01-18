@@ -207,9 +207,21 @@
     
     UICommand *contactsupport = [UICommand commandWithTitle:@"Email Support" image:nil action:@selector(contactSupport) propertyList:nil];
     
-    UIMenu *helpMenu = [UIMenu menuWithTitle:@"" image:nil identifier:@"SupportMenu" options:UIMenuOptionsDisplayInline children:@[contactsupport]];
+    UIMenu *faqItem = [UICommand commandWithTitle:@"Elytra Help" image:nil action:@selector(openFAQ) propertyList:nil];
     
-    [builder insertChildMenu:helpMenu atEndOfMenuForIdentifier:UIMenuHelp];
+    UIMenu *helpMenu = [UIMenu menuWithTitle:@"" image:nil identifier:@"SupportMenu" options:UIMenuOptionsDisplayInline children:@[faqItem, contactsupport]];
+    
+    [builder replaceChildrenOfMenuForIdentifier:UIMenuHelp fromChildrenBlock:^NSArray<UIMenuElement *> * _Nonnull(NSArray<UIMenuElement *> * _Nonnull originalItems) {
+        
+        if (originalItems.count == 1) {
+            return @[helpMenu];
+        }
+        
+        return originalItems;
+        
+    }];
+    
+//    [builder insertChildMenu:helpMenu atEndOfMenuForIdentifier:UIMenuHelp];
     
 }
 

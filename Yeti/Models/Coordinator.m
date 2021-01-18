@@ -464,6 +464,19 @@ NSString* deviceName() {
     
 }
 
+- (void)showFeedInfo:(Feed *)feed from:(UIViewController *)viewController {
+    
+    FeedInfoController *instance = [[FeedInfoController alloc] initWithFeed:feed];
+    
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:instance];
+    nav.modalPresentationStyle = UIModalPresentationFormSheet;
+    
+    [viewController presentViewController:nav animated:YES completion:nil];
+    
+}
+
+#pragma mark - Resync
+
 - (void)prepareDataForFullResync {
     
     SidebarVC *instance = self.sidebarVC;

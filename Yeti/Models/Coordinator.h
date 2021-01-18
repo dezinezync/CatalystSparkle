@@ -79,6 +79,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)didTapCloseForPushRequest;
 
+- (void)showFeedInfo:(Feed * _Nonnull)feed from:(UIViewController * _Nonnull)viewController;
+
 #if TARGET_OS_MACCATALYST
 
 - (void)showAttributions;

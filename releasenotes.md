@@ -1,70 +1,20 @@
-## Build 114
+The Winter 2020 build is finally ready in 2021! This is the first release of Elytra which brings local sync, local notifications and a lot of performance and stability improvements to the apps. 
 
-- macOS: Fixed an issue where if your account had an expired subscription, it would multiple windows for the Subscriptions interface and eventually fill up the screen.  
+If you feel generous and have a couple of minutes, please leave a review on the App Store. It makes a huge difference for me. Thank you in advance.  
 
-- Fixed an issue with the iPadOS app showing different widths for the columns in different orientations or environments (split view).
+## New 
 
-- Fixed an issue with the apps not correctly download bookmarks from the API. 
+- Local Sync. All feeds are now synced to your device locally, so you can continue reading even when your device is offline. 
 
-- Fixed an issue where toggling folders in the sidebar interface would show empty folders. 
+- Add a new "Title View" to individual feeds. Open a feed and tap on its title. This shows the Feed Info and two preferences at the moment: Push/Local Notifications & Safari Reader Mode. These are per feed settings. 
 
-## Build 112 
+- Push Notifications Request Form. If you already have push notifications enabled, you won't see this. This is per device. 
 
-- Testing local notifications. 
+- Added support for background push notifications to keep all your devices in sync without needing manual refreshing. 
 
-## Build 111
+- Push Notifications for new articles now download and cache the article for immediate use.  
 
-- Improved sync performance. 
-
-- Widgets are now updated considering the filters if you have any set up. 
-
-- Filters are now processed when processing timelines. 
-
-- Filters are now correctly updated locally when adding or removing filters. 
-
-- macOS:  Force-Resync menu option for macOS. Hold option key before clicking on the Elytra Menu item in the menu bar. 
-
-## Build 109
-
-Other bugs and crash reports apart from these two: I'll look into them over the coming week. 
-
-- This is a hot patch build which fixes a crash that would occur when the app is fetching updates. 
-
-- This hot patch also fixes another related issue where the app would no longer fetch items from pending feeds until the next refresh is ready if the app had previously crashed. 
-
-- This hotpatch also fixes an issue with incorrect updates to the read-articles from your other devices. 
-
-## Build 106
-
-- Fixed an issue where the app would stall or eventually crash (sometimes immediately) during initial or fresh sync. 
-
-- Fixed an issue where the Today view would load twice in quick succession. 
-
-- Unread counts in the Feeds View and the new Feed Title view should not correctly account for your filters. 
-
-## Build 105
-
-- Fixed: inside a feed, the context and right swipe Browser actions will also respect the reader mode setting. 
-
-## Build 104
-
-- Fixed articles not loading for certain feeds. 
-
-- Fixed Today View not updating when opened after an app launch. 
-
-- Fixed unread counts showing a small mismatch. (Filtered counts issue still exists. Some feeds may show counts of the articles which have been filtered out of the view.)
-
-- Add a new "Title View" to individual feeds. This shows the Feed Info and two preferences at the moment: Push Notifications & Safari Reader Mode. These are per feed settings. Push notifications can either be real-time (functional) or near real-time (non-functional at the moment). 
-
-## Build 100
-
-- Fixed a crash when app is backgrounded. 
-
-## Build 99 
-
-- Fixed some feeds not getting synced. Uses the new caching mechanism instead to check feeds with changes. 
-
-## Build 85
+- Added the "Contact Support" menu item under Help. 
 
 ## Improvements
 
@@ -72,7 +22,13 @@ Other bugs and crash reports apart from these two: I'll look into them over the 
 
 - Tapping on the disclosure icon on a folder now toggles its expanded state. 
 
-## Fixes
+- Filtering is now stricter. It'll match "sponsor" but will not match "sponsored". 
+
+- Added Feeds to the iOS Search Index. You can now directly open feeds by their names (or custom names if you have one set).
+
+- Added Force-Resync menu option for macOS. Hold option key before clicking on the Elytra Menu item in the menu bar. 
+
+## Fixes 
 
 - Fixed the tint colour for the blog name when opening a micro-blog article. 
 
@@ -80,8 +36,34 @@ Other bugs and crash reports apart from these two: I'll look into them over the 
 
 - Fixed an issue when searching by title for 3-letter sites like CNN or BBC. 
 
-### macOS
+- Fixed articles not loading for certain feeds. 
 
-- Added the "Contact Support" menu item under Help on macOS. 
+- Fixed Today View not updating when opened after an app launch. 
+
+- Fixed an issue with the iPadOS app showing different widths for the columns in different orientations or environments (split view).
+
+- Fixed an issue with the apps not correctly download bookmarks from the API. 
+
+- Fixed an issue where toggling folders in the sidebar interface would show empty folders. 
+
+- Fixed an issue with certain CJK paragraph blocks rendering incorrectly when certain linebreak characters are used in the paragraph text.  
+
+- Fixed an issue with filters incorrectly hiding articles when matching against CJK based filters. 
+
+- Fixed an issue with line-heights in the articles list for multi-lined article titles with favicons. 
+
+- Fixed an issue where the "no articles" label would appear over the articles. 
+
+- Fixed an issue for adding Streaming Video Channel feeds. They recently changed their format which was causing issues. 
+
+- Fixed a crash when writing the widgets data to disk when the app has just been sent to the background. 
+
+- Fixed Navigation Bar buttons not appearing in some contexts. 
 
 - Fixed the activity indicator not being visible when opening a feed. 
+
+- Fixed an issue where if your account had an expired subscription, it would multiple windows for the Subscriptions interface and eventually fill up the screen.
+
+- Fixed a long standing issue where the article's list would not draw a separator between two articles. 
+
+Thank you for reading. 

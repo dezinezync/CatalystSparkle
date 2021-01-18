@@ -736,11 +736,7 @@
 
 - (void)didTapTitleView {
     
-    FeedInfoController *instance = [[FeedInfoController alloc] initWithFeed:self.feed];
     
-    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:instance];
-    
-    [self presentViewController:nav animated:YES completion:nil];
     
 }
 
