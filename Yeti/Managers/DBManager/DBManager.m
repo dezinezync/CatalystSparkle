@@ -464,7 +464,7 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     
 }
 
-- (NSDictionary *)_metadataForFeed:(Feed *)feed {
+- (NSDictionary * _Nullable)_metadataForFeed:(Feed *)feed {
     
     NSMutableDictionary *existing = nil;
     
@@ -475,16 +475,23 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     }
     else {
         
-        NSMutableDictionary *metadata = @{@"id": feed.feedID,
-                                          @"url": feed.url,
-                                          @"title": feed.title ?: @"",
-        }.mutableCopy;
+        if (feed.feedID && feed.url) {
         
-        if (feed.folderID) {
-            metadata[@"folderID"] = feed.folderID;
+            NSMutableDictionary *metadata = @{@"id": feed.feedID,
+                                              @"url": feed.url,
+                                              @"title": feed.title ?: @"",
+            }.mutableCopy;
+            
+            if (feed.folderID) {
+                metadata[@"folderID"] = feed.folderID;
+            }
+            
+            existing = metadata;
+            
         }
-        
-        existing = metadata;
+        else {
+            return @{};
+        }
         
     }
     

@@ -736,7 +736,7 @@
 
 - (void)didTapTitleView {
     
-    
+    [self.mainCoordinator showFeedInfo:self.feed from:self];
     
 }
 
