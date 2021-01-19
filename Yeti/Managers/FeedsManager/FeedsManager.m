@@ -2335,7 +2335,7 @@ NSArray <NSString *> * _defaultsKeys;
 
 #pragma mark - Sync
 
-- (void)getSync:(NSString *)token success:(successBlock)successCB error:(errorBlock)errorCB {
+- (void)getSync:(NSString *)token tokenID:(NSString *)tokenID page:(NSUInteger)page success:(successBlock)successCB error:(errorBlock)errorCB {
     
     if (!self.userID) {
         
@@ -2347,13 +2347,17 @@ NSArray <NSString *> * _defaultsKeys;
         
     }
     
+    page = page ?: 1;
+    
     NSDictionary *query = @{@"token": token,
-                            @"userID": self.userID
+                            @"tokenID": tokenID,
+                            @"userID": self.userID,
+                            @"page": @(page)
                             };
     
     DZURLSession *session = self.currentSession;
     
-    [session GET:@"/2.2/sync" parameters:query success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [session GET:@"/2.2.1/sync" parameters:query success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (response.statusCode == 304) {
             // nothing changed. exit early
@@ -2367,14 +2371,18 @@ NSArray <NSString *> * _defaultsKeys;
         
         // server will respond with changes and changeToken
         NSString *changeToken = responseObject[@"changeToken"];
+        NSString *changeIDToken = responseObject[@"changeIDToken"];
         NSDictionary <NSString *, NSArray *> * changes = responseObject[@"changes"] ?: @{};
         NSDictionary <NSString *, NSNumber *> *reads = responseObject[@"reads"] ?: @[];
+        NSUInteger pages = [(NSNumber *)(changes[@"pages"] ?: @1) unsignedIntegerValue];
         
         if (successCB) {
             
             ChangeSet *changeSet = [[ChangeSet alloc] init];
             changeSet.changeToken = changeToken;
             changeSet.reads = reads;
+            changeSet.pages = pages;
+            changeSet.changeIDToken = changeIDToken;
             
             NSArray *customFeeds = [changes valueForKey:@"customFeeds"];
             
@@ -2425,13 +2433,13 @@ NSArray <NSString *> * _defaultsKeys;
                 
             }
             
-            NSArray *feedsWithNewArticles = [changes valueForKey:@"feedsWithNewArticles"];
+            NSArray <FeedItem *> *articles = [([changes valueForKey:@"articles"] ?: @[]) rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+                
+                return [FeedItem instanceFromDictionary:obj];
+                
+            }];
             
-            if (feedsWithNewArticles != nil && feedsWithNewArticles.count) {
-                
-                changeSet.feedsWithNewArticles = feedsWithNewArticles;
-                
-            }
+            changeSet.articles = articles;
             
             dispatch_group_notify(group, dispatch_get_main_queue(), ^ {
                 successCB(changeSet, response, task);
@@ -3202,7 +3210,7 @@ NSArray <NSString *> * _defaultsKeys;
 
         DZURLSession *session = [[DZURLSession alloc] initWithSessionConfiguration:defaultConfig];
         
-        session.baseURL = [NSURL URLWithString:@"http://192.168.1.90:3000"];
+        session.baseURL = [NSURL URLWithString:@"http://192.168.1.93:3000"];
         session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
 #ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://api.elytra.app"];

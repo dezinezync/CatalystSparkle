@@ -48,11 +48,10 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
 }
 
 @interface DBManager () {
-    CGFloat _totalProgress;
-    CGFloat _currentProgress;
     NSOperationQueue *_syncQueue;
     
     NSString * _Nullable _inProgressSyncToken;
+    NSString * _Nullable _inProgressSyncTokenID;
     ChangeSet * _Nullable _inProgressChangeSet;
     
     NSDictionary <NSNumber *, NSDictionary *> * _Nullable _preSyncFeedMetadata;
@@ -63,8 +62,12 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
 @property (nonatomic, assign, getter=isSyncSetup) BOOL syncSetup;
 
 @property (atomic, strong, readwrite) dispatch_queue_t readQueue;
+@property (atomic, strong, readwrite) dispatch_queue_t writeQueue;
 
 @property (atomic, strong) NSTimer *updateCountersTimer;
+
+@property (atomic, assign) CGFloat totalProgress;
+@property (atomic, assign) CGFloat currentProgress;
 
 @end
 
@@ -159,6 +162,8 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         
         self.readQueue = dispatch_queue_create("com.elytra.sync.serialFetchQueue", DISPATCH_QUEUE_CONCURRENT_WITH_AUTORELEASE_POOL);
         
+        self.writeQueue = dispatch_queue_create("com.elytra.sync.writeQueue", DISPATCH_QUEUE_SERIAL);
+        
         _syncQueue = queue;
         
         [self setupDatabase];
@@ -195,15 +200,26 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                 
                 if (self->_inProgressSyncToken != nil) {
                     
-                    [MyDBManager.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+                    dispatch_async(self.writeQueue, ^{
                         
-                        [transaction setObject:self->_inProgressSyncToken forKey:syncToken inCollection:SYNC_COLLECTION];
+                        [MyDBManager.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+                            
+                            [transaction setObject:self->_inProgressSyncToken forKey:syncToken inCollection:SYNC_COLLECTION];
+                            
+                            if (self->_inProgressSyncTokenID != nil && [self->_inProgressSyncTokenID isEqualToString:@"MA=="] == false) {
+                                
+                                [transaction setObject:self->_inProgressSyncTokenID forKey:syncTokenID inCollection:SYNC_COLLECTION];
+                                
+                            }
+                            
+                        } completionBlock:^{
+                           
+                            MyDBManager->_inProgressSyncToken = nil;
+                            MyDBManager->_inProgressSyncTokenID = nil;
+                            
+                        }];
                         
-                    } completionBlock:^{
-                       
-                        MyDBManager->_inProgressSyncToken = nil;
-                        
-                    }];
+                    });
                     
                 }
                 
@@ -1242,7 +1258,7 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
 
 - (BOOL)isSyncing {
     
-    return _totalProgress != 0 && (_totalProgress < 0.95f);
+    return self.totalProgress != 0.f && (self.totalProgress < 0.99f);
     
 }
 
@@ -1257,7 +1273,7 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     
     self.syncProgressBlock = ^(CGFloat progress) {
         
-        if (progress >= 0.95f) {
+        if (progress >= 0.99f) {
             
             MyFeedsManager.unreadLastUpdate = NSDate.date;
             
@@ -1336,6 +1352,7 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     [self.uiConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
         
         NSString *token = [transaction objectForKey:syncToken inCollection:SYNC_COLLECTION];
+        NSString *tokenID = [transaction objectForKey:syncTokenID inCollection:SYNC_COLLECTION];
         
         // if we don't have a token, we create one with an old date of 1993-03-11 06:11:00 ;)
         // date was later changed to 2020-04-14 22:30 when sync was finalised.
@@ -1372,6 +1389,12 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
             
         }
         
+        if (tokenID == nil) {
+            
+            tokenID = [@"0" base64Encoded];
+            
+        }
+        
 //#ifdef DEBUG
 //
 //        runOnMainQueueWithoutDeadlocking(^{
@@ -1390,140 +1413,126 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         
 //        token = [@"2020-12-27 05:00:00" base64Encoded];
         
-        [self syncNow:token];
+        [self syncNow:token tokenID:tokenID page:1];
         
     }];
     
 }
 
-- (void)syncNow:(NSString *)token {
+- (void)syncNow:(NSString *)token tokenID:(NSString *)tokenID page:(NSUInteger)page {
     
     if (MyFeedsManager == nil) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-            [self syncNow:token];
+            [self syncNow:token tokenID:tokenID page:page];
         });
         
         return;
     }
     
-    _totalProgress = 0.f;
-    _currentProgress = 0.f;
-    
-    if (self.syncProgressBlock) {
+    if (page == 1) {
+        
+        self.totalProgress = 1.f;
+        self.currentProgress = 0.f;
+        
+        if (self.syncProgressBlock) {
+        
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.syncProgressBlock(0.f);
+            });
+            
+        }
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.syncProgressBlock(0.f);
+            self.internalSyncBlock(0.f, nil);
         });
         
     }
     
-    dispatch_async(dispatch_get_main_queue(), ^{
-        self.internalSyncBlock(0.f, nil);
-    });
-    
     weakify(self);
     
-    [_syncQueue addOperationWithBlock:^{
-       
-        [MyFeedsManager getSync:token success:^(ChangeSet *changeSet, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [MyFeedsManager getSync:token tokenID:tokenID page:page success:^(ChangeSet *changeSet, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if (response.statusCode > 299 || changeSet == nil) {
             
-            if (response.statusCode > 299 || changeSet == nil) {
+            if (self.syncProgressBlock) {
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.syncProgressBlock(1.f);
+                });
+                
+            }
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.internalSyncBlock(1.f, nil);
+            });
+            
+            return;
+            
+        }
+        
+        strongify(self);
+
+        // these will be updated with each page's response.
+        @synchronized (self) {
+            self->_inProgressSyncToken = changeSet.changeToken;
+            self->_inProgressSyncTokenID = changeSet.changeIDToken;
+        }
+        
+        weakify(self);
+        
+        // save the new change token to our local db
+        [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+            
+            strongify(self);
+
+            // now for every change set, create/update an appropriate key in the database
+            if (changeSet.customFeeds != nil && changeSet.customFeeds.count > 0) {
+                
+                self.totalProgress += changeSet.customFeeds.count;
+                self.currentProgress = self.totalProgress;
+                
+                [self updateCustomFeedsMapping:changeSet transaction:transaction];
+                
+            }
+            
+            if (changeSet.articles.count > 0) {
+                
+                if (page == 1) {
+                    
+                    self.totalProgress += changeSet.pages;
+                    self.currentProgress += 1;
+                    
+                }
+                else {
+                    
+                    self.currentProgress += 1;
+                    
+                }
                 
                 if (self.syncProgressBlock) {
                     
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        self.syncProgressBlock(1.f);
+                        self.syncProgressBlock(self.currentProgress/self.totalProgress);
                     });
                     
                 }
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    self.internalSyncBlock(1.f, nil);
+                    self.internalSyncBlock(self.currentProgress/self.totalProgress, changeSet);
                 });
                 
-                return;
-                
-            }
-            
-            // save the new change token to our local db
-            [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
-                
-                strongify(self);
+                dispatch_async(self.writeQueue, ^{
 
-                @synchronized (self) {
-                    self->_inProgressSyncToken = changeSet.changeToken;
-                }
+                    [self addArticles:changeSet.articles strip:NO];
+                    
+                });
                 
-                // now for every change set, create/update an appropriate key in the database
-                if (changeSet.customFeeds) {
-                    
-                    self->_totalProgress += changeSet.customFeeds.count;
-                    self->_currentProgress = self->_totalProgress;
-                    
-                    [self updateCustomFeedsMapping:changeSet transaction:transaction];
-                    
+                if (changeSet.articles.count == 20 &&
+                    ((page < self->_inProgressChangeSet.pages) || (page == 1 && page < changeSet.pages))
+                ) {
+                    [self syncNow:token tokenID:tokenID page:(page + 1)];
                 }
-                
-                if (changeSet.feedsWithNewArticles) {
-                    
-                    self->_totalProgress += changeSet.feedsWithNewArticles.count;
-                    
-                    if (self.syncProgressBlock) {
-                        
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            self.syncProgressBlock(self->_currentProgress/self->_totalProgress);
-                        });
-                        
-                    }
-                    
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        self.internalSyncBlock(self->_currentProgress/self->_totalProgress, changeSet);
-                    });
-                    
-                    // this is an async method. So we don't pass it a transaction.
-                    // it'll fetch its own transaction as necessary.
-                    dispatch_async(self.readQueue, ^{
-                        
-                        [self fetchNewArticlesFor:changeSet.feedsWithNewArticles since:token];
-                        
-                    });
-                    
-                }
-                
-                /*
-                if (changeSet.feedsWithNewArticles) {
-                    
-                    NSArray <NSNumber *> *feedIDs = [ArticlesManager.shared.feeds rz_map:^id(Feed *obj, NSUInteger idx, NSArray *array) {
-                        return obj.feedID;
-                    }];
-                    
-                    // Check all feeds
-                    self->_totalProgress += feedIDs.count;
-                    
-                    if (self.syncProgressBlock) {
-                        
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            self.syncProgressBlock(self->_currentProgress/self->_totalProgress);
-                        });
-                        
-                    }
-                    
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        self.internalSyncBlock(self->_currentProgress/self->_totalProgress, changeSet);
-                    });
-                    
-                    // this is an async method. So we don't pass it a transaction.
-                    // it'll fetch its own transaction as necessary.
-                    dispatch_async(self.readQueue, ^{
-                        
-                        [self fetchNewArticlesFor:feedIDs since:token];
-                        
-                    });
-                    
-                }
-                */
-                
-                if (self->_totalProgress == 0.f) {
+                else if (changeSet.articles.count < 20) {
                     
                     if (self.syncProgressBlock) {
                         
@@ -1538,46 +1547,77 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                     });
                     
                 }
-
-            }];
-            
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            if ([error.localizedDescription containsString:@"Try again in"]) {
                 
-                // get the seconds value
-                NSString *secondsString = [error.localizedDescription stringByReplacingOccurrencesOfString:@"Try again in " withString:@""];
-                secondsString = [error.localizedDescription stringByReplacingOccurrencesOfString:@"s" withString:@""];
+            }
+            else {
                 
-                NSInteger seconds = secondsString.integerValue;
-                
-                if (seconds != NSNotFound) {
+                if (self.syncProgressBlock) {
                     
-                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(seconds * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-                        [self syncNow:token];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        self.syncProgressBlock(1.f);
                     });
                     
                 }
                 
-                return;
-                
-            }
-            
-            if (self.syncProgressBlock) {
-                
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    self.syncProgressBlock(1.f);
+                    self.internalSyncBlock(1.f, changeSet);
                 });
                 
             }
             
-            dispatch_async(dispatch_get_main_queue(), ^{
-                self.internalSyncBlock(1.f, nil);
-            });
-           
-            NSLog(@"An error occurred when syncing changes: %@", error);
-            
+            if (self->_totalProgress == 0.f) {
+                
+                if (self.syncProgressBlock) {
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        self.syncProgressBlock(1.f);
+                    });
+                    
+                }
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.internalSyncBlock(1.f, changeSet);
+                });
+                
+            }
+
         }];
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if ([error.localizedDescription containsString:@"Try again in"]) {
+            
+            // get the seconds value
+            NSString *secondsString = [error.localizedDescription stringByReplacingOccurrencesOfString:@"Try again in " withString:@""];
+            secondsString = [error.localizedDescription stringByReplacingOccurrencesOfString:@"s" withString:@""];
+            
+            NSInteger seconds = secondsString.integerValue;
+            
+            if (seconds != NSNotFound) {
+                
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(seconds * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+                    [self syncNow:token tokenID:tokenID page:page];
+                });
+                
+            }
+            
+            return;
+            
+        }
+        
+        if (self.syncProgressBlock) {
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.syncProgressBlock(1.f);
+            });
+            
+        }
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.internalSyncBlock(1.f, nil);
+        });
+       
+        NSLog(@"An error occurred when syncing changes: %@", error);
         
     }];
     
@@ -2148,56 +2188,70 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         return;
     }
     
+    [self addArticles:@[article] strip:strip];
+    
+}
+
+- (void)addArticles:(NSArray <FeedItem *> * _Nonnull)articles strip:(BOOL)strip {
+    
+    if (articles.count == 0) {
+        return;
+    }
+    
     [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
         
-        NSString *collection = [self collectionForArticle:article];
-        
-        if (article.content) {
+        for (FeedItem *article in articles) {
             
-            if (article.summary == nil || (article.summary != nil && [article.summary isBlank])) {
+            NSString *collection = [self collectionForArticle:article];
+            
+            if (article.content) {
                 
-                article.summary = [article textFromContent];
-                
-                if (article.summary != nil && article.summary.length > 200) {
+                if (article.summary == nil || (article.summary != nil && [article.summary isBlank])) {
                     
-                    article.summary = [[article.summary substringWithRange:NSMakeRange(0, 197)] stringByAppendingString:@"..."];
+                    article.summary = [article textFromContent];
+                    
+                    if (article.summary != nil && article.summary.length > 200) {
+                        
+                        article.summary = [[article.summary substringWithRange:NSMakeRange(0, 197)] stringByAppendingString:@"..."];
+                        
+                    }
+                    
+                    NSLogDebug(@"Added summary for article:%@ from content.", article.identifier);
                     
                 }
                 
-                NSLogDebug(@"Added summary for article:%@ from content.", article.identifier);
+                [transaction setObject:article.content forKey:article.identifier.stringValue inCollection:LOCAL_ARTICLES_CONTENT_COLLECTION];
                 
             }
             
-            [transaction setObject:article.content forKey:article.identifier.stringValue inCollection:LOCAL_ARTICLES_CONTENT_COLLECTION];
+            if (strip == YES) {
+                article.content = nil;
+            }
             
-        }
-        
-        if (strip == YES) {
-            article.content = nil;
-        }
-        
-        NSCharacterSet *charSet = [NSCharacterSet whitespaceCharacterSet];
-        NSMutableCharacterSet *punctuations = [NSMutableCharacterSet punctuationCharacterSet];
-        
-        [punctuations addCharactersInString:@",./\{}[]()!~`“‘…–≠=-÷:;&"];
-        NSString *title = [[[article.articleTitle.lowercaseString stringByTrimmingCharactersInSet:charSet] componentsSeparatedByCharactersInSet:punctuations] componentsJoinedByString:@" "];
-        
-        NSArray <NSString *> *components = [[title componentsSeparatedByCharactersInSet:charSet] rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+            NSCharacterSet *charSet = [NSCharacterSet whitespaceCharacterSet];
+            NSMutableCharacterSet *punctuations = [NSMutableCharacterSet punctuationCharacterSet];
             
-            return obj != nil && obj.length && [obj isBlank] == NO;
+            [punctuations addCharactersInString:@",./\{}[]()!~`“‘…–≠=-÷:;&"];
+            NSString *title = [[[article.articleTitle.lowercaseString stringByTrimmingCharactersInSet:charSet] componentsSeparatedByCharactersInSet:punctuations] componentsJoinedByString:@" "];
             
-        }];
-        
-        NSDictionary *metadata = @{
-            @"read": @(article.isRead),
-            @"bookmarked": @(article.isBookmarked),
-            @"mercury": @(article.mercury),
-            @"feedID": article.feedID,
-            @"timestamp": @([article.timestamp timeIntervalSince1970]),
-            kTitleWordCloud: components
-        };
+            NSArray <NSString *> *components = [[title componentsSeparatedByCharactersInSet:charSet] rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+                
+                return obj != nil && obj.length && [obj isBlank] == NO;
+                
+            }];
+            
+            NSDictionary *metadata = @{
+                @"read": @(article.isRead),
+                @"bookmarked": @(article.isBookmarked),
+                @"mercury": @(article.mercury),
+                @"feedID": article.feedID,
+                @"timestamp": @([article.timestamp timeIntervalSince1970]),
+                kTitleWordCloud: components
+            };
 
-        [transaction setObject:article forKey:article.identifier.stringValue inCollection:collection withMetadata:metadata];
+            [transaction setObject:article forKey:article.identifier.stringValue inCollection:collection withMetadata:metadata];
+            
+        }
         
     }];
     

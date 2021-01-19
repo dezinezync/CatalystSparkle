@@ -189,7 +189,7 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 #pragma mark - Sync
 
-- (void)getSync:(NSString * _Nonnull)token success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+- (void)getSync:(NSString * _Nonnull)token tokenID:(NSString * _Nonnull)tokenID page:(NSUInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)syncSettings;
 
