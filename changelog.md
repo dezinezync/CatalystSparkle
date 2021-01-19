@@ -6,7 +6,7 @@
 
 ### New 
 
-- Using a new API for Sync. 
+- Using a new API and logic for Sync. 
 
 ## macOS 
 
