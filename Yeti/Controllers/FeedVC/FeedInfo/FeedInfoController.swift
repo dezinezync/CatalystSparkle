@@ -11,7 +11,7 @@ import SDWebImage
 
 @objc final class FeedInfoController: UITableViewController {
     
-    weak var feed: Feed?
+    var feed: Feed?
     weak var faviconView: UIImageView?
     
     var headerView: UIView {

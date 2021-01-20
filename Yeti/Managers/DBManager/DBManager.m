@@ -389,28 +389,32 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
 
 - (void)setUser:(User *)user completion:(void (^)(void))completion {
     
-    [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
-       
-        if (user == nil) {
-            [transaction removeObjectForKey:@"user" inCollection:@"user"];
-        }
-        else {
-            
-            NSDictionary *data = user.dictionaryRepresentation;
-            
-            [transaction setObject:data forKey:@"user" inCollection:@"user"];
-            
-        }
+    dispatch_sync(self.writeQueue, ^{
         
-        [MyFeedsManager setValue:user forKey:@"user"];
+        [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+           
+            if (user == nil) {
+                [transaction removeObjectForKey:@"user" inCollection:@"user"];
+            }
+            else {
+                
+                NSDictionary *data = user.dictionaryRepresentation;
+                
+                [transaction setObject:data forKey:@"user" inCollection:@"user"];
+                
+            }
+            
+            [MyFeedsManager setValue:user forKey:@"user"];
+            
+            if (completion) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    completion();
+                });
+            }
+            
+        }];
         
-        if (completion) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                completion();
-            });
-        }
-        
-    }];
+    });
     
 }
 
@@ -452,31 +456,35 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
 
 - (void)setFeeds:(NSArray <Feed *> *)feeds {
     
-    if (feeds == nil || (feeds && feeds.count == 0)) {
+    if (feeds == nil) {
         return;
     }
     
-    [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+    dispatch_sync(self.writeQueue, ^{
         
-        for (Feed *feed in feeds) {
+        [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
             
-            NSString *key = feed.feedID.stringValue;
+            for (Feed *feed in feeds) {
+                
+                NSString *key = feed.feedID.stringValue;
+            
+    #ifdef DEBUG
+                NSAssert(key != nil, @"Expected feed to have a feedID.");
+    #endif
+                
+                NSDictionary *metadata = [self _metadataForFeed:feed];
+                
+                [transaction setObject:feed forKey:key inCollection:LOCAL_FEEDS_COLLECTION withMetadata:metadata];
+                
+            }
+            
+            self->_preSyncFeedMetadata = nil;
+            
+        }];
         
-#ifdef DEBUG
-            NSAssert(key != nil, @"Expected feed to have a feedID.");
-#endif
-            
-            NSDictionary *metadata = [self _metadataForFeed:feed];
-            
-            [transaction setObject:feed forKey:key inCollection:LOCAL_FEEDS_COLLECTION withMetadata:metadata];
-            
-        }
+        NSLogDebug(@"Updated local cache of feeds");
         
-        self->_preSyncFeedMetadata = nil;
-        
-    }];
-    
-    NSLogDebug(@"Updated local cache of feeds");
+    });
     
 }
 
@@ -551,13 +559,17 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         return;
     }
     
-    NSString *key = feed.feedID.stringValue;
-    
-    [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
-       
-        [transaction setObject:feed forKey:key inCollection:LOCAL_FEEDS_COLLECTION withMetadata:metadata];
+    dispatch_sync(self.writeQueue, ^{
         
-    }];
+        NSString *key = feed.feedID.stringValue;
+        
+        [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+           
+            [transaction setObject:feed forKey:key inCollection:LOCAL_FEEDS_COLLECTION withMetadata:metadata];
+            
+        }];
+        
+    });
     
 }
 
@@ -694,29 +706,33 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
 
 - (void)setFolders:(NSArray<Folder *> *)folders {
     
-    if (folders == nil || (folders && folders.count == 0)) {
+    if (folders == nil) {
         return;
     }
     
-    [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+    dispatch_sync(self.writeQueue, ^{
         
-        for (Folder *folder in folders) {
+        [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
             
-            NSMutableDictionary *dict = folder.dictionaryRepresentation.mutableCopy;
-            
-            if ([dict objectForKey:@"feeds"]) {
-                [dict removeObjectForKey:@"feeds"];
+            for (Folder *folder in folders) {
+                
+                NSMutableDictionary *dict = folder.dictionaryRepresentation.mutableCopy;
+                
+                if ([dict objectForKey:@"feeds"]) {
+                    [dict removeObjectForKey:@"feeds"];
+                }
+                
+                Folder *object = [Folder instanceFromDictionary:dict];
+                
+                [transaction setObject:object forKey:object.folderID.stringValue inCollection:LOCAL_FOLDERS_COLLECTION];
+                
             }
             
-            Folder *object = [Folder instanceFromDictionary:dict];
-            
-            [transaction setObject:object forKey:object.folderID.stringValue inCollection:LOCAL_FOLDERS_COLLECTION];
-            
-        }
+        }];
         
-    }];
-    
-    NSLogDebug(@"Updated local cache of folders");
+        NSLogDebug(@"Updated local cache of folders");
+        
+    });
     
 }
 
@@ -2198,62 +2214,66 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         return;
     }
     
-    [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+    dispatch_sync(self.writeQueue, ^{
         
-        for (FeedItem *article in articles) {
+        [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
             
-            NSString *collection = [self collectionForArticle:article];
-            
-            if (article.content) {
+            for (FeedItem *article in articles) {
                 
-                if (article.summary == nil || (article.summary != nil && [article.summary isBlank])) {
+                NSString *collection = [self collectionForArticle:article];
+                
+                if (article.content) {
                     
-                    article.summary = [article textFromContent];
-                    
-                    if (article.summary != nil && article.summary.length > 200) {
+                    if (article.summary == nil || (article.summary != nil && [article.summary isBlank])) {
                         
-                        article.summary = [[article.summary substringWithRange:NSMakeRange(0, 197)] stringByAppendingString:@"..."];
+                        article.summary = [article textFromContent];
+                        
+                        if (article.summary != nil && article.summary.length > 200) {
+                            
+                            article.summary = [[article.summary substringWithRange:NSMakeRange(0, 197)] stringByAppendingString:@"..."];
+                            
+                        }
+                        
+                        NSLogDebug(@"Added summary for article:%@ from content.", article.identifier);
                         
                     }
                     
-                    NSLogDebug(@"Added summary for article:%@ from content.", article.identifier);
+                    [transaction setObject:article.content forKey:article.identifier.stringValue inCollection:LOCAL_ARTICLES_CONTENT_COLLECTION];
                     
                 }
                 
-                [transaction setObject:article.content forKey:article.identifier.stringValue inCollection:LOCAL_ARTICLES_CONTENT_COLLECTION];
+                if (strip == YES) {
+                    article.content = nil;
+                }
                 
-            }
-            
-            if (strip == YES) {
-                article.content = nil;
-            }
-            
-            NSCharacterSet *charSet = [NSCharacterSet whitespaceCharacterSet];
-            NSMutableCharacterSet *punctuations = [NSMutableCharacterSet punctuationCharacterSet];
-            
-            [punctuations addCharactersInString:@",./\{}[]()!~`“‘…–≠=-÷:;&"];
-            NSString *title = [[[article.articleTitle.lowercaseString stringByTrimmingCharactersInSet:charSet] componentsSeparatedByCharactersInSet:punctuations] componentsJoinedByString:@" "];
-            
-            NSArray <NSString *> *components = [[title componentsSeparatedByCharactersInSet:charSet] rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+                NSCharacterSet *charSet = [NSCharacterSet whitespaceCharacterSet];
+                NSMutableCharacterSet *punctuations = [NSMutableCharacterSet punctuationCharacterSet];
                 
-                return obj != nil && obj.length && [obj isBlank] == NO;
+                [punctuations addCharactersInString:@",./\{}[]()!~`“‘…–≠=-÷:;&"];
+                NSString *title = [[[article.articleTitle.lowercaseString stringByTrimmingCharactersInSet:charSet] componentsSeparatedByCharactersInSet:punctuations] componentsJoinedByString:@" "];
                 
-            }];
-            
-            NSDictionary *metadata = @{
-                @"read": @(article.isRead),
-                @"bookmarked": @(article.isBookmarked),
-                @"mercury": @(article.mercury),
-                @"feedID": article.feedID,
-                @"timestamp": @([article.timestamp timeIntervalSince1970]),
-                kTitleWordCloud: components
-            };
+                NSArray <NSString *> *components = [[title componentsSeparatedByCharactersInSet:charSet] rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+                    
+                    return obj != nil && obj.length && [obj isBlank] == NO;
+                    
+                }];
+                
+                NSDictionary *metadata = @{
+                    @"read": @(article.isRead),
+                    @"bookmarked": @(article.isBookmarked),
+                    @"mercury": @(article.mercury),
+                    @"feedID": article.feedID,
+                    @"timestamp": @([article.timestamp timeIntervalSince1970]),
+                    kTitleWordCloud: components
+                };
 
-            [transaction setObject:article forKey:article.identifier.stringValue inCollection:collection withMetadata:metadata];
+                [transaction setObject:article forKey:article.identifier.stringValue inCollection:collection withMetadata:metadata];
+                
+            }
             
-        }
+        }];
         
-    }];
+    });
     
 }
 
@@ -2263,11 +2283,15 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         return;
     }
     
-    [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+    dispatch_sync(self.writeQueue, ^{
         
-        [transaction setObject:content forKey:identifier.stringValue inCollection:LOCAL_ARTICLES_FULLTEXT_COLLECTION];
+        [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+            
+            [transaction setObject:content forKey:identifier.stringValue inCollection:LOCAL_ARTICLES_FULLTEXT_COLLECTION];
+            
+        }];
         
-    }];
+    });
     
 }
 
@@ -2277,11 +2301,15 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         return;
     }
     
-    [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+    dispatch_sync(self.writeQueue, ^{
         
-        [transaction removeObjectForKey:identifier.stringValue inCollection:LOCAL_ARTICLES_FULLTEXT_COLLECTION];
+        [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+            
+            [transaction removeObjectForKey:identifier.stringValue inCollection:LOCAL_ARTICLES_FULLTEXT_COLLECTION];
+            
+        }];
         
-    }];
+    });
     
 }
 
@@ -2295,15 +2323,19 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
 
 - (void)_deleteArticle:(NSString *)key collection:(NSString *)col {
     
-    [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+    dispatch_sync(self.writeQueue, ^{
         
-        [transaction removeObjectForKey:key inCollection:col];
+        [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+            
+            [transaction removeObjectForKey:key inCollection:col];
+            
+            [transaction removeObjectForKey:key inCollection:LOCAL_ARTICLES_CONTENT_COLLECTION];
+            
+            [transaction removeObjectForKey:key inCollection:LOCAL_ARTICLES_FULLTEXT_COLLECTION];
+            
+        }];
         
-        [transaction removeObjectForKey:key inCollection:LOCAL_ARTICLES_CONTENT_COLLECTION];
-        
-        [transaction removeObjectForKey:key inCollection:LOCAL_ARTICLES_FULLTEXT_COLLECTION];
-        
-    }];
+    });
     
 }
 
@@ -2319,21 +2351,25 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
 
 - (void)removeAllArticlesFor:(NSNumber *)feedID {
     
-    NSString *collection = [self articlesCollectionForFeed:feedID];
-    
-    [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+    dispatch_async(self.writeQueue, ^{
         
-        NSArray <NSString *> *keys = [transaction allKeysInCollection:collection];
-       
-        [transaction removeAllObjectsInCollection:collection];
+        NSString *collection = [self articlesCollectionForFeed:feedID];
         
-        [transaction removeObjectsForKeys:keys inCollection:LOCAL_ARTICLES_CONTENT_COLLECTION];
+        [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+            
+            NSArray <NSString *> *keys = [transaction allKeysInCollection:collection];
+           
+            [transaction removeAllObjectsInCollection:collection];
+            
+            [transaction removeObjectsForKeys:keys inCollection:LOCAL_ARTICLES_CONTENT_COLLECTION];
+            
+            [transaction removeObjectsForKeys:keys inCollection:LOCAL_ARTICLES_FULLTEXT_COLLECTION];
+            
+            [transaction removeObjectForKey:feedID.stringValue inCollection:LOCAL_FEEDS_COLLECTION];
+            
+        }];
         
-        [transaction removeObjectsForKeys:keys inCollection:LOCAL_ARTICLES_FULLTEXT_COLLECTION];
-        
-        [transaction removeObjectForKey:feedID.stringValue inCollection:LOCAL_FEEDS_COLLECTION];
-        
-    }];
+    });
     
 }
 
