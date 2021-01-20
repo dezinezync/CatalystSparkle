@@ -1537,11 +1537,7 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                     self.internalSyncBlock(self.currentProgress/self.totalProgress, changeSet);
                 });
                 
-                dispatch_async(self.writeQueue, ^{
-
-                    [self addArticles:changeSet.articles strip:NO];
-                    
-                });
+                [self addArticles:changeSet.articles strip:NO];
                 
                 if (changeSet.articles.count == 20 &&
                     ((page < self->_inProgressChangeSet.pages) || (page == 1 && page < changeSet.pages))
