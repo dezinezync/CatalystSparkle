@@ -193,11 +193,6 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
             
             if (progress >= 0.99f) {
                 
-                if (self.backgroundFetchHandler) {
-                    self.backgroundFetchHandler(UIBackgroundFetchResultNoData);
-                    self.backgroundFetchHandler = nil;
-                }
-                
                 if (self->_inProgressSyncToken != nil) {
                     
                     dispatch_async(self.writeQueue, ^{
@@ -224,6 +219,11 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                 }
                 
                 if (self->_inProgressChangeSet != nil) {
+                    
+                    if (self.backgroundFetchHandler) {
+                        self.backgroundFetchHandler(UIBackgroundFetchResultNewData);
+                        self.backgroundFetchHandler = nil;
+                    }
                     
                     changeSet = self->_inProgressChangeSet;
                     
@@ -292,7 +292,14 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                         }];
                         
                     }
-                    
+                    else {
+                        
+                        if (self.backgroundFetchHandler) {
+                            self.backgroundFetchHandler(UIBackgroundFetchResultNoData);
+                            self.backgroundFetchHandler = nil;
+                        }
+                        
+                    }
                 }
                 
             }

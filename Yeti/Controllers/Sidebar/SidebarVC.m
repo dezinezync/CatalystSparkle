@@ -617,7 +617,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             [self.syncProgressView setProgress:progress animated:YES];
             
         }
-        else if (progress >= 0.999f) {
+        else if (progress >= 0.99f) {
             
             [self.syncProgressView setProgress:progress animated:YES];
             
