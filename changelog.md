@@ -2,7 +2,9 @@
 
 ## Build 149 
 
-- Fixes the directional marking bug. The results will be consistent now. 
+- Fixed directional marking bug. The results will be consistent now.
+
+- Fixed notifications prompt modal spanning the full width on iPads.
 
 ## New
 
