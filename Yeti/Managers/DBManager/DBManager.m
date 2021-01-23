@@ -1546,12 +1546,12 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                 
                 [self addArticles:changeSet.articles strip:NO];
                 
-                if (changeSet.articles.count == 20 &&
+                if (changeSet.articles.count == 40 &&
                     ((page < self->_inProgressChangeSet.pages) || (page == 1 && page < changeSet.pages))
                 ) {
                     [self syncNow:token tokenID:tokenID page:(page + 1)];
                 }
-                else if (changeSet.articles.count < 20) {
+                else if (changeSet.articles.count < 40) {
                     
                     if (self.syncProgressBlock) {
                         

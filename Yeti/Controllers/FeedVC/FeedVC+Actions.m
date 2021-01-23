@@ -573,6 +573,7 @@
             
             NSString *localIdentifier = item.identifier.stringValue;
             NSUInteger localID = localIdentifier.integerValue;
+            NSTimeInterval localTimestamp = item.timestamp.timeIntervalSince1970;
             
             YapDatabaseFilteredViewTransaction *tnx = [transaction ext:self.filteringViewName];
             
@@ -581,15 +582,29 @@
             [tnx enumerateKeysAndMetadataInGroup:GROUP_ARTICLES withOptions:options range:NSMakeRange(0, MyFeedsManager.totalUnread) usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, NSDictionary *  _Nullable metadata, NSUInteger index, BOOL * _Nonnull stop) {
                 
                 NSUInteger keyID = key.integerValue;
+                NSTimeInterval keyTimestamp = [[metadata valueForKey:@"timestamp"] doubleValue];
                 
-                if (direction == 1 && (keyID < localID)) {
+                if (direction == 1) {
                     
-                    return;
+                    // the item's time cannot be higher than the
+                    // denoted item's time.
+                    if (keyTimestamp < localTimestamp) {
+                        return;
+                    }
+                    else if (keyTimestamp == localTimestamp && (keyID < localID)) {
+                        // if they are the same, compare by the identifier.
+                        return;
+                    }
                     
                 }
-                else if (direction == 2 && (keyID > localID)) {
+                else if (direction == 2) {
                     
-                    return;
+                    if (keyTimestamp > localTimestamp) {
+                        return;
+                    }
+                    else if (keyTimestamp == localTimestamp && (keyID > localID)) {
+                        return;
+                    }
                     
                 }
                 

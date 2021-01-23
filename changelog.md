@@ -1,5 +1,9 @@
 # v2.2.1
 
+## Build 150 
+
+- Corrects a fundamental issue (which I realised yesterday evening) with directional marking read. 
+
 ## Build 149 
 
 - Fixed directional marking bug. The results will be consistent now.
