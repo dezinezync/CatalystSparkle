@@ -580,6 +580,34 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     
 }
 
+- (void)bulkUpdateFeedsAndMetadata:(FeedBulkOperation * _Nonnull (^_Nonnull)(Feed *feed, NSMutableDictionary *metadata))closure {
+    
+    if (closure == nil) {
+        return;
+    }
+    
+    dispatch_async(self.writeQueue, ^{
+        
+        [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+            
+            for (Feed *feed in ArticlesManager.shared.feeds) {
+                
+                NSMutableDictionary *metadata = [MyDBManager metadataForFeed:feed].mutableCopy;
+                
+                FeedBulkOperation *op = closure(feed, metadata);
+                
+                NSString *key = op.feed.feedID.stringValue;
+                
+                [transaction setObject:op.feed forKey:key inCollection:LOCAL_FEEDS_COLLECTION withMetadata:op.metadata];
+                
+            }
+            
+        }];
+        
+    });
+    
+}
+
 - (FeedOperation *)_renameFeed:(Feed *)feed title:(NSString *)title {
     
     if (feed == nil) {
@@ -2484,6 +2512,20 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         [transaction removeAllObjectsInCollection:LOCAL_FOLDERS_COLLECTION];
         
     }];
+    
+}
+
+@end
+
+@implementation FeedBulkOperation
+
++ (instancetype)withFeed:(Feed *)feed metadata:(NSDictionary *)metadata {
+    
+    FeedBulkOperation *op = [FeedBulkOperation new];
+    op.feed = feed;
+    op.metadata = metadata;
+    
+    return op;
     
 }
 

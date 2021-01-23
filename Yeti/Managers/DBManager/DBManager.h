@@ -67,6 +67,15 @@ extern NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInte
 
 extern DBManager * MyDBManager;
 
+@interface FeedBulkOperation : NSObject
+
+@property (nonatomic, weak) Feed *feed;
+@property (nonatomic, weak) NSDictionary *metadata;
+
++ (instancetype)withFeed:(Feed * _Nonnull)feed metadata:(NSDictionary * _Nonnull)metadata;
+
+@end
+
 @interface DBManager : NSObject {
     
     YapDatabaseCloudCore * _cloudCoreExtension;
@@ -109,6 +118,8 @@ extern DBManager * MyDBManager;
 - (void)updateFeed:(Feed * _Nonnull)feed;
 
 - (void)updateFeed:(Feed * _Nonnull)feed metadata:(NSDictionary * _Nullable)metadata;
+
+- (void)bulkUpdateFeedsAndMetadata:(FeedBulkOperation * _Nonnull (^_Nonnull)(Feed *feed, NSMutableDictionary *metadata))closure;
 
 - (void)setFolders:(NSArray <Folder *> *)folders;
 

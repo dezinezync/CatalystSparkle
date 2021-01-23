@@ -43,17 +43,19 @@ typedef NS_ENUM(NSInteger, AppIconName) {
 @implementation MiscVC
 
 - (void)viewDidLoad {
+    
     [super viewDidLoad];
     
     self.title = @"Miscellaneous";
 #if TARGET_OS_MACCATALYST
     self.sections = @[@"Unread Counters", @"Mark Read Prompt", @"Hide Bookmarks", @"Open Unread", @"Preview", @"Use Toolbar", @"Hide Bars"];
 #else
-    self.sections = @[@"App Icon", @"Unread Counters", @"Mark Read Prompt", @"Hide Bookmarks", @"Open Unread", @"Preview", @"Use Toolbar", @"Hide Bars"];
+    self.sections = @[@"App Icon", @"Unread Counters", @"Mark Read Prompt", @"Hide Bookmarks", @"Open Unread", @"Preview", @"Use Toolbar", @"Hide Bars", @"Reader Mode"];
 #endif
     
     [self.tableView registerClass:SettingsBaseCell.class forCellReuseIdentifier:kMiscSettingsCell];
     [self.tableView registerClass:SettingsCell.class forCellReuseIdentifier:kSettingsCell];
+    [self.tableView registerClass:DeactivateCell.class forCellReuseIdentifier:kDeactivateCell];
     
     self.tableView.backgroundColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
         
@@ -136,6 +138,10 @@ typedef NS_ENUM(NSInteger, AppIconName) {
     
     else if (section == 7) {
         return @"Hides the navigation bar and toolbar in the article reader when scrolling.";
+    }
+    
+    else if (section == 7) {
+        return @"You may enable reader mode for all feeds with a single tap.";
     }
     
     return nil;
@@ -258,6 +264,14 @@ typedef NS_ENUM(NSInteger, AppIconName) {
         cell.accessoryView = nil;
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
+    else if ([sectionName isEqualToString:@"Reader Mode"]) {
+        
+        cell = [tableView dequeueReusableCellWithIdentifier:kDeactivateCell forIndexPath:indexPath];
+        
+        cell.textLabel.text = @"Enable Reader Mode";
+        cell.textLabel.textColor = SharedPrefs.tintColor;
+        
+    }
     else {
         cell.accessoryView = sw;
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -332,6 +346,31 @@ typedef NS_ENUM(NSInteger, AppIconName) {
         [self showViewController:vc sender:self];
         
         return;
+    }
+    
+    // Reader Mode
+    if (indexPath.section == 8) {
+        
+        UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Enable Reader Mode?" message:@"Are you sure you want to enable Reader Mode for all feeds?" preferredStyle:UIAlertControllerStyleAlert];
+        
+        [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+        
+        [avc addAction:[UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            [MyDBManager bulkUpdateFeedsAndMetadata:^FeedBulkOperation * _Nonnull(Feed * _Nonnull feed, NSMutableDictionary * _Nonnull metadata) {
+               
+                metadata[kFeedSafariReaderMode] = @YES;
+                
+                return [FeedBulkOperation withFeed:feed metadata:metadata];
+                
+            }];
+            
+        }]];
+        
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        
+        [self presentViewController:avc animated:YES completion:nil];
+        
     }
     
     if (indexPath.section == 0) {

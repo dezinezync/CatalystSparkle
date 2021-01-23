@@ -849,6 +849,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         progressView.frame = CGRectMake(0, 0, MAX(frame.size.width, 280.f), 6.f);
         progressView.layer.cornerRadius = 2.f;
         progressView.translatesAutoresizingMaskIntoConstraints = NO;
+        progressView.tintColor = SharedPrefs.tintColor;
         
         NSLayoutConstraint *widthConstraint = [progressView.widthAnchor constraintEqualToConstant:MAX(frame.size.width, 280.f)];
         widthConstraint.priority = 999;

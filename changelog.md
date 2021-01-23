@@ -4,6 +4,8 @@
 
 - Corrects a fundamental issue (which I realised yesterday evening) with directional marking read. 
 
+- Added option to bulk enable Reader Mode for all feeds under Settings > Misc.
+
 ## Build 149 
 
 - Fixed directional marking bug. The results will be consistent now.
