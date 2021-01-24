@@ -1471,9 +1471,6 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
             tokenID = [@"0" base64Encoded];
             
         }
-        else {
-            tokenID = (NSString *)[@"21575000" base64Encoded];
-        }
         
 //#ifdef DEBUG
 //
