@@ -162,7 +162,7 @@
     // Use this method to save data, release shared resources, and store enough scene-specific state information
     // to restore the scene back to its current state.
     
-    [MyDBManager setFeeds:ArticlesManager.shared.feeds];
+//    [MyDBManager setFeeds:ArticlesManager.shared.feeds];
     
     [BGTaskScheduler.sharedScheduler getPendingTaskRequestsWithCompletionHandler:^(NSArray<BGTaskRequest *> * _Nonnull taskRequests) {
         

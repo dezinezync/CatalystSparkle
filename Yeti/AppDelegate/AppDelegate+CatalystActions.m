@@ -45,8 +45,6 @@
     
     SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
     
-    [MyDBManager purgeDataForResync];
-    
     SidebarVC *vc = sceneDelegate.coordinator.sidebarVC;
     
     [vc beginRefreshingAll:vc.refreshControl];
