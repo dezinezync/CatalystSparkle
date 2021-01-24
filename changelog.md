@@ -4,7 +4,7 @@
 
 - Fixed a bug where your Feed Preferences would be lost after a few launches of the app. 
 
-
+- Local notifications now check filters before presenting the notifications. 
 
 ## Build 150 
 

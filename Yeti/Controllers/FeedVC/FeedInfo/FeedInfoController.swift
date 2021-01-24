@@ -389,7 +389,7 @@ import SDWebImage
                 }
                 
                 if (changed) {
-                    MyDBManager.update(feed, metadata: metadata)
+                    MyDBManager.update(feed, metadata: m)
                 }
                 
             }
@@ -424,7 +424,7 @@ import SDWebImage
             }
             
             if (changed) {
-                MyDBManager.update(feed, metadata: metadata)
+                MyDBManager.update(feed, metadata: m)
             }
             
         }
