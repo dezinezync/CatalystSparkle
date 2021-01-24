@@ -563,6 +563,8 @@
     BOOL isDescending = [sorting isEqualToString:YTSortAllDesc] || [sorting isEqualToString:YTSortUnreadDesc];
     isDescending = (direction == 1 && isDescending) || (direction == 2 && isDescending == NO);
     
+    NSEnumerationOptions options = isDescending == NO ? NSEnumerationReverse : kNilOptions;
+    
     weakify(self);
     
     dispatch_async(MyDBManager.readQueue, ^{
@@ -570,55 +572,40 @@
         [MyDBManager.uiConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
             
             NSString *localIdentifier = item.identifier.stringValue;
+            NSUInteger localID = localIdentifier.integerValue;
+            NSTimeInterval localTimestamp = item.timestamp.timeIntervalSince1970;
             
             YapDatabaseFilteredViewTransaction *tnx = [transaction ext:self.filteringViewName];
-            
-            NSEnumerationOptions options = kNilOptions;
-            
-            if (isDescending == NO) {
-
-                // get all items from and after this index which are unread.
-                // enumerating backwards on our forward index will have the same effect.
-                options = NSEnumerationReverse;
-
-            }
             
             NSMutableArray <id> *unreads = @[].mutableCopy;
             
             [tnx enumerateKeysAndMetadataInGroup:GROUP_ARTICLES withOptions:options range:NSMakeRange(0, MyFeedsManager.totalUnread) usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, NSDictionary *  _Nullable metadata, NSUInteger index, BOOL * _Nonnull stop) {
                 
-                BOOL stopping = NO;
+                NSUInteger keyID = key.integerValue;
+                NSTimeInterval keyTimestamp = [[metadata valueForKey:@"timestamp"] doubleValue];
                 
-                // this triggers when the actioned article
-                // is unread
-                if ([key isEqualToString:localIdentifier] && [[metadata valueForKey:@"read"] boolValue] == YES) {
+                if (direction == 1) {
                     
-                    stopping = YES;
+                    // the item's time cannot be higher than the
+                    // denoted item's time.
+                    if (keyTimestamp < localTimestamp) {
+                        return;
+                    }
+                    else if (keyTimestamp == localTimestamp && (keyID < localID)) {
+                        // if they are the same, compare by the identifier.
+                        return;
+                    }
                     
                 }
-                
-                if (stopping == NO) {
-                    // this is triggered when the actioned
-                    // article is read and is used as an anchor
-                    if (isDescending) {
-
-                        if (localIdentifier.integerValue > key.integerValue) {
-
-                            stopping = YES;
-
-                        }
-
+                else if (direction == 2) {
+                    
+                    if (keyTimestamp > localTimestamp) {
+                        return;
                     }
-                    else {
-
-                        if (key.integerValue > localIdentifier.integerValue) {
-
-                            stopping = YES;
-
-                        }
-
+                    else if (keyTimestamp == localTimestamp && (keyID > localID)) {
+                        return;
                     }
-
+                    
                 }
                 
                 if (metadata != nil && ([([metadata valueForKey:@"read"] ?: @(NO)) boolValue] == NO)) {
@@ -627,8 +614,6 @@
                     [unreads addObject:metadata];
                     
                 }
-                
-                *stop = stopping;
                 
             }];
             

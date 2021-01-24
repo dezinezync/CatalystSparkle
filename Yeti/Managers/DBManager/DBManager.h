@@ -23,7 +23,8 @@
 #define cloudCoreExtensionName @"ElytraCloudCoreExtension"
 
 #define SYNC_COLLECTION @"sync-collection"
-#define syncToken @"syncToken-2.2" // last sync date we stored or the one sent by the server
+#define syncToken @"syncToken-2.2.1" // last sync date we stored or the one sent by the server
+#define syncTokenID @"syncTokenID-2.2.1" // last sync date we stored or the one sent by the server
 #define syncedChanges @"syncedChanges" // have the synced the changes with our local store ?    
 
 NS_ASSUME_NONNULL_BEGIN
@@ -65,6 +66,15 @@ typedef void (^syncProgressBlock)(CGFloat progress);
 extern NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval time2);
 
 extern DBManager * MyDBManager;
+
+@interface FeedBulkOperation : NSObject
+
+@property (nonatomic, weak) Feed *feed;
+@property (nonatomic, weak) NSDictionary *metadata;
+
++ (instancetype)withFeed:(Feed * _Nonnull)feed metadata:(NSDictionary * _Nonnull)metadata;
+
+@end
 
 @interface DBManager : NSObject {
     
@@ -108,6 +118,8 @@ extern DBManager * MyDBManager;
 - (void)updateFeed:(Feed * _Nonnull)feed;
 
 - (void)updateFeed:(Feed * _Nonnull)feed metadata:(NSDictionary * _Nullable)metadata;
+
+- (void)bulkUpdateFeedsAndMetadata:(FeedBulkOperation * _Nonnull (^_Nonnull)(Feed *feed, NSMutableDictionary *metadata))closure;
 
 - (void)setFolders:(NSArray <Folder *> *)folders;
 

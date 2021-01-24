@@ -11,7 +11,20 @@ import SDWebImage
 
 @objc final class FeedInfoController: UITableViewController {
     
-    weak var feed: Feed?
+    var feed: Feed? {
+        didSet {
+            if let f = feed {
+                let m = MyDBManager.metadata(for: f) as! Dictionary<String, Any>
+                metadata = m
+            }
+            else {
+                metadata = nil
+            }
+        }
+    }
+    
+    var metadata: Dictionary<String, Any>?
+    
     weak var faviconView: UIImageView?
     
     var headerView: UIView {
@@ -46,6 +59,10 @@ import SDWebImage
         let bundle = Bundle.init(for: FeedInfoController.self)
         
         self.init(nibName: "FeedInfoController", bundle: bundle)
+        setFeed(feed: feed)
+    }
+    
+    private func setFeed(feed: Feed) {
         self.feed = feed
     }
     
@@ -155,15 +172,11 @@ import SDWebImage
                     
                     // local
                     
-                    if let feed = self.feed {
+                    if let m: Dictionary = metadata {
                         
-                        if let metadata: Dictionary = MyDBManager.metadata(for: feed) {
-                            
-                            let val:NSNumber = (metadata[kFeedLocalNotifications] ?? NSNumber.init(value: false)) as! NSNumber
-                            
-                            cell.toggle.setOn(val.boolValue, animated: false)
-                        }
+                        let val:NSNumber = (m[kFeedLocalNotifications] ?? NSNumber.init(value: false)) as! NSNumber
                         
+                        cell.toggle.setOn(val.boolValue, animated: false)
                     }
                     
                 }
@@ -174,15 +187,11 @@ import SDWebImage
                 cell.label.text = "Safari Reader Mode"
                 cell.toggle.addTarget(self, action: #selector(didToggleSafariReaderMode(toggle:)), for: .valueChanged)
                 
-                if let feed = self.feed {
+                if let m: Dictionary = metadata {
                     
-                    if let metadata: Dictionary = MyDBManager.metadata(for: feed) {
-                        
-                        let val:NSNumber = (metadata[kFeedSafariReaderMode] ?? NSNumber.init(value: false)) as! NSNumber
-                        
-                        cell.toggle.setOn(val.boolValue, animated: false)
-                    }
+                    let val:NSNumber = (m[kFeedSafariReaderMode] ?? NSNumber.init(value: false)) as! NSNumber
                     
+                    cell.toggle.setOn(val.boolValue, animated: false)
                 }
                 else {
                     cell.toggle.setOn(false, animated: false)
@@ -360,27 +369,27 @@ import SDWebImage
             
             // supports local
             
-            if var metadata: Dictionary = MyDBManager.metadata(for: feed) {
+            if var m = metadata {
                 
-                let val:NSNumber = (metadata[kFeedLocalNotifications] ?? NSNumber.init(value: false)) as! NSNumber
+                let val:NSNumber = (m[kFeedLocalNotifications] ?? NSNumber.init(value: false)) as! NSNumber
                 
                 var changed = false
                 
                 if (val.boolValue == true && toggle.isOn == false) {
                     
-                    metadata[kFeedLocalNotifications] = NSNumber.init(value: false)
+                    m[kFeedLocalNotifications] = NSNumber.init(value: false)
                     changed = true
                     
                 }
                 else if (val.boolValue == false && toggle.isOn == true) {
                     
-                    metadata[kFeedLocalNotifications] = NSNumber.init(value: true)
+                    m[kFeedLocalNotifications] = NSNumber.init(value: true)
                     changed = true
                     
                 }
                 
                 if (changed) {
-                    MyDBManager.update(feed, metadata: metadata)
+                    MyDBManager.update(feed, metadata: m)
                 }
                 
             }
@@ -395,27 +404,27 @@ import SDWebImage
             return
         }
         
-        if var metadata: Dictionary = MyDBManager.metadata(for: feed) {
+        if var m = metadata {
             
-            let val:NSNumber = (metadata[kFeedSafariReaderMode] ?? NSNumber.init(value: false)) as! NSNumber
+            let val:NSNumber = (m[kFeedSafariReaderMode] ?? NSNumber.init(value: false)) as! NSNumber
             
             var changed = false
             
             if (val.boolValue == true && toggle.isOn == false) {
                 
-                metadata[kFeedSafariReaderMode] = NSNumber.init(value: false)
+                m[kFeedSafariReaderMode] = NSNumber.init(value: false)
                 changed = true
                 
             }
             else if (val.boolValue == false && toggle.isOn == true) {
                 
-                metadata[kFeedSafariReaderMode] = NSNumber.init(value: true)
+                m[kFeedSafariReaderMode] = NSNumber.init(value: true)
                 changed = true
                 
             }
             
             if (changed) {
-                MyDBManager.update(feed, metadata: metadata)
+                MyDBManager.update(feed, metadata: m)
             }
             
         }

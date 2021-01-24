@@ -567,7 +567,7 @@ NSString* deviceName() {
                     
                 }
                 
-                NSTimeInterval time = isImmediate ? 0 : 5;
+                NSTimeInterval time = isImmediate ? 0 : 2;
                 
                 runOnMainQueueWithoutDeadlocking(^{
                     
