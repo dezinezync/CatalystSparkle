@@ -566,6 +566,10 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         return;
     }
     
+    if ([metadata isKindOfClass:NSMutableDictionary.class]) {
+        metadata = metadata.copy;
+    }
+    
     dispatch_sync(self.writeQueue, ^{
         
         NSString *key = feed.feedID.stringValue;
@@ -595,6 +599,10 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                 NSMutableDictionary *metadata = [MyDBManager metadataForFeed:feed].mutableCopy;
                 
                 FeedBulkOperation *op = closure(feed, metadata);
+                
+                if ([op.metadata isKindOfClass:NSMutableDictionary.class]) {
+                    metadata = op.metadata.copy;
+                }
                 
                 NSString *key = op.feed.feedID.stringValue;
                 
@@ -858,6 +866,54 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     return postSanitizer;
 }
 
+- (YapDatabaseSerializer)metadataSerializer {
+    
+    YapDatabaseSerializer serializer = ^NSData * _Nonnull(NSString * _Nonnull collection, NSString * _Nonnull key, NSDictionary *  _Nonnull object) {
+        
+        if (object == nil) {
+            return nil;
+        }
+        
+        NSError *error = nil;
+        
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:object requiringSecureCoding:YES error:&error];
+        
+        if (error) {
+            NSLog(@"Error serializing metadata:%@ with error:\n%@", object, error);
+        }
+        
+        return data;
+        
+    };
+    
+    return serializer;
+    
+}
+
+- (YapDatabaseDeserializer)metadataDeserializer {
+    
+    YapDatabaseDeserializer deserializer = ^id _Nullable(NSString * _Nonnull collection, NSString * _Nonnull key, NSData * _Nonnull data) {
+        
+        if (data == nil) {
+            return nil;
+        }
+        
+        NSError *error = nil;
+        
+        NSDictionary * object = [NSKeyedUnarchiver unarchivedObjectOfClasses:[NSSet setWithObjects:NSDictionary.class, NSNumber.class, NSString.class, NSDate.class, NSValue.class, nil] fromData:data error:&error];
+        
+        if (error != nil) {
+            NSLog(@"Error deserializing metadata:%@ with error:\n%@", object, error);
+        }
+        
+        return object;
+        
+    };
+    
+    return deserializer;
+    
+}
+
 - (void)setupDatabase
 {
     NSString *databasePath = [[self class] databasePath];
@@ -876,41 +932,11 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     [_database registerDefaultPreSanitizer:[self databasePreSanitizer]];
     [_database registerDefaultPostSanitizer:[self databasePostSanitizer]];
     
-    [_database registerMetadataSerializer:^NSData * _Nonnull(NSString * _Nonnull collection, NSString * _Nonnull key, NSDictionary *  _Nonnull object) {
-        
-        if (object == nil) {
-            return nil;
-        }
-        
-        NSError *error = nil;
-        
-        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:object requiringSecureCoding:YES error:&error];
-        
-        if (error) {
-            NSLog(@"Error serializing metadata:%@ with error:\n%@", object, error);
-        }
-        
-        return data;
-        
-    } forCollection:LOCAL_ARTICLES_COLLECTION];
+    [_database registerMetadataSerializer:[self metadataSerializer] forCollection:LOCAL_ARTICLES_COLLECTION];
+    [_database registerMetadataDeserializer:[self metadataDeserializer] forCollection:LOCAL_ARTICLES_COLLECTION];
     
-    [_database registerMetadataDeserializer:^id _Nullable(NSString * _Nonnull collection, NSString * _Nonnull key, NSData * _Nonnull data) {
-        
-        if (data == nil) {
-            return nil;
-        }
-        
-        NSError *error = nil;
-        
-        NSDictionary * object = [NSKeyedUnarchiver unarchivedObjectOfClasses:[NSSet setWithObjects:NSDictionary.class, NSNumber.class, NSString.class, NSDate.class, NSValue.class, nil] fromData:data error:&error];
-        
-        if (error != nil) {
-            NSLog(@"Error deserializing metadata:%@ with error:\n%@", object, error);
-        }
-        
-        return object;
-        
-    } forCollection:LOCAL_ARTICLES_COLLECTION];
+    [_database registerMetadataSerializer:[self metadataSerializer] forCollection:LOCAL_FEEDS_COLLECTION];
+    [_database registerMetadataDeserializer:[self metadataDeserializer] forCollection:LOCAL_FEEDS_COLLECTION];
     
     // Setup the extensions
     

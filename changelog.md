@@ -1,5 +1,11 @@
 # v2.2.1
 
+## Build 151 
+
+- Fixed a bug where your Feed Preferences would be lost after a few launches of the app. 
+
+
+
 ## Build 150 
 
 - Corrects a fundamental issue (which I realised yesterday evening) with directional marking read. 
