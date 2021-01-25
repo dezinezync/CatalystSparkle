@@ -425,12 +425,12 @@
             
             strongify(self);
             
-#if TARGET_OS_MACCATALYST
-            FeedHeaderView *header = (id)[self.tableView tableHeaderView];
-            header.subscribeButton.hidden = YES;
-#else
+//#if TARGET_OS_MACCATALYST
+//            FeedHeaderView *header = (id)[self.tableView tableHeaderView];
+//            header.subscribeButton.hidden = YES;
+//#else
             self.navigationItem.rightBarButtonItem = nil;
-#endif
+//#endif
             
         });
         

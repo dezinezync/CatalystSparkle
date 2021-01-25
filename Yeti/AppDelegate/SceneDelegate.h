@@ -18,11 +18,11 @@
 
 #if TARGET_OS_MACCATALYST
 
-@property (nonatomic, weak) NSToolbar *toolbar;
+@property (nonatomic, weak) NSToolbar * _Nullable toolbar;
 
-@property (nonatomic, weak) NSMenuToolbarItem *sortingItem;
+@property (nonatomic, weak) NSMenuToolbarItem * _Nullable sortingItem;
 
-@property (nonatomic) UIImageSymbolConfiguration *toolbarSymbolConfiguration;
+@property (nonatomic) UIImageSymbolConfiguration * _Nullable toolbarSymbolConfiguration;
 
 #endif
 

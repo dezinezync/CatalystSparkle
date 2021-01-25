@@ -55,8 +55,10 @@
 
     NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject ?: session.stateRestorationActivity;
     
+    NSSet *DEFAULT_ACTIVITIES = [NSSet setWithObjects:@"main", @"restoration", nil];
+    
 #if TARGET_OS_MACCATALYST
-    if (activity != nil && [activity.activityType isEqualToString:@"restoration"] == NO) {
+    if (activity != nil && [DEFAULT_ACTIVITIES containsObject:activity.activityType] == NO) {
         
         [self handleSceneActivity:activity scene:windowScene];
         
