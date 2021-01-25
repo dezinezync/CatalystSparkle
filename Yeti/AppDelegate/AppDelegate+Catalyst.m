@@ -26,6 +26,7 @@
 #import <UIKit/UIMenuSystem.h>
 #import <AppKit/NSToolbarItemGroup.h>
 #import <DZKit/DZMessagingController.h>
+#import <DZKit/AlertManager.h>
 
 @implementation AppDelegate (Catalyst)
 
@@ -75,6 +76,8 @@
     [builder replaceMenuForIdentifier:UIMenuPreferences withMenu:customPreferencesMenu];
     
     // Add items for File menu
+    UIKeyCommand *feedsMenuItem = [UIKeyCommand commandWithTitle:@"New Window" image:nil action:@selector(showMainScene) input:@"n" modifierFlags:UIKeyModifierAlternate propertyList:nil];
+    
     UIKeyCommand *newFeed = [UIKeyCommand commandWithTitle:@"New Feed" image:nil action:@selector(createNewFeed) input:@"n" modifierFlags:UIKeyModifierCommand propertyList:nil];
     
     UIKeyCommand *newFolder = [UIKeyCommand commandWithTitle:@"New Folder" image:nil action:@selector(createNewFolder) input:@"n" modifierFlags:UIKeyModifierCommand|UIKeyModifierShift propertyList:nil];
@@ -93,7 +96,11 @@
     
     UIMenu *subscriptionsMenu = [UIMenu menuWithTitle:@"Subscriptions" image:nil identifier:@"SubscriptionsMenuIdentifier" options:UIMenuOptionsDisplayInline children:@[importSubscriptions, exportSubscriptions]];
     
-    [builder replaceMenuForIdentifier:UIMenuNewScene withMenu:newFeedMenu];
+    UIMenu *newSceneMenu = [UIMenu menuWithTitle:@"New Scene" image:nil identifier:UIMenuNewScene options:UIMenuOptionsDisplayInline children:@[feedsMenuItem]];
+    
+    [builder replaceMenuForIdentifier:UIMenuNewScene withMenu:newSceneMenu];
+    
+    [builder insertSiblingMenu:newFeedMenu afterMenuForIdentifier:UIMenuNewScene];
     
     [builder insertSiblingMenu:subscriptionsMenu afterMenuForIdentifier:@"NewFeedInlineMenuItem"];
     
@@ -236,8 +243,16 @@
     
 }
 
-//- (void)validateCommand:(UICommand *)command {
-//
+- (void)validateCommand:(UICommand *)command {
+    
+    NSLogDebug(@"%@ - %@", command.title, NSStringFromSelector(command.action));
+    
+    if ([command.title isEqualToString:@"New Window"]) {
+        
+        command.attributes = self.mainScene == nil ? 0 : UIMenuElementAttributesDisabled;
+        
+    }
+
 //    Class aClass = NSClassFromString([NSString stringWithFormat:@"%@%@%@", @"NSE", @"ve", @"nt"]);
 //
 //    BOOL hideOptionals = ((NSUInteger)[aClass performSelector:NSSelectorFromString(@"modifierFlags")] & (1 << 19)) != (1 << 19);
@@ -252,8 +267,8 @@
 //        command.attributes = hideOptionals ? 0 : UIMenuElementAttributesHidden;
 //
 //    }
-//
-//}
+
+}
 
 - (void)contactSupport {
     [self.coordinator showContactInterface];
@@ -267,6 +282,22 @@
 
 - (void)__refreshFeeds {
     [self.coordinator prepareFeedsForFullResync];
+}
+
+- (void)showMainScene {
+    
+    NSUserActivity *main = [[NSUserActivity alloc] initWithActivityType:@"main"];
+    
+    [UIApplication.sharedApplication requestSceneSessionActivation:nil userActivity:main options:nil errorHandler:^(NSError * _Nonnull error) {
+       
+        if (error != nil) {
+            
+            [AlertManager showGenericAlertWithTitle:@"Error Opening Window" message:error.localizedDescription];
+            
+        }
+        
+    }];
+    
 }
 
 @end
