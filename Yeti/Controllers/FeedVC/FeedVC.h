@@ -119,6 +119,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)_showArticleVC:(ArticleVC *)vc;
 
+#pragma mark - Internal
+
+- (void)didBeginRefreshing:(id)sender;
+
 @end
 
 NS_ASSUME_NONNULL_END

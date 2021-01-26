@@ -534,15 +534,7 @@
 
 - (void)didBeginRefreshing:(UIRefreshControl *)sender {
     
-    // mac catalyst doesn't have a refresh control
-#if !TARGET_OS_MACCATALYST
-    if (sender != nil) {
-#else
-    if (self->_isRefreshing == NO) {
-#endif
-        self.unreadsManager = nil;
-        [self loadNextPage];
-    }
+    [super didBeginRefreshing:sender];
     
 }
 

@@ -243,4 +243,10 @@
     
 }
 
+- (void)didBeginRefreshing:(id)sender {
+ 
+    [self setupData];
+    
+}
+
 @end

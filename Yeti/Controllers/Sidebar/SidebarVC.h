@@ -23,6 +23,9 @@ NS_ASSUME_NONNULL_BEGIN
     // Set to true when updating folder structs is necessary.
     // only used for the mac idiom.
     BOOL _needsUpdateOfStructs;
+    
+    @public
+    BOOL _refreshing;
 }
 
 @property (nonatomic, strong, readonly) UICollectionViewDiffableDataSource <NSNumber *, Feed *> *DS;

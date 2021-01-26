@@ -1542,6 +1542,26 @@ static NSUInteger _filteringTag = 0;
     
 }
 
+- (void)didBeginRefreshing:(id)sender {
+    
+    if (self.mainCoordinator != nil && self.mainCoordinator.sidebarVC != nil && self.mainCoordinator.sidebarVC->_refreshing == NO) {
+        
+        return [self.mainCoordinator.sidebarVC beginRefreshingAll:nil];
+        
+    }
+    
+    // mac catalyst doesn't have a refresh control
+#if !TARGET_OS_MACCATALYST
+    if (sender != nil) {
+#endif
+        self.pagingManager = nil;
+        [self loadNextPage];
+#if !TARGET_OS_MACCATALYST
+    }
+#endif
+    
+}
+
 #pragma mark - State Restoration
 
 #define kVCType @"kFeedVCType"

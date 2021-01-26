@@ -1,33 +1,5 @@
-# v2.2.1
+# v2.2.2
 
-## Build 151 
+## Build 153 
 
-- Fixed a bug where your Feed Preferences would be lost after a few launches of the app. 
-
-- Local notifications now check filters before presenting the notifications. 
-
-## Build 150 
-
-- Corrects a fundamental issue (which I realised yesterday evening) with directional marking read. 
-
-- Added option to bulk enable Reader Mode for all feeds under Settings > Misc.
-
-## Build 149 
-
-- Fixed directional marking bug. The results will be consistent now.
-
-- Fixed notifications prompt modal spanning the full width on iPads.
-
-## New
-
-### Universal 
-
-- Using a new API and logic for Sync.
-
-### iOS 
-
-- Patches a bug where app would get stuck after first refresh or force refresh
-
-### macOS 
-
-- Added Force-Refresh (option) and Force-Refresh Feeds (option + Shift) menu options under File. 
+- Fixes a refreshing bug on iOS and macOS. 

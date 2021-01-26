@@ -31,7 +31,6 @@
 @interface SidebarVC () {
     
     // Sync
-    BOOL _refreshing;
     NSUInteger _refreshFeedsCounter;
     
     // Counters
@@ -643,9 +642,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
                     UnreadVC *instance = (id)self.mainCoordinator.feedVC;
                     UIRefreshControl *refreshControl = instance.refreshControl;
                     
-                    if (refreshControl) {
-                        [instance didBeginRefreshing:refreshControl];
-                    }
+                    [instance didBeginRefreshing:refreshControl];
                     
                     [(FeedVC *)instance updateTitleView];
                     
