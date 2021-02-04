@@ -247,6 +247,12 @@
     
     NSLogDebug(@"%@ - %@", command.title, NSStringFromSelector(command.action));
     
+    if (self.mainScene != nil && self.mainScene.windows.firstObject.isKeyWindow == NO) {
+        
+        command.attributes = UIMenuElementAttributesHidden|UIMenuElementAttributesDisabled;
+        
+    }
+    
     if ([command.title isEqualToString:@"New Window"]) {
         
         command.attributes = self.mainScene == nil ? 0 : UIMenuElementAttributesDisabled;
