@@ -626,6 +626,10 @@ NSString* deviceName() {
             return;
         }
         
+        if (MyFeedsManager.user == nil || MyFeedsManager.user.userID == nil) {
+            return;
+        }
+        
         if (UIApplication.sharedApplication.applicationState == UIApplicationStateBackground) {
             return;
         }
