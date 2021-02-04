@@ -84,6 +84,9 @@ Push Notifications are also used for keeping your devices in-sync with each othe
                                             <integer key="value" value="16"/>
                                         </userDefinedRuntimeAttribute>
                                     </userDefinedRuntimeAttributes>
+                                    <variation key="userInterfaceIdiom=mac">
+                                        <nil key="backgroundColor"/>
+                                    </variation>
                                     <connections>
                                         <action selector="didTapEnable:" destination="-1" eventType="touchUpInside" id="hFd-Ug-CDe"/>
                                     </connections>
