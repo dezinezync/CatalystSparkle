@@ -167,17 +167,12 @@
     footer.activityIndicator.hidesWhenStopped = YES;
     
     footer.backgroundColor = UIColor.systemGroupedBackgroundColor;
-    // affects normal state
-    footer.buyButton.backgroundColor = self.view.tintColor;
-    
+
 #if !TARGET_OS_MACCATALYST
-    [footer.buyButton setBackgroundImage:[UIImage imageWithColor:self.view.tintColor] forState:UIControlStateNormal];
-#endif
     
     footer.buyButton.layer.cornerRadius = 8.f;
     footer.buyButton.clipsToBounds = YES;
-
-#if !TARGET_OS_MACCATALYST
+    
     UIColor *tint = self.view.tintColor;
 
     [footer.buyButton setBackgroundImage:[UIImage imageWithColor:tint] forState:UIControlStateNormal];
