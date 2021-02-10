@@ -22,9 +22,9 @@
 #import "BookmarksMigrationVC.h"
 #import <DZAppdelegate/UIApplication+KeyWindow.h>
 
-@interface SplitVC () <UIGestureRecognizerDelegate>
+@interface SplitVC () <UIGestureRecognizerDelegate, UISplitViewControllerDelegate>
 
-#if TARGET_OS_MACCATALYST
+#if !TARGET_OS_MACCATALYST
 
 - (void)setupDisplayModes:(CGSize)size;
 
@@ -69,6 +69,11 @@
         self.preferredSplitBehavior = UISplitViewControllerSplitBehaviorDisplace;
         
         self.presentsWithGesture = YES;
+        
+        self.delegate = self;
+        
+//        UINavigationController *nav = [UINavigationController new];
+//        [self setViewController:nav forColumn:UISplitViewControllerColumnCompact];
         
 //        [self loadViewIfNeeded];
         
@@ -496,58 +501,77 @@
 
 #pragma mark - <UISplitViewControllerDelegate>
 
-- (UIViewController *)primaryViewControllerForCollapsingSplitViewController:(UISplitViewController *)splitViewController {
-    UINavigationController *nav = splitViewController.viewControllers.firstObject;
-
-    return nav;
-}
-
-- (UIViewController *)primaryViewControllerForExpandingSplitViewController:(UISplitViewController *)splitViewController {
-
-    UINavigationController *nav = splitViewController.viewControllers.firstObject;
-
-    return nav;
-}
-
-- (nullable UIViewController *)splitViewController:(UISplitViewController *)splitViewController separateSecondaryViewControllerFromPrimaryViewController:(UINavigationController *)primaryViewController {
+- (UISplitViewControllerColumn)splitViewController:(UISplitViewController *)svc topColumnForCollapsingToProposedTopColumn:(UISplitViewControllerColumn)proposedTopColumn {
     
-    // collapseSecondaryViewController:forSplitViewController causes the
-    // UINavigationController to be pushed on the the stack of the primary
-    // navgiation controller.
-    if ([[primaryViewController topViewController] isKindOfClass:UINavigationController.class]) {
-        return [primaryViewController popViewControllerAnimated:NO];
+    if (self.mainCoordinator.articleVC != nil) {
+        return UISplitViewControllerColumnSecondary;
     }
-    else if ([[primaryViewController topViewController] isKindOfClass:ArticleVC.class]) {
-
-        ArticleVC *vc = (ArticleVC *)[primaryViewController popViewControllerAnimated:NO];
-
-        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-        nav.restorationIdentifier = @"ArticleDetailNav";
-
-        return nav;
+    else if (self.mainCoordinator.feedVC != nil) {
+        return UISplitViewControllerColumnSupplementary;
     }
-
-    return [self emptyVC];
-
-}
-
-- (BOOL)splitViewController:(UISplitViewController *)splitViewController collapseSecondaryViewController:(UIViewController *)secondaryViewController ontoPrimaryViewController:(UIViewController *)primaryViewController {
     
-    if ([secondaryViewController isKindOfClass:[UINavigationController class]]
-        && [[(UINavigationController *)secondaryViewController topViewController] isKindOfClass:[ArticleVC class]]
-        && ([(ArticleVC *)[(UINavigationController *)secondaryViewController topViewController] currentArticle] == nil)) {
-        // Return YES to indicate that we have handled the collapse by doing nothing; the secondary controller will be discarded.
-        return YES;
-    }
-    else if ([secondaryViewController isKindOfClass:UINavigationController.class]
-             && [[(UINavigationController *)secondaryViewController topViewController] isKindOfClass:EmptyVC.class]) {
-        // Return YES to indicate that we have handled the collapse by doing nothing; the secondary controller will be discarded.
-        return YES;
-    }
-    else {
-        return NO;
-    }
+    return UISplitViewControllerColumnPrimary;
+    
 }
+
+//- (UIViewController *)primaryViewControllerForCollapsingSplitViewController:(UISplitViewController *)splitViewController {
+//    UINavigationController *nav = splitViewController.viewControllers.firstObject;
+//
+//    return nav;
+//}
+//
+//- (UIViewController *)primaryViewControllerForExpandingSplitViewController:(UISplitViewController *)splitViewController {
+//
+//    UINavigationController *nav = splitViewController.viewControllers.firstObject;
+//
+//    return nav;
+//}
+//
+//- (nullable UIViewController *)separateSupplementaryViewControllerFromPrimaryViewController:(UIViewController *)primaryViewController {
+//
+//    return nil;
+//
+//}
+//
+//- (nullable UIViewController *)splitViewController:(UISplitViewController *)splitViewController separateSecondaryViewControllerFromPrimaryViewController:(UINavigationController *)primaryViewController {
+//
+//    // collapseSecondaryViewController:forSplitViewController causes the
+//    // UINavigationController to be pushed on the the stack of the primary
+//    // navgiation controller.
+//    if ([[primaryViewController topViewController] isKindOfClass:UINavigationController.class]) {
+//        return [primaryViewController popViewControllerAnimated:NO];
+//    }
+//    else if ([[primaryViewController topViewController] isKindOfClass:ArticleVC.class]) {
+//
+//        ArticleVC *vc = (ArticleVC *)[primaryViewController popViewControllerAnimated:NO];
+//
+//        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+//        nav.restorationIdentifier = @"ArticleDetailNav";
+//
+//        return nav;
+//    }
+//
+//    return [self emptyVC];
+//
+//}
+//
+//- (BOOL)splitViewController:(UISplitViewController *)splitViewController collapseSecondaryViewController:(UIViewController *)secondaryViewController ontoPrimaryViewController:(UIViewController *)primaryViewController {
+//
+//    if ([secondaryViewController isKindOfClass:[UINavigationController class]]
+//        && [[(UINavigationController *)secondaryViewController topViewController] isKindOfClass:[ArticleVC class]]
+//        && ([(ArticleVC *)[(UINavigationController *)secondaryViewController topViewController] currentArticle] == nil)) {
+//        // Return YES to indicate that we have handled the collapse by doing nothing; the secondary controller will be discarded.
+//        return YES;
+//    }
+//    else if ([secondaryViewController isKindOfClass:UINavigationController.class]
+//             && [[(UINavigationController *)secondaryViewController topViewController] isKindOfClass:EmptyVC.class]) {
+//        // Return YES to indicate that we have handled the collapse by doing nothing; the secondary controller will be discarded.
+//        return YES;
+//    }
+//    else {
+//        return NO;
+//    }
+//}
 
 #pragma mark - <UIGestureRecognizerDelegate>
 
@@ -557,85 +581,87 @@
     
 }
 
+#if TARGET_OS_MACCATALYST
+
 #pragma mark - Forward invocations
 
 - (BOOL)respondsToSelector:(SEL)aSelector {
-    
+
     if ([NSStringFromSelector(aSelector) isEqualToString:@"didBeginRefreshing:"]) {
-        
+
         if (self.mainCoordinator.feedVC != nil) {
-            
+
             return [self.mainCoordinator.feedVC respondsToSelector:aSelector];
-            
+
         }
-        
+
         return NO;
-        
+
     }
     else if ([NSStringFromSelector(aSelector) isEqualToString:@"didTapSearch"]) {
-        
+
         if (self.mainCoordinator.articleVC != nil) {
-            
+
             return [self.mainCoordinator.articleVC respondsToSelector:aSelector];
-            
+
         }
-        
+
         return NO;
-        
+
     }
     else if ([NSStringFromSelector(aSelector) isEqualToString:@"showSubscriptionsInterface"]) {
-        
+
         return YES;
-        
+
     }
     else if ([NSStringFromSelector(aSelector) isEqualToString:@"didLongPressOnAllRead:"]) {
-        
+
         if (self.mainCoordinator.feedVC != nil) {
-            
+
             return [self.mainCoordinator.feedVC respondsToSelector:aSelector];
-            
+
         }
-        
+
         return NO;
-        
+
     }
-    
+
     return [super respondsToSelector:aSelector];
-    
+
 }
 
 - (NSMethodSignature*) methodSignatureForSelector:(SEL)selector {
-    
+
     if ([NSStringFromSelector(selector) isEqualToString:@"didBeginRefreshing:"]) {
-        
+
         if (self.mainCoordinator.feedVC != nil && [self.mainCoordinator.feedVC respondsToSelector:selector] == YES) {
             return [self.mainCoordinator.feedVC methodSignatureForSelector:selector];
         }
-        
+
     }
     else if ([NSStringFromSelector(selector) isEqualToString:@"didTapSearch"]) {
-        
+
         if (self.mainCoordinator.articleVC != nil && [self.mainCoordinator.articleVC respondsToSelector:selector] == YES) {
             return [self.mainCoordinator.articleVC methodSignatureForSelector:selector];
         }
-        
+
     }
     else if ([NSStringFromSelector(selector) isEqualToString:@"showSubscriptionsInterface"]) {
-        
+
         return [self.mainCoordinator methodSignatureForSelector:selector];
-        
+
     }
     else if ([NSStringFromSelector(selector) isEqualToString:@"didLongPressOnAllRead:"] && self.mainCoordinator.feedVC != nil) {
-        
+
         return [self.mainCoordinator.feedVC methodSignatureForSelector:selector];
-        
+
     }
-    
+
     return [super methodSignatureForSelector:selector];
 }
 
 - (void)forwardInvocation:(NSInvocation *)anInvocation {
-    
+
     if (anInvocation.selector == NSSelectorFromString(@"didBeginRefreshing:") && self.mainCoordinator.feedVC != nil) {
         [anInvocation invokeWithTarget:self.mainCoordinator.feedVC];
         return;
@@ -652,9 +678,11 @@
         [anInvocation invokeWithTarget:self.mainCoordinator.feedVC];
         return;
     }
-    
+
     [super forwardInvocation:anInvocation];
-    
+
 }
+
+#endif
 
 @end

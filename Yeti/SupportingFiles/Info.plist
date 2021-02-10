@@ -250,7 +250,7 @@
 		<true/>
 	</dict>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2016-2020 Nikhil Nigade</string>
+	<string>Copyright © 2016-2021 Nikhil Nigade</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Save images you select from articles to your photos.  </string>
 	<key>NSUserActivityTypes</key>
