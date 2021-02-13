@@ -177,6 +177,10 @@
         
         NSString *todayString = [NSString stringWithFormat:@"%@-%@-%@", @(comps.year), @(comps.month), @(comps.day)];
         
+        if (MyFeedsManager.userID == nil) {
+            return nil;
+        }
+        
         NSMutableDictionary *params = @{@"userID": MyFeedsManager.userID, @"limit": @10, @"date": todayString}.mutableCopy;
         
         params[@"sortType"] = @(self.sortingOption.integerValue);

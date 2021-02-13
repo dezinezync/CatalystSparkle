@@ -109,7 +109,7 @@
     
     NSString *UUID = MyFeedsManager.user.uuid;
     
-    if (exp != nil && [exp numberOfMatchesInString:UUID options:kNilOptions range:NSMakeRange(0, UUID.length)] > 0) {
+    if (exp != nil && UUID.length > 0 && [exp numberOfMatchesInString:UUID options:kNilOptions range:NSMakeRange(0, UUID.length)] > 0) {
         return 2;
     }
     

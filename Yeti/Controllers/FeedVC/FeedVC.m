@@ -1354,15 +1354,23 @@ static NSUInteger _filteringTag = 0;
     
     if ((self.DS == nil || self.DS.snapshot.numberOfItems == 0) && _loadOnReadyTries < 3) {
         
-        weakify(self);
+        __weak typeof(self) wself = self;
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             
-            strongify(self);
+            if (wself == nil) {
+                return;
+            }
             
-            self->_loadOnReadyTries++;
+            __strong typeof(wself) sself = wself;
             
-            [self setLoadOnReady:loadOnReady];
+            if (sself == nil) {
+                return;
+            }
+            
+            sself->_loadOnReadyTries++;
+            
+            [sself setLoadOnReady:loadOnReady];
             
         });
         
