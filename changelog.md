@@ -1,5 +1,9 @@
 # v2.2.2
 
+## Build 158
+
+- Fixed a text rendering bug where text containing an apostrophe would sometimes force all letters after it to be rendered on the next line. H/T Paarth. 
+
 ## Build 156 
 
 - Potential fix for a long standing crash when app is in background.

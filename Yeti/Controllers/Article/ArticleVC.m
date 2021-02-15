@@ -1733,18 +1733,55 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         if (newAttrs) {
             
+            BOOL spaceFlag = NO;
+            
             // For CJK paragraphs, we strictly ignore any rangeAdditions we make.
             // Not doing so breaks the formatting as intended by the author making
             // the text one big paragraph and difficult to read. 
             if (rangeAdded == YES && [newAttrs.string containsCJKCharacters] == YES) {
                 rangeAdded = NO;
             }
+            else if (rangeAdded == NO && attrs.string.length > 0) {
+                
+                // ensure if the last char from the attrs string
+                // is not a whitespace char.
+                NSString *lastChar = [attrs.string substringFromIndex:(attrs.string.length - 1)];
+                
+                // if it is a non-whitespace character, ergo a continuation
+                // of the previous para's text, we appead directly.
+                if ( [lastChar rangeOfCharacterFromSet:NSCharacterSet.punctuationCharacterSet].location == NSNotFound
+                    && [lastChar rangeOfCharacterFromSet:NSCharacterSet.whitespaceAndNewlineCharacterSet].location == NSNotFound) {
+                    
+                    rangeAdded = YES;
+                    
+                    // if the new string's first char is an apostrophe
+                    // we set the spaceFlag to YES, such that we do not
+                    // append a space, and forego that process.
+                    
+                    if (newAttrs.string.length > 0) {
+                        
+                        NSString *firstChar = [newAttrs.string substringToIndex:1];
+                        
+                        if ([firstChar isEqualToString:@"'"]) {
+                            spaceFlag = YES;
+                        }
+                        
+                    }
+                    
+                }
+                
+            }
             
-            NSString *accessoryStr = formattedString(@"%@", rangeAdded ? @" " : @"\n\n");
+            if (spaceFlag == NO) {
+                
+                NSString *accessoryStr = formattedString(@"%@", rangeAdded ? @" " : @"\n\n");
+                
+                NSAttributedString *accessory = [[NSAttributedString alloc] initWithString:accessoryStr];
+                
+                [attrs appendAttributedString:accessory];
+                
+            }
             
-            NSAttributedString *accessory = [[NSAttributedString alloc] initWithString:accessoryStr];
-            
-            [attrs appendAttributedString:accessory];
             [attrs appendAttributedString:newAttrs];
             
             if (!rangeAdded) {
