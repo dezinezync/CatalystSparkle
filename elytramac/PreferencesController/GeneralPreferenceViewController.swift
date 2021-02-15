@@ -71,7 +71,7 @@ func dialogNoReturn (question: String, text: String, buttonTitle: String) {
     alert.messageText = question
     alert.informativeText = text
     alert.alertStyle = .warning
-    alert.addButton(withTitle: buttonTitle ?? "Yes")
+    alert.addButton(withTitle: buttonTitle)
     
     alert.runModal()
     

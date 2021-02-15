@@ -538,15 +538,27 @@ static NSUInteger _filteringTag = 0;
             
             if (article.content == nil || (article.content != nil && article.content.count == 0)) {
                 
-                NSArray *content = [MyDBManager contentForArticle:article.identifier];
+                dispatch_async(MyDBManager.readQueue, ^{
+                    
+                    NSArray *content = [MyDBManager contentForArticle:article.identifier];
+                    
+                    article.content = content;
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [cell configure:article feedType:self.type];
+                    });
+                    
+                });
                 
-                article.content = content;
-                
+            }
+            else {
+                [cell configure:article feedType:self.type];
             }
             
         }
-        
-        [cell configure:article feedType:self.type];
+        else {
+            [cell configure:article feedType:self.type];
+        }
         
         cell.accessibilityLabel = [NSString stringWithFormat:@"Article %@", @(indexPath.row + 1)];
         cell.accessibilityValue = article.articleTitle;

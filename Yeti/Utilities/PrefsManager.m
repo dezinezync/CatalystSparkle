@@ -94,7 +94,9 @@ PrefsManager * SharedPrefs = nil;
     [self updateAppearances];
     
 #endif
+    
     self.badgeAppIcon = [self.defaults boolForKey:badgeAppIconPreference];
+    self.autoloadGIFs = [self.defaults boolForKey:AutoloadGIF];
     
     if (self.paraTitleFont == nil) {
         self.paraTitleFont = ALPSystem;
@@ -190,6 +192,9 @@ PrefsManager * SharedPrefs = nil;
 #endif
     else if ([key isEqualToString:propSel(badgeAppIcon)]) {
         return badgeAppIconPreference;
+    }
+    else if ([key isEqualToString:propSel(autoloadGIFs)]) {
+        return AutoloadGIF;
     }
 //    else if ([key isEqualToString:propSel(<#string#>)]) {
 //        return <#mapping#>;
@@ -327,6 +332,7 @@ PrefsManager * SharedPrefs = nil;
     [defaults addObserver:self forKeyPath:@"AppleHighlightColor" options:NSKeyValueObservingOptionNew context:DefaultsAppleHighlightColorContext];
     
     if (self.defaultsController == nil) {
+        
         Class controller = NSClassFromString(@"NSUserDefaultsController");
         SEL selector = NSSelectorFromString(@"sharedUserDefaultsController");
         id instance = [controller performSelector:selector];
@@ -334,6 +340,7 @@ PrefsManager * SharedPrefs = nil;
         self.defaultsController = instance;
         
         [instance addObserver:self forKeyPath:@"values.com.dezinezync.elytra.showMarkReadPrompt" options:NSKeyValueObservingOptionNew context:NULL];
+        [instance addObserver:self forKeyPath:@"values.autoloadGIF" options:NSKeyValueObservingOptionNew context:NULL];
     }
     
 #endif
@@ -507,6 +514,11 @@ PrefsManager * SharedPrefs = nil;
         if ([keyPath containsString:kShowMarkReadPrompt]) {
             
             [self setValue:value forKey:keypath(showMarkReadPrompts)];
+            
+        }
+        else if ([keyPath containsString:AutoloadGIF]) {
+            
+            [self setValue:value forKey:keypath(autoloadGIFs)];
             
         }
         

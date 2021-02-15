@@ -163,6 +163,8 @@ NSString * _Nonnull const MacKeyOpensBrowserInBackground = @"macKeyOpensBrowserI
 NSNotificationName _Nonnull const BadgeAppIconPreferenceUpdated = @"badgeAppIconPreferenceUpdated";
 NSString * _Nonnull const badgeAppIconPreference = @"badgeAppIconPreference";
 
+NSString * _Nonnull const AutoloadGIF = @"autoloadGIF";
+
 #pragma mark -
 
 NSString * modelIdentifier (void) {

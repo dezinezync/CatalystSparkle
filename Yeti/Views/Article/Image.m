@@ -287,6 +287,13 @@
     }
     
     [gifButton addTarget:self action:@selector(didTapGIF:) forControlEvents:UIControlEventTouchUpInside];
+    
+    if (SharedPrefs.autoloadGIFs == YES) {
+        
+        [self didTapGIF:gifButton];
+        
+    }
+    
 }
 
 - (void)setupAnimationControls {

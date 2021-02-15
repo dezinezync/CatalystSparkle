@@ -150,6 +150,7 @@ extern NSString * _Nonnull const MacKeyOpensBrowserInBackground;
 
 extern NSNotificationName _Nonnull const BadgeAppIconPreferenceUpdated;
 extern NSString * _Nonnull const badgeAppIconPreference;
+extern NSString * _Nonnull const AutoloadGIF;
 
 extern BOOL canSupportOLED (void);
 

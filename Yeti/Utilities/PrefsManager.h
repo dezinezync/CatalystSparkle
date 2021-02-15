@@ -56,6 +56,8 @@ extern PrefsManager * SharedPrefs;
 
 @property (assign) BOOL badgeAppIcon;
 
+@property (assign) BOOL autoloadGIFs;
+
 #if TARGET_OS_MACCATALYST
 
 @property (assign) BOOL browserOpenInBackground;
