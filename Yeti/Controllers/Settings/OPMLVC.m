@@ -19,6 +19,7 @@
 
 #import <DZNetworking/DZUploadSession.h>
 #import <DZKit/AlertManager.h>
+#import "DZLoggingJSONResponseParser.h"
 
 @interface OPMLVC () <UIDocumentPickerDelegate> {
     BOOL _hasSetup;
@@ -396,15 +397,14 @@
     
     weakify(self);
     
-    NSString *url = formattedString(@"http://192.168.1.15:3000/user/opml");
-    url = @"https://api.elytra.app/user/opml";
-#ifndef DEBUG
-    url = @"https://api.elytra.app/user/opml";
-#endif
+    NSString *url = [MyFeedsManager.session.baseURL.absoluteString stringByAppendingString:@"/user/opml"];
 
     url = [url stringByAppendingFormat:@"?userID=%@", MyFeedsManager.userID];
     
-    __unused NSURLSessionTask *task = [[DZUploadSession shared] UPLOAD:self.importURL.path fieldName:@"file" URL:url parameters:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    DZUploadSession *session = [DZUploadSession shared];
+    session.session.responseParser = [DZLoggingJSONResponseParser new];
+    
+    __unused NSURLSessionTask *task = [session UPLOAD:self.importURL.path fieldName:@"file" URL:url parameters:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         strongify(self);
 
@@ -437,15 +437,9 @@
     
 }
 
-- (void)handleOPMLData:(NSData *)response {
-    NSError *error = nil;
+- (void)handleOPMLData:(NSDictionary *)response {
     
-    id obj = [NSJSONSerialization JSONObjectWithData:response options:kNilOptions error:&error];
-    
-    if (error != nil) {
-        [AlertManager showGenericAlertWithTitle:@"Error Parsing Subscriptions File" message:error.localizedDescription fromVC:self];
-        return;
-    }
+    id obj = response;
     
     weakify(self);
     

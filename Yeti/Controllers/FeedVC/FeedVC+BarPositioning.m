@@ -130,7 +130,7 @@
     BOOL isPushFromHub = (self.feed.hubSubscribed && self.feed.hub);
     BOOL isPushFromRPC = self.feed.rpcCount > 0;
     
-    if (isPushFromHub == NO && isPushFromRPC == NO) {
+//    if (isPushFromHub == NO && isPushFromRPC == NO) {
         NSMutableArray *buttons = @[allReadBackDated].mutableCopy;
         
         if ([self showsSortingButton]) {
@@ -138,24 +138,24 @@
         }
         
         return buttons;
-    }
-    else {
-        // push notifications are possible
-        NSString *imageString = self.feed.isSubscribed ? @"bell.fill" : @"bell.slash";
-        
-        UIBarButtonItem *notifications = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:imageString] style:UIBarButtonItemStylePlain target:self action:@selector(didTapNotifications:)];
-        notifications.accessibilityValue = self.feed.isSubscribed ? @"Subscribe" : @"Unsubscribe";
-        notifications.accessibilityHint = self.feed.isSubscribed ? @"Unsubscribe from notifications" : @"Subscribe to notifications";
-        notifications.width = 32.f;
-        
-        NSMutableArray *buttons = @[allReadBackDated, notifications].mutableCopy;
-        
-        if ([self showsSortingButton]) {
-            [buttons addObject:sorting];
-        }
-        
-        return buttons;
-    }
+//    }
+//    else {
+//        // push notifications are possible
+//        NSString *imageString = self.feed.isSubscribed ? @"bell.fill" : @"bell.slash";
+//        
+//        UIBarButtonItem *notifications = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:imageString] style:UIBarButtonItemStylePlain target:self action:@selector(didTapNotifications:)];
+//        notifications.accessibilityValue = self.feed.isSubscribed ? @"Subscribe" : @"Unsubscribe";
+//        notifications.accessibilityHint = self.feed.isSubscribed ? @"Unsubscribe from notifications" : @"Subscribe to notifications";
+//        notifications.width = 32.f;
+//        
+//        NSMutableArray *buttons = @[allReadBackDated, notifications].mutableCopy;
+//        
+//        if ([self showsSortingButton]) {
+//            [buttons addObject:sorting];
+//        }
+//        
+//        return buttons;
+//    }
     
 }
 

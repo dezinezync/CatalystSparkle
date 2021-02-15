@@ -101,9 +101,11 @@
 #ifdef DEBUG
 #if !TARGET_OS_MACCATALYST
     // 4800
-    return [self processUUID:@"000768.e759fc828ab249ad98ceefc5f80279b3.1145"];
+//    return [self processUUID:@"000768.e759fc828ab249ad98ceefc5f80279b3.1145"];
     // Expired account, 6506
 //    return [self processUUID:@"001713.e2309676d2be41f99cd394575b53effd.1544"];
+    // Test account (Local)
+    return [self processUUID:@"7EBC0714-2F66-4B8C-BE5B-4014E4ECD04F"];
 #endif
 #endif
     
