@@ -202,8 +202,8 @@ NSArray <NSString *> * _defaultsKeys;
         
         NSDictionary *feedCounters = [responseObject valueForKey:@"feeds"];
         
-        self.totalUnread = MAX(0, unread.integerValue);
-        self.totalToday = MAX(0, today.integerValue);
+//        self.totalUnread = MAX(0, unread.integerValue);
+//        self.totalToday = MAX(0, today.integerValue);
         
         [self updateSharedUnreadCounters];
         
