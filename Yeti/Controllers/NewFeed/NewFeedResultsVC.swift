@@ -67,4 +67,18 @@ class NewFeedResultsVC: UITableViewController {
         
     }
     
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        guard let item = DS.itemIdentifier(for: indexPath) else {
+            return
+        }
+        
+        let instance = FeedPreviewVC(collectionViewLayout: FeedPreviewVC.layout)
+        instance.item = item
+        
+        let nav = UINavigationController(rootViewController: instance)
+        self.present(nav, animated: true, completion: nil)
+        
+    }
+    
 }

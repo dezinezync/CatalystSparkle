@@ -283,7 +283,7 @@ NSString* deviceName() {
     vc.mainCoordinator = self;
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-    nav.modalPresentationStyle = UIModalPresentationFullScreen;
+    nav.modalPresentationStyle = UIModalPresentationFormSheet;
     
     [self.splitViewController presentViewController:nav animated:YES completion:nil];
     
