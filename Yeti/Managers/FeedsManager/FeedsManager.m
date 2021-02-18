@@ -197,8 +197,8 @@ NSArray <NSString *> * _defaultsKeys;
       
         strongify(self);
 
-        NSNumber *unread = [responseObject valueForKey:@"unread"];
-        NSNumber *today = [responseObject valueForKey:@"todayCount"];
+//        NSNumber *unread = [responseObject valueForKey:@"unread"];
+//        NSNumber *today = [responseObject valueForKey:@"todayCount"];
         
         NSDictionary *feedCounters = [responseObject valueForKey:@"feeds"];
         

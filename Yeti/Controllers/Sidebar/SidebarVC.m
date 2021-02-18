@@ -1120,86 +1120,10 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     _refreshing = YES;
     
-//    [self fetchLatestCounters];
     [self updateSharedData];
     
     [MyDBManager setValue:@(NO) forKey:@"syncSetup"];
     [MyDBManager setupSync];
-    
-}
-
-- (void)fetchLatestCounters {
-    
-    if (self->_fetchingCounters == YES) {
-        return;
-    }
-    
-    self->_fetchingCounters = YES;
-    
-    [MyFeedsManager getCountersWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        self->_fetchingCounters = NO;
-        self->_refreshing = NO;
-        
-        MyFeedsManager.unreadLastUpdate = NSDate.date;
-        
-        NSDiffableDataSourceSnapshot *snapshot = self.DS.snapshot;
-        
-        if (snapshot == nil) {
-
-            [self setupData];
-
-        }
-        else {
-            
-            NSIndexPath *selected = [[self.collectionView indexPathsForSelectedItems] firstObject];
-            
-            NSArray <NSIndexPath *> *visible = [self.collectionView indexPathsForVisibleItems];
-            
-            NSMutableArray *identifiers = [NSMutableArray arrayWithCapacity:visible.count];
-            
-            for (NSIndexPath *indexPath in visible) {
-                
-                id item = [self.DS itemIdentifierForIndexPath:indexPath];
-                
-                if (item != nil) {
-                    [identifiers addObject:item];
-                }
-                
-            }
-            
-            [snapshot reloadItemsWithIdentifiers:identifiers];
-            
-            [self.DS applySnapshot:snapshot animatingDifferences:NO];
-            
-            if (selected != nil) {
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                   
-                    [self.collectionView selectItemAtIndexPath:selected animated:NO scrollPosition:UICollectionViewScrollPositionNone];
-                    
-                });
-                
-            }
-            
-        }
-
-        if ([self.refreshControl isRefreshing]) {
-            [self.refreshControl endRefreshing];
-        }
-        
-        if (self->_refreshFeedsCounter > 0) {
-            self->_refreshFeedsCounter = 0;
-        }
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        NSLog(@"Error: Failed to fetch counters with error:%@", error.localizedDescription);
-        
-        self->_fetchingCounters = NO;
-        self->_refreshing = NO;
-        
-    }];
     
 }
 

@@ -170,8 +170,6 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         
         dispatch_async(dispatch_get_main_queue(), ^{
             
-            [self checkIfResetIsNeeded];
-            
             [ArticlesManager.shared willBeginUpdatingStore];
             
             [self loadFeeds];
@@ -309,60 +307,6 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     }
     
     return self;
-}
-
-- (void)checkIfResetIsNeeded {
-    
-    __block NSNumber * lastFetch = nil;
-    
-    [self.uiConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
-        
-        lastFetch = [transaction objectForKey:kLastFeedsFetchTimeInterval inCollection:LOCAL_SETTINGS_COLLECTION];
-        
-    }];
-    
-    BOOL shouldResetAndRefresh = NO;
-    
-    if (lastFetch == nil) {
-        
-        shouldResetAndRefresh = YES;
-        
-    }
-    else {
-        
-        NSDate *today = NSDate.date;
-        
-        NSDate *earlier = [NSDate dateWithTimeIntervalSince1970:lastFetch.doubleValue];
-        
-        NSTimeInterval diff = [today timeIntervalSinceDate:earlier];
-        
-        NSLogDebug(@"Time interval since last reset: %@", @(diff));
-        
-        // if it has been more than 3 days
-        if (diff > 259200) {
-            
-            shouldResetAndRefresh = YES;
-            
-        }
-        
-    }
-    
-    if (shouldResetAndRefresh) {
-        
-        [self purgeDataForResync];
-        
-        [self->_syncQueue addOperationWithBlock:^{
-            
-            [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
-               
-                [transaction setObject:@(NSDate.date.timeIntervalSince1970) forKey:kLastFeedsFetchTimeInterval inCollection:LOCAL_SETTINGS_COLLECTION];
-                
-            }];
-            
-        }];
-        
-    }
-    
 }
 
 #pragma mark - Methods
