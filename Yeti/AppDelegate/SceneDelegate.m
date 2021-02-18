@@ -349,13 +349,15 @@
                 return;
             }
             
-            [MyFeedsManager getCountersWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                
-                [vc setupData];
-
-                [vc.refreshControl setAttributedTitle:[vc lastUpdateAttributedString]];
-                
-            } error:nil];
+            [vc.refreshControl setAttributedTitle:[vc lastUpdateAttributedString]];
+            
+//            [MyFeedsManager getCountersWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//                [vc setupData];
+//
+//                [vc.refreshControl setAttributedTitle:[vc lastUpdateAttributedString]];
+//
+//            } error:nil];
             
         }];
 

@@ -341,6 +341,9 @@
 		F0BC8C0125205CF100FADCBB /* GeneralPreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0BC8BFF25205CF000FADCBB /* GeneralPreferenceViewController.xib */; };
 		F0BC8C072520636200FADCBB /* Keychain.m in Sources */ = {isa = PBXBuildFile; fileRef = F01285C123436D8D00B8C277 /* Keychain.m */; };
 		F0BFD6FA24580543009A863C /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0B482792455F64900EE5AA2 /* DZKit.framework */; };
+		F0C16FB325DD4AAF005BAA9E /* NewFeedVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C16FB225DD4AAF005BAA9E /* NewFeedVC.swift */; };
+		F0C1704D25DD4B1D005BAA9E /* FeedsLib in Frameworks */ = {isa = PBXBuildFile; productRef = F0C1704C25DD4B1D005BAA9E /* FeedsLib */; };
+		F0C1705425DD4CFE005BAA9E /* NewFeedResultsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C1705325DD4CFE005BAA9E /* NewFeedResultsVC.swift */; };
 		F0C6E049234AFCF8001EED23 /* StoreReceiptVerifier.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C6E048234AFCF8001EED23 /* StoreReceiptVerifier.m */; };
 		F0C8953525622CA0002F365E /* UITextField+CursorPosition.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C8953425622CA0002F365E /* UITextField+CursorPosition.m */; };
 		F0C9F7D6215250980078FB8F /* FeedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C9F7D5215250980078FB8F /* FeedCell.m */; };
@@ -391,6 +394,9 @@
 		F0E86491234793870089F9EF /* ArticleVC+Photos.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E86490234793870089F9EF /* ArticleVC+Photos.m */; };
 		F0E86494234796B80089F9EF /* ArticlePhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E86493234796B80089F9EF /* ArticlePhoto.m */; };
 		F0ED9814234C50F6007449AF /* StoreKeychainPersistence.m in Sources */ = {isa = PBXBuildFile; fileRef = F0ED9813234C50F6007449AF /* StoreKeychainPersistence.m */; };
+		F0EDAC7625DE0C950074ED1E /* NewFeedReccomendationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0EDAC7425DE0C950074ED1E /* NewFeedReccomendationCell.swift */; };
+		F0EDAC7725DE0C950074ED1E /* NewFeedReccomendationCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0EDAC7525DE0C950074ED1E /* NewFeedReccomendationCell.xib */; };
+		F0EDAD0525DE17A60074ED1E /* NewFeedResultCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0EDAD0425DE17A60074ED1E /* NewFeedResultCell.swift */; };
 		F0EE6CD624CABCAE00E987FC /* SidebarVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EE6CD524CABCAE00E987FC /* SidebarVC.m */; };
 		F0EEC86021ECB2420046BB12 /* reader.css in Resources */ = {isa = PBXBuildFile; fileRef = F0EEC85F21ECB2420046BB12 /* reader.css */; };
 		F0EFA63A205FDC5A00815ED7 /* ArticleHelperView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EFA639205FDC5A00815ED7 /* ArticleHelperView.m */; };
@@ -2010,6 +2016,7 @@
 		F0A7B8F320FA21C00056A2C0 /* _YetiStoreVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = _YetiStoreVC.m; sourceTree = "<group>"; };
 		F0AD76D320E2217C0003787B /* Reachability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		F0AD76D420E2217C0003787B /* Reachability.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
+		F0AE1ADE25DB83BB0005CBEF /* FeedsLib */ = {isa = PBXFileReference; lastKnownFileType = folder; path = FeedsLib; sourceTree = "<group>"; };
 		F0AF313F20D287E600E074D6 /* IntroViewDefault.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = IntroViewDefault.xib; sourceTree = "<group>"; };
 		F0AF314220D287F400E074D6 /* IntroViewDefault.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntroViewDefault.h; sourceTree = "<group>"; };
 		F0AF314320D287F400E074D6 /* IntroViewDefault.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IntroViewDefault.m; sourceTree = "<group>"; };
@@ -2046,6 +2053,8 @@
 		F0BC8BF725205C4400FADCBB /* PreferencesController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesController.swift; sourceTree = "<group>"; };
 		F0BC8BFE25205CF000FADCBB /* GeneralPreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneralPreferenceViewController.swift; sourceTree = "<group>"; };
 		F0BC8BFF25205CF000FADCBB /* GeneralPreferenceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GeneralPreferenceViewController.xib; sourceTree = "<group>"; };
+		F0C16FB225DD4AAF005BAA9E /* NewFeedVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFeedVC.swift; sourceTree = "<group>"; };
+		F0C1705325DD4CFE005BAA9E /* NewFeedResultsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFeedResultsVC.swift; sourceTree = "<group>"; };
 		F0C4F8C4234C69B900D57C18 /* DZNetworking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZNetworking.xcodeproj; path = Vendors/DZNetworking/DZNetworking.xcodeproj; sourceTree = "<group>"; };
 		F0C6E047234AFCF8001EED23 /* StoreReceiptVerifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StoreReceiptVerifier.h; sourceTree = "<group>"; };
 		F0C6E048234AFCF8001EED23 /* StoreReceiptVerifier.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = StoreReceiptVerifier.m; sourceTree = "<group>"; };
@@ -2127,6 +2136,9 @@
 		F0E86493234796B80089F9EF /* ArticlePhoto.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArticlePhoto.m; sourceTree = "<group>"; };
 		F0ED9812234C50F6007449AF /* StoreKeychainPersistence.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StoreKeychainPersistence.h; sourceTree = "<group>"; };
 		F0ED9813234C50F6007449AF /* StoreKeychainPersistence.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = StoreKeychainPersistence.m; sourceTree = "<group>"; };
+		F0EDAC7425DE0C950074ED1E /* NewFeedReccomendationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFeedReccomendationCell.swift; sourceTree = "<group>"; };
+		F0EDAC7525DE0C950074ED1E /* NewFeedReccomendationCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NewFeedReccomendationCell.xib; sourceTree = "<group>"; };
+		F0EDAD0425DE17A60074ED1E /* NewFeedResultCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFeedResultCell.swift; sourceTree = "<group>"; };
 		F0EE6CD424CABCAE00E987FC /* SidebarVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SidebarVC.h; sourceTree = "<group>"; };
 		F0EE6CD524CABCAE00E987FC /* SidebarVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SidebarVC.m; sourceTree = "<group>"; };
 		F0EE6CD724CABEE000E987FC /* Coordinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Coordinator.h; sourceTree = "<group>"; };
@@ -2192,6 +2204,7 @@
 				F0B4827E2455F65600EE5AA2 /* YapDatabase.framework in Frameworks */,
 				F02A4894252653C7001063E9 /* SDWebImage in Frameworks */,
 				F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */,
+				F0C1704D25DD4B1D005BAA9E /* FeedsLib in Frameworks */,
 				F08C5DFF2386567F0055946F /* DZAppdelegate.framework in Frameworks */,
 				F0B4827C2455F65000EE5AA2 /* DZKit.framework in Frameworks */,
 				F0448D0C244463B7003B6AA7 /* CoreServices.framework in Frameworks */,
@@ -2592,6 +2605,7 @@
 		F070C2D01FBABC3500912CCF = {
 			isa = PBXGroup;
 			children = (
+				F0AE1ADE25DB83BB0005CBEF /* FeedsLib */,
 				F0D98F5F24EE4C8500B1F9F0 /* UnreadsWidgetExtension.entitlements */,
 				F070C2DB1FBABC3500912CCF /* Yeti */,
 				F070C2F41FBABC3600912CCF /* YetiTests */,
@@ -3308,6 +3322,11 @@
 				F0A0501B21F07BFF00A46524 /* AddFeedVC.m */,
 				F03C4EBB2510CE8A008561DB /* NewFolderController.h */,
 				F03C4EBC2510CE8A008561DB /* NewFolderController.m */,
+				F0C16FB225DD4AAF005BAA9E /* NewFeedVC.swift */,
+				F0C1705325DD4CFE005BAA9E /* NewFeedResultsVC.swift */,
+				F0EDAC7425DE0C950074ED1E /* NewFeedReccomendationCell.swift */,
+				F0EDAC7525DE0C950074ED1E /* NewFeedReccomendationCell.xib */,
+				F0EDAD0425DE17A60074ED1E /* NewFeedResultCell.swift */,
 			);
 			path = NewFeed;
 			sourceTree = "<group>";
@@ -3620,6 +3639,7 @@
 			name = Elytra;
 			packageProductDependencies = (
 				F02A4893252653C7001063E9 /* SDWebImage */,
+				F0C1704C25DD4B1D005BAA9E /* FeedsLib */,
 			);
 			productName = Yeti;
 			productReference = F070C2D91FBABC3500912CCF /* Elytra.app */;
@@ -4921,6 +4941,7 @@
 				F0A5AEBA20C19DA200CFA1D2 /* IBMPlexSans-Medium.ttf in Resources */,
 				F0DB58FB23F575400008D871 /* CustomizationHeader.xib in Resources */,
 				F032A770244D89AF0024AC63 /* reader-dark.json in Resources */,
+				F0EDAC7725DE0C950074ED1E /* NewFeedReccomendationCell.xib in Resources */,
 				F01E6E1424AC6C2500D1BD6E /* gold-dark@2x.png in Resources */,
 				F044B3CA2338A6E900DD8E90 /* BookmarksMigrationVC.xib in Resources */,
 				F047F4F420C25FB900626968 /* Spectral-Medium.ttf in Resources */,
@@ -5084,6 +5105,7 @@
 				F0DDA0F420E5F84C00C5D97E /* FeedsGridCell.m in Sources */,
 				F0519D4B20848D4D00EB3FE0 /* FiltersVC.m in Sources */,
 				F03C4EBD2510CE8A008561DB /* NewFolderController.m in Sources */,
+				F0EDAC7625DE0C950074ED1E /* NewFeedReccomendationCell.swift in Sources */,
 				F050F30D2521FB980032328F /* SidebarSearchView.m in Sources */,
 				F05B93322091BA50009BBDDB /* MoveFoldersVC.m in Sources */,
 				F085785521D1EAE200CC2B95 /* PreviewLinesVC.m in Sources */,
@@ -5106,6 +5128,7 @@
 				F04E92BF21B5429300AD1FB2 /* NSString+Components.m in Sources */,
 				F0D07206205E9EC500A042CD /* DZWebViewController.m in Sources */,
 				F070C2EC1FBABC3600912CCF /* main.m in Sources */,
+				F0C16FB325DD4AAF005BAA9E /* NewFeedVC.swift in Sources */,
 				F0B0EA3424EC1EDD00D675B4 /* NSString+ImageProxy.m in Sources */,
 				F0F35B2C2577A05D0043982C /* FeedInfoCell.swift in Sources */,
 				F093319424EC14A90066FA41 /* CustomFeed.m in Sources */,
@@ -5167,6 +5190,7 @@
 				F0F35B0A257779CD0043982C /* FeedInfoController.swift in Sources */,
 				F00F644424EC1BC700E5727C /* Range.m in Sources */,
 				F064A53B21576E7200A385AD /* UIImage+Color.m in Sources */,
+				F0C1705425DD4CFE005BAA9E /* NewFeedResultsVC.swift in Sources */,
 				F00F643D24EC1BC700E5727C /* MetaOpenGraph.m in Sources */,
 				F0F10A9D244C8020009FC108 /* DTError.m in Sources */,
 				F070C2DE1FBABC3600912CCF /* AppDelegate.m in Sources */,
@@ -5240,6 +5264,7 @@
 				F05C7A9F20D8E1F3007D6B5C /* TableHeader.m in Sources */,
 				F0F10A99244C8020009FC108 /* DTTimePeriod.m in Sources */,
 				F093321024EC14CF0066FA41 /* FeedsManagerErrors.m in Sources */,
+				F0EDAD0525DE17A60074ED1E /* NewFeedResultCell.swift in Sources */,
 				F06F8E2125A479CD0033BC67 /* PushRequestVC.swift in Sources */,
 				F093320E24EC14CF0066FA41 /* FeedsManager.m in Sources */,
 				F0123C4C224D216300EDFF92 /* ArticleAuthorView.m in Sources */,
@@ -6136,6 +6161,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F02A4892252653C7001063E9 /* XCRemoteSwiftPackageReference "SDWebImage" */;
 			productName = SDWebImage;
+		};
+		F0C1704C25DD4B1D005BAA9E /* FeedsLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FeedsLib;
 		};
 		F0D424222526557C00837194 /* SDWebImage */ = {
 			isa = XCSwiftPackageProductDependency;
