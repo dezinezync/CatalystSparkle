@@ -357,6 +357,7 @@
 		F0CDA0D4247524F900DC1217 /* FolderVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CDA0D3247524F900DC1217 /* FolderVC.m */; };
 		F0CDA0D724752C6C00DC1217 /* AuthorVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CDA0D624752C6C00DC1217 /* AuthorVC.m */; };
 		F0CEA1742035B91B0082F4E7 /* NSString+Levenshtein.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CEA1732035B91B0082F4E7 /* NSString+Levenshtein.m */; };
+		F0CF4FC325DF700000E12411 /* String+URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CF4FC225DF700000E12411 /* String+URL.swift */; };
 		F0D01CC32118681C003A01DD /* dark@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0D01CC02118681B003A01DD /* dark@3x.png */; };
 		F0D01CC52118681C003A01DD /* dark.png in Resources */ = {isa = PBXBuildFile; fileRef = F0D01CC12118681C003A01DD /* dark.png */; };
 		F0D01CC72118681C003A01DD /* dark@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0D01CC22118681C003A01DD /* dark@2x.png */; };
@@ -2086,6 +2087,8 @@
 		F0CDA0D624752C6C00DC1217 /* AuthorVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AuthorVC.m; sourceTree = "<group>"; };
 		F0CEA1722035B91B0082F4E7 /* NSString+Levenshtein.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+Levenshtein.h"; sourceTree = "<group>"; };
 		F0CEA1732035B91B0082F4E7 /* NSString+Levenshtein.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+Levenshtein.m"; sourceTree = "<group>"; };
+		F0CF4F3525DF68BB00E12411 /* MoveFoldersDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MoveFoldersDelegate.h; sourceTree = "<group>"; };
+		F0CF4FC225DF700000E12411 /* String+URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+URL.swift"; sourceTree = "<group>"; };
 		F0D01CC02118681B003A01DD /* dark@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dark@3x.png"; sourceTree = "<group>"; };
 		F0D01CC12118681C003A01DD /* dark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dark.png; sourceTree = "<group>"; };
 		F0D01CC22118681C003A01DD /* dark@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dark@2x.png"; sourceTree = "<group>"; };
@@ -2738,6 +2741,7 @@
 				F047CB6E2579F98E00395DC2 /* UIControlSubscription.swift */,
 				F09B951F25AC0C3D004440E3 /* DZLoggingJSONResponseParser.h */,
 				F09B952025AC0C3D004440E3 /* DZLoggingJSONResponseParser.m */,
+				F0CF4F3525DF68BB00E12411 /* MoveFoldersDelegate.h */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -2787,6 +2791,7 @@
 				F0F049622532EB6A001CF7E1 /* NSString+CJK.m */,
 				F0C8953325622CA0002F365E /* UITextField+CursorPosition.h */,
 				F0C8953425622CA0002F365E /* UITextField+CursorPosition.m */,
+				F0CF4FC225DF700000E12411 /* String+URL.swift */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -5170,6 +5175,7 @@
 				F0F44E4624CEFDA20044CA01 /* SidebarVC+SearchResults.m in Sources */,
 				F01285C323436D8D00B8C277 /* Keychain.m in Sources */,
 				F01A34BC219C556C00D020F3 /* TwoFingerPanGestureRecognizer.m in Sources */,
+				F0CF4FC325DF700000E12411 /* String+URL.swift in Sources */,
 				F0A589F5205A580300488015 /* LinguisticSearch.m in Sources */,
 				F02B705124EA7E5C00DD607F /* IDMZoomingScrollView.m in Sources */,
 				F070C3591FBAE7A200912CCF /* ArticleVC.m in Sources */,

@@ -28,6 +28,8 @@ private let recommendationTopics = [
 
 @objc class NewFeedVC: UICollectionViewController {
     
+    @objc weak var moveFoldersDelegate: (NSObject & MoveFoldersDelegate)?
+    
     @objc public static let gridLayout: UICollectionViewCompositionalLayout = {
         
         let layout = UICollectionViewCompositionalLayout { (sectionNumber, env) -> NSCollectionLayoutSection? in
@@ -59,10 +61,14 @@ private let recommendationTopics = [
        
         var sc = UISearchController(searchResultsController: NewFeedResultsVC(style: .plain))
         sc.searchResultsUpdater = self
-//        sc.delegate = self
+        (sc.searchResultsController as! NewFeedResultsVC).moveFoldersDelegate = self.moveFoldersDelegate
         sc.obscuresBackgroundDuringPresentation = false
         sc.searchBar.placeholder = "#topic or Website URL"
         sc.searchBar.accessibilityHint = sc.searchBar.placeholder
+        sc.searchBar.textContentType = .URL
+        sc.searchBar.keyboardType = .URL
+        sc.searchBar.autocapitalizationType = .none
+        sc.searchBar.delegate = self
         
         return sc
         
@@ -81,10 +87,6 @@ private let recommendationTopics = [
         
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-    }
-    
     // MARK: - Setups
     func setupCollectionView() {
         
@@ -98,9 +100,11 @@ private let recommendationTopics = [
     
     func setupNavBar() {
         
-        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.hidesSearchBarWhenScrolling = false
         
+        navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .automatic
+        
         navigationItem.searchController = searchController
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(didTapCancel))
@@ -151,19 +155,29 @@ extension NewFeedVC {
     
 }
 
-extension NewFeedVC: UISearchResultsUpdating {
+extension NewFeedVC: UISearchResultsUpdating, UISearchBarDelegate {
     
     func updateSearchResults(for searchController: UISearchController) {
+        
+        guard (searchController.searchBar.text ?? "").contains("#") == true else {
+            return
+        }
+        
+        searchBarTextDidEndEditing(searchController.searchBar)
+        
+    }
+    
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
         
         guard isLoading == false else {
             return
         }
         
-        guard let text = searchController.searchBar.text else {
+        guard let text = searchBar.text else {
             return
         }
         
-        guard let resultsInstance = self.searchController.searchResultsController as? NewFeedResultsVC else {
+        guard let resultsInstance = searchController.searchResultsController as? NewFeedResultsVC else {
             return
         }
         
@@ -187,19 +201,41 @@ extension NewFeedVC: UISearchResultsUpdating {
                 return
             }
             
+            searchTopic(stripped)
+            
         }
         else {
-            stripped = text
+            
+            resultsInstance.results = nil
+            
+            guard text.isValidURL == true, let url = URL(string: text) else {
+                return
+            }
+            
+            searchURL(url, isYoutube: false)
+            
         }
+        
+    }
+    
+    func searchTopic(_ topic: String) {
         
         let locale = Locale.current.languageCode ?? "en"
         
         isLoading = true
         
-        FeedsLib.shared.getRecommendations(topic: stripped.lowercased(), locale: locale) { [weak self] (error: Error?, response: RecommendationsResponse?) in
+        guard let resultsInstance = self.searchController.searchResultsController as? NewFeedResultsVC else {
+            return
+        }
+        
+        FeedsLib.shared.getRecommendations(topic: topic.lowercased(), locale: locale) { [weak self] (error: Error?, response: RecommendationsResponse?) in
             
             guard let sself = self else {
                 return
+            }
+            
+            if sself.searchController.searchBar.isFirstResponder == true {
+                sself.searchController.searchBar.resignFirstResponder()
             }
          
             sself.isLoading = false
@@ -220,10 +256,44 @@ extension NewFeedVC: UISearchResultsUpdating {
         
     }
     
+    func searchURL(_ url: URL, isYoutube: Bool?) {
+        
+        if url.absoluteString.contains("youtube.com") == true, url.absoluteString.contains("videos.xml") == false,
+           isYoutube == false {
+            
+            MyFeedsManager._checkYoutubeFeed(url) { [weak self] (responseObject, _, _) in
+                
+                guard let url = responseObject as? URL else {
+                    return
+                }
+                
+                self?.searchURL(url, isYoutube: true)
+                
+            } error: { (error, _, _) in
+                
+                guard let error = error else {
+                    return
+                }
+                
+                AlertManager.showGenericAlert(withTitle: "An Error Occurred", message: error.localizedDescription)
+                
+            }
+            
+            return
+            
+        }
+        
+        let item = FeedRecommendation()
+        item.id = "feed/\(url.absoluteString)"
+        item.title = isYoutube == true ? "Youtube Channel" : "Untitled"
+        
+        let instance = FeedPreviewVC(collectionViewLayout: FeedPreviewVC.layout)
+        instance.item = item
+        instance.moveFoldersDelegate = self.moveFoldersDelegate
+        
+        let nav = UINavigationController(rootViewController: instance)
+        self.present(nav, animated: true, completion: nil)
+        
+    }
+    
 }
-
-//extension NewFeedVC: UISearchControllerDelegate {
-//
-//
-//
-//}

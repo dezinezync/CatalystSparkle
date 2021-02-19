@@ -614,20 +614,16 @@ NSArray <NSString *> * _defaultsKeys;
         [Keychain add:YTSubscriptionHasAddedFirstFeed boolean:YES];
         
         NSDictionary *feedObj = [responseObject valueForKey:@"feed"];
-//        NSArray *articlesObj = [responseObject valueForKey:@"articles"];
-        
-//        NSArray <FeedItem *> *articles = [articlesObj rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-//            return [FeedItem instanceFromDictionary:obj];
-//        }];
-        
+
         Feed *feed = [Feed instanceFromDictionary:feedObj];
-//        feed.articles = articles;
         
         if (self.additionalFeedsToSync == nil) {
             self.additionalFeedsToSync = [NSMutableSet new];
         }
         
         [self.additionalFeedsToSync addObject:feed.feedID];
+        
+        ArticlesManager.shared.feeds = [ArticlesManager.shared.feeds arrayByAddingObject:feed];
         
         if (successCB)
             successCB(feed, response, task);
@@ -1316,7 +1312,7 @@ NSArray <NSString *> * _defaultsKeys;
         NSString *canonical = nil;
         
         // HTML
-        NSString *startString = @"<link rel=\"canonical\" href=\"";
+        NSString *startString = @"<link rel=\"alternate\" type=\"application/rss+xml\" title=\"RSS\" href=\"";
         
         NSScanner *scanner = [[NSScanner alloc] initWithString:html];
         
@@ -1337,8 +1333,10 @@ NSArray <NSString *> * _defaultsKeys;
         
         if (successCB) {
             
+            NSURL *url = [NSURL URLWithString:canonical];
+            
             dispatch_async(dispatch_get_main_queue(), ^{
-                successCB(canonical, (NSHTTPURLResponse *)response, task);
+                successCB(url, (NSHTTPURLResponse *)response, task);
             });
             
         }
@@ -1662,7 +1660,20 @@ NSArray <NSString *> * _defaultsKeys;
                 
                 if (addedFeeds != nil && [addedFeeds isKindOfClass:NSArray.class] && addedFeeds.count) {
                     
-                    [folder.feeds addObjectsFromArray:addedFeeds];
+                    if ([folder.feeds isKindOfClass:NSPointerArray.class] == false) {
+                        
+                        if ([folder.feeds isKindOfClass:NSArray.class]) {
+                            
+                            NSArray <Feed *> *feeds = (NSArray *)[folder feeds];
+                            
+                            folder.feeds = [NSPointerArray weakObjectsPointerArray];
+                            [folder.feeds addObjectsFromArray:feeds];
+                            
+                        }
+                        
+                    }
+                    
+                    [(NSPointerArray *)[folder feeds] addObjectsFromArray:addedFeeds];
                     
                 }
                 

@@ -7,3 +7,4 @@
 #import "FeedsManager.h"
 #import "DBManager.h"
 #import "NSString+ImageProxy.h"
+#import "MoveFoldersDelegate.h"

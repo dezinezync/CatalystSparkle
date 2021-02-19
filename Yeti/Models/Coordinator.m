@@ -281,6 +281,7 @@ NSString* deviceName() {
     
     NewFeedVC *vc = [[NewFeedVC alloc] initWithCollectionViewLayout:NewFeedVC.gridLayout];
     vc.mainCoordinator = self;
+    vc.moveFoldersDelegate = self.sidebarVC;
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
     nav.modalPresentationStyle = UIModalPresentationFormSheet;

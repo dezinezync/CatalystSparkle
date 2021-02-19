@@ -21,6 +21,8 @@ class FeedPreviewDatasource : UICollectionViewDiffableDataSource<FeedPreviewSect
 
 class FeedPreviewVC: UICollectionViewController {
     
+    weak var moveFoldersDelegate: (NSObject & MoveFoldersDelegate)?
+    
     var item: FeedRecommendation!
     var headerRegistration: UICollectionView.SupplementaryRegistration<FeedPreviewHeader>!
     var folderRegistration: UICollectionView.CellRegistration<PreviewFolderCell, Folder>!
@@ -111,17 +113,18 @@ class FeedPreviewVC: UICollectionViewController {
                 return
             }
             
-            guard let iconUrl = sself.item.iconUrl else {
-                return
-            }
-            
-            guard let url = URL(string: iconUrl) else {
-                return
+            if let iconUrl = sself.item.iconUrl {
+                
+                if let url = URL(string: iconUrl) {
+                    
+                    header.imageView.sd_setImage(with: url, completed: nil)
+                    
+                }
+                
             }
             
             header.titleLabel.text = sself.item.title
             header.subtitleLabel.text = sself.item.id?.replacingOccurrences(of: "feed/", with: "")
-            header.imageView.sd_setImage(with: url, completed: nil)
             
         }
         
@@ -196,6 +199,14 @@ class FeedPreviewVC: UICollectionViewController {
             if let selected = sself.selectedFolder {
                 
                 MyFeedsManager.update(selected, add: [feed.feedID], remove: nil) { (_, _, _) in
+                    
+                    if let delegate = sself.moveFoldersDelegate {
+                        
+                        if delegate.responds(to: #selector(MoveFoldersDelegate.feed(_:didMoveFrom:to:))) {
+                            delegate.feed(feed, didMoveFrom: nil, to: selected)
+                        }
+                        
+                    }
                     
                     sself.dismissSelf()
                     

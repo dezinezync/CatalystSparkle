@@ -227,6 +227,12 @@
                         [obj.feeds removeAllObjects];
                         [obj.feeds addObjectsFromArray:feeds];
                         
+                        obj.feedIDs = [NSSet setWithArray:[obj.feedIDs.allObjects rz_filter:^BOOL(NSNumber *obj, NSUInteger idx, NSArray *array) {
+                            
+                            return obj.unsignedIntegerValue != __feed.feedID.unsignedIntegerValue;
+                            
+                        }]];
+                        
                         *stop = YES;
                     }
                     

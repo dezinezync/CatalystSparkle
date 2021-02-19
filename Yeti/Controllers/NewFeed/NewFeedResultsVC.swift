@@ -11,6 +11,8 @@ import FeedsLib
 
 class NewFeedResultsVC: UITableViewController {
     
+    weak var moveFoldersDelegate: (NSObject & MoveFoldersDelegate)?
+    
     var results: RecommendationsResponse? {
         
         didSet {
@@ -75,6 +77,7 @@ class NewFeedResultsVC: UITableViewController {
         
         let instance = FeedPreviewVC(collectionViewLayout: FeedPreviewVC.layout)
         instance.item = item
+        instance.moveFoldersDelegate = self.moveFoldersDelegate
         
         let nav = UINavigationController(rootViewController: instance)
         self.present(nav, animated: true, completion: nil)

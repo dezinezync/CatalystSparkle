@@ -1834,23 +1834,12 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
             return;
         }
         
-//        Feed *feed = [Feed new];
-//        feed.feedID = feedID;
-//
-//        NSDictionary *metadata = [MyDBManager metadataForFeed:feed];
-//
-//        // insert these articles to the DB.
-//        for (FeedItem *item in responseObject) {
-//
-//            [self addArticle:item];
-//
-//        }
-//
-//        if ([([metadata valueForKey:kFeedLocalNotifications] ?: @(NO)) boolValue] == YES) {
-//
-//            [self showNotificationsFor:responseObject];
-//
-//        }
+        // insert these articles to the DB.
+        for (FeedItem *item in responseObject) {
+
+            [self addArticle:item];
+
+        }
         
         // do not load more than 100 articles.
         if (responseObject.count == 20 && (page + 1) <= 5) {

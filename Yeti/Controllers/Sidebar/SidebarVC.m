@@ -449,9 +449,9 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
                     
                     folder.feeds = pointers;
                     
-                    feeds = [folder.feeds.allObjects sortedArrayUsingDescriptors:@[alphaSort]];
-                    
                 }
+                
+                feeds = [[NSSet setWithArray:folder.feeds.allObjects].allObjects sortedArrayUsingDescriptors:@[alphaSort]];
                 
                 [foldersSnapshot appendItems:feeds intoParentItem:folder];
                 
