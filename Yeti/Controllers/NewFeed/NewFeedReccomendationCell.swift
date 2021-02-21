@@ -31,7 +31,7 @@ class NewFeedReccomendationCell: UICollectionViewCell {
         shadowView.layer.shadowPath = UIBezierPath(roundedRect: shadowView.bounds, cornerRadius: 6).cgPath
         shadowView.backgroundColor = .clear
         
-        roundedRectView.layer.cornerRadius = 6
+        roundedRectView.layer.cornerRadius = 12
         roundedRectView.layer.cornerCurve = .continuous
         roundedRectView.clipsToBounds = true
         roundedRectView.backgroundColor = .systemBackground

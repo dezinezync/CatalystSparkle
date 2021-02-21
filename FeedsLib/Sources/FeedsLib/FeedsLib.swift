@@ -169,7 +169,10 @@ import WebKit
                     
                     let result = try decoder.decode(FeedInfoResponse.self, from: data)
                     
-                    completion?(nil, result)
+                    DispatchQueue.main.async {
+                        completion?(nil, result)
+                    }
+                    
                     return
                     
                 }

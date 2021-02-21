@@ -8,22 +8,35 @@
 import Foundation
 
 @objc public class FeedInfo: NSObject, Codable {
-    var id: String? = nil
-    var feedId: String? = nil
-    var title: String? = nil
-    var iconUrl: String? = nil
-    var website: String? = nil
-    var visualUrl: String? = nil
-    var subscribers: Int = 0
-    var updated: Date? = nil
-    var lastUpdated: Date? = nil
-    var priority: UInt = 0
+    public var id: String? = nil
+    public var feedId: String? = nil
+    public var title: String? = nil
+    public var iconUrl: String? = nil
+    public var website: String? = nil
+    public var visualUrl: String? = nil
+    public var subscribers: Int? = 0
+    public var updated: Date? = nil
+    public var lastUpdated: Date? = nil
+    public var priority: UInt? = 0
+    
+    public func toRecommendation () -> FeedRecommendation {
+        
+        let recco = FeedRecommendation()
+        recco.title = title
+        recco.id = id
+        recco.iconUrl = iconUrl
+        recco.visualUrl = visualUrl
+        
+        return recco
+        
+    }
+    
 }
 
 @objc public class FeedInfoResponse: NSObject, Codable {
     
-    var results: [FeedInfo]? = nil
-    var queryType: String? = nil
-    var scheme: String? = nil
+    public var results: [FeedInfo]? = nil
+    public var queryType: String? = nil
+    public var scheme: String? = nil
     
 }

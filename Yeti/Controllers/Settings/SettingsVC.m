@@ -84,7 +84,7 @@ typedef NS_ENUM(NSUInteger, SectionOneRows) {
     
     [self.tableView registerClass:SettingsCell.class forCellReuseIdentifier:kSettingsCell];
     
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"xmark"] style:UIBarButtonItemStyleDone target:self action:@selector(didTapDone)];
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"xmark"] style:UIBarButtonItemStyleDone target:self action:@selector(didTapDone)];
 
     self.tableView.tableFooterView = self.footerView;
     

@@ -61,7 +61,6 @@ private let recommendationTopics = [
        
         var sc = UISearchController(searchResultsController: NewFeedResultsVC(style: .plain))
         sc.searchResultsUpdater = self
-        (sc.searchResultsController as! NewFeedResultsVC).moveFoldersDelegate = self.moveFoldersDelegate
         sc.obscuresBackgroundDuringPresentation = false
         sc.searchBar.placeholder = "#topic or Website URL"
         sc.searchBar.accessibilityHint = sc.searchBar.placeholder
@@ -69,12 +68,28 @@ private let recommendationTopics = [
         sc.searchBar.keyboardType = .URL
         sc.searchBar.autocapitalizationType = .none
         sc.searchBar.delegate = self
+        sc.searchBar.searchTextField.delegate = self
+        sc.delegate = self
+        
+        (sc.searchResultsController as! NewFeedResultsVC).moveFoldersDelegate = self.moveFoldersDelegate
         
         return sc
         
     }()
     
-    private var isLoading: Bool = false
+    private var isLoading: Bool = false {
+        
+        didSet {
+            
+            guard let resultsVC = searchController.searchResultsController as? NewFeedResultsVC else {
+                return
+            }
+            
+            resultsVC.isLoading = self.isLoading
+            
+        }
+        
+    }
     
     override func viewDidLoad() {
         
@@ -90,7 +105,16 @@ private let recommendationTopics = [
     // MARK: - Setups
     func setupCollectionView() {
         
-        collectionView.backgroundColor = .systemBackground
+        collectionView.backgroundColor = UIColor.init(dynamicProvider: { (trait: UITraitCollection) -> UIColor in
+                
+            if trait.userInterfaceStyle == .light {
+                return .systemGroupedBackground
+            }
+            
+            return .black
+            
+        })
+        
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
         
@@ -155,7 +179,7 @@ extension NewFeedVC {
     
 }
 
-extension NewFeedVC: UISearchResultsUpdating, UISearchBarDelegate {
+extension NewFeedVC: UISearchResultsUpdating, UISearchBarDelegate, UITextFieldDelegate, UISearchControllerDelegate {
     
     func updateSearchResults(for searchController: UISearchController) {
         
@@ -164,6 +188,19 @@ extension NewFeedVC: UISearchResultsUpdating, UISearchBarDelegate {
         }
         
         searchBarTextDidEndEditing(searchController.searchBar)
+        
+    }
+    
+    func textFieldShouldClear(_ textField: UITextField) -> Bool {
+        
+        if let resultsInstance = searchController.searchResultsController as? NewFeedResultsVC {
+            
+            resultsInstance.results = nil
+            resultsInstance.isLoading = false
+            
+        }
+        
+        return true
         
     }
     
@@ -218,6 +255,20 @@ extension NewFeedVC: UISearchResultsUpdating, UISearchBarDelegate {
         
     }
     
+    func willDismissSearchController(_ searchController: UISearchController) {
+        
+        isLoading = false
+        
+        guard let resultsInstance = self.searchController.searchResultsController as? NewFeedResultsVC else {
+            return
+        }
+        
+        resultsInstance.results = nil
+        
+    }
+    
+    //MARK: - Networking
+    
     func searchTopic(_ topic: String) {
         
         let locale = Locale.current.languageCode ?? "en"
@@ -225,6 +276,7 @@ extension NewFeedVC: UISearchResultsUpdating, UISearchBarDelegate {
         isLoading = true
         
         guard let resultsInstance = self.searchController.searchResultsController as? NewFeedResultsVC else {
+            isLoading = false
             return
         }
         
@@ -276,6 +328,42 @@ extension NewFeedVC: UISearchResultsUpdating, UISearchBarDelegate {
                 }
                 
                 AlertManager.showGenericAlert(withTitle: "An Error Occurred", message: error.localizedDescription)
+                
+            }
+            
+            return
+            
+        }
+        
+        let path: String = url.path
+        
+        if (path.contains("/feed") || path.contains("/rss") || path.contains("xml") || path.contains("json")) == false {
+            
+            guard let resultsInstance = searchController.searchResultsController as? NewFeedResultsVC else {
+                return
+            }
+            
+            FeedsLib.shared.getFeedInfo(url: url) { (error: Error?, response: FeedInfoResponse?) in
+                
+                if let error = error {
+                    AlertManager.showGenericAlert(withTitle: "An Error Occurred", message: error.localizedDescription)
+                    return
+                }
+                
+                guard let response = response else {
+                    return
+                }
+                
+                guard let results = response.results, results.count > 0 else {
+                    return
+                }
+                
+                let items: [FeedRecommendation] = results.map { $0.toRecommendation() }
+                
+                let recommendationsResponse = RecommendationsResponse()
+                recommendationsResponse.feedInfos = items
+                
+                resultsInstance.results = recommendationsResponse
                 
             }
             

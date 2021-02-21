@@ -19,6 +19,9 @@ class FeedPreviewHeader: UICollectionReusableView {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        imageView.layer.cornerRadius = 4
+        imageView.layer.cornerCurve = .continuous
+        imageView.layer.masksToBounds = true
     }
     
     override func prepareForReuse() {
