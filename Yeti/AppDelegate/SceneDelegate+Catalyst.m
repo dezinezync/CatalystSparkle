@@ -132,13 +132,7 @@
             
         }];
         
-        UIAction *reccomendationsAction = [UIAction actionWithTitle:@"Recommendations" image:[UIImage systemImageNamed:@"flame"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
-           
-            [self.coordinator.sidebarVC didTapRecommendations:nil];
-            
-        }];
-        
-        UIMenu *menu = [UIMenu menuWithChildren:@[newFeedAction, newFolderAction, reccomendationsAction]];
+        UIMenu *menu = [UIMenu menuWithChildren:@[newFeedAction, newFolderAction]];
         
 //        UIBarButtonItem *menuItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd menu:menu];
         
