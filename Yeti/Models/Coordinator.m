@@ -14,12 +14,10 @@
 #import "UnreadVC.h"
 #import "TodayVC.h"
 #import "BookmarksVC.h"
-#import "RecommendationsVC.h"
 #import "FolderVC.h"
 #import "NewFolderVC.h"
 #import "LaunchVC.h"
 #import "StoreVC.h"
-#import "AddFeedVC.h"
 #import "NewFolderController.h"
 #import "SettingsVC.h"
 #import <DZKit/AlertManager.h>
@@ -203,14 +201,6 @@ NSString* deviceName() {
     
 }
 
-- (void)showRecommendations {
-    
-    RecommendationsVC *vc = [[RecommendationsVC alloc] initWithNibName:NSStringFromClass(RecommendationsVC.class) bundle:nil];
-
-    [self _showSupplementaryController:vc];
-    
-}
-
 - (void)showEmptyVC {
     
     EmptyVC *vc = [[EmptyVC alloc] initWithNibName:NSStringFromClass(EmptyVC.class) bundle:nil];
@@ -276,8 +266,6 @@ NSString* deviceName() {
     [self openSceneNamed:@"newFeedScene"];
     
 #else
-    
-//    UINavigationController *nav = [AddFeedVC instanceInNavController];
     
     NewFeedVC *vc = [[NewFeedVC alloc] initWithCollectionViewLayout:NewFeedVC.gridLayout];
     vc.mainCoordinator = self;

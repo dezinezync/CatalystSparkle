@@ -51,8 +51,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)showArticleVC:(ArticleVC *)articleVC;
 
-- (void)showRecommendations;
-
 - (void)showEmptyVC;
 
 - (void)showLaunchVC;

@@ -102,6 +102,17 @@ private let recommendationTopics = [
         
     }
     
+    deinit {
+        
+        if let coordinator = value(forKey: "mainCoordinator") as? NSObject,
+           let vc = coordinator.value(forKey: "sidebarVC") as? UIViewController {
+            
+            vc.viewWillAppear(true)
+            
+        }
+        
+    }
+    
     // MARK: - Setups
     func setupCollectionView() {
         

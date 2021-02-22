@@ -15,9 +15,10 @@
 
 #import "DZWebViewController.h"
 #import "UIColor+HEX.h"
-#import "AddFeedVC.h"
 
 #import <CoreSpotlight/CoreSpotlight.h>
+
+#import "Elytra-Swift.h"
 
 #define backgroundRefreshIdentifier @"com.yeti.refresh"
 
@@ -427,7 +428,6 @@
         ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
 
         vc.externalWindow = YES;
-
         
         Feed *feed = [ArticlesManager.shared feedForID:item.feedID];
         
@@ -495,12 +495,11 @@
         windowScene.titlebar.titleVisibility = UITitlebarTitleVisibilityHidden;
         windowScene.titlebar.toolbarStyle = UITitlebarToolbarStyleUnified;
         
-        window.rootViewController = [AddFeedVC instanceInNavController];
+        NewFeedVC *vc = [[NewFeedVC alloc] initWithCollectionViewLayout:NewFeedVC.gridLayout];
+        vc.mainCoordinator = self;
+        vc.moveFoldersDelegate = self.coordinator.sidebarVC;
         
-        AddFeedVC *addFeedVC = [[(UINavigationController *)window.rootViewController viewControllers] firstObject];
-        
-        addFeedVC.mainCoordinator = self.coordinator;
-        addFeedVC.isFromAddFeed = YES;
+        window.rootViewController = vc;
         
     }
     

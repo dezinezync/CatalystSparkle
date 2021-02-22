@@ -794,25 +794,17 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
 - (NSArray <UIBarButtonItem *> *)rightBarButtonItems {
     
     UIImage * newFolderImage = [UIImage systemImageNamed:@"folder.badge.plus"],
-            * recommendationsImage = [UIImage systemImageNamed:@"flame"],
             * newFeedImage = [UIImage systemImageNamed:@"plus"];
     
     UIBarButtonItem *add = [[UIBarButtonItem alloc] initWithImage:newFeedImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapAdd:)];
     add.accessibilityLabel = @"New Feed";
     add.accessibilityHint = @"Add a new RSS Feed";
-    // add.width = 40.f;
     
     UIBarButtonItem *folder = [[UIBarButtonItem alloc] initWithImage:newFolderImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapAddFolder:)];
     folder.accessibilityLabel = @"New Folder";
     folder.accessibilityHint = @"Create a new folder";
-    // folder.width = 40.f;
     
-    UIBarButtonItem *recommendations = [[UIBarButtonItem alloc] initWithImage:recommendationsImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapRecommendations:)];
-    recommendations.accessibilityLabel = @"Recommendations";
-    recommendations.accessibilityHint = @"View RSS Feed Recommendations";
-    // recommendations.width = 40.f;
-    
-    return @[add, folder, recommendations];
+    return @[add, folder];
     
 }
 

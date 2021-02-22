@@ -7,7 +7,7 @@
 //
 
 #import "SidebarVC+SearchResults.h"
-#import "AddFeedVC.h"
+
 #import "NewFolderVC.h"
 #import "SettingsVC.h"
 
@@ -15,6 +15,7 @@
 #import "ArticlesManager.h"
 
 #import <DZKit/AlertManager.h>
+#import <DZKit/NSString+Extras.h>
 
 @implementation SidebarVC (Actions)
 
@@ -32,22 +33,6 @@
 
 - (void)didTapSettings {
     [self.mainCoordinator showSettingsVC];
-}
-
-- (void)didTapRecommendations:(UIBarButtonItem *)sender {
-    
-    NSArray <NSIndexPath *> *selectedIndexPaths = self.collectionView.indexPathsForSelectedItems;
-    
-    if (selectedIndexPaths.count > 0) {
-        
-        for (NSIndexPath *indexPath in selectedIndexPaths) {
-            [self.collectionView deselectItemAtIndexPath:indexPath animated:YES];
-        }
-        
-    }
-    
-    [self.mainCoordinator showRecommendations];
-    
 }
 
 #pragma mark - <UICollectionViewDelegate>

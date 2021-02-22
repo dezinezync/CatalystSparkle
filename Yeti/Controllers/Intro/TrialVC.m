@@ -17,8 +17,6 @@
 #import <DZKit/AlertManager.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 
-#import "RecommendationsVC.h"
-
 #import "Keychain.h"
 #import "AppDelegate.h"
 
@@ -124,13 +122,7 @@
         
         [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
         
-        RecommendationsVC *vc = [[RecommendationsVC alloc] initWithNibName:NSStringFromClass(RecommendationsVC.class) bundle:nil];
-        
-        vc.onboarding = YES;
-        
-        [self.navigationController setNavigationBarHidden:YES animated:YES];
-        
-        [self.navigationController setViewControllers:@[vc] animated:YES];
+        [self.navigationController dismissViewControllerAnimated:YES completion:nil];
         
     });
     
