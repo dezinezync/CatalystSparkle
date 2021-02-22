@@ -54,6 +54,7 @@
         return [obj isKindOfClass:Feed.class];
     }];
     
+    /**
     KVSItem *instance = [KVSItem new];
     instance.changeType = read ? KVSChangeTypeRead : KVSChangeTypeUnread;
     instance.identifiers = articles;
@@ -101,6 +102,9 @@
     }
     
     [self trackChanges];
+     */
+    
+    [self markRead:read identifiers:articles];
     
     for (FeedItem *item in items) {
         
@@ -156,6 +160,10 @@
 
 - (void)markArticlesAsRead:(NSArray<NSNumber *> *)identifiers {
     
+    if (identifiers == nil) {
+        return;
+    }
+    
     if (identifiers.count == 0) {
         return;
     }
@@ -182,6 +190,7 @@
     }
     else {
         
+        /**
         KVSItem *instance = [KVSItem new];
         instance.changeType = KVSChangeTypeRead;
         instance.identifiers = identifiers;
@@ -193,6 +202,9 @@
         [self.KVSItems addObject:instance];
 
         [self trackChanges];
+        **/
+        
+        [self markRead:YES identifiers:identifiers];
         
     }
     
@@ -204,6 +216,7 @@
     
     [MyDBManager addArticle:item strip:NO];
     
+    /**
     KVSItem *instance = [KVSItem new];
     instance.changeType = bookmarked ? KVSChangeTypeBookmark : KVSChangeTypeUnbookmark;
     instance.identifiers = @[item.identifier];
@@ -215,6 +228,9 @@
     [self.KVSItems addObject:instance];
     
     [self trackChanges];
+     **/
+    
+    [self markBookmark:bookmarked identifier:item.identifier];
     
     if (bookmarked) {
         self.totalBookmarks++;
