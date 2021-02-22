@@ -24,7 +24,7 @@
     
     CGFloat contentHeight = scrollView.contentSize.height - (scrollView.adjustedContentInset.top + scrollView.adjustedContentInset.bottom) ;
     
-    NSLogDebug(@"Pos Y: %@ -- Content Height: %@", @(scrollPositionY), @(contentHeight));
+//    NSLogDebug(@"Pos Y: %@ -- Content Height: %@", @(scrollPositionY), @(contentHeight));
     
     if (scrollPositionY >= contentHeight) {
         
@@ -33,10 +33,13 @@
         if (delegate && [scrollView.delegate respondsToSelector:@selector(loadNextPage)]) {
             
             if (![delegate isLoadingNext] && ![delegate cantLoadNext]) {
+                
                 NSLog(@"Loading next page for: %@", self);
                 
                 [delegate loadNextPage];
+                
             }
+            
         }
         
     }

@@ -492,14 +492,15 @@
         windowScene.sizeRestrictions.minimumSize = fixedSize;
         windowScene.sizeRestrictions.maximumSize = fixedSize;
         
-        windowScene.titlebar.titleVisibility = UITitlebarTitleVisibilityHidden;
+        windowScene.titlebar.titleVisibility = UITitlebarTitleVisibilityVisible;
         windowScene.titlebar.toolbarStyle = UITitlebarToolbarStyleUnified;
+        windowScene.title = @"New Feed";
         
         NewFeedVC *vc = [[NewFeedVC alloc] initWithCollectionViewLayout:NewFeedVC.gridLayout];
-        vc.mainCoordinator = self;
+        vc.mainCoordinator = self.coordinator;
         vc.moveFoldersDelegate = self.coordinator.sidebarVC;
         
-        window.rootViewController = vc;
+        window.rootViewController = [[UINavigationController alloc] initWithRootViewController:vc];
         
     }
     

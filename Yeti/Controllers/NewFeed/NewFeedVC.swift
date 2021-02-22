@@ -137,12 +137,21 @@ private let recommendationTopics = [
         
         navigationItem.hidesSearchBarWhenScrolling = false
         
+        navigationItem.searchController = searchController
+        
+        #if targetEnvironment(macCatalyst)
+        
+        navigationController?.navigationBar.prefersLargeTitles = false
+        navigationItem.largeTitleDisplayMode = .never
+        
+        #else
+        
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .automatic
         
-        navigationItem.searchController = searchController
-        
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(didTapCancel))
+        
+        #endif
         
     }
     
