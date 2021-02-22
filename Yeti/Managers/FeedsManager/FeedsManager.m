@@ -616,6 +616,7 @@ NSArray <NSString *> * _defaultsKeys;
         NSDictionary *feedObj = [responseObject valueForKey:@"feed"];
 
         Feed *feed = [Feed instanceFromDictionary:feedObj];
+        feed.unread = @(0);
         
         if (self.additionalFeedsToSync == nil) {
             self.additionalFeedsToSync = [NSMutableSet new];
@@ -764,14 +765,9 @@ NSArray <NSString *> * _defaultsKeys;
         [Keychain add:YTSubscriptionHasAddedFirstFeed boolean:YES];
 
         NSDictionary *feedObj = [responseObject valueForKey:@"feed"] ?: responseObject;
-//        NSArray *articlesObj = [responseObject valueForKey:@"articles"];
-        
-//        NSArray <FeedItem *> *articles = [articlesObj rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-//            return [FeedItem instanceFromDictionary:obj];
-//        }];
         
         Feed *feed = [Feed instanceFromDictionary:feedObj];
-//        feed.articles = articles;
+        feed.unread = @(0);
         
         if (self.additionalFeedsToSync == nil) {
             self.additionalFeedsToSync = [NSMutableSet new];
