@@ -11,6 +11,7 @@ import UIKit
 class NewFeedReccomendationCell: UICollectionViewCell {
     
     static let identifier: String = "newFeedRecommendationCell"
+    let radius: CGFloat = 12
 
     @IBOutlet weak var shadowView: UIView!
     @IBOutlet weak var roundedRectView: UIView!
@@ -27,14 +28,17 @@ class NewFeedReccomendationCell: UICollectionViewCell {
         shadowView.layer.shadowOffset = CGSize(width: 0, height: 3)
         shadowView.layer.shadowColor = UIColor.black.cgColor
         shadowView.layer.shadowOpacity = 0.08
-        shadowView.layer.shadowRadius = 6
-        shadowView.layer.shadowPath = UIBezierPath(roundedRect: shadowView.bounds, cornerRadius: 6).cgPath
+        shadowView.layer.shadowRadius = radius
+        shadowView.layer.shadowPath = UIBezierPath(roundedRect: shadowView.bounds, cornerRadius: radius).cgPath
         shadowView.backgroundColor = .clear
         
-        roundedRectView.layer.cornerRadius = 12
+        roundedRectView.layer.cornerRadius = radius
         roundedRectView.layer.cornerCurve = .continuous
         roundedRectView.clipsToBounds = true
         roundedRectView.backgroundColor = .systemBackground
+        
+        imageView.image = UIImage(systemName: "questionmark.square.dashed")
+//        imageView.backgroundColor = .secondarySystemFill
         
     }
     
@@ -42,7 +46,7 @@ class NewFeedReccomendationCell: UICollectionViewCell {
         
         super.layoutSubviews()
         
-        shadowView.layer.shadowPath = UIBezierPath(roundedRect: shadowView.bounds, cornerRadius: 6).cgPath
+        shadowView.layer.shadowPath = UIBezierPath(roundedRect: shadowView.bounds, cornerRadius: radius).cgPath
         
     }
     

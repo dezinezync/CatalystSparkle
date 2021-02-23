@@ -25,7 +25,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="245" height="98"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="scd-HX-7X4">
-                                        <rect key="frame" x="6" y="6" width="233" height="86"/>
+                                        <rect key="frame" x="6" y="12" width="233" height="80"/>
                                         <subviews>
                                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Del-vD-d75">
                                                 <rect key="frame" x="94.5" y="0.0" width="44" height="44"/>
@@ -35,7 +35,7 @@
                                                 </constraints>
                                             </imageView>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GHM-aa-G3J">
-                                                <rect key="frame" x="97" y="52" width="39.5" height="34"/>
+                                                <rect key="frame" x="97" y="52" width="39.5" height="28"/>
                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleCallout"/>
                                                 <color key="textColor" systemColor="secondaryLabelColor"/>
                                                 <nil key="highlightedColor"/>
@@ -47,7 +47,7 @@
                                 <constraints>
                                     <constraint firstAttribute="bottom" secondItem="scd-HX-7X4" secondAttribute="bottom" constant="6" id="9sj-Yg-TXF"/>
                                     <constraint firstItem="scd-HX-7X4" firstAttribute="leading" secondItem="zvs-c8-nrs" secondAttribute="leading" constant="6" id="U8X-y0-54H"/>
-                                    <constraint firstItem="scd-HX-7X4" firstAttribute="top" secondItem="zvs-c8-nrs" secondAttribute="top" constant="6" id="dWV-eA-qjm"/>
+                                    <constraint firstItem="scd-HX-7X4" firstAttribute="top" secondItem="zvs-c8-nrs" secondAttribute="top" constant="12" id="dWV-eA-qjm"/>
                                     <constraint firstAttribute="trailing" secondItem="scd-HX-7X4" secondAttribute="trailing" constant="6" id="vXP-cw-bD3"/>
                                 </constraints>
                             </view>
