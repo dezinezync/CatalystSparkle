@@ -93,14 +93,6 @@
      };
 #endif
     
-    if (activity != nil && [activity.activityType isEqualToString:@"restoration"]) {
-        
-        [MyFeedsManager continueActivity:activity];
-        
-        [ArticlesManager.shared continueActivity:activity];
-        
-    }
-    
     [self setupRootViewController];
     
     [self.coordinator start];
@@ -247,13 +239,6 @@
     if (self.window.rootViewController != nil && [self.window.rootViewController isKindOfClass:SplitVC.class] == YES) {
 
         restorationActivity = [(SplitVC *)[self.window rootViewController] continuationActivity];
-
-        if (restorationActivity != nil) {
-
-            [MyFeedsManager saveRestorationActivity:restorationActivity];
-            [ArticlesManager.shared saveRestorationActivity:restorationActivity];
-
-        }
 
     }
 

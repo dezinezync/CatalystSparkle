@@ -238,12 +238,6 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)updateSharedUnreadCounters;
 
-#pragma mark - State Restoration
-
-- (void)continueActivity:(NSUserActivity * _Nonnull)activity;
-
-- (void)saveRestorationActivity:(NSUserActivity * _Nonnull)activity;
-
 #pragma mark - KVS
 
 @property (atomic, strong) NSTimer * _Nullable batchKVSTimer;

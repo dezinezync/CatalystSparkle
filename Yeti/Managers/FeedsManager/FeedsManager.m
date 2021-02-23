@@ -40,7 +40,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 
 NSArray <NSString *> * _defaultsKeys;
 
-@interface FeedsManager () <UIStateRestoring, UIObjectRestoration> {
+@interface FeedsManager () {
     
     NSString * _Nullable _debugLogsSequenceToken;
     
@@ -4217,95 +4217,6 @@ NSArray <NSString *> * _defaultsKeys;
     }];
     
     [[NSRunLoop currentRunLoop] addTimer:self.widgetCountersUpdateTimer forMode:NSRunLoopCommonModes];
-    
-}
-
-#pragma mark - State Restoration
-
-NSString *const kFoldersKey = @"key.folders";
-NSString *const kFeedsKey = @"key.feeds";
-NSString *const kSubscriptionKey = @"key.subscription";
-NSString *const kBookmarksKey = @"key.bookmarks";
-NSString *const kBookmarksCountKey = @"key.bookmarksCount";
-NSString *const ktotalUnreadKey = @"key.totalUnread";
-NSString *const kUnreadKey = @"key.unread";
-NSString *const kUnreadLastUpdateKey = @"key.unreadLastUpdate";
-
-- (Class)objectRestorationClass {
-    return self.class;
-}
-
-+ (id <UIStateRestoring>)objectWithRestorationIdentifierPath:(NSArray<NSString *> *)identifierComponents coder:(NSCoder *)coder {
-    return MyFeedsManager;
-}
-
-- (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
-    
-    if (self.user.userID != nil && self.user.uuid != nil) {
-        [coder encodeInteger:self.userID.integerValue forKey:kUserID];
-        [coder encodeObject:self.user.uuid forKey:kAccountID];
-        
-        [coder encodeObject:ArticlesManager.shared.folders forKey:kFoldersKey];
-        [coder encodeObject:ArticlesManager.shared.feeds forKey:kFeedsKey];
-//        [coder encodeObject:self.subscription forKey:kSubscriptionKey];
-        [coder encodeInteger:self.totalBookmarks forKey:kBookmarksCountKey];
-        [coder encodeInteger:self.totalUnread forKey:ktotalUnreadKey];
-//        [coder encodeObject:ArticlesManager.shared forKey:NSStringFromClass(ArticlesManager.class)];
-        
-        if (self.unreadLastUpdate) {
-            [coder encodeDouble:[self.unreadLastUpdate timeIntervalSince1970] forKey:kUnreadLastUpdateKey];
-        }
-    }
-    
-}
-
-- (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
-    
-    NSString * UUIDString = [coder decodeObjectForKey:kAccountID];
-    NSInteger userID = [coder decodeIntegerForKey:kUserID];
-    
-    if (UUIDString != nil && userID > 0) {
-        self.user.userID = @(userID);
-        self.user.uuid = UUIDString;
-        
-        [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
-        
-        ArticlesManager.shared.folders = [coder decodeObjectForKey:kFoldersKey];
-        ArticlesManager.shared.feeds = [coder decodeObjectForKey:kFeedsKey];
-//        self.subscription = [coder decodeObjectForKey:kSubscriptionKey];
-        self.totalBookmarks = [coder decodeIntegerForKey:kBookmarksCountKey];
-        self.totalUnread = [coder decodeIntegerForKey:ktotalUnreadKey];
-        
-        double unreadUpdate = [coder decodeDoubleForKey:kUnreadLastUpdateKey];
-        if (unreadUpdate) {
-            NSDate *date = [NSDate dateWithTimeIntervalSince1970:unreadUpdate];
-            self.unreadLastUpdate = date;
-        }
-    }
-    
-}
-
-- (void)continueActivity:(NSUserActivity *)activity {
-    
-    NSDictionary *manager = [activity.userInfo valueForKey:@"feedsManager"];
-    
-    self.totalUnread = [[manager valueForKey:@"totalUnread"] unsignedIntegerValue];
-    self.totalToday = [[manager valueForKey:@"totalToday"] unsignedIntegerValue];
-    
-}
-
-- (void)saveRestorationActivity:(NSUserActivity * _Nonnull)activity {
-    
-    if (self.userID == nil) {
-        return;
-    }
-    
-    NSMutableDictionary *dict = [NSMutableDictionary new];
-    
-    [dict setObject:@(self.totalUnread) forKey:@"totalUnread"];
-    [dict setObject:@(self.totalToday) forKey:@"totalToday"];
-    
-    [activity addUserInfoEntriesFromDictionary:@{@"feedsManager":dict}];
     
 }
 

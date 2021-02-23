@@ -115,14 +115,6 @@ AppDelegate *MyAppDelegate = nil;
         
         [[UIImageView appearance] setAccessibilityIgnoresInvertColors:YES];
         
-        if (MyFeedsManager != nil) {
-            [UIApplication registerObjectForStateRestoration:(id <UIStateRestoring>)MyFeedsManager restorationIdentifier:NSStringFromClass(FeedsManager.class)];
-        }
-            
-        if (ArticlesManager.shared != nil) {
-            [UIApplication registerObjectForStateRestoration:(id <UIStateRestoring>)ArticlesManager.shared restorationIdentifier:NSStringFromClass(ArticlesManager.class)];
-        }
-        
 //         To test push notifications
 //        #ifdef DEBUG
 //            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
