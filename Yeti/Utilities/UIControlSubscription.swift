@@ -60,7 +60,7 @@ struct UIControlPublisher<Control: UIControl>: Publisher {
 protocol CombineCompatible { }
 extension UIControl: CombineCompatible { }
 extension CombineCompatible where Self: UIControl {
-    func publisher(for events: UIControl.Event) -> UIControlPublisher<UIControl> {
+    func publisher(forEvent events: UIControl.Event) -> UIControlPublisher<UIControl> {
         return UIControlPublisher(control: self, events: events)
     }
 }

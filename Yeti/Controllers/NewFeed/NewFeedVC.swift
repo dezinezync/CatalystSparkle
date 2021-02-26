@@ -13,16 +13,12 @@ private let recommendationTopics = [
     "News",
     "Tech",
     "Science",
-    "Food",
     "Photography",
-    "Sports",
-    "Entertainment",
     "Movies",
     "Business",
     "Finance",
-    "Health",
+    "Entertainment",
     "Travel",
-    "Fashion",
     "Design"
 ]
 
@@ -180,7 +176,10 @@ extension NewFeedVC {
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NewFeedReccomendationCell.identifier, for: indexPath) as! NewFeedReccomendationCell
         
-        cell.titleLabel.text = recommendationTopics[indexPath.item]
+        let title = recommendationTopics[indexPath.item]
+        
+        cell.titleLabel.text = title
+        cell.imageView.image = UIImage(named: "newfeed-\(title.lowercased())")
         
         cell.setNeedsLayout()
         
