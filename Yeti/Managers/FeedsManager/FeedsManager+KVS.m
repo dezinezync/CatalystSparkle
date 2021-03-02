@@ -36,23 +36,7 @@
         return;
     }
     
-    NSArray <NSNumber *> *articles = [items rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
-        return obj.identifier;
-    }];
-    
-    NSArray *feeds = [[items rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
-        
-        Feed *feed = [self feedForID:obj.feedID];
-        
-        if (feed) {
-            return feed;
-        }
-        
-        return [NSNull null];
-        
-    }] rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
-        return [obj isKindOfClass:Feed.class];
-    }];
+    [self markRead:read identifiers:items];
     
     /**
     KVSItem *instance = [KVSItem new];
@@ -103,83 +87,31 @@
     
     [self trackChanges];
      */
-    
-    [self markRead:read identifiers:articles];
-    
-    for (FeedItem *item in items) {
-        
-        item.read = read;
-        
-        if (feeds.count > 0 && [NSCalendar.currentCalendar isDateInToday:item.timestamp]) {
-            
-            // adjust value for Today as well
-            if (read == YES) {
-                self.totalToday = self.totalToday - items.count;
-            }
-            else {
-                self.totalToday = self.totalToday + items.count;
-            }
-            
-        }
-        
-        // save it back to the DB so the read state is persisted.
-        [MyDBManager addArticle:item strip:NO];
-        
-    }
-    
-    // only post the notification if it's affecting a feed or folder
-    // this avoids reducing or incrementing the count for unsubscribed feeds
-    if (feeds.count > 0) {
-        
-        if (read == YES) {
-            self.totalUnread = self.totalUnread - items.count;
-        }
-        else {
-            self.totalUnread = self.totalUnread + items.count;
-        }
-        
-        for (Feed *feed in feeds) {
-            
-            NSInteger current = [feed.unread integerValue];
-            
-            NSArray <FeedItem *> *articlesForFeed = [items rz_filter:^BOOL(FeedItem *objx, NSUInteger idxx, NSArray *array) {
-                return objx.feedID.integerValue == feed.feedID.integerValue;
-            }];
-            
-            NSInteger affectedArticles = articlesForFeed.count;
-            
-            NSInteger updated = MAX(0, current + (read ? (-1 * affectedArticles) : affectedArticles));
-            
-            feed.unread = @(updated);
-            
-        }
-    
-    }
 
 }
 
-- (void)markArticlesAsRead:(NSArray<NSNumber *> *)identifiers {
+- (void)markArticlesAsRead:(NSArray<FeedItem *> *)articles {
     
-    if (identifiers == nil) {
+    if (articles == nil) {
         return;
     }
     
-    if (identifiers.count == 0) {
+    if (articles.count == 0) {
         return;
     }
     
     NSUInteger const limit = 100;
     
-    if (identifiers.count > 100) {
+    if (articles.count > 100) {
         
         NSUInteger counter = 0;
-        NSUInteger total = identifiers.count;
+        NSUInteger total = articles.count;
         
         while (counter < total) {
             
             NSUInteger inLimit = (counter + limit) > total ? (total - counter) : limit;
             
-            NSArray *subarray = [identifiers subarrayWithRange:NSMakeRange(counter, inLimit)];
+            NSArray *subarray = [articles subarrayWithRange:NSMakeRange(counter, inLimit)];
             
             [self markArticlesAsRead:subarray];
             
@@ -204,7 +136,7 @@
         [self trackChanges];
         **/
         
-        [self markRead:YES identifiers:identifiers];
+        [self markRead:YES identifiers:articles];
         
     }
     
@@ -249,88 +181,96 @@
 
 #pragma mark -
 
-- (void)trackChanges {
-    
-    if (self.KVSItems == nil) {
-        return;
-    }
-    
-    if (self.batchKVSTimer != nil) {
-        
-        // invalidate the existing timer.
-        
-        if ([self.batchKVSTimer isValid]) {
-            [self.batchKVSTimer invalidate];
-        }
-        
-        self.batchKVSTimer = nil;
-        
-    }
-    
-    weakify(self);
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        
-        strongify(self);
-        
-        weakify(self);
-       
-        self.batchKVSTimer = [NSTimer scheduledTimerWithTimeInterval:2 repeats:NO block:^(NSTimer * _Nonnull timer) {
-            
-            strongify(self);
-            
-            [self flushChanges];
-            
-        }];
-        
-    });
-    
-}
+//- (void)trackChanges {
+//
+//    if (self.KVSItems == nil) {
+//        return;
+//    }
+//
+//    if (self.batchKVSTimer != nil) {
+//
+//        // invalidate the existing timer.
+//
+//        if ([self.batchKVSTimer isValid]) {
+//            [self.batchKVSTimer invalidate];
+//        }
+//
+//        self.batchKVSTimer = nil;
+//
+//    }
+//
+//    weakify(self);
+//
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//
+//        strongify(self);
+//
+//        weakify(self);
+//
+//        self.batchKVSTimer = [NSTimer scheduledTimerWithTimeInterval:2 repeats:NO block:^(NSTimer * _Nonnull timer) {
+//
+//            strongify(self);
+//
+//            [self flushChanges];
+//
+//        }];
+//
+//    });
+//
+//}
 
-- (void)flushChanges {
-    
-    if (self.KVSItems == nil) {
-        return;
-    }
-    
-    if (self.KVSItems.count == 0) {
-        // no changes to flush.
-        return;
-    }
-    
-    // make a copy
-    NSMutableOrderedSet *set = [self.KVSItems mutableCopy];
-    
-    // setup a new instance immediately
-    // so all future calls are scheduled
-    // on a separate instance and doesn't
-    // get lost in this call.
-    self.KVSItems = [NSMutableOrderedSet new];
-    
-    for (KVSItem *instance in set) {
-        
-        if (instance.changeType == KVSChangeTypeUnread || instance.changeType == KVSChangeTypeRead) {
-            
-            if (instance.identifiers.count) {
-                
-                [self markRead:instance.changeType == KVSChangeTypeRead identifiers:instance.identifiers];
-                
-            }
-            
-        }
-        else {
-            
-            if (instance.identifiers.count) {
-                [self markBookmark:instance.changeType == KVSChangeTypeBookmark identifier:instance.identifiers.firstObject];
-            }
-            
-        }
-        
-    }
-    
-}
+//- (void)flushChanges {
+//
+//    if (self.KVSItems == nil) {
+//        return;
+//    }
+//
+//    if (self.KVSItems.count == 0) {
+//        // no changes to flush.
+//        return;
+//    }
+//
+//    // make a copy
+//    NSMutableOrderedSet *set = [self.KVSItems mutableCopy];
+//
+//    // setup a new instance immediately
+//    // so all future calls are scheduled
+//    // on a separate instance and doesn't
+//    // get lost in this call.
+//    self.KVSItems = [NSMutableOrderedSet new];
+//
+//    for (KVSItem *instance in set) {
+//
+//        if (instance.changeType == KVSChangeTypeUnread || instance.changeType == KVSChangeTypeRead) {
+//
+//            if (instance.identifiers.count) {
+//
+//                [self markRead:instance.changeType == KVSChangeTypeRead identifiers:instance];
+//
+//            }
+//
+//        }
+//        else {
+//
+//            if (instance.identifiers.count) {
+//                [self markBookmark:instance.changeType == KVSChangeTypeBookmark identifier:instance.identifiers.firstObject];
+//            }
+//
+//        }
+//
+//    }
+//
+//}
 
-- (void)markRead:(BOOL)read identifiers:(NSArray <NSNumber *> *)identifiers {
+- (void)markRead:(BOOL)read identifiers:(NSArray <FeedItem *> *)items {
+    
+    if (items.count > 100 && read == YES) {
+        return [self markArticlesAsRead:items];
+    }
+    
+    NSArray <NSNumber *> *identifiers = [items rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
+        return obj.identifier;
+    }];
     
     if (identifiers == nil || (identifiers != nil && identifiers.count == 0)) {
         return;
@@ -342,7 +282,71 @@
     
     DZURLSession *session = self.currentSession;
     
+    NSArray *feeds = [[items rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
+        
+        Feed *feed = [self feedForID:obj.feedID];
+        
+        if (feed) {
+            return feed;
+        }
+        
+        return [NSNull null];
+        
+    }] rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
+        return [obj isKindOfClass:Feed.class];
+    }];
+    
     [session POST:path parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        for (FeedItem *item in items) {
+            
+            item.read = read;
+            
+            if (feeds.count > 0 && [NSCalendar.currentCalendar isDateInToday:item.timestamp]) {
+                
+                // adjust value for Today as well
+                if (read == YES) {
+                    self.totalToday = self.totalToday - items.count;
+                }
+                else {
+                    self.totalToday = self.totalToday + items.count;
+                }
+                
+            }
+            
+            // save it back to the DB so the read state is persisted.
+            [MyDBManager addArticle:item strip:NO];
+            
+        }
+        
+        // only post the notification if it's affecting a feed or folder
+        // this avoids reducing or incrementing the count for unsubscribed feeds
+        if (feeds.count > 0) {
+            
+            if (read == YES) {
+                self.totalUnread = self.totalUnread - items.count;
+            }
+            else {
+                self.totalUnread = self.totalUnread + items.count;
+            }
+            
+            for (Feed *feed in feeds) {
+                
+                NSInteger current = [feed.unread integerValue];
+                
+                NSArray <FeedItem *> *articlesForFeed = [items rz_filter:^BOOL(FeedItem *objx, NSUInteger idxx, NSArray *array) {
+                    return objx.feedID.integerValue == feed.feedID.integerValue;
+                }];
+                
+                NSInteger affectedArticles = articlesForFeed.count;
+                
+                NSInteger updated = MAX(0, current + (read ? (-1 * affectedArticles) : affectedArticles));
+                
+                feed.unread = @(updated);
+                
+            }
+        
+        }
         
         NSLog(@"Marked %@ for %@", read ? @"read" : @"unread", identifiers);
 
@@ -351,7 +355,9 @@
         // silently handle
         error = [self errorFromResponse:error.userInfo];
 
-        NSLog(@"error marking %@ as read: %@", identifiers, error);
+//        NSLog(@"error marking %@ as read: %@", identifiers, error);
+        
+        [AlertManager showGenericAlertWithTitle:formattedString(@"Error Marking %@", read == YES ? @"Read" : @"Unread") message:error.localizedDescription];
 
     }];
     

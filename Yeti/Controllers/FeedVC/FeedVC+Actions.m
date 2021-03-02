@@ -623,38 +623,17 @@
                 return;
             }
             
-            NSArray <NSNumber *> *identifiers = [unreads rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
-                return [obj isKindOfClass:NSNumber.class];
-            }];
-            
-            [MyFeedsManager markArticlesAsRead:identifiers];
+            [MyFeedsManager markArticlesAsRead:unreads];
 
             dispatch_async(MyDBManager.readQueue, ^{
 
-                [MyDBManager.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+                for (FeedItem * item in unreads) {
+                    
+                    item.read = YES;
+                    
+                }
 
-                    for (NSUInteger idx = 0; idx < unreads.count; idx+=2) {
-
-                        NSNumber *identifier = unreads[idx];
-                        NSMutableDictionary *metadata = [unreads[idx + 1] mutableCopy];
-
-                        id feedID = [metadata valueForKey:@"feedID"];
-                        NSString *collection = [NSString stringWithFormat:@"%@:%@", LOCAL_ARTICLES_COLLECTION, feedID];
-
-                        FeedItem * object = [transaction objectForKey:identifier.stringValue inCollection:collection];
-
-                        object.read = YES;
-                        [metadata setValue:@(YES) forKey:@"read"];
-
-                        [transaction setObject:object forKey:identifier.stringValue inCollection:collection withMetadata:metadata];
-
-                    }
-
-                    strongify(self);
-
-                    [self reloadCellsFrom:indexPath direction:(options == NSEnumerationReverse)];
-
-                }];
+                [self reloadCellsFrom:indexPath direction:(options == NSEnumerationReverse)];
 
             });
             
