@@ -2087,6 +2087,7 @@
 		F0D01CC22118681C003A01DD /* dark@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dark@2x.png"; sourceTree = "<group>"; };
 		F0D01CC92118683B003A01DD /* MiscVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MiscVC.h; sourceTree = "<group>"; };
 		F0D01CCA2118683B003A01DD /* MiscVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MiscVC.m; sourceTree = "<group>"; };
+		F0D028F525EE1CE20086F725 /* Models */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Models; path = Yeti/Models; sourceTree = "<group>"; };
 		F0D030A4205FC4DD00D46B34 /* ArticleProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticleProvider.h; sourceTree = "<group>"; };
 		F0D071EC205E75D700A042CD /* AccountVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccountVC.h; sourceTree = "<group>"; };
 		F0D071ED205E75D700A042CD /* AccountVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AccountVC.m; sourceTree = "<group>"; };
@@ -2604,6 +2605,7 @@
 		F070C2D01FBABC3500912CCF = {
 			isa = PBXGroup;
 			children = (
+				F0D028F525EE1CE20086F725 /* Models */,
 				F0AE1ADE25DB83BB0005CBEF /* FeedsLib */,
 				F0D98F5F24EE4C8500B1F9F0 /* UnreadsWidgetExtension.entitlements */,
 				F070C2DB1FBABC3500912CCF /* Yeti */,
@@ -2641,7 +2643,7 @@
 				F070C31F1FBAC0C800912CCF /* AppDelegate */,
 				F070C3101FBABC8500912CCF /* Categories */,
 				F070C30E1FBABC7500912CCF /* Controllers */,
-				F070C3111FBABC8A00912CCF /* Models */,
+				F070C3111FBABC8A00912CCF /* _Models */,
 				F070C30F1FBABC7A00912CCF /* Utilities */,
 				F093321C24EC14DA0066FA41 /* Managers */,
 				F070C3351FBAC37A00912CCF /* Views */,
@@ -2784,7 +2786,7 @@
 			path = Categories;
 			sourceTree = "<group>";
 		};
-		F070C3111FBABC8A00912CCF /* Models */ = {
+		F070C3111FBABC8A00912CCF /* _Models */ = {
 			isa = PBXGroup;
 			children = (
 				F032A75C244D7D8C0024AC63 /* YetiTheme.h */,
@@ -2819,7 +2821,7 @@
 				F00F642F24EC1BC600E5727C /* VideoInfo.h */,
 				F00F642D24EC1BC600E5727C /* VideoInfo.m */,
 			);
-			path = Models;
+			path = _Models;
 			sourceTree = "<group>";
 		};
 		F070C3121FBABC9E00912CCF /* Root */ = {
