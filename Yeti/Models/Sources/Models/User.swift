@@ -98,10 +98,11 @@ class User: NSObject, Codable {
             }
             
         }
-        
-        #if DEBUG
-        print("User undefined key:\(key) with value:\(String(describing: value))")
-        #endif
+        else {
+            #if DEBUG
+            print("User undefined key:\(key) with value:\(String(describing: value))")
+            #endif
+        }
         
     }
     
