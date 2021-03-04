@@ -32,6 +32,7 @@ class Folder: NSObject, Codable, ObservableObject {
     // https://stackoverflow.com/a/60707942/1387258
     var feeds = [() -> Feed?]()
     
+    // https://stackoverflow.com/a/59587459/1387258
     var unread: UInt {
         return feeds.reduce(0) { (result: UInt, closure: @escaping () -> Feed?) -> UInt in
             return result + (closure()?.unread ?? 0)
