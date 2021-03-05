@@ -69,7 +69,7 @@ class Folder: NSObject, Codable, ObservableObject {
     override func setValue(_ value: Any?, forUndefinedKey key: String) {
         
         #if DEBUG
-        print("User undefined key:\(key) with value:\(String(describing: value))")
+        print("Folder undefined key:\(key) with value:\(String(describing: value))")
         #endif
         
     }

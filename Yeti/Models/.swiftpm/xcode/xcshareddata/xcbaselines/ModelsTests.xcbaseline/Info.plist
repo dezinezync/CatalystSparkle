@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>runDestinationsByUUID</key>
+	<dict>
+		<key>C05BBB0E-87EE-48D1-AB2B-1610DF6CE4D4</key>
+		<dict>
+			<key>localComputer</key>
+			<dict>
+				<key>busSpeedInMHz</key>
+				<integer>400</integer>
+				<key>cpuCount</key>
+				<integer>1</integer>
+				<key>cpuKind</key>
+				<string>14-Core Intel Xeon W</string>
+				<key>cpuSpeedInMHz</key>
+				<integer>3300</integer>
+				<key>logicalCPUCoresPerPackage</key>
+				<integer>28</integer>
+				<key>modelCode</key>
+				<string>iMacPro1,1</string>
+				<key>physicalCPUCoresPerPackage</key>
+				<integer>14</integer>
+				<key>platformIdentifier</key>
+				<string>com.apple.platform.macosx</string>
+			</dict>
+			<key>targetArchitecture</key>
+			<string>x86_64</string>
+		</dict>
+	</dict>
+</dict>
+</plist>

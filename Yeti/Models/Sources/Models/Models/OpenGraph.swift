@@ -77,7 +77,7 @@ class OpenGraph: NSObject, Codable {
         if key == "foo" {}
         else {
             #if DEBUG
-            print("FeedMetaData undefined key:\(key) with value:\(String(describing: value))")
+            print("OpenGraph undefined key:\(key) with value:\(String(describing: value))")
             #endif
         }
         

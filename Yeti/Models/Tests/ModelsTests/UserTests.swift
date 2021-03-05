@@ -14,7 +14,8 @@ final class UserTests: XCTestCase {
         return User(from: [
             "uuid": "000714.d16a484c82844d25ae3016904bcdc9fd.0425",
             "userID": 1,
-            "filters": ["sponsor", "sponsored", "sponsoring", "comicon", "corona"]
+            "filters": ["sponsor", "sponsored", "sponsoring", "comicon", "corona"],
+            "expiry": Date().addingTimeInterval(86400)
         ])
     }
     
@@ -22,7 +23,7 @@ final class UserTests: XCTestCase {
         
         let user = User(from: [
             "uuid": "000714.d16a484c82844d25ae3016904bcdc9fd.0425",
-            "userID": 1,
+            "id": 1,
             "filters": ["sponsor", "sponsored", "sponsoring", "comicon", "corona"]
         ])
         
@@ -104,8 +105,11 @@ final class UserTests: XCTestCase {
     
     func testSettingSub () {
         
-        let user = Self.makeUser()
+        var user = Self.makeUser()
+        
         user.setValue(subJSON, forKey: "subscription")
+        
+        user.subscription.setValue("2025-12-31T00:00:00.000Z", forKey: "expiry")
         
         XCTAssertNotNil(user.subscription)
         XCTAssertEqual(user.subscription.status, .active)
