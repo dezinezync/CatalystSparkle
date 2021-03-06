@@ -6,10 +6,11 @@
 //
 
 import Foundation
+import CoreGraphics
 
-class Content: NSObject, Codable {
+public final class Content: NSObject, Codable {
     
-    enum CodingKeys: String, CodingKey, CaseIterable {
+    public enum CodingKeys: String, CodingKey, CaseIterable {
         case content
         case ranges
         case type
@@ -25,29 +26,29 @@ class Content: NSObject, Codable {
         case images
     }
     
-    var content: String?
-    var ranges = [ContentRange]()
-    var type: String!
-    var url: URL?
-    var alt: String?
-    var identifier: String?
-    var level: UInt?
-    var items: [Content]?
-    var attributes: [String: String]?
-    var videoID: String?
+    public var content: String?
+    public var ranges = [ContentRange]()
+    public var type: String!
+    public var url: URL?
+    public var alt: String?
+    public var identifier: String?
+    public var level: UInt?
+    public var items: [Content]?
+    public var attributes: [String: String]?
+    public var videoID: String?
     
     // Determines if this Content block was programatically created from the enclosures.
-    var fromEnclosure: Bool = false
+    public var fromEnclosure: Bool = false
     
     // for images
-    var size: CGSize?
-    var srcSet: [String: String]?
+    public var size: CGSize?
+    public var srcSet: [String: String]?
     
-    var images: [Content]?
+    public var images: [Content]?
     
-    weak var downloadTask: URLSessionTask?
+    public weak var downloadTask: URLSessionTask?
     
-    convenience init(from dict: [String: Any]) {
+    public convenience init(from dict: [String: Any]) {
         
         self.init()
         
@@ -55,7 +56,7 @@ class Content: NSObject, Codable {
         
     }
     
-    convenience init(from array: [[String: Any]]) {
+    public convenience init(from array: [[String: Any]]) {
         
         self.init()
         
@@ -63,7 +64,7 @@ class Content: NSObject, Codable {
         
     }
     
-    override func setValue(_ value: Any?, forKey key: String) {
+    public override func setValue(_ value: Any?, forKey key: String) {
         
         if key == "content" {
             if let value = value as? String {
@@ -204,7 +205,7 @@ class Content: NSObject, Codable {
         
     }
     
-    override func setValue(_ value: Any?, forUndefinedKey key: String) {
+    public override func setValue(_ value: Any?, forUndefinedKey key: String) {
         
         if key == "foo" {}
         else {
@@ -219,12 +220,12 @@ class Content: NSObject, Codable {
 
 extension Content {
     
-    override var description: String {
+    public override var description: String {
         let desc = super.description
         return "\(desc)\n\(dictionaryRepresentation)"
     }
     
-    var dictionaryRepresentation: [String: Any] {
+    public var dictionaryRepresentation: [String: Any] {
         
         var dict = [String: Any]()
         
@@ -264,7 +265,7 @@ extension Content {
         }
         
         if let size = size {
-            dict["size"] = NSStringFromSize(size) as String
+            dict["size"] = "\(size.width),\(size.height)"
         }
         
         if let srcSet = srcSet {

@@ -1946,6 +1946,7 @@
 		F093322F24EC14DC0066FA41 /* ChangeSet.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChangeSet.m; sourceTree = "<group>"; };
 		F093323624EC14DD0066FA41 /* FeedOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedOperation.h; sourceTree = "<group>"; };
 		F093323724EC14DD0066FA41 /* FeedOperation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedOperation.m; sourceTree = "<group>"; };
+		F0953BAA25F36D9E005DE6C7 /* DBManager */ = {isa = PBXFileReference; lastKnownFileType = folder; name = DBManager; path = Yeti/DBManager; sourceTree = "<group>"; };
 		F099465F20AD86BE00E5520F /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		F099466320AD8A8A00E5520F /* AppDelegate+Store.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+Store.h"; sourceTree = "<group>"; };
 		F099466420AD8A8B00E5520F /* AppDelegate+Store.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+Store.m"; sourceTree = "<group>"; };
@@ -2605,6 +2606,7 @@
 		F070C2D01FBABC3500912CCF = {
 			isa = PBXGroup;
 			children = (
+				F0953BAA25F36D9E005DE6C7 /* DBManager */,
 				F0D028F525EE1CE20086F725 /* Models */,
 				F0AE1ADE25DB83BB0005CBEF /* FeedsLib */,
 				F0D98F5F24EE4C8500B1F9F0 /* UnreadsWidgetExtension.entitlements */,

@@ -7,15 +7,15 @@
 
 import Foundation
 
-final class ContentRange: NSObject, Codable {
+public final class ContentRange: NSObject, Codable {
     
-    var element: String?
-    var range: NSRange!
-    var type: String?
-    var url: URL?
-    var level: UInt?
+    public var element: String?
+    public var range: NSRange!
+    public var type: String?
+    public var url: URL?
+    public var level: UInt?
     
-    enum CodingKeys: String, CodingKey, CaseIterable {
+    public enum CodingKeys: String, CodingKey, CaseIterable {
         case element
         case range
         case type
@@ -23,7 +23,7 @@ final class ContentRange: NSObject, Codable {
         case level
     }
     
-    convenience init(from dict: [String: Any]) {
+    public convenience init(from dict: [String: Any]) {
         
         self.init()
         
@@ -31,7 +31,7 @@ final class ContentRange: NSObject, Codable {
         
     }
     
-    override func setValue(_ value: Any?, forKey key: String) {
+    public override func setValue(_ value: Any?, forKey key: String) {
         
         if key == "element" {
             if let value = value as? String {
@@ -70,7 +70,7 @@ final class ContentRange: NSObject, Codable {
         
     }
     
-    override func setValue(_ value: Any?, forUndefinedKey key: String) {
+    public override func setValue(_ value: Any?, forUndefinedKey key: String) {
         
         if key == "foo" {}
         else {
@@ -85,12 +85,12 @@ final class ContentRange: NSObject, Codable {
 
 extension ContentRange {
     
-    override var description: String {
+    public override var description: String {
         let desc = super.description
         return "\(desc)\n\(dictionaryRepresentation)"
     }
     
-    var dictionaryRepresentation: [String: Any] {
+    public var dictionaryRepresentation: [String: Any] {
         
         var dict = [String: Any]()
         

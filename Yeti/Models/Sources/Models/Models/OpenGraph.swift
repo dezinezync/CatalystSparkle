@@ -7,16 +7,16 @@
 
 import Foundation
 
-class OpenGraph: NSObject, Codable {
+public final class OpenGraph: NSObject, Codable {
     
-    var summary: String?
-    var image: URL?
-    var locale: String?
-    var title: String?
-    var type: String?
-    var url: URL?
+    public var summary: String?
+    public var image: URL?
+    public var locale: String?
+    public var title: String?
+    public var type: String?
+    public var url: URL?
     
-    convenience init(from dict: [String: Any]) {
+    public convenience init(from dict: [String: Any]) {
         
         self.init()
         
@@ -24,7 +24,7 @@ class OpenGraph: NSObject, Codable {
         
     }
     
-    override func setValue(_ value: Any?, forKey key: String) {
+    public override func setValue(_ value: Any?, forKey key: String) {
         
         if key == "image",
            let value = value as? String {
@@ -72,7 +72,7 @@ class OpenGraph: NSObject, Codable {
         
     }
     
-    override func setValue(_ value: Any?, forUndefinedKey key: String) {
+    public override func setValue(_ value: Any?, forUndefinedKey key: String) {
         
         if key == "foo" {}
         else {
@@ -87,7 +87,12 @@ class OpenGraph: NSObject, Codable {
 
 extension OpenGraph {
     
-    var dictionaryRepresentation: [String: Any] {
+    public override var description: String {
+        let desc = super.description
+        return "\(desc)\n\(dictionaryRepresentation)"
+    }
+    
+    public var dictionaryRepresentation: [String: Any] {
         
         var dict = [String: Any]()
         

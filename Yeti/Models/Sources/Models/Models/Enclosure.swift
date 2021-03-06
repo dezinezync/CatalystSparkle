@@ -7,13 +7,13 @@
 
 import Foundation
 
-class Enclosure: NSObject, Codable {
+public final class Enclosure: NSObject, Codable {
     
-    var length: Double?
-    var type: String!
-    var url: URL!
+    public var length: Double?
+    public var type: String!
+    public var url: URL!
     
-    convenience init(from dict: [String: Any]) {
+    public convenience init(from dict: [String: Any]) {
         
         self.init()
         
@@ -21,7 +21,7 @@ class Enclosure: NSObject, Codable {
         
     }
     
-    override func setValue(_ value: Any?, forKey key: String) {
+    public override func setValue(_ value: Any?, forKey key: String) {
         
         if key == "length" {
             
@@ -53,7 +53,7 @@ class Enclosure: NSObject, Codable {
         
     }
     
-    override func setValue(_ value: Any?, forUndefinedKey key: String) {
+    public override func setValue(_ value: Any?, forUndefinedKey key: String) {
         
         if key == "foo" {}
         else {
@@ -68,12 +68,12 @@ class Enclosure: NSObject, Codable {
 
 extension Enclosure {
     
-    override var description: String {
+    public override var description: String {
         let desc = super.description
         return "\(desc)\n\(dictionaryRepresentation)"
     }
     
-    var dictionaryRepresentation: [String: Any] {
+    public var dictionaryRepresentation: [String: Any] {
         
         var dict = [String: Any]()
         

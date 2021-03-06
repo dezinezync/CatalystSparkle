@@ -7,25 +7,25 @@
 
 import Foundation
 
-class Article: NSObject, Codable, ObservableObject {
+public final class Article: NSObject, Codable, ObservableObject {
     
-    var identifier: UInt!
-    var title: String?
-    var url: URL!
-    var author: String?
-    var content = [Content]()
-    var coverImage: URL!
-    var guid: String!
-    var timestamp: Date!
-    var enclosures = [Enclosure]()
-    var feedID: UInt!
-    var summary: String?
+    public var identifier: UInt!
+    public var title: String?
+    public var url: URL!
+    public var author: String?
+    public var content = [Content]()
+    public var coverImage: URL!
+    public var guid: String!
+    public var timestamp: Date!
+    public var enclosures = [Enclosure]()
+    public var feedID: UInt!
+    public var summary: String?
     
-    @Published var bookmarked: Bool! = false
-    @Published var read: Bool! = false
-    @Published var fulltext: Bool! = false
+    @Published public var bookmarked: Bool! = false
+    @Published public var read: Bool! = false
+    @Published public var fulltext: Bool! = false
     
-    convenience init(from dict: [String: Any]) {
+    public convenience init(from dict: [String: Any]) {
         
         self.init()
         
@@ -33,7 +33,7 @@ class Article: NSObject, Codable, ObservableObject {
         
     }
     
-    override func setValue(_ value: Any?, forKey key: String) {
+    public override func setValue(_ value: Any?, forKey key: String) {
         
         if key == "content" {
             
@@ -179,7 +179,7 @@ class Article: NSObject, Codable, ObservableObject {
         
     }
     
-    override func setValue(_ value: Any?, forUndefinedKey key: String) {
+    public override func setValue(_ value: Any?, forUndefinedKey key: String) {
         
         if key == "foo" {}
         else {
@@ -194,7 +194,7 @@ class Article: NSObject, Codable, ObservableObject {
 
 extension Article {
     
-    override var description: String {
+    public override var description: String {
         let desc = super.description
         return "\(desc)\n\(dictionaryRepresentation)"
     }
@@ -216,7 +216,7 @@ extension Article {
         
     }
 
-    var textFromContent: String? {
+    public var textFromContent: String? {
         
         var string = ""
         
@@ -236,7 +236,7 @@ extension Article {
         
     }
     
-    var dictionaryRepresentation: [String: Any] {
+    public var dictionaryRepresentation: [String: Any] {
         
         var dict = [String: Any]()
         

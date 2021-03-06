@@ -27,6 +27,15 @@
           "revision": "2b14531d0c36dbb7c1c45a4d38db9c2e7898a307",
           "version": "3.0.200"
         }
+      },
+      {
+        "package": "Swift-YapDatabase",
+        "repositoryURL": "git@github.com:mickeyl/SwiftYapDatabase.git",
+        "state": {
+          "branch": "master",
+          "revision": "e1befb00a014fa75721633950e100dddd343f496",
+          "version": null
+        }
       }
     ]
   },

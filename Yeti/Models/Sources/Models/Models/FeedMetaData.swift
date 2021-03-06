@@ -7,17 +7,17 @@
 
 import Foundation
 
-class FeedMetaData: NSObject, Codable {
+public final class FeedMetaData: NSObject, Codable {
     
-    var icons = [String: URL]()
-    var icon: URL?
-    var keywords = [String]()
-    var title: String?
-    var url: URL?
-    var summary: String?
-    var opengraph: OpenGraph?
+    public var icons = [String: URL]()
+    public var icon: URL?
+    public var keywords = [String]()
+    public var title: String?
+    public var url: URL?
+    public var summary: String?
+    public var opengraph: OpenGraph?
     
-    convenience init(from dict: [String: Any]) {
+    public convenience init(from dict: [String: Any]) {
         
         self.init()
         
@@ -25,7 +25,7 @@ class FeedMetaData: NSObject, Codable {
         
     }
     
-    override func setValue(_ value: Any?, forKey key: String) {
+    public override func setValue(_ value: Any?, forKey key: String) {
         
         if key == "icon" {
             
@@ -104,7 +104,7 @@ class FeedMetaData: NSObject, Codable {
         
     }
     
-    override func setValue(_ value: Any?, forUndefinedKey key: String) {
+    public override func setValue(_ value: Any?, forUndefinedKey key: String) {
         
         if key == "apple-touch-icon",
            let value = value as? [String: Any] {
@@ -136,7 +136,12 @@ class FeedMetaData: NSObject, Codable {
 
 extension FeedMetaData {
     
-    var dictionaryRepresentation: [String: Any] {
+    public override var description: String {
+        let desc = super.description
+        return "\(desc)\n\(dictionaryRepresentation)"
+    }
+    
+    public var dictionaryRepresentation: [String: Any] {
         
         var dict = [String: Any]()
         

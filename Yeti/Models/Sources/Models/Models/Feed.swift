@@ -17,23 +17,23 @@ public let kFeedLocalNotifications = "com.elytra.feed.localNotifications"
 
 private let imageExtensions = ["png", "jpg", "jpeg", "svg", "bmp", "ico", "webp", "gif"]
 
-class Feed: NSObject, Codable, ObservableObject {
+open class Feed: NSObject, Codable, ObservableObject {
+
+    public var feedID: UInt!
+    public var summary: String!
+    public var title: String!
+    public var url: URL!
+    public var favicon: URL?
+    public var extra: FeedMetaData?
+    public var rpcCount: UInt! = 0
+    public var lastRPC: Date?
+    public var hubSubscribed: Bool! = false
+    public var subscribed: Bool! = false
+    public var folderID: UInt? = 0
+    public var localName: String?
+    public var podcast: Bool! = false
     
-    var feedID: UInt!
-    var summary: String!
-    var title: String!
-    var url: URL!
-    var favicon: URL?
-    var extra: FeedMetaData?
-    var rpcCount: UInt! = 0
-    var lastRPC: Date?
-    var hubSubscribed: Bool! = false
-    var subscribed: Bool! = false
-    var folderID: UInt? = 0
-    var localName: String?
-    var podcast: Bool! = false
-    
-    private enum CodingKeys: String, CodingKey, CaseIterable {
+    public enum CodingKeys: String, CodingKey, CaseIterable {
         case feedID
         case summary
         case title
@@ -53,12 +53,12 @@ class Feed: NSObject, Codable, ObservableObject {
     
     weak var folder: Folder?
     #if os(macOS)
-    var faviconImage: NSImage?
+    public var faviconImage: NSImage?
     #else
-    var faviconImage: UIImage?
+    public var faviconImage: UIImage?
     #endif
     
-    var canShowExtraLevel: Bool {
+    public var canShowExtraLevel: Bool {
         
         guard let extra = extra else {
             return false
@@ -68,7 +68,7 @@ class Feed: NSObject, Codable, ObservableObject {
         
     }
     
-    convenience init(from dict: [String: Any]) {
+    public convenience init(from dict: [String: Any]) {
         
         self.init()
         
@@ -76,8 +76,8 @@ class Feed: NSObject, Codable, ObservableObject {
         
     }
     
-    internal var _faviconURI: URL?
-    var faviconURI: URL? {
+    fileprivate(set) var _faviconURI: URL?
+    public var faviconURI: URL? {
         
         guard _faviconURI == nil else {
             return _faviconURI!
@@ -220,11 +220,11 @@ class Feed: NSObject, Codable, ObservableObject {
         
     }
     
-    var displayTitle: String {
+    public var displayTitle: String {
         return localName ?? title
     }
     
-    override func setValue(_ value: Any?, forKey key: String) {
+    public override func setValue(_ value: Any?, forKey key: String) {
         
         if key == "extra", let value = value as? [String: Any] {
             
@@ -288,7 +288,7 @@ class Feed: NSObject, Codable, ObservableObject {
         
     }
     
-    override func setValue(_ value: Any?, forUndefinedKey key: String) {
+    public override func setValue(_ value: Any?, forUndefinedKey key: String) {
         
         if key == "feed", let value = value as? [String: Any] {
             
@@ -318,7 +318,7 @@ class Feed: NSObject, Codable, ObservableObject {
 
 extension Feed {
     
-    override var description: String {
+    public override var description: String {
         let desc = super.description
         return "\(desc)\n\(dictionaryRepresentation)"
     }

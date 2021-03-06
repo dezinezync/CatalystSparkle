@@ -7,30 +7,30 @@
 
 import Foundation
 
-enum SubscriptionEnv: String, Codable {
+public enum SubscriptionEnv: String, Codable {
     case Sandbox
     case ProductionSandbox
     case Production
 }
 
-enum SubscriptionStatus: Int, Codable {
+public enum SubscriptionStatus: Int, Codable {
     case expired = 0
     case active = 1
     case trial = 2
 }
 
-class Subscription: NSObject, Codable {
+public final class Subscription: NSObject, Codable {
     
-    static let dateFormatter: DateFormatter = {
+    public static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'.000Z'"
         formatter.timeZone = NSTimeZone.system
         return formatter
     }()
     
-    var identifier: UInt!
-    var environment: SubscriptionEnv!
-    var expiry: Date! {
+    public var identifier: UInt!
+    public var environment: SubscriptionEnv!
+    public var expiry: Date! {
         didSet {
             
             guard expiry != nil else {
@@ -55,13 +55,14 @@ class Subscription: NSObject, Codable {
             
         }
     }
-    var created: Date!
-    var status: SubscriptionStatus! = .expired
-    var preAppStore: Bool = false
-    var lifetime: Bool = false
-    var external: Bool = false
     
-    convenience init(from dict: [String: Any]) {
+    public var created: Date!
+    public var status: SubscriptionStatus! = .expired
+    public var preAppStore: Bool = false
+    public var lifetime: Bool = false
+    public var external: Bool = false
+    
+    public convenience init(from dict: [String: Any]) {
         
         self.init()
         
@@ -69,7 +70,7 @@ class Subscription: NSObject, Codable {
         
     }
     
-    var hasExpired: Bool {
+    public var hasExpired: Bool {
         get {
             if self.lifetime == true {
                 return false
@@ -91,7 +92,7 @@ class Subscription: NSObject, Codable {
         }
     }
     
-    override func setValue(_ value: Any?, forKey key: String) {
+    public override func setValue(_ value: Any?, forKey key: String) {
         
         if key == "expiry" || key == "created" {
             
@@ -129,7 +130,7 @@ class Subscription: NSObject, Codable {
         
     }
     
-    override func setValue(_ value: Any?, forUndefinedKey key: String) {
+    public override func setValue(_ value: Any?, forUndefinedKey key: String) {
         
         if key == "id" || key == "identifier" || key == "identifer" {
             if let id = (value as? NSString)?.integerValue {
@@ -214,6 +215,11 @@ class Subscription: NSObject, Codable {
 }
 
 extension Subscription {
+    
+    public override var description: String {
+        let desc = super.description
+        return "\(desc)\n\(dictionaryRepresentation)"
+    }
     
     public var dictionaryRepresentation: [String: Any] {
         

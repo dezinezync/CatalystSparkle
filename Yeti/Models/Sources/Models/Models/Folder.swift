@@ -7,12 +7,12 @@
 
 import Foundation
 
-class Folder: NSObject, Codable, ObservableObject {
+public final class Folder: NSObject, Codable, ObservableObject {
     
-    var title: String!
-    var folderID: UInt!
-    var expanded: Bool = false
-    var feedIDs = Set<UInt>() {
+    public var title: String!
+    public var folderID: UInt!
+    public var expanded: Bool = false
+    public var feedIDs = Set<UInt>() {
         didSet {
             
             let _ = feedIDs.map { $0 }
@@ -22,7 +22,7 @@ class Folder: NSObject, Codable, ObservableObject {
         }
     }
     
-    private enum CodingKeys: String, CodingKey {
+    public enum CodingKeys: String, CodingKey {
         case title
         case folderID
         case feedIDs
@@ -30,16 +30,16 @@ class Folder: NSObject, Codable, ObservableObject {
     }
     
     // https://stackoverflow.com/a/60707942/1387258
-    var feeds = [() -> Feed?]()
+    public var feeds = [() -> Feed?]()
     
     // https://stackoverflow.com/a/59587459/1387258
-    var unread: UInt {
+    public var unread: UInt {
         return feeds.reduce(0) { (result: UInt, closure: @escaping () -> Feed?) -> UInt in
             return result + (closure()?.unread ?? 0)
         }
     }
     
-    convenience init(from dict: [String: Any]) {
+    public convenience init(from dict: [String: Any]) {
         
         self.init()
         
@@ -47,7 +47,7 @@ class Folder: NSObject, Codable, ObservableObject {
         
     }
     
-    override func setValue(_ value: Any?, forKey key: String) {
+    public override func setValue(_ value: Any?, forKey key: String) {
         
         if key == "title", let value = value as? String {
             title = value
@@ -66,7 +66,7 @@ class Folder: NSObject, Codable, ObservableObject {
         
     }
     
-    override func setValue(_ value: Any?, forUndefinedKey key: String) {
+    public override func setValue(_ value: Any?, forUndefinedKey key: String) {
         
         #if DEBUG
         print("Folder undefined key:\(key) with value:\(String(describing: value))")
@@ -78,7 +78,12 @@ class Folder: NSObject, Codable, ObservableObject {
 
 extension Folder {
     
-    var dictionaryRepresentation: [String: Any] {
+    public override var description: String {
+        let desc = super.description
+        return "\(desc)\n\(dictionaryRepresentation)"
+    }
+    
+    public var dictionaryRepresentation: [String: Any] {
         
         var dict = [String: Any]()
         

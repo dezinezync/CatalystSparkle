@@ -7,14 +7,14 @@
 
 import Foundation
 
-class User: NSObject, Codable {
+public final class User: NSObject, Codable {
     
-    var uuid: String!
-    var userID: UInt!
-    var filters = Set<String>()
-    var subscription: Subscription!
+    public var uuid: String!
+    public var userID: UInt!
+    public var filters = Set<String>()
+    public var subscription: Subscription!
     
-    convenience init(from dict: [String: Any]) {
+    public convenience init(from dict: [String: Any]) {
         
         self.init()
         
@@ -22,7 +22,7 @@ class User: NSObject, Codable {
         
     }
     
-    override func setValue(_ value: Any?, forKey key: String) {
+    public override func setValue(_ value: Any?, forKey key: String) {
         
         if key == "uuid", let val = value as? String {
             uuid = val
@@ -72,7 +72,7 @@ class User: NSObject, Codable {
         
     }
     
-    override func setValue(_ value: Any?, forUndefinedKey key: String) {
+    public override func setValue(_ value: Any?, forUndefinedKey key: String) {
         
         if key == "id" || key == "userID" {
             
@@ -93,7 +93,7 @@ class User: NSObject, Codable {
 
 extension User {
     
-    override var description: String {
+    public override var description: String {
         let desc = super.description
         return "\(desc)\n\(dictionaryRepresentation)"
     }
