@@ -54,4 +54,24 @@ final class EnclosureTests: XCTestCase {
         
     }
     
+    func testSettingUndefinedValues () {
+        
+        let enclosure = Enclosure()
+        enclosure.setValue(true, forKey: "foo")
+        enclosure.setValue(false, forKey: "bar")
+        
+    }
+    
+    func testDescription () {
+        
+        let enclosure = Enclosure(from:[
+            "length": 123456789,
+            "type": "image/png",
+            "url": "https://blog.elytra.app/wp-content/uploads/2021/01/elytra-v2.2@2x.png"
+        ])
+        
+        XCTAssert(enclosure.description.contains("Enclosure:"))
+        
+    }
+    
 }

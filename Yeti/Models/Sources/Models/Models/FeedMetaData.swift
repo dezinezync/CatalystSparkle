@@ -27,45 +27,75 @@ class FeedMetaData: NSObject, Codable {
     
     override func setValue(_ value: Any?, forKey key: String) {
         
-        if key == "icon",
-           let value = value as? String {
+        if key == "icon" {
             
-            if let url = URL(string: value) {
+            if let value = value as? String {
+                icon = URL(string: value)
+            }
+            
+            else if let url = value as? URL {
                 icon = url
             }
             
         }
-        else if key == "keywords",
-                let value = value as? [String] {
+        else if key == "keywords" {
             
-            keywords = value
+            if let value = value as? [String] {
+            
+                keywords = value
+                
+            }
+            else if let value = value as? String {
+                
+                if value.contains(",") == true {
+                    
+                    let keywords = value
+                        .components(separatedBy: ",")
+                        .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                    
+                    self.keywords = keywords
+                    
+                }
+                else {
+                    keywords = [value]
+                }
+                
+            }
             
         }
-        else if key == "title",
-                let value = value as? String {
+        else if key == "title" {
             
-            title = value
+            if let value = value as? String {
+                title = value
+            }
             
         }
-        else if key == "url",
-                let value = value as? String {
+        else if key == "url" {
             
-            if let url = URL(string: value) {
+            if let value = value as? String {
+                self.url = URL(string: value)
+            }
+            
+            else if let url = value as? URL {
                 self.url = url
             }
             
         }
-        else if key == "summary",
-                let value = value as? String {
+        else if key == "summary" {
             
-            summary = value
+            if let value = value as? String {
+                summary = value
+            }
             
         }
-        else if key == "opengraph",
-                let value = value as? [String: Any] {
+        else if key == "opengraph" {
             
-            let og = OpenGraph(from: value)
-            opengraph = og
+            if let value = value as? [String: Any] {
+            
+                let og = OpenGraph(from: value)
+                opengraph = og
+                
+            }
             
         }
         else {

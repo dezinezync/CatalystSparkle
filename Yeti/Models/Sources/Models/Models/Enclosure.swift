@@ -68,6 +68,11 @@ class Enclosure: NSObject, Codable {
 
 extension Enclosure {
     
+    override var description: String {
+        let desc = super.description
+        return "\(desc)\n\(dictionaryRepresentation)"
+    }
+    
     var dictionaryRepresentation: [String: Any] {
         
         var dict = [String: Any]()

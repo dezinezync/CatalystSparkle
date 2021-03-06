@@ -63,11 +63,6 @@ class Content: NSObject, Codable {
         
     }
     
-    override var description: String {
-        let desc = super.description
-        return "\(desc)\n\(dictionaryRepresentation)"
-    }
-    
     override func setValue(_ value: Any?, forKey key: String) {
         
         if key == "content" {
@@ -135,6 +130,9 @@ class Content: NSObject, Codable {
                 items = objects
                 
             }
+            else if let value = value as? Content {
+                items = [value]
+            }
             else if let value = value as? [Content] {
                 items = value
             }
@@ -161,6 +159,19 @@ class Content: NSObject, Codable {
             if let value = value as? CGSize {
                 size = value
             }
+            else if let value = value as? String {
+                
+                let comps = value.components(separatedBy: ",")
+                    .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                    .filter { $0.count > 0 }
+                    .map { ($0 as NSString).doubleValue }
+                
+                guard comps.count == 2 else {
+                    return
+                }
+                
+                size = CGSize(width: comps.first!, height: comps.last!)
+            }
         }
         else if key == "srcSet" || key == "srcset" {
             if let value = value as? [String: String] {
@@ -173,6 +184,9 @@ class Content: NSObject, Codable {
                 let objects = value.map { Content(from: $0) }
                 images = objects
                 
+            }
+            else if let value = value as? Content {
+                images = [value]
             }
             else if let value = value as? [Content] {
                 images = value
@@ -204,6 +218,11 @@ class Content: NSObject, Codable {
 }
 
 extension Content {
+    
+    override var description: String {
+        let desc = super.description
+        return "\(desc)\n\(dictionaryRepresentation)"
+    }
     
     var dictionaryRepresentation: [String: Any] {
         

@@ -105,7 +105,7 @@ final class UserTests: XCTestCase {
     
     func testSettingSub () {
         
-        var user = Self.makeUser()
+        let user = Self.makeUser()
         
         user.setValue(subJSON, forKey: "subscription")
         

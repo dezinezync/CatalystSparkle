@@ -15,13 +15,15 @@ import UIKit
 public let kFeedSafariReaderMode = "com.elytra.feed.safariReaderMode"
 public let kFeedLocalNotifications = "com.elytra.feed.localNotifications"
 
+private let imageExtensions = ["png", "jpg", "jpeg", "svg", "bmp", "ico", "webp", "gif"]
+
 class Feed: NSObject, Codable, ObservableObject {
     
     var feedID: UInt!
     var summary: String!
     var title: String!
     var url: URL!
-    var favicon: URL!
+    var favicon: URL?
     var extra: FeedMetaData?
     var rpcCount: UInt! = 0
     var lastRPC: Date?
@@ -31,7 +33,7 @@ class Feed: NSObject, Codable, ObservableObject {
     var localName: String?
     var podcast: Bool! = false
     
-    private enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey, CaseIterable {
         case feedID
         case summary
         case title
@@ -74,8 +76,154 @@ class Feed: NSObject, Codable, ObservableObject {
         
     }
     
-    var faviconURI: String {
-        return ""
+    internal var _faviconURI: URL?
+    var faviconURI: URL? {
+        
+        guard _faviconURI == nil else {
+            return _faviconURI!
+        }
+        
+        var url: URL? = nil
+        
+        // check if this is a youtube channel
+        let isYoutubeChannel = self.url.absoluteString.contains("feeds/videos.xml?channel_id=")
+        
+        if isYoutubeChannel == true,
+           let ogImage = value(for: "extra.opengraph.image") as? URL {
+            
+            url = ogImage
+            
+        }
+        
+        if url != nil,
+           let favicon = favicon,
+           favicon.absoluteString.isEmpty == false {
+            
+            url = favicon
+            
+        }
+        
+        if let extra = extra {
+            
+            if extra.icons.count > 0 {
+                
+                if let base = extra.icons["base"] {
+                    
+                    url = base
+                    
+                }
+                
+                // sort keys by size
+                let sortedKeys = extra.icons.keys.sorted()
+                
+                if let icon = extra.icons[sortedKeys.last!] {
+                    
+                    url = icon
+                    
+                }
+                
+            }
+            else if let og = extra.opengraph,
+                    let image = og.image {
+                
+                url = image
+                
+            }
+            
+        }
+        
+        if let uri = url {
+            
+            // opengraph can only contain images (samwize)
+            var pathExtension = uri.pathExtension
+            
+            if pathExtension.contains("?") {
+                
+                let range = (pathExtension as NSString).range(of: "?")
+                
+                pathExtension = (pathExtension as NSString).substring(to: range.location) as String
+                
+                // the path extension can be blank for gravatar URLs
+                if pathExtension.isEmpty == false,
+                   imageExtensions.contains(pathExtension) == false {
+                    
+                    url = nil
+                    
+                }
+                
+            }
+            
+        }
+        
+        if url == nil,
+           let icon = extra?.icon,
+           icon.absoluteString.isEmpty == false {
+            
+            url = icon
+            
+        }
+        
+        if url == nil,
+           let fav = favicon,
+           fav.absoluteString.isEmpty == false {
+            
+            url = fav
+            
+        }
+        
+        guard var uri = url else {
+            return nil
+        }
+        
+        // ensure this is a not a relative URL
+        guard var components = URLComponents(string: uri.absoluteString) else {
+            
+            _faviconURI = url
+            return _faviconURI
+            
+        }
+        
+        if components.host == nil {
+            
+            // relative string
+            guard var comps = URLComponents(string: extra?.url?.absoluteString ?? "") else {
+                
+                return nil
+                
+            }
+            
+            comps.path = uri.absoluteString
+            
+            uri = comps.url ?? uri
+            
+            components = URLComponents(string: uri.absoluteString)!
+            
+        }
+        
+        if components.scheme == nil {
+            
+            components.scheme = "https"
+            
+            uri = components.url ?? uri
+            
+        }
+        
+        if uri.pathExtension.contains("ico") {
+            
+            guard let googleURL = URL(string: "https://www.google.com/s2/favicons?domain=\(components.host ?? "")") else {
+                
+                return nil
+                
+            }
+            
+            uri = googleURL
+            
+        }
+        
+        _faviconURI = uri
+        return _faviconURI
+        
+        
     }
     
     var displayTitle: String {
@@ -175,6 +323,35 @@ class Feed: NSObject, Codable, ObservableObject {
 }
 
 extension Feed {
+    
+    override var description: String {
+        let desc = super.description
+        return "\(desc)\n\(dictionaryRepresentation)"
+    }
+    
+    var dictionaryRepresentation: [String: Any] {
+        
+        var dict = [String: Any]()
+        
+        for name in Feed.CodingKeys.allCases {
+            
+            let key = name.rawValue
+            
+            if var val = value(for: key) {
+                
+                if key == "extra" {
+                    val = (val as! FeedMetaData).dictionaryRepresentation
+                }
+                
+                dict[key] = val
+                
+            }
+            
+        }
+        
+        return dict
+        
+    }
     
     static func == (lhs: Feed, rhs: Feed) -> Bool {
         

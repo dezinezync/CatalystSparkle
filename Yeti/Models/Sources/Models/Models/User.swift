@@ -7,23 +7,6 @@
 
 import Foundation
 
-protocol Copyable {
-    func copy() -> Self
-}
-
-extension Copyable {
-    func copy() -> Self where Self: Codable {
-        do {
-            let encoded = try JSONEncoder().encode(self)
-            let decoded = try JSONDecoder().decode(Self.self, from: encoded)
-            return decoded
-        }
-        catch {
-            fatalError(error.localizedDescription)
-        }
-    }
-}
-
 class User: NSObject, Codable {
     
     var uuid: String!
@@ -106,14 +89,14 @@ class User: NSObject, Codable {
         
     }
     
-    override var description: String {
-        let sup = super.description
-        return "\(sup)\n\(dictionaryRepresentation)"
-    }
-    
 }
 
 extension User {
+    
+    override var description: String {
+        let desc = super.description
+        return "\(desc)\n\(dictionaryRepresentation)"
+    }
     
     public var dictionaryRepresentation: [String: Any] {
         

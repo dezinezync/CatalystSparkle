@@ -60,6 +60,29 @@ final class FeedTests: XCTestCase {
         XCTAssert(feed != FeedMetaData())
         
     }
+    
+    func testDictRepresentation () {
+        
+        let feed = Self.makeFeed()
+        
+        let dict = feed.dictionaryRepresentation
+        
+        XCTAssertNotNil(dict["extra"])
+        XCTAssertNotNil(dict["title"])
+        XCTAssertNotNil(dict["url"])
+        XCTAssertNotNil(dict["feedID"])
+        
+    }
+    
+    func testDescription () {
+        
+        let feed = Self.makeFeed()
+        let desc = feed.description
+        
+        XCTAssert(desc.contains("Feed:"))
+        XCTAssert(desc.contains("macstories.net"))
+        
+    }
 
 }
 

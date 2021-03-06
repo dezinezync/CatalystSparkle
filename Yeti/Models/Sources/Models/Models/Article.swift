@@ -166,6 +166,8 @@ class Article: NSObject, Codable, ObservableObject {
         }
         else if key == "fulltext" || key == "mercury" {
             
+            print("value is \(String(describing:value))")
+            
             if let value = value as? Bool {
                 fulltext = value
             }
@@ -191,6 +193,11 @@ class Article: NSObject, Codable, ObservableObject {
 }
 
 extension Article {
+    
+    override var description: String {
+        let desc = super.description
+        return "\(desc)\n\(dictionaryRepresentation)"
+    }
     
     private func textFromContent(content: Content) -> String {
         

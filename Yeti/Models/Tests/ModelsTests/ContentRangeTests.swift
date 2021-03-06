@@ -84,4 +84,17 @@ final class ContentRangeTests: XCTestCase {
         
     }
     
+    func testDescription () {
+        
+        let range = ContentRange(from: [
+            "element": "link",
+            "url": URL(string: "https://elytra.app/")!,
+            "range": NSRange(location: 25, length: 5)
+        ])
+        
+        XCTAssert(range.description.contains("ContentRange:"))
+        XCTAssert(range.description.contains("https://elytra.app/"))
+        
+    }
+    
 }
