@@ -89,13 +89,13 @@ class Feed: NSObject, Codable, ObservableObject {
         let isYoutubeChannel = self.url.absoluteString.contains("feeds/videos.xml?channel_id=")
         
         if isYoutubeChannel == true,
-           let ogImage = value(for: "extra.opengraph.image") as? URL {
+           let ogImage = extra?.opengraph?.image {
             
             url = ogImage
             
         }
         
-        if url != nil,
+        if url == nil,
            let favicon = favicon,
            favicon.absoluteString.isEmpty == false {
             
@@ -103,7 +103,7 @@ class Feed: NSObject, Codable, ObservableObject {
             
         }
         
-        if let extra = extra {
+        if url == nil, let extra = extra {
             
             if extra.icons.count > 0 {
                 
@@ -114,9 +114,11 @@ class Feed: NSObject, Codable, ObservableObject {
                 }
                 
                 // sort keys by size
-                let sortedKeys = extra.icons.keys.sorted()
+                let sortedKeys = extra.icons.keys.map { ($0 as NSString).integerValue }.sorted()
                 
-                if let icon = extra.icons[sortedKeys.last!] {
+                let key = "\(sortedKeys.last!)"
+                
+                if let icon = extra.icons[key] {
                     
                     url = icon
                     
@@ -135,21 +137,13 @@ class Feed: NSObject, Codable, ObservableObject {
         if let uri = url {
             
             // opengraph can only contain images (samwize)
-            var pathExtension = uri.pathExtension
+            let pathExtension = uri.pathExtension
             
-            if pathExtension.contains("?") {
+            // the path extension can be blank for gravatar URLs
+            if pathExtension.isEmpty == false,
+               imageExtensions.contains(pathExtension) == false {
                 
-                let range = (pathExtension as NSString).range(of: "?")
-                
-                pathExtension = (pathExtension as NSString).substring(to: range.location) as String
-                
-                // the path extension can be blank for gravatar URLs
-                if pathExtension.isEmpty == false,
-                   imageExtensions.contains(pathExtension) == false {
-                    
-                    url = nil
-                    
-                }
+                url = nil
                 
             }
             
