@@ -3,12 +3,6 @@ import YapDatabase
 import Models
 import Combine
 
-/// The last sync date we stored or the one sent by the server.
-private let SYNC_TOKEN = "syncToken-2.3.0"
-
-/// The last sync token we stored or the one sent by the server.
-private let SYNC_TOKEN_ID = "syncTokenID-2.3.0"
-
 /// Have the changes been fully synced with our local store?
 private let SYNCED_CHANGES = "syncedChanges"
 
@@ -291,6 +285,12 @@ public final class DBManager {
         
     }
     
+    public func feed(for id: UInt) -> Feed? {
+        
+        return _feeds.first { $0.feedID == id }
+        
+    }
+    
     fileprivate var _preSyncFeedMetadata = [UInt: FeedMeta]()
     
     fileprivate func _metadataForFeed(_ feed: Feed) -> FeedMeta {
@@ -456,33 +456,14 @@ public final class DBManager {
     }
     
     // MARK: - Articles
-    public func collection(for feed: Feed) -> String {
-        
-        return collection(for: feed.feedID)
-        
-    }
-    
-    public func collection(for feedID: UInt) -> String {
-        
-        return "\(CollectionNames.articles.rawValue):\(feedID)"
-        
-    }
-    
-    public func collection(for article: Article) -> String {
-        
-        return "\(CollectionNames.articles.rawValue):\(article.feedID!)"
-        
-    }
     
     public func article(for id: UInt, feedID: UInt) -> Article? {
         
         var a: Article! = nil
         
-        uiConnection.read { [weak self] (t) in
+        uiConnection.read { (t) in
             
-            let col = self?.collection(for: feedID)
-            
-            a = t.object(forKey: "\(id)", inCollection: col) as? Article
+            a = t.object(forKey: "\(id)", inCollection: .articles) as? Article
             
         }
         
@@ -540,13 +521,21 @@ public final class DBManager {
             return
         }
         
-        writeQueue.sync { [weak self] in
+        let now = Date()
+        
+        writeQueue.sync {
             
             bgConnection.asyncReadWrite { (t) in
                 
                 for a in articles {
                     
-                    let col = self?.collection(for: a)
+                    if a.read == false,
+                       a.timestamp.timeIntervalSince(now) < -1209600 {
+                        
+                        // articles older than 2 weeks are marked as read
+                        a.read = true
+                        
+                    }
                     
                     if a.content.count > 0 {
                         
@@ -590,7 +579,7 @@ public final class DBManager {
                     
                     let metadata = ArticleMeta(feedID: a.feedID, read: a.read, bookmarked: a.bookmarked, fulltext: a.fulltext, timestamp: a.timestamp, titleWordCloud: components)
                     
-                    t.setObject(a, forKey: "\(a.identifier!)", inCollection: col, withMetadata: metadata)
+                    t.setObject(a, forKey: "\(a.identifier!)", inCollection: .articles, withMetadata: metadata)
                     
                 }
                 
@@ -634,12 +623,11 @@ public final class DBManager {
     
     public func delete(article: Article) {
         
-        let col = collection(for: article)
+        _delete(articleID: article.identifier)
         
-        _delete(articleID: article.identifier, collection: col)
     }
     
-    fileprivate func _delete(articleID: UInt, collection: String) {
+    fileprivate func _delete(articleID: UInt) {
         
         writeQueue.sync { [weak self] in
             
@@ -647,7 +635,7 @@ public final class DBManager {
                 
                 let key = "\(articleID)"
                 
-                self?._delete(articleID: key, collection: collection, transaction: t)
+                self?._delete(articleID: key, transaction: t)
                 
             })
             
@@ -655,9 +643,9 @@ public final class DBManager {
         
     }
     
-    fileprivate func _delete(articleID: String, collection: String, transaction: YapDatabaseReadWriteTransaction) {
+    fileprivate func _delete(articleID: String, transaction: YapDatabaseReadWriteTransaction) {
         
-        transaction.removeObject(forKey: articleID, inCollection: collection)
+        transaction.removeObject(forKey: articleID, inCollection: .articles)
         transaction.removeObject(forKey: articleID, inCollection: .articlesContent)
         transaction.removeObject(forKey: articleID, inCollection: .articlesFulltext)
         
@@ -686,13 +674,6 @@ public final class DBManager {
         }
         
     }
-    
-}
-
-// MARK: - Sync
-extension DBManager {
-    
-    
     
 }
 

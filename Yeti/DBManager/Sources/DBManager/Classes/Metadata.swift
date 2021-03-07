@@ -13,6 +13,8 @@ public struct FeedMeta: Codable {
     public var url: URL
     public var title: String
     public var folderID: UInt?
+    public var localNotifications: Bool = false
+    public var readerMode: Bool = false
     
     public init(id: UInt, url: URL, title: String) {
         
