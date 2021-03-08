@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "DZNetworking",
+        "repositoryURL": "https://github.com/DZNS/DZNetworking.git",
+        "state": {
+          "branch": null,
+          "revision": "d4c585f0d1aca0e1fc1189b8dfb355e882a2e5c5",
+          "version": "2.0.3"
+        }
+      },
+      {
         "package": "SDWebImage",
         "repositoryURL": "https://github.com/SDWebImage/SDWebImage.git",
         "state": {

@@ -1813,6 +1813,7 @@
 		F0650656236036A90015F2C4 /* PushVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PushVC.m; sourceTree = "<group>"; };
 		F065D65D24EC19DA00007467 /* Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Prefix.pch; sourceTree = "<group>"; };
 		F065D65E24EC1A1E00007467 /* notificationContext.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = notificationContext.entitlements; sourceTree = "<group>"; };
+		F065F6A025F4FEB800D76076 /* Networking */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Networking; path = Yeti/Networking; sourceTree = "<group>"; };
 		F0673AFE20C6A1EB00C42062 /* OPMLVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OPMLVC.h; sourceTree = "<group>"; };
 		F0673AFF20C6A1EB00C42062 /* OPMLVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OPMLVC.m; sourceTree = "<group>"; };
 		F0673B0020C6A1EB00C42062 /* OPMLVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OPMLVC.xib; sourceTree = "<group>"; };
@@ -2606,6 +2607,7 @@
 		F070C2D01FBABC3500912CCF = {
 			isa = PBXGroup;
 			children = (
+				F065F6A025F4FEB800D76076 /* Networking */,
 				F0953BAA25F36D9E005DE6C7 /* DBManager */,
 				F0D028F525EE1CE20086F725 /* Models */,
 				F0AE1ADE25DB83BB0005CBEF /* FeedsLib */,
