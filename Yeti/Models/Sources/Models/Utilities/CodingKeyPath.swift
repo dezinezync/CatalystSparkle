@@ -8,10 +8,10 @@
 import Foundation
 
 extension Encodable {
-    func hasKey(for path: String) -> Bool {
+    public func hasKey(for path: String) -> Bool {
         return Mirror(reflecting: self).children.contains { $0.label == path }
     }
-    func value(for path: String) -> Any? {
+    public func value(for path: String) -> Any? {
         return Mirror(reflecting: self).children.first { $0.label == path }?.value
     }
 }

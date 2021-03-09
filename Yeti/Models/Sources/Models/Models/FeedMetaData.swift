@@ -189,4 +189,28 @@ extension FeedMetaData {
     
 }
 
+extension FeedMetaData {
+    
+    static func == (lhs: FeedMetaData, rhs: FeedMetaData) -> Bool {
+        
+        return lhs.opengraph == rhs.opengraph
+            && lhs.icons == rhs.icons
+            && lhs.icon == rhs.icon
+            && lhs.keywords == rhs.keywords
+            && lhs.title == rhs.title
+            && lhs.url == rhs.url
+            && lhs.summary == rhs.summary
+        
+    }
+    
+    public override func isEqual(_ object: Any?) -> Bool {
+        
+        guard let object = object as? FeedMetaData else { return false }
+        
+        return object == self
+        
+    }
+    
+}
+
 extension FeedMetaData: Copyable { }

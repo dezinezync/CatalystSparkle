@@ -85,6 +85,29 @@ final class FeedsManagerTests: XCTestCase {
                 XCTAssertNotNil(result)
                 XCTAssert(result.feeds.count > 0)
                 XCTAssert(result.folders.count > 0)
+                
+                let feed: Feed = result.feeds[0]
+                let encoder = JSONEncoder()
+                let encoded = try? encoder.encode(feed)
+                
+                XCTAssertNotNil(encoded)
+                
+                let decoder = JSONDecoder()
+                let decodedFeed: Feed = try! decoder.decode(Feed.self, from: encoded!)
+                
+                XCTAssertEqual(feed, decodedFeed)
+                
+                for ck in Feed.CodingKeys.allCases {
+                    
+                    let key = ck.rawValue
+                    
+                    let a = feed.value(for: key) as? String
+                    let b = decodedFeed.value(for: key) as? String
+                    
+                    XCTAssertEqual(a, b)
+                    
+                }
+                
                 expectation.fulfill()
             
             case .failure(let error):

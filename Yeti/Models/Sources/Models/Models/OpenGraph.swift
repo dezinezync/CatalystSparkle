@@ -126,4 +126,27 @@ extension OpenGraph {
     
 }
 
+extension OpenGraph {
+    
+    static func == (lhs: OpenGraph, rhs: OpenGraph) -> Bool {
+        
+        return lhs.type == rhs.type
+            && lhs.url == rhs.url
+            && lhs.locale == rhs.locale
+            && lhs.title == rhs.title
+            && lhs.image == rhs.image
+            && lhs.summary == rhs.summary
+        
+    }
+    
+    public override func isEqual(_ object: Any?) -> Bool {
+        
+        guard let object = object as? OpenGraph else { return false }
+        
+        return object == self
+        
+    }
+    
+}
+
 extension OpenGraph: Copyable { }

@@ -351,15 +351,24 @@ extension Feed {
         
     }
     
+}
+
+extension Feed {
+    
     static func == (lhs: Feed, rhs: Feed) -> Bool {
         
-        switch (lhs, rhs) {
-        case (lhs, rhs): do {
-            return lhs.url == rhs.url && lhs.feedID == rhs.feedID
-        }
-        default:
-            return false
-        }
+        return lhs.url == rhs.url
+            && lhs.feedID == rhs.feedID
+            && lhs.extra == rhs.extra
+            && lhs.displayTitle == rhs.displayTitle
+        
+    }
+    
+    open override func isEqual(_ object: Any?) -> Bool {
+        
+        guard let object = object as? Feed else { return false }
+        
+        return object == self
         
     }
     
