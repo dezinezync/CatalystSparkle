@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/DZNS/DZNetworking.git",
         "state": {
           "branch": null,
-          "revision": "d4c585f0d1aca0e1fc1189b8dfb355e882a2e5c5",
-          "version": "2.0.3"
+          "revision": "ff413e61deb19cdb7835110d3a53921d2f4f9f0e",
+          "version": "2.0.4"
         }
       },
       {
@@ -44,6 +44,15 @@
           "branch": "master",
           "revision": "e1befb00a014fa75721633950e100dddd343f496",
           "version": null
+        }
+      },
+      {
+        "package": "SwiftyJSON",
+        "repositoryURL": "https://github.com/SwiftyJSON/SwiftyJSON.git",
+        "state": {
+          "branch": null,
+          "revision": "2b6054efa051565954e1d2b9da831680026cd768",
+          "version": "4.3.0"
         }
       }
     ]

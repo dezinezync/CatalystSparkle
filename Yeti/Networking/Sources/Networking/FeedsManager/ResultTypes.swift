@@ -13,3 +13,32 @@ public struct GetUserResult: Hashable, Codable {
     let user: User
     
 }
+
+public struct StartTrialResult: Hashable, Codable {
+    
+    let status: Bool
+    let id: UInt?
+    let expiry: String?
+    
+}
+
+public struct GetSubscriptionResult: Hashable, Codable {
+    
+    let status: Bool
+    let subscription: Subscription
+    
+}
+
+public struct StructureResult: Hashable, Codable {
+    
+    let folders: [Folder]
+    let feeds: [UInt]
+    
+}
+
+public struct GetFeedsResult: Hashable, Codable {
+    
+    let feeds: [Feed]
+    let folders: [Folder]
+    
+}

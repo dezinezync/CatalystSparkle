@@ -105,20 +105,20 @@ open class Feed: NSObject, Codable, ObservableObject {
         
         if url == nil, let extra = extra {
             
-            if extra.icons.count > 0 {
+            if extra.icons?.count ?? 0 > 0 {
                 
-                if let base = extra.icons["base"] {
+                if let base = extra.icons?["base"] {
                     
                     url = base
                     
                 }
                 
                 // sort keys by size
-                let sortedKeys = extra.icons.keys.map { ($0 as NSString).integerValue }.sorted()
+                let sortedKeys = extra.icons?.keys.map { ($0 as NSString).integerValue }.sorted() ?? []
                 
                 let key = "\(sortedKeys.last!)"
                 
-                if let icon = extra.icons[key] {
+                if let icon = extra.icons?[key] {
                     
                     url = icon
                     
@@ -252,11 +252,15 @@ open class Feed: NSObject, Codable, ObservableObject {
             }
             
         }
-        else if key == "favicon",
-                let value = value as? String {
+        else if key == "favicon" {
             
-            if let url = URL(string: value) {
-                favicon = url
+            if let value = value as? String {
+                if let url = URL(string: value) {
+                    favicon = url
+                }
+            }
+            else if let value = value as? URL {
+                favicon = value
             }
             
         }

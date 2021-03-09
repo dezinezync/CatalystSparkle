@@ -29,6 +29,10 @@ public final class Folder: NSObject, Codable, ObservableObject {
         case expanded
     }
     
+    fileprivate enum AdditionalInfoKeys: String, CodingKey {
+        case feeds
+    }
+    
     // https://stackoverflow.com/a/60707942/1387258
     public var feeds = [() -> Feed?]()
     
@@ -55,7 +59,7 @@ public final class Folder: NSObject, Codable, ObservableObject {
         else if key == "id" || key == "folderID", let value = value as? UInt {
             folderID = value
         }
-        else if key == "feedIDs", let value = value as? [UInt] {
+        else if key == "feeds", let value = value as? [UInt] {
             
             value.forEach { feedIDs.insert($0) }
             

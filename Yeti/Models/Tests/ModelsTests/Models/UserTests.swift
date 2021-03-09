@@ -29,8 +29,8 @@ final class UserTests: XCTestCase {
         
         XCTAssertEqual(user.uuid, "000714.d16a484c82844d25ae3016904bcdc9fd.0425")
         XCTAssertEqual(user.userID, 1)
-        XCTAssertEqual(user.filters.count, 5)
-        XCTAssert(user.filters.contains("comicon"))
+        XCTAssertEqual(user.filters?.count, 5)
+        XCTAssert(user.filters?.contains("comicon") == true)
         
     }
     
@@ -44,8 +44,8 @@ final class UserTests: XCTestCase {
         
         XCTAssertEqual(user.uuid, "000714.d16a484c82844d25ae3016904bcdc9fd.0425")
         XCTAssertEqual(user.userID, 1)
-        XCTAssertEqual(user.filters.count, 5)
-        XCTAssert(user.filters.contains("comicon"))
+        XCTAssertEqual(user.filters?.count, 5)
+        XCTAssert(user.filters?.contains("comicon") == true)
         
     }
     
@@ -59,8 +59,8 @@ final class UserTests: XCTestCase {
         
         XCTAssertEqual(user.uuid, "000714.d16a484c82844d25ae3016904bcdc9fd.0425")
         XCTAssertEqual(user.userID, 1)
-        XCTAssertEqual(user.filters.count, 5)
-        XCTAssert(user.filters.contains("comicon"))
+        XCTAssertEqual(user.filters?.count, 5)
+        XCTAssert(user.filters?.contains("comicon") == true)
         
     }
     

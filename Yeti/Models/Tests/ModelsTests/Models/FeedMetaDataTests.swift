@@ -28,10 +28,10 @@ final class FeedMetaDataTests: XCTestCase {
         
         let feed = Self.makeMetadata()!
         
-        XCTAssertEqual(feed.icons.count, 4)
+        XCTAssertEqual(feed.icons?.count ?? 0, 4)
         XCTAssertNil(feed.icon)
         XCTAssertNotNil(feed.keywords)
-        XCTAssert(feed.keywords.count > 0)
+        XCTAssert(feed.keywords?.count ?? 0 > 0)
         XCTAssertNotNil(feed.title)
         XCTAssertNotNil(feed.summary)
         XCTAssertNotNil(feed.opengraph)
@@ -43,7 +43,7 @@ final class FeedMetaDataTests: XCTestCase {
         let feed = Self.makeMetadata()!
         let dict = feed.dictionaryRepresentation
         
-        XCTAssertEqual(feed.icons.count, (dict["icons"] as? [String: Any])?.count)
+        XCTAssertEqual(feed.icons?.count ?? 0, (dict["icons"] as? [String: Any])?.count)
         XCTAssertNil(dict["icon"])
         XCTAssertNotNil(dict["keywords"])
         XCTAssert((dict["keywords"] as! [String]).count > 0)
@@ -78,8 +78,8 @@ final class FeedMetaDataTests: XCTestCase {
         feed.setValue("singleKeyword", forKey: "keywords")
         
         XCTAssertNotNil(feed.keywords)
-        XCTAssertEqual(feed.keywords.count, 1)
-        XCTAssertEqual(feed.keywords.first, "singleKeyword")
+        XCTAssertEqual(feed.keywords?.count ?? 0, 1)
+        XCTAssertEqual(feed.keywords?.first, "singleKeyword")
         
     }
     
@@ -89,9 +89,9 @@ final class FeedMetaDataTests: XCTestCase {
         feed.setValue("firstKeyword, secondKeyword", forKey: "keywords")
         
         XCTAssertNotNil(feed.keywords)
-        XCTAssertEqual(feed.keywords.count, 2)
-        XCTAssertEqual(feed.keywords.first, "firstKeyword")
-        XCTAssertEqual(feed.keywords.last, "secondKeyword")
+        XCTAssertEqual(feed.keywords?.count, 2)
+        XCTAssertEqual(feed.keywords?.first, "firstKeyword")
+        XCTAssertEqual(feed.keywords?.last, "secondKeyword")
         
     }
     

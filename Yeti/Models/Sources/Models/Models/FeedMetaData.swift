@@ -9,9 +9,9 @@ import Foundation
 
 public final class FeedMetaData: NSObject, Codable {
     
-    public var icons = [String: URL]()
+    public var icons: [String: URL]?
     public var icon: URL?
-    public var keywords = [String]()
+    public var keywords: [String]?
     public var title: String?
     public var url: URL?
     public var summary: String?
@@ -109,6 +109,10 @@ public final class FeedMetaData: NSObject, Codable {
         if key == "apple-touch-icon",
            let value = value as? [String: Any] {
             
+            if icons == nil {
+                icons = [String: URL]()
+            }
+            
             value.forEach { (arg0) in
                 
                 let (k, v) = arg0
@@ -119,7 +123,7 @@ public final class FeedMetaData: NSObject, Codable {
                 
                 let url = URL(string: vi)
                 
-                self.icons[k] = url
+                self.icons?[k] = url
                 
             }
             

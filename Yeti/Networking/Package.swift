@@ -19,14 +19,15 @@ let package = Package(
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
         .package(name: "Models", path: "../Models"),
-        .package(url: "https://github.com/DZNS/DZNetworking.git", .upToNextMajor(from: "2.0.3"))
+        .package(url: "https://github.com/DZNS/DZNetworking.git", .upToNextMajor(from: "2.0.4")),
+        .package(url: "https://github.com/SwiftyJSON/SwiftyJSON.git", from: "4.0.0"),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "Networking",
-            dependencies: ["Models", "DZNetworking"]),
+            dependencies: ["Models", "DZNetworking", "SwiftyJSON"]),
         .testTarget(
             name: "NetworkingTests",
             dependencies: ["Networking"]),

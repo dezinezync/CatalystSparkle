@@ -34,6 +34,9 @@ let package = Package(
             ]),
         .testTarget(
             name: "ModelsTests",
-            dependencies: ["Models"]),
+            dependencies: ["Models"],
+            resources: [
+                .copy("Stubs")
+            ]),
     ]
 )
