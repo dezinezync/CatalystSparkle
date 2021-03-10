@@ -17,11 +17,11 @@ import AppKit
 import UIKit
 #endif
 
-enum FeedsManagerError : Error {
+public enum FeedsManagerError : Error {
     
     case general(message: String)
     
-    var message: String? {
+    public var message: String? {
         return String(describing: self).replacingOccurrences(of: "general(message: \"", with: "").replacingOccurrences(of: "\")", with: "")
     }
     
@@ -29,14 +29,14 @@ enum FeedsManagerError : Error {
 
 public final class FeedsManager: NSObject {
     
-    static let shared = FeedsManager()
-    var deviceID: String?
-    unowned var user: User?
+    public static let shared = FeedsManager()
+    public var deviceID: String?
+    public unowned var user: User?
     
     public var additionalFeedsToSync = [Feed]()
     
     // MARK: - Sessions
-    var session: DZURLSession {
+    public var session: DZURLSession {
         get {
             #if os(macOS)
             return mainSession
@@ -202,7 +202,7 @@ public final class FeedsManager: NSObject {
     
 }
 
-enum AppConfiguration: Int {
+public enum AppConfiguration: Int {
   case Debug
   case TestFlight
   case AppStore
@@ -578,13 +578,13 @@ extension FeedsManager {
 // MARK: - Articles
 extension FeedsManager {
     
-    func getArticles(forFeed feed:Feed, page: UInt = 1, completion:((Result<[Article], Error>) -> Void)?) {
+    public func getArticles(forFeed feed:Feed, page: UInt = 1, completion:((Result<[Article], Error>) -> Void)?) {
         
         getArticles(forFeed: feed.feedID, page: page, completion: completion)
         
     }
     
-    func getArticles(forFeed feedID:UInt, page: UInt = 1, completion:((Result<[Article], Error>) -> Void)?) {
+    public func getArticles(forFeed feedID:UInt, page: UInt = 1, completion:((Result<[Article], Error>) -> Void)?) {
         
         guard feedID > 0 else {
             completion?(.failure(FeedsManagerError.general(message: "Invalid or no Feed ID was provided.")))
@@ -597,6 +597,53 @@ extension FeedsManager {
             case .success(let (_, aResult)):
                 let a = aResult?.articles ?? []
                 completion?(.success(a))
+            case .failure(let error):
+                completion?(.failure(error))
+            }
+            
+        }
+        
+    }
+    
+    
+    
+}
+
+// MARK: - Sync
+extension FeedsManager {
+    
+    public func sync(with token:String, tokenID: String, page: UInt, completion:((Result<ChangeSet, Error>) -> Void)?) {
+        
+        guard let user = user else {
+            completion?(.failure((NSError(domain: "Elytra", code: 401, userInfo: [NSLocalizedDescriptionKey: "User is not logged in."]) as Error)))
+            return
+        }
+        
+        let query = [
+            "token": token,
+            "tokenID": tokenID,
+            "userID": "\(user.userID!)",
+            "page": "\(page)"
+        ]
+        
+        session.GET(path: "/2.2.1/sync", query: query, resultType: ChangeSet.self) { (result) in
+            
+            switch result {
+            case .success(let (response, changeSet)):
+                
+                guard let response = response else {
+                    completion?(.failure(FeedsManagerError.general(message: "No response was received when trying to fetch sync data.")))
+                    return
+                }
+                
+                if response.statusCode == 304 || changeSet == nil {
+                    let dummy = ChangeSet(changeToken: token, changeTokenID: tokenID, customFeeds: nil, articles: nil, reads: nil, pages: 0)
+                    completion?(.success(dummy))
+                    return
+                }
+                
+                completion?(.success(changeSet!))
+                
             case .failure(let error):
                 completion?(.failure(error))
             }

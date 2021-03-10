@@ -13,8 +13,8 @@ final class FeedsManagerTests: XCTestCase {
     
     var user: User = {
        let u = User()
-        u.userID = 7378
-        u.uuid = "7EBC0714-2F66-4B8C-BE5B-4014E4ECD04F"
+        u.userID = 1
+        u.uuid = "000714.d16a484c82844d25ae3016904bcdc9fd.0425"
         u.filters = [String]()
         
         return u
@@ -180,6 +180,30 @@ final class FeedsManagerTests: XCTestCase {
             switch result {
             case .success(let articles):
                 XCTAssertGreaterThan(articles.count, 10)
+                expectation.fulfill()
+            case .failure(let error):
+                print(error)
+            }
+            
+        }
+        
+        wait(for: [expectation], timeout: 5)
+        
+    }
+    
+    func testSync () {
+        
+        let expectation = XCTestExpectation()
+        
+        let date = Date().addingTimeInterval(-86400 * 14)
+        let timecode = Subscription.dateFormatter.string(from: date)
+        let d = timecode.data(using: .utf8)
+        let token = d?.base64EncodedString()
+        
+        FeedsManager.shared.sync(with: token!, tokenID: "MA==", page: 1) { (result) in
+            
+            switch result {
+            case .success(_):
                 expectation.fulfill()
             case .failure(let error):
                 print(error)

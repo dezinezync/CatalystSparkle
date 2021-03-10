@@ -7,18 +7,19 @@
 
 import Foundation
 
-struct SyncChange {
+public struct SyncChange: Codable {
     
-    var feedID: UInt
-    var title: String?
-    var order: UInt?
+    public let feedID: UInt
+    public let title: String?
+    public let order: UInt?
     
-    init(feedID: UInt, title: String?) {
+    public init(feedID: UInt, title: String?) {
         self.title = title
         self.feedID = feedID
+        self.order = 0
     }
     
-    init(feedID: UInt, title: String?, order: UInt?) {
+    public init(feedID: UInt, title: String?, order: UInt?) {
         self.title = title
         self.feedID = feedID
         self.order = order

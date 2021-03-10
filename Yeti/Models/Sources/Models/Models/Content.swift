@@ -61,7 +61,7 @@ public final class Content: NSObject, Codable {
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case content
         case ranges
-        case type
+        case type = "node"
         case url
         case alt
         case identifier

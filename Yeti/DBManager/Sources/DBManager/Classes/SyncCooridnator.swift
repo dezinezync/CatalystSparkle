@@ -7,9 +7,15 @@
 
 import Foundation
 import BackgroundTasks
-import UIKit.UIApplication
 import Models
 import UserNotifications
+import Networking
+
+#if os(macOS)
+import AppKit.NSApplication
+#else
+import UIKit.UIApplication
+#endif
 
 /// The last sync date we stored or the one sent by the server.
 private let SYNC_TOKEN = "syncToken-2.3.0"
@@ -23,8 +29,9 @@ class SyncCoordinator {
     public var currentProgress: Double = 1
     
     fileprivate var backgroundCompletionHandler: (() -> Void)?
+    #if os(iOS)
     public var backgroundFetchHandler: ((_ result: UIBackgroundFetchResult) -> Void)?
-    
+    #endif
     fileprivate var syncProgressCallback: ((_ progress: Double) -> Void)?
     
     fileprivate var syncQueue: OperationQueue?
@@ -35,6 +42,7 @@ class SyncCoordinator {
         return totalProgress != 0.0 && totalProgress < 0.99
     }
     
+    #if os(iOS)
     public func setupSync(with task: BGAppRefreshTask?, completion: ((_ completed: Bool) -> Void)?) {
         
         let originalSyncProgressCallback = syncProgressCallback
@@ -93,6 +101,7 @@ class SyncCoordinator {
         setupSync()
         
     }
+    #endif
     
     public func setupSync () {
         
@@ -157,8 +166,89 @@ class SyncCoordinator {
             totalProgress = 1
             currentProgress = 0
             
+            #if os(iOS)
             DispatchQueue.main.async { [weak self] in
                 self?.internalProgressCallback(0, nil)
+            }
+            #endif
+            
+        }
+        
+        FeedsManager.shared.sync(with: token, tokenID: tokenID, page: page) { [weak self] (result) in
+            
+            switch result {
+            case .success(let changeSet):
+                
+                guard let sself = self else {
+                    return
+                }
+                
+                if changeSet.pages == 0 {
+                    DispatchQueue.main.async {
+                        sself.internalProgressCallback(1, nil)
+                    }
+                    return
+                }
+                
+                sself.inProgressSyncToken = changeSet.changeToken
+                sself.inProgressSyncTokenID = changeSet.changeTokenID
+                
+                if let reads = changeSet.reads {
+                    
+                    sself.updateReads(reads: reads)
+                    
+                }
+                
+                if let custom = changeSet.customFeeds {
+                    
+                    sself.updateCustomFeeds(custom: custom)
+                    
+                }
+                
+                if let articles = changeSet.articles {
+                    
+                    sself.addArticles(articles: articles)
+                    
+                    if articles.count > 0 && page == 1 {
+                        sself.totalProgress += Double(changeSet.pages)
+                        sself.currentProgress += 1
+                    }
+                    else {
+                        sself.currentProgress += 1
+                    }
+                    
+                    if articles.count == 40,
+                       (page < (sself.inProgressChangeSet ?? changeSet).pages)
+                        || (page == 1 && page < changeSet.pages) {
+                        
+                        DispatchQueue.main.async {
+                            sself.internalProgressCallback(sself.currentProgress/sself.totalProgress, changeSet)
+                        }
+                        
+                        sself.syncNow(with: token, tokenID: tokenID, page: (page + 1))
+                        
+                    }
+                    else if articles.count < 40 {
+                        
+                        // syncing completed
+                        DispatchQueue.main.async {
+                            sself.internalProgressCallback(1, changeSet)
+                        }
+                        
+                    }
+                    
+                }
+                else {
+                    DispatchQueue.main.async {
+                        sself.internalProgressCallback(1, changeSet)
+                    }
+                }
+                
+            case .failure(let err):
+                print(err)
+                DispatchQueue.main.async {
+                    self?.internalProgressCallback(1, nil)
+                }
             }
             
         }
@@ -170,6 +260,7 @@ class SyncCoordinator {
     fileprivate var inProgressSyncToken: String?
     fileprivate var inProgressSyncTokenID: String?
     
+    #if os(iOS)
     fileprivate lazy var internalProgressCallback: ((_ progress: Double, _ changeSet: ChangeSet?) -> Void) = { return { [weak self] (progress, changeSet) in
         
         guard let sself = self else {
@@ -221,24 +312,6 @@ class SyncCoordinator {
                         sself.backgroundFetchHandler?(.newData)
                     }
                     
-                    if let reads = changes.reads {
-                        
-                        sself.updateReads(reads: reads)
-                        
-                    }
-                    
-                    if let custom = changes.customFeeds {
-                        
-                        sself.updateCustomFeeds(custom: custom)
-                        
-                    }
-                    
-                    if let articles = changes.articles {
-                        
-                        sself.addArticles(articles: articles)
-                        
-                    }
-                    
                 }
                 else {
                     
@@ -253,8 +326,9 @@ class SyncCoordinator {
         }
         
     } }()
+    #endif
     
-    private func updateReads(reads: [UInt: Bool]) {
+    private func updateReads(reads: [Int: Bool]) {
         
         guard reads.count > 0 else {
             return
@@ -353,7 +427,7 @@ class SyncCoordinator {
         
         if grouped.count > 0 {
             
-            let filters = (DBManager.shared.user?.filters ?? Set<String>()).map { $0 }
+            let filters = (DBManager.shared.user?.filters ?? [String]()).map { $0 }
             
             for feed in grouped.keys {
                 

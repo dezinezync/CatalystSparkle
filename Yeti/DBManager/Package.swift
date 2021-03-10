@@ -19,7 +19,8 @@ let package = Package(
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
         .package(name: "Swift-YapDatabase", url: "git@github.com:mickeyl/SwiftYapDatabase.git", .branch("master")),
-        .package(name: "Models", path: "../Models")
+        .package(name: "Models", path: "../Models"),
+        .package(name: "Networking", path: "../Networking")
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -28,7 +29,8 @@ let package = Package(
             name: "DBManager",
             dependencies: [
                 "Models",
-                .product(name: "YapDatabase", package: "Swift-YapDatabase")
+                "Networking",
+                .product(name: "SwiftYapDatabase", package: "Swift-YapDatabase")
             ]),
         .testTarget(
             name: "DBManagerTests",
