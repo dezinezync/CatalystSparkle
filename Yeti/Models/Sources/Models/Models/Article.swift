@@ -17,9 +17,26 @@ public final class Article: NSObject, Codable, ObservableObject {
     public var coverImage: URL?
     public var guid: String!
     public var timestamp: Date!
-    public var enclosures = [Enclosure]()
+    public var enclosures: [Enclosure]?
     public var feedID: UInt!
     public var summary: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case identifier = "id"
+        case title
+        case url
+        case author
+        case content
+        case coverImage
+        case guid
+        case timestamp = "created"
+        case enclosures
+        case feedID
+        case summary
+        case bookmarked
+        case read
+        case fulltext = "mercury"
+    }
     
     @Published public var bookmarked: Bool! = false
     @Published public var read: Bool! = false
@@ -262,7 +279,7 @@ extension Article {
         
         dict["timestamp"] = Subscription.dateFormatter.string(from: timestamp)
         
-        dict["enclosures"] = enclosures.map { $0.dictionaryRepresentation }
+        dict["enclosures"] = (enclosures ?? []).map { $0.dictionaryRepresentation }
         
         dict["feedID"] = feedID
         

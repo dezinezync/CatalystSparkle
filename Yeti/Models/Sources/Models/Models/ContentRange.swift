@@ -7,20 +7,55 @@
 
 import Foundation
 
+public struct _Range: Codable {
+    
+    public var range: NSRange = NSRange()
+    
+    var location: Int {
+        return range.location
+    }
+    
+    var length: Int {
+        return range.length
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case range
+    }
+    
+    public init(range: NSRange) {
+        self.range = range
+    }
+    
+    public init(range: String) {
+        self.range = NSRangeFromString(range)
+    }
+    
+    public init(from decoder: Decoder) throws {
+        
+        let values = try decoder.singleValueContainer()
+        
+        let val = try values.decode(String.self)
+        self.range = NSRangeFromString(val)
+        
+    }
+    
+}
+
 public final class ContentRange: NSObject, Codable {
     
     public var element: String?
-    public var range: NSRange!
+    public var range: _Range!
     public var type: String?
     public var url: URL?
     public var level: UInt?
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case element
-        case range
         case type
         case url
         case level
+        case range
     }
     
     public convenience init(from dict: [String: Any]) {
@@ -40,10 +75,10 @@ public final class ContentRange: NSObject, Codable {
         }
         else if key == "range" {
             if let value = value as? NSRange {
-                range = value
+                range = _Range(range: value)
             }
             else if let value = value as? String {
-                range = NSRangeFromString(value)
+                range = _Range(range: value)
             }
         }
         else if key == "type" {
@@ -101,7 +136,7 @@ extension ContentRange {
             if let value = value(for: key) {
             
                 if key == "range" {
-                    dict[key] = NSStringFromRange(value as! NSRange)
+                    dict[key] = NSStringFromRange((value as! _Range).range)
                 }
                 else {
                     dict[key] = value

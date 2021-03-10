@@ -223,7 +223,10 @@ extension DZURLSession {
     
     public func decodeResponse<R: Decodable>(data: Data, response: HTTPURLResponse?,  completion: @escaping successTypedBlock<R>) {
         
-        let dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "YYYY-MM-dd HH:mm:ss"
+        
+        let dateDecoding: JSONDecoder.DateDecodingStrategy = .formatted(dateFormatter)
         let keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys
         
         let decoder = JSONDecoder()

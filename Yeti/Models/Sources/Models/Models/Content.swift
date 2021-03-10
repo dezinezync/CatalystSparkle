@@ -8,6 +8,54 @@
 import Foundation
 import CoreGraphics
 
+public struct ContentSize: Codable {
+    
+    var size: CGSize = CGSize()
+    
+    var width: CGFloat {
+        return size.width
+    }
+    
+    var height: CGFloat {
+        return size.height
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case size
+    }
+    
+    public init(size: CGSize) {
+        self.size = size
+    }
+    
+    public init(size: String) {
+        self.size = setSize(size: size)
+    }
+    
+    public init(from decoder: Decoder) throws {
+        
+        let values = try decoder.singleValueContainer()
+        
+        let val = try values.decode(String.self)
+        self.size = setSize(size: val)
+        
+    }
+    
+    private mutating func setSize(size: String) -> CGSize {
+        let comps = size.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespaces) }.map { ($0 as NSString).doubleValue }
+        
+        if comps.count == 2 {
+            
+            return CGSize(width: comps.first!, height: comps.last!)
+            
+        }
+        
+        return CGSize()
+        
+    }
+    
+}
+
 public final class Content: NSObject, Codable {
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
@@ -21,13 +69,13 @@ public final class Content: NSObject, Codable {
         case items
         case attributes
         case videoID
-        case size
         case srcSet
         case images
+        case size
     }
     
     public var content: String?
-    public var ranges = [ContentRange]()
+    public var ranges: [ContentRange]?
     public var type: String!
     public var url: URL?
     public var alt: String?
@@ -41,7 +89,7 @@ public final class Content: NSObject, Codable {
     public var fromEnclosure: Bool = false
     
     // for images
-    public var size: CGSize?
+    public var size: ContentSize?
     public var srcSet: [String: String]?
     
     public var images: [Content]?
@@ -158,20 +206,10 @@ public final class Content: NSObject, Codable {
         }
         else if key == "size" {
             if let value = value as? CGSize {
-                size = value
+                size = ContentSize(size: value)
             }
             else if let value = value as? String {
-                
-                let comps = value.components(separatedBy: ",")
-                    .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-                    .filter { $0.count > 0 }
-                    .map { ($0 as NSString).doubleValue }
-                
-                guard comps.count == 2 else {
-                    return
-                }
-                
-                size = CGSize(width: comps.first!, height: comps.last!)
+                size = ContentSize(size: value)
             }
         }
         else if key == "srcSet" || key == "srcset" {
@@ -233,7 +271,7 @@ extension Content {
             dict["content"] = content
         }
         
-        dict["ranges"] = ranges.map { $0.dictionaryRepresentation }
+        dict["ranges"] = (ranges ?? []).map { $0.dictionaryRepresentation }
         dict["type"] = type
         
         if let url = url {

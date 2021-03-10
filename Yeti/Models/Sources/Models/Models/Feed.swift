@@ -34,7 +34,7 @@ open class Feed: NSObject, Codable, ObservableObject {
     public var podcast: Bool! = false
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case feedID
+        case feedID = "id"
         case summary
         case title
         case url
@@ -49,7 +49,7 @@ open class Feed: NSObject, Codable, ObservableObject {
         case podcast
     }
     
-    @Published var unread: UInt! = 0
+    @Published public var unread: UInt! = 0
     
     weak var folder: Folder?
     #if os(macOS)

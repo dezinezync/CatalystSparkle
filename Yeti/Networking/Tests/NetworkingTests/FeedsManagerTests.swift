@@ -47,7 +47,7 @@ final class FeedsManagerTests: XCTestCase {
 
         }
         
-        wait(for: [expectation], timeout: 10)
+        wait(for: [expectation], timeout: 5)
         
     }
     
@@ -70,7 +70,7 @@ final class FeedsManagerTests: XCTestCase {
 
         }
         
-        wait(for: [expectation], timeout: 10)
+        wait(for: [expectation], timeout: 5)
         
     }
     
@@ -117,7 +117,77 @@ final class FeedsManagerTests: XCTestCase {
 
         }
         
-        wait(for: [expectation], timeout: 10)
+        wait(for: [expectation], timeout: 5)
+        
+    }
+    
+    func testAddFeedByURL () {
+        
+        let url = URL(string: "https://blog.elytra.app")!
+        
+        let expectation = XCTestExpectation()
+        
+        FeedsManager.shared.add(feed: url) { (result) in
+            
+            switch result {
+            case .success(let feed):
+                XCTAssertEqual(feed.feedID, 18)
+                expectation.fulfill()
+            case .failure(let error):
+                if (error as! FeedsManagerError).message == "Feed already exists in your list." {
+                    expectation.fulfill()
+                    return
+                }
+            }
+            
+        }
+        
+        wait(for: [expectation], timeout: 5)
+        
+    }
+    
+    func testAddFeedByID () {
+        
+        let expectation = XCTestExpectation()
+        
+        FeedsManager.shared.add(feed: 1, completion: { (result) in
+            
+            switch result {
+            case .success(let feed):
+                XCTAssertEqual(feed.feedID, 1)
+                expectation.fulfill()
+            case .failure(let error):
+                if let error = (error as? FeedsManagerError),
+                   error.message == "Feed already exists in your list." {
+                    expectation.fulfill()
+                    return
+                }
+                print(error)
+            }
+            
+        })
+        
+        wait(for: [expectation], timeout: 5)
+        
+    }
+    
+    func testGetArticlesByFeedID () {
+        
+        let expectation = XCTestExpectation()
+        
+        FeedsManager.shared.getArticles(forFeed: 18) { (result) in
+            
+            switch result {
+            case .success(let articles):
+                XCTAssertGreaterThan(articles.count, 10)
+                expectation.fulfill()
+            case .failure(let error):
+                print(error)
+            }
+            
+        }
+        
+        wait(for: [expectation], timeout: 5)
         
     }
     

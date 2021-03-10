@@ -18,7 +18,13 @@ import UIKit
 #endif
 
 enum FeedsManagerError : Error {
+    
     case general(message: String)
+    
+    var message: String? {
+        return String(describing: self).replacingOccurrences(of: "general(message: \"", with: "").replacingOccurrences(of: "\")", with: "")
+    }
+    
 }
 
 public final class FeedsManager: NSObject {
@@ -26,6 +32,8 @@ public final class FeedsManager: NSObject {
     static let shared = FeedsManager()
     var deviceID: String?
     unowned var user: User?
+    
+    public var additionalFeedsToSync = [Feed]()
     
     // MARK: - Sessions
     var session: DZURLSession {
@@ -68,6 +76,7 @@ public final class FeedsManager: NSObject {
         sessionConfiguration.httpAdditionalHeaders = additionalHeaders
         
         var s = DZURLSession(sessionConfiguration: sessionConfiguration)
+        
         s.baseURL = URL(string: "http://192.168.1.90:3000")
 //        s.baseURL = URL(string: "https://api.elytra.app")
         
@@ -100,8 +109,8 @@ public final class FeedsManager: NSObject {
             let signature = stringToSign.hmac(key: uuid)
             
             r.addValue(signature, forHTTPHeaderField: "Authorization")
-            r.addValue("1", forHTTPHeaderField: "x-userid")
-            r.addValue("1", forHTTPHeaderField: "x-bypass")
+            r.addValue("\(userID)", forHTTPHeaderField: "x-userid")
+//            r.addValue("1", forHTTPHeaderField: "x-bypass")
             r.addValue(timecode, forHTTPHeaderField: "x-timestamp")
             
             if let deviceID = sself.deviceID {
@@ -143,6 +152,9 @@ public final class FeedsManager: NSObject {
         s.baseURL = URL(string: "http://192.168.1.90:3000")
 //        s.baseURL = URL(string: "https://api.elytra.app")
         
+        s.baseURL = URL(string: "http://192.168.1.90:3000")
+//        s.baseURL = URL(string: "https://api.elytra.app")
+        
         #if !DEBUG
         s.baseURL = URL(string: "https://api.elytra.app")
         #endif
@@ -173,8 +185,8 @@ public final class FeedsManager: NSObject {
             let signature = stringToSign.hmac(key: uuid)
             
             r.addValue(signature, forHTTPHeaderField: "Authorization")
-            r.addValue("1", forHTTPHeaderField: "x-userid")
-            r.addValue("1", forHTTPHeaderField: "x-bypass")
+            r.addValue("\(userID)", forHTTPHeaderField: "x-userid")
+//            r.addValue("1", forHTTPHeaderField: "x-bypass")
             r.addValue(timecode, forHTTPHeaderField: "x-timestamp")
             
             if let deviceID = sself.deviceID {
@@ -362,6 +374,7 @@ extension FeedsManager {
     
 }
 
+// MARK: - Feeds
 extension FeedsManager {
     
     public func getFeeds(completion:((Result<GetFeedsResult, Error>) -> Void)?) {
@@ -430,6 +443,165 @@ extension FeedsManager {
             
         }
 
+        
+    }
+    
+    public func add(feed url: URL, completion:((Result<Feed, Error>) -> Void)?) {
+        
+        guard let user = user else {
+            completion?(.failure((NSError(domain: "Elytra", code: 401, userInfo: [NSLocalizedDescriptionKey: "User is not logged in."]) as Error)))
+            return
+        }
+        
+        let query = ["version": "2"]
+        let body = [
+            "URL": url.absoluteString,
+            "userID": "\(user.userID!)"
+        ]
+        
+        session.PUT(path: "/feed", query: query, body: body, resultType: Feed.self) { [weak self] (result) in
+            
+            switch result {
+            case .success(let (response, feed)): do {
+                
+                guard let response = response else {
+                    completion?(.failure(FeedsManagerError.general(message: "No response recevied when trying to add the feed.")))
+                    return
+                }
+                
+                if response.statusCode == 300 {
+                    
+                    // multiple options
+                    completion?(.failure(FeedsManagerError.general(message: "Not a supported URL.")))
+                    return
+                    
+                }
+                else if response.statusCode == 302 {
+                    // already exists.
+                    if let reroute = response.allHeaderFields["location"] as? String,
+                       let url = URL(string: reroute) {
+                        
+                        let feedID = UInt((url.lastPathComponent as NSString).integerValue)
+                        
+                        self?.add(feed: feedID, completion: completion)
+                        
+                        return
+                        
+                    }
+                    
+                }
+                else if response.statusCode == 304 {
+                    // feed already exists in the user's list.
+                    completion?(.failure(FeedsManagerError.general(message: "Feed already exists in your list.")))
+                    return
+                }
+                
+                guard let feed = feed else {
+                    completion?(.failure(FeedsManagerError.general(message: "An unknown error occurred when adding this feed to your account")))
+                    return
+                }
+                
+                // @TODO Update Keychain for YTSubscriptionHasAddedFirstFeed
+                
+                feed.unread = 0
+                
+                self?.additionalFeedsToSync.append(feed)
+                
+                // @TODO: Add to DB Manager
+                
+                completion?(.success(feed))
+                
+            }
+            case .failure(let error):
+                completion?(.failure(error))
+            }
+            
+        }
+        
+    }
+    
+    public func add(feed id: UInt, completion:((Result<Feed, Error>) -> Void)?) {
+        
+        guard let user = user else {
+            completion?(.failure((NSError(domain: "Elytra", code: 401, userInfo: [NSLocalizedDescriptionKey: "User is not logged in."]) as Error)))
+            return
+        }
+        
+        let query = ["version": "2"]
+        let body = [
+            "feedID": "\(id)",
+            "userID": "\(user.userID!)"
+        ]
+        
+        session.PUT(path: "/feed", query: query, body: body, resultType: Feed.self) { [weak self] (result) in
+            
+            switch result {
+            case .success(let (response, feed)): do {
+                
+                guard let response = response else {
+                    completion?(.failure(FeedsManagerError.general(message: "No response recevied when trying to add the feed.")))
+                    return
+                }
+                
+               if response.statusCode == 304 {
+                    // feed already exists in the user's list.
+                    completion?(.failure(FeedsManagerError.general(message: "Feed already exists in your list.")))
+                    return
+                }
+                
+                guard let feed = feed else {
+                    completion?(.failure(FeedsManagerError.general(message: "An unknown error occurred when adding this feed to your account")))
+                    return
+                }
+                
+                // @TODO Update Keychain for YTSubscriptionHasAddedFirstFeed
+                
+                feed.unread = 0
+                
+                self?.additionalFeedsToSync.append(feed)
+                
+                // @TODO: Add to DB Manager
+                
+                completion?(.success(feed))
+                
+            }
+            case .failure(let error):
+                completion?(.failure(error))
+            }
+            
+        }
+        
+    }
+    
+}
+
+// MARK: - Articles
+extension FeedsManager {
+    
+    func getArticles(forFeed feed:Feed, page: UInt = 1, completion:((Result<[Article], Error>) -> Void)?) {
+        
+        getArticles(forFeed: feed.feedID, page: page, completion: completion)
+        
+    }
+    
+    func getArticles(forFeed feedID:UInt, page: UInt = 1, completion:((Result<[Article], Error>) -> Void)?) {
+        
+        guard feedID > 0 else {
+            completion?(.failure(FeedsManagerError.general(message: "Invalid or no Feed ID was provided.")))
+            return
+        }
+        
+        session.GET(path: "/2.2/feeds/\(feedID)", query: ["page": "\(page)"], resultType: GetArticlesResult.self) { (result) in
+            
+            switch result {
+            case .success(let (_, aResult)):
+                let a = aResult?.articles ?? []
+                completion?(.success(a))
+            case .failure(let error):
+                completion?(.failure(error))
+            }
+            
+        }
         
     }
     

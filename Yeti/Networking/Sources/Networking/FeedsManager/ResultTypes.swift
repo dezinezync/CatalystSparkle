@@ -42,3 +42,15 @@ public struct GetFeedsResult: Hashable, Codable {
     let folders: [Folder]
     
 }
+
+public struct AddFeedResult: Hashable, Codable {
+    
+    let feed: Feed
+    
+}
+
+public struct GetArticlesResult: Hashable, Codable {
+    
+    let articles: [Article]
+    
+}
