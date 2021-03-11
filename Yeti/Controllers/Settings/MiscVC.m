@@ -15,6 +15,8 @@
 #import <DZKit/NSArray+Safe.h>
 #import <DZKit/UIViewController+AnimatedDeselect.h>
 
+#import "Elytra-Swift.h"
+
 NSString *const kMiscSettingsCell = @"settingsCell";
 
 @interface MiscVC () {
@@ -357,13 +359,15 @@ typedef NS_ENUM(NSInteger, AppIconName) {
         
         [avc addAction:[UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             
-            [MyDBManager bulkUpdateFeedsAndMetadata:^FeedBulkOperation * _Nonnull(Feed * _Nonnull feed, NSMutableDictionary * _Nonnull metadata) {
-               
-                metadata[kFeedSafariReaderMode] = @YES;
-                
-                return [FeedBulkOperation withFeed:feed metadata:metadata];
-                
-            }];
+//            @TODO:
+            
+//            [MyDBManager bulkUpdateFeedsAndMetadata:^FeedBulkOperation * _Nonnull(Feed * _Nonnull feed, NSMutableDictionary * _Nonnull metadata) {
+//
+//                metadata[kFeedSafariReaderMode] = @YES;
+//
+//                return [FeedBulkOperation withFeed:feed metadata:metadata];
+//
+//            }];
             
         }]];
         

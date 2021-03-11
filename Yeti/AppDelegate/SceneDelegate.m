@@ -16,9 +16,10 @@
 #import "DZWebViewController.h"
 #import "UIColor+HEX.h"
 
-#import <CoreSpotlight/CoreSpotlight.h>
+#import "PrefsManager.h"
 
-#import "Elytra-Swift.h"
+#import <CoreSpotlight/CoreSpotlight.h>
+#import <BackgroundTasks/BackgroundTasks.h>
 
 #define backgroundRefreshIdentifier @"com.yeti.refresh"
 
@@ -206,11 +207,12 @@
             
             NSString *feedID = [uniqueIdentifier stringByReplacingOccurrencesOfString:@"feed:" withString:@""];
             
-            NSURL *url = [NSURL URLWithFormat:@"elytra://feed/%@", feedID];
+            // @TODO
+//            NSURL *url = [NSURL URLWithFormat:@"elytra://feed/%@", feedID];
             
-            runOnMainQueueWithoutDeadlocking(^{
-                [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
-            });
+//            runOnMainQueueWithoutDeadlocking(^{
+//                [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
+//            });
             
         }
         
@@ -238,7 +240,8 @@
 
     if (self.window.rootViewController != nil && [self.window.rootViewController isKindOfClass:SplitVC.class] == YES) {
 
-        restorationActivity = [(SplitVC *)[self.window rootViewController] continuationActivity];
+        // @TODO
+//        restorationActivity = [(SplitVC *)[self.window rootViewController] continuationActivity];
 
     }
 
@@ -321,31 +324,32 @@
         // schedule next refresh
         [self scheduleBackgroundRefresh];
        
-        [MyDBManager setupSync:task completionHandler:^(BOOL completed) {
-            
-            if (completed == NO) {
-                return;
-            }
-            
-            SceneDelegate * scene = (id)[[UIApplication.sharedApplication.connectedScenes.allObjects firstObject] delegate];
-            
-            SidebarVC *vc = scene.coordinator.sidebarVC;
-            
-            if (vc == nil) {
-                return;
-            }
-            
-            [vc.refreshControl setAttributedTitle:[vc lastUpdateAttributedString]];
-            
-//            [MyFeedsManager getCountersWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        // @TODO
+//        [MyDBManager setupSync:task completionHandler:^(BOOL completed) {
 //
-//                [vc setupData];
+//            if (completed == NO) {
+//                return;
+//            }
 //
-//                [vc.refreshControl setAttributedTitle:[vc lastUpdateAttributedString]];
+//            SceneDelegate * scene = (id)[[UIApplication.sharedApplication.connectedScenes.allObjects firstObject] delegate];
 //
-//            } error:nil];
-            
-        }];
+//            SidebarVC *vc = scene.coordinator.sidebarVC;
+//
+//            if (vc == nil) {
+//                return;
+//            }
+//
+//            [vc.refreshControl setAttributedTitle:[vc lastUpdateAttributedString]];
+//
+////            [MyFeedsManager getCountersWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+////
+////                [vc setupData];
+////
+////                [vc.refreshControl setAttributedTitle:[vc lastUpdateAttributedString]];
+////
+////            } error:nil];
+//
+//        }];
 
         
     }];
@@ -367,13 +371,14 @@
 //#endif
     
     if (reset) {
-        [MyFeedsManager resetAccount];
-        
-        SplitVC *v = self.coordinator.splitViewController;
-        [v userNotFound];
-        
-        [defaults setBool:NO forKey:kResetAccountSettingsPref];
-        [defaults synchronize];
+        // @TODO
+//        [MyFeedsManager resetAccount];
+//
+//        SplitVC *v = self.coordinator.splitViewController;
+//        [v userNotFound];
+//
+//        [defaults setBool:NO forKey:kResetAccountSettingsPref];
+//        [defaults synchronize];
     }
     
 }

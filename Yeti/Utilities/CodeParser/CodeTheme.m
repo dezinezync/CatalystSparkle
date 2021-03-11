@@ -8,6 +8,7 @@
 
 #import "CodeTheme.h"
 #import "UIColor+HEX.h"
+#import "PrefsManager.h"
 
 typedef NSDictionary <NSString *, NSDictionary <NSString *, NSString *> *> ThemeStringDict;
 typedef NSMutableDictionary <NSString *, NSDictionary <NSString *, NSString *> *> MutableStringThemeDict;

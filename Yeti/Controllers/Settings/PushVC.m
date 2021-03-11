@@ -8,7 +8,7 @@
 
 #import "PushVC.h"
 #import "FeedsCell.h"
-#import "FeedsManager.h"
+#import "Elytra-Swift.h"
 
 #import <DZKit/AlertManager.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
@@ -115,21 +115,22 @@
     
     self.controllerState = StateLoading;
     
-    [MyFeedsManager getAllWebSubWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        self.feeds = responseObject;
-        
-        [self setupData];
-        
-        self.controllerState = StateLoaded;
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        self.controllerState = StateErrored;
-       
-        [AlertManager showGenericAlertWithTitle:@"Error Loading Subscriptions" message:error.localizedDescription];
-        
-    }];
+    // @TODO
+//    [MyFeedsManager getAllWebSubWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        self.feeds = responseObject;
+//
+//        [self setupData];
+//
+//        self.controllerState = StateLoaded;
+//
+//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        self.controllerState = StateErrored;
+//
+//        [AlertManager showGenericAlertWithTitle:@"Error Loading Subscriptions" message:error.localizedDescription];
+//
+//    }];
     
 }
 
@@ -140,35 +141,35 @@
     Feed *feed = [self.DS itemIdentifierForIndexPath:indexPath];
     
     if (feed) {
-        
-        [MyFeedsManager unsubscribe:feed success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                
-                self.feeds = [self.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
-                   
-                    return ([obj.feedID isEqualToNumber:feed.feedID] == NO);
-                    
-                }];
-                
-                if (completionHandler) {
-                    completionHandler(YES);
-                }
-                
-                [self setupData];
-                
-            });
-            
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            if (completionHandler) {
-                completionHandler(YES);
-            }
-           
-            [AlertManager showGenericAlertWithTitle:@"Error Removing Subscription" message:error.localizedDescription];
-            
-        }];
-        
+        // @TODO
+//        [MyFeedsManager unsubscribe:feed success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//
+//                self.feeds = [self.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+//
+//                    return ([obj.feedID isEqualToNumber:feed.feedID] == NO);
+//
+//                }];
+//
+//                if (completionHandler) {
+//                    completionHandler(YES);
+//                }
+//
+//                [self setupData];
+//
+//            });
+//
+//        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//            if (completionHandler) {
+//                completionHandler(YES);
+//            }
+//
+//            [AlertManager showGenericAlertWithTitle:@"Error Removing Subscription" message:error.localizedDescription];
+//
+//        }];
+//
     }
     
 }

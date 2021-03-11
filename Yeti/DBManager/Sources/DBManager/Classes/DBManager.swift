@@ -7,7 +7,7 @@ import Combine
 /// Have the changes been fully synced with our local store?
 private let SYNCED_CHANGES = "syncedChanges"
 
-internal enum CollectionNames: String, CaseIterable {
+public enum CollectionNames: String, CaseIterable {
     
     case sync
     case localNames
@@ -875,21 +875,21 @@ extension DBManager {
     
     func setupDatabase (_ db: YapDatabase) {
         
-        db.registerCodableSerialization(Feed.self, metadata: FeedMeta.self, forCollection: CollectionNames.feeds.rawValue)
+        db.registerCodableSerialization(Feed.self, metadata: FeedMeta.self, forCollection: .feeds)
         
-        db.registerCodableSerialization(Folder.self, forCollection: CollectionNames.folders.rawValue)
+        db.registerCodableSerialization(Folder.self, forCollection: .folders)
         
-        db.registerCodableSerialization(User.self, forCollection: CollectionNames.folders.rawValue)
+        db.registerCodableSerialization(User.self, forCollection: .folders)
         
-        db.registerCodableSerialization(Article.self, metadata: ArticleMeta.self, forCollection: CollectionNames.articles.rawValue)
+        db.registerCodableSerialization(Article.self, metadata: ArticleMeta.self, forCollection: .articles)
         
-        db.registerCodableSerialization(String.self, forCollection: CollectionNames.sync.rawValue)
-        db.registerCodableSerialization(String.self, forCollection: CollectionNames.localNames.rawValue)
+        db.registerCodableSerialization(String.self, forCollection: .sync)
+        db.registerCodableSerialization(String.self, forCollection: .localNames)
     
-        db.registerCodableSerialization(Content.self, forCollection: CollectionNames.articlesContent.rawValue)
-        db.registerCodableSerialization(Content.self, forCollection: CollectionNames.articlesFulltext.rawValue)
+        db.registerCodableSerialization(Content.self, forCollection: .articlesContent)
+        db.registerCodableSerialization(Content.self, forCollection: .articlesFulltext)
         
-        db.registerCodableSerialization(User.self, forCollection: CollectionNames.user.rawValue)
+        db.registerCodableSerialization(User.self, forCollection: .user)
         
     }
     
@@ -1097,6 +1097,18 @@ extension YapDatabase {
     public func register(_ ext: YapDatabaseExtension, withName: DBManagerViews) {
         
         register(ext, withName: withName.rawValue)
+        
+    }
+    
+    public func registerCodableSerialization<O, M>(_ objectType: O.Type, metadata metadataType: M.Type, forCollection collection: CollectionNames) where O: Codable, M: Codable {
+        
+        self.registerCodableSerialization(objectType, metadata: metadataType, forCollection: collection.rawValue)
+        
+    }
+    
+    public func registerCodableSerialization<T>(_ type: T.Type, forCollection collection: CollectionNames) where T: Codable {
+        
+        self.registerCodableSerialization(type, forCollection: collection.rawValue)
         
     }
     

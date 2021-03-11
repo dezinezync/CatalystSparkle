@@ -7,7 +7,7 @@
 //
 
 #import "IdentityVC.h"
-#import "FeedsManager.h"
+#import "Elytra-Swift.h"
 #import "TrialVC.h"
 
 #import "UIImage+Color.h"
@@ -94,37 +94,39 @@
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         
-        User *user = [User new];
-        user.uuid = NSUUID.UUID.UUIDString;
+        //  @TODO
         
-        [MyFeedsManager createUser:user.uuid success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            NSLog(@"%@", responseObject);
-            
-            NSDictionary *userObj = [responseObject objectForKey:@"user"];
-            NSNumber *userID = [userObj objectForKey:@"id"];
-            
-            user.userID = userID;
-            
-            [MyDBManager setUser:user completion:^{
-                    
-                strongify(self);
-                
-                self.input.text = user.uuid;
-                
-                self.button.enabled = YES;
-                
-                if (self.presentedViewController) {
-                    [self.presentedViewController dismissViewControllerAnimated:YES completion:nil];
-                }
-                
-            }];
-            
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-           
-            [AlertManager showGenericAlertWithTitle:@"Creating Account Failed" message:error.localizedDescription];
-            
-        }];
+//        User *user = [User new];
+//        user.uuid = NSUUID.UUID.UUIDString;
+//
+//        [MyFeedsManager createUser:user.uuid success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//            NSLog(@"%@", responseObject);
+//
+//            NSDictionary *userObj = [responseObject objectForKey:@"user"];
+//            NSNumber *userID = [userObj objectForKey:@"id"];
+//
+//            user.userID = userID;
+//
+//            [MyDBManager setUser:user completion:^{
+//
+//                strongify(self);
+//
+//                self.input.text = user.uuid;
+//
+//                self.button.enabled = YES;
+//
+//                if (self.presentedViewController) {
+//                    [self.presentedViewController dismissViewControllerAnimated:YES completion:nil];
+//                }
+//
+//            }];
+//
+//        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//            [AlertManager showGenericAlertWithTitle:@"Creating Account Failed" message:error.localizedDescription];
+//
+//        }];
         
     });
 

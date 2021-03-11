@@ -10,6 +10,7 @@
 #import "TypeFactory.h"
 #import "YetiConstants.h"
 #import "Coordinator.h"
+#import "Elytra-Swift.h"
 
 @interface ArticleAuthorView () <UIContextMenuInteractionDelegate> {
     BOOL _didAddHorizontalConstraints;
@@ -225,7 +226,8 @@
             return;
         }
         
-        [MyDBManager deleteArticleFullText:item.identifier];
+        // @TODO 
+//        DBManager.shared.removeFullText(...)
         
         [self mercurialButton:self.mercurialButton];
         

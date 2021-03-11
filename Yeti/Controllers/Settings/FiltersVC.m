@@ -9,7 +9,7 @@
 #import "FiltersVC.h"
 #import "FilterInputCell.h"
 
-#import "FeedsManager.h"
+#import "Elytra-Swift.h"
 #import "YetiThemeKit.h"
 
 #import <DZKit/AlertManager.h>
@@ -60,36 +60,36 @@ NSString *const kFiltersCell = @"filterCell";
     [super viewWillAppear:animated];
     
     weakify(self);
-    
-    if (MyFeedsManager.user.filters != nil) {
-     
-        [self setupData:MyFeedsManager.user.filters.allObjects.reverseObjectEnumerator.allObjects];
-        
-    }
-    else {
-        
-        [MyFeedsManager getFiltersWithSuccess:^(NSArray <NSString *> *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            if (responseObject == nil) {
-                responseObject = @[];
-            }
-            
-            User *user = MyFeedsManager.user;
-            user.filters = [NSSet setWithArray:responseObject];
-            
-            [MyDBManager setUser:user];
-            
-            strongify(self);
-            
-            [self setupData:MyFeedsManager.user.filters.allObjects.reverseObjectEnumerator.allObjects];
-            
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-           
-            [AlertManager showGenericAlertWithTitle:@"Failed to Load Filters" message:error.localizedDescription];
-            
-        }];
-        
-    }
+    // @TODO
+//    if (MyFeedsManager.user.filters != nil) {
+//
+//        [self setupData:MyFeedsManager.user.filters.allObjects.reverseObjectEnumerator.allObjects];
+//
+//    }
+//    else {
+//
+//        [MyFeedsManager getFiltersWithSuccess:^(NSArray <NSString *> *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//            if (responseObject == nil) {
+//                responseObject = @[];
+//            }
+//
+//            User *user = MyFeedsManager.user;
+//            user.filters = [NSSet setWithArray:responseObject];
+//
+//            [MyDBManager setUser:user];
+//
+//            strongify(self);
+//
+//            [self setupData:MyFeedsManager.user.filters.allObjects.reverseObjectEnumerator.allObjects];
+//
+//        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//            [AlertManager showGenericAlertWithTitle:@"Failed to Load Filters" message:error.localizedDescription];
+//
+//        }];
+//
+//    }
     
 }
 
@@ -175,33 +175,33 @@ NSString *const kFiltersCell = @"filterCell";
     }
     
     weakify(self);
-    
-    [MyFeedsManager removeFilter:keyword success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        if ([responseObject boolValue]) {
-            
-            strongify(self);
-            
-            NSArray *keywords = [self.DS.snapshot itemIdentifiersInSectionWithIdentifier:@1];
-            
-            keywords = [keywords rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
-                return ![obj isEqualToString:keyword];
-            }];
-            
-            User *user = MyFeedsManager.user;
-            user.filters = [NSSet setWithArray:keywords];
-            
-            [MyDBManager setUser:user];
-            
-            [self setupData:keywords];
-            
-        }
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        [AlertManager showGenericAlertWithTitle:@"Failed to Delete Filter" message:error.localizedDescription];
-        
-    }];
+    // @TODO
+//    [MyFeedsManager removeFilter:keyword success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        if ([responseObject boolValue]) {
+//
+//            strongify(self);
+//
+//            NSArray *keywords = [self.DS.snapshot itemIdentifiersInSectionWithIdentifier:@1];
+//
+//            keywords = [keywords rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+//                return ![obj isEqualToString:keyword];
+//            }];
+//
+//            User *user = MyFeedsManager.user;
+//            user.filters = [NSSet setWithArray:keywords];
+//
+//            [MyDBManager setUser:user];
+//
+//            [self setupData:keywords];
+//
+//        }
+//
+//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        [AlertManager showGenericAlertWithTitle:@"Failed to Delete Filter" message:error.localizedDescription];
+//
+//    }];
     
 }
 
@@ -288,28 +288,28 @@ NSString *const kFiltersCell = @"filterCell";
         textField.text = nil;
         [textField becomeFirstResponder];
     });
-    
-    [MyFeedsManager addFilter:keyword success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-     
-        User *user = MyFeedsManager.user;
-        user.filters = [NSSet setWithArray:data];
-        
-        [MyDBManager setUser:user];
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-       
-        [AlertManager showGenericAlertWithTitle:@"Failed to add Filter" message:error.localizedDescription];
-        
-        strongify(self);
-        
-        NSArray *keywords = [self.DS.snapshot itemIdentifiersInSectionWithIdentifier:@1];
-        keywords = [keywords rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
-            return [obj isEqualToString:keyword] == NO;
-        }];
-        
-        [self setupData:keywords];
-        
-    }];
+    // @TODO
+//    [MyFeedsManager addFilter:keyword success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        User *user = MyFeedsManager.user;
+//        user.filters = [NSSet setWithArray:data];
+//
+//        [MyDBManager setUser:user];
+//
+//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        [AlertManager showGenericAlertWithTitle:@"Failed to add Filter" message:error.localizedDescription];
+//
+//        strongify(self);
+//
+//        NSArray *keywords = [self.DS.snapshot itemIdentifiersInSectionWithIdentifier:@1];
+//        keywords = [keywords rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+//            return [obj isEqualToString:keyword] == NO;
+//        }];
+//
+//        [self setupData:keywords];
+//
+//    }];
     
     return NO;
 }

@@ -7,11 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SplitVC.h"
 
-#import "SidebarVC+SearchResults.h"
-#import "FeedVC+SearchController.h"
 #import "EmptyVC.h"
+#import "ArticleVC.h"
+
+@class SidebarVC;
+@class SplitVC;
+@class Folder;
+@class Feed;
+@class CustomFeed;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -31,7 +35,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak) SidebarVC *sidebarVC;
 
-@property (nonatomic, weak, nullable) FeedVC *feedVC;
+// @TODO: Change to FeedVC
+@property (nonatomic, weak, nullable) ArticleVC *feedVC;
 
 @property (nonatomic, weak, nullable) ArticleVC *articleVC;
 
@@ -92,7 +97,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Helpers
 
-- (UIImage *)imageForSortingOption:(YetiSortOption)option;
+//- (UIImage *)imageForSortingOption:(YetiSortOption)option;
 
 @end
 

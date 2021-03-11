@@ -7,8 +7,8 @@
 //
 
 #import "ArticleVC+Toolbar.h"
-#import "FeedsManager+KVS.h"
-#import "FeedVC.h"
+#import "Elytra-Swift.h"
+
 #import "ArticleAuthorView.h"
 
 #import "AppDelegate.h"
@@ -260,8 +260,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         [self.loader startAnimating];
         
     }
-    
-    [MyFeedsManager checkConstraintsForRequestingReview];
+    // @TODO
+//    [MyFeedsManager checkConstraintsForRequestingReview];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -805,31 +805,33 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         return;
     }
     
-    if (MyFeedsManager.reachability.currentReachabilityStatus == NotReachable) {
-        NSError *error = [NSError errorWithDomain:@"ArticleInterface" code:500 userInfo:@{NSLocalizedDescriptionKey: @"Elytra cannot connect to the internet at the moment. Please check your connection and try again."}];
-        self.articleLoadingError = error;
-        self.state = ArticleStateError;
-        return;
-    }
+    // @TODO
+//    if (MyFeedsManager.reachability.currentReachabilityStatus == NotReachable) {
+//        NSError *error = [NSError errorWithDomain:@"ArticleInterface" code:500 userInfo:@{NSLocalizedDescriptionKey: @"Elytra cannot connect to the internet at the moment. Please check your connection and try again."}];
+//        self.articleLoadingError = error;
+//        self.state = ArticleStateError;
+//        return;
+//    }
     
     self.state = ArticleStateLoading;
     
     weakify(self);
     
-    [MyFeedsManager getArticle:self.item.identifier feedID:self.item.feedID noAuth:self.noAuth success:^(FeedItem *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        strongify(self);
-        
-        [self _setupArticle:responseObject start:start isChangingArticle:isChangingArticle];
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-       
-        strongify(self);
-        
-        self.articleLoadingError = error;
-        self.state = ArticleStateError;
-        
-    }];
+    // @TODO
+//    [MyFeedsManager getArticle:self.item.identifier feedID:self.item.feedID noAuth:self.noAuth success:^(FeedItem *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        strongify(self);
+//
+//        [self _setupArticle:responseObject start:start isChangingArticle:isChangingArticle];
+//
+//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        strongify(self);
+//
+//        self.articleLoadingError = error;
+//        self.state = ArticleStateError;
+//
+//    }];
 }
 
 - (BOOL)_imageURL:(NSString *)url appearsInContent:(Content *)content {
@@ -1149,17 +1151,18 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         NSLog(@"Processing: %@", @([NSDate.date timeIntervalSinceDate:start]));
         
-        if (self.item && self.item.isRead == NO) {
-            // since v1.2, fetching the article marks it as read.
-//            [MyFeedsManager article:self.item markAsRead:YES];
-            
-            if (self.providerDelegate && [self.providerDelegate respondsToSelector:@selector(userMarkedArticle:read:)]) {
-                [self.providerDelegate userMarkedArticle:self.item read:YES];
-            }
-            else {
-                [MyFeedsManager article:self.item markAsRead:YES];
-            }
-        }
+        // @TODO
+//        if (self.item && self.item.isRead == NO) {
+//            // since v1.2, fetching the article marks it as read.
+////            [MyFeedsManager article:self.item markAsRead:YES];
+//
+//            if (self.providerDelegate && [self.providerDelegate respondsToSelector:@selector(userMarkedArticle:read:)]) {
+//                [self.providerDelegate userMarkedArticle:self.item read:YES];
+//            }
+//            else {
+//                [MyFeedsManager article:self.item markAsRead:YES];
+//            }
+//        }
         
         [self.stackView layoutIfNeeded];
         
@@ -1219,9 +1222,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         author = [author stringByAppendingString:@" • "];
     }
     
-    Feed *feed = [MyFeedsManager feedForID:self.item.feedID];
-    
-    NSString *firstLine = feed != nil ? feed.displayTitle : nil;
+    // @TODO
+//    Feed *feed = [MyFeedsManager feedForID:self.item.feedID];
+//
+//    NSString *firstLine = feed != nil ? feed.displayTitle : nil;
     NSString *timestamp = nil;
     
     timestamp = [[NSRelativeDateTimeFormatter new] localizedStringForDate:self.item.timestamp relativeToDate:NSDate.date];
@@ -1283,7 +1287,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     authorView.frame = frame;
     
     authorView.titleLabel.attributedText = attrs;
-    authorView.blogLabel.text = firstLine;
+//  @TODO  authorView.blogLabel.text = firstLine;
     authorView.authorLabel.text = sublineText;
     
 #if !TARGET_OS_MACCATALYSt
@@ -1311,28 +1315,30 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     // came from a push notification
     // or the providerDelegate is a non-base-DetailFeedVC (eg. DetailCustomVC)
-    if (self.providerDelegate == nil ||
-        (self.providerDelegate != nil && [self.providerDelegate isMemberOfClass:FeedVC.class] == NO)) {
-        
-        // the blog label should redirect to the blog
-        authorView.blogLabel.textColor = SharedPrefs.tintColor;
-        [authorView.blogLabel setNeedsDisplay];
-        
-        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnBlogLabel:)];
-        tap.numberOfTapsRequired = 1;
-        tap.delaysTouchesBegan = YES;
-        tap.delaysTouchesEnded = NO;
-        
-        if (@available(iOS 13.4, *)) {
-            
-            UIPointerInteraction *interaction = [[UIPointerInteraction alloc] initWithDelegate:self];
-            [authorView.blogLabel addInteraction:interaction];
-            
-        }
-        
-        [authorView.blogLabel addGestureRecognizer:tap];
-        
-    }
+    
+    // @TODO
+//    if (self.providerDelegate == nil ||
+//        (self.providerDelegate != nil && [self.providerDelegate isMemberOfClass:FeedVC.class] == NO)) {
+//
+//        // the blog label should redirect to the blog
+//        authorView.blogLabel.textColor = SharedPrefs.tintColor;
+//        [authorView.blogLabel setNeedsDisplay];
+//
+//        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnBlogLabel:)];
+//        tap.numberOfTapsRequired = 1;
+//        tap.delaysTouchesBegan = YES;
+//        tap.delaysTouchesEnded = NO;
+//
+//        if (@available(iOS 13.4, *)) {
+//
+//            UIPointerInteraction *interaction = [[UIPointerInteraction alloc] initWithDelegate:self];
+//            [authorView.blogLabel addInteraction:interaction];
+//
+//        }
+//
+//        [authorView.blogLabel addGestureRecognizer:tap];
+//
+//    }
     
 }
 
@@ -2397,7 +2403,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
                 UIImageView *imageView = [[UIImageView alloc] initWithFrame:playerController.contentOverlayView.bounds];
                 imageView.contentMode = UIViewContentModeScaleAspectFill;
-                imageView.autoUpdateFrameOrConstraints = NO;
+//                imageView.autoUpdateFrameOrConstraints = NO;
                 imageView.translatesAutoresizingMaskIntoConstraints = NO;
 
                 [playerController.contentOverlayView addSubview:imageView];
@@ -2600,17 +2606,18 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         return;
     }
     
-    Feed *feed = [MyFeedsManager feedForID:self.item.feedID];
-    
-    if (feed == nil) {
-        
-        [(UILabel *)sender.view setTextColor:UIColor.secondaryLabelColor];
-        [sender.view removeGestureRecognizer:sender];
-        
-        return;
-    }
-    
-    [self.mainCoordinator showFeedVC:feed];
+    // @TODO
+//    Feed *feed = [MyFeedsManager feedForID:self.item.feedID];
+//
+//    if (feed == nil) {
+//
+//        [(UILabel *)sender.view setTextColor:UIColor.secondaryLabelColor];
+//        [sender.view removeGestureRecognizer:sender];
+//
+//        return;
+//    }
+//
+//    [self.mainCoordinator showFeedVC:feed];
     
 }
 
@@ -2629,73 +2636,75 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     // if the article already has a mercury source
     // this will only mark that and return
-    if (self.item.mercury == YES) {
-        
-        NSArray <Content *> *content = [MyDBManager contentForArticle:self.item.identifier];
-        
-        if (content != nil) {
-            
-            runOnMainQueueWithoutDeadlocking(^{
-               
-                self.item.content = content;
-                self.item.mercury = NO;
-                
-                [self setupArticle:self.item];
-                
-            });
-         
-            if (completionHandler) {
-                completionHandler(YES);
-            }
-            
-        }
-        else {
-            
-            if (completionHandler) {
-                completionHandler(NO);
-            }
-            
-        }
-        
-        return;
-    }
-
-    [MyFeedsManager getMercurialArticle:self.item.identifier success:^(FeedItem * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        self.item.mercury = responseObject.mercury;
-        self.item.read = responseObject.read;
-        self.item.bookmarked = responseObject.bookmarked;
-        
-        if (responseObject.content && responseObject.content.count) {
-            
-            self.item.content = responseObject.content;
-            
-        }
-        
-        if (responseObject.coverImage) {
-            self.item.coverImage = responseObject.coverImage;
-        }
-        
-        if (responseObject.enclosures && responseObject.enclosures.count) {
-            self.item.enclosures = responseObject.enclosures;
-        }
-        
-        [self setupArticle:self.item];
-        
-        if (completionHandler) {
-            completionHandler(YES);
-        }
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        if (completionHandler) {
-            completionHandler(NO);
-        }
-        
-        [AlertManager showGenericAlertWithTitle:@"An Unexpected Error Occurred" message:error.localizedDescription fromVC:self];
-        
-    }];
     
+    // @TODO
+//    if (self.item.mercury == YES) {
+//
+//        NSArray <Content *> *content = [MyDBManager contentForArticle:self.item.identifier];
+//
+//        if (content != nil) {
+//
+//            runOnMainQueueWithoutDeadlocking(^{
+//
+//                self.item.content = content;
+//                self.item.mercury = NO;
+//
+//                [self setupArticle:self.item];
+//
+//            });
+//
+//            if (completionHandler) {
+//                completionHandler(YES);
+//            }
+//
+//        }
+//        else {
+//
+//            if (completionHandler) {
+//                completionHandler(NO);
+//            }
+//
+//        }
+//
+//        return;
+//    }
+//
+//    [MyFeedsManager getMercurialArticle:self.item.identifier success:^(FeedItem * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        self.item.mercury = responseObject.mercury;
+//        self.item.read = responseObject.read;
+//        self.item.bookmarked = responseObject.bookmarked;
+//
+//        if (responseObject.content && responseObject.content.count) {
+//
+//            self.item.content = responseObject.content;
+//
+//        }
+//
+//        if (responseObject.coverImage) {
+//            self.item.coverImage = responseObject.coverImage;
+//        }
+//
+//        if (responseObject.enclosures && responseObject.enclosures.count) {
+//            self.item.enclosures = responseObject.enclosures;
+//        }
+//
+//        [self setupArticle:self.item];
+//
+//        if (completionHandler) {
+//            completionHandler(YES);
+//        }
+//
+//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        if (completionHandler) {
+//            completionHandler(NO);
+//        }
+//
+//        [AlertManager showGenericAlertWithTitle:@"An Unexpected Error Occurred" message:error.localizedDescription fromVC:self];
+//
+//    }];
+//
 }
 
 #pragma mark - <UIScrollViewDelegate>
@@ -2868,19 +2877,21 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     __block Paragraph *required = nil;
     
-    Feed *feed = [ArticlesManager.shared feedForID:self.item.feedID];
     
-    NSString *base = @"";
-    
-    if (feed != nil && feed.extra.url != nil) {
-        
-        base = feed.extra.url;
-        
-        if ([[base substringFromIndex:base.length - 1] isEqualToString:@"/"]) {
-            base = [base substringToIndex:base.length-1];
-        }
-        
-    }
+    // @TODO
+//    Feed *feed = [ArticlesManager.shared feedForID:self.item.feedID];
+//
+//    NSString *base = @"";
+//
+//    if (feed != nil && feed.extra.url != nil) {
+//
+//        base = feed.extra.url;
+//
+//        if ([[base substringFromIndex:base.length - 1] isEqualToString:@"/"]) {
+//            base = [base substringToIndex:base.length-1];
+//        }
+//
+//    }
     
     for (Paragraph *para in paragraphs) { @autoreleasepool {
         
@@ -2902,9 +2913,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                 
                 compare = [compare stringByReplacingOccurrencesOfString:@"#" withString:@""];
                 
-                if (base.length > 0 && [compare containsString:base]) {
-                    compare = [compare stringByReplacingOccurrencesOfString:base withString:@""];
-                }
+                // @TODO 
+//                if (base.length > 0 && [compare containsString:base]) {
+//                    compare = [compare stringByReplacingOccurrencesOfString:base withString:@""];
+//                }
                 
                 float ld = [identifier compareStringWithString:compare];
                 NSLogDebug(@"href:%@ distance:%@", compare, @(ld));
@@ -3077,20 +3089,22 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             return NO;
         }
         
-        Feed *feed = [ArticlesManager.shared feedForID:self.item.feedID];
         
-        if ([absolute containsString:@"#"] && feed != nil &&
-            ([absolute containsString:feed.extra.url] || ([absolute compareStringWithString:feed.extra.url] <= feed.extra.url.length))
-            ) {
-            
-            NSUInteger location = [absolute rangeOfString:@"#"].location;
-            
-            absolute = [absolute substringFromIndex:location];
-            
-            [self scrollToIdentifer:absolute];
-            return NO;
-            
-        }
+        // @TODO
+//        Feed *feed = [ArticlesManager.shared feedForID:self.item.feedID];
+//
+//        if ([absolute containsString:@"#"] && feed != nil &&
+//            ([absolute containsString:feed.extra.url] || ([absolute compareStringWithString:feed.extra.url] <= feed.extra.url.length))
+//            ) {
+//
+//            NSUInteger location = [absolute rangeOfString:@"#"].location;
+//
+//            absolute = [absolute substringFromIndex:location];
+//
+//            [self scrollToIdentifer:absolute];
+//            return NO;
+//
+//        }
         
         // links to sections within the article
         if ([absolute containsString:self.item.articleURL] && ![absolute isEqualToString:self.item.articleURL]) {

@@ -9,7 +9,6 @@
 #import <UIKit/UIKit.h>
 
 #import "EmptyVC.h"
-#import "FeedVC+SearchController.h"
 #import "ArticleVC.h"
 
 @interface SplitVC : UISplitViewController <UIViewControllerRestoration, UIStateRestoring>

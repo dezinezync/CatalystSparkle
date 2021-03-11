@@ -8,6 +8,7 @@
 
 import Foundation
 import FeedsLib
+import Networking
 
 private let recommendationTopics = [
     "News",
@@ -332,21 +333,22 @@ extension NewFeedVC: UISearchResultsUpdating, UISearchBarDelegate, UITextFieldDe
         if url.absoluteString.contains("youtube.com") == true, url.absoluteString.contains("videos.xml") == false,
            isYoutube == false {
             
-            MyFeedsManager._checkYoutubeFeed(url) { [weak self] (responseObject, _, _) in
+            FeedsManager.shared.checkYoutube(url: url) { [weak self] (result) in
                 
-                guard let url = responseObject as? URL else {
-                    return
+                switch result {
+                case .success(let url):
+                    self?.searchURL(url, isYoutube: true)
+                    
+                case .failure(let error):
+                    
+                    if let error = error as? FeedsManagerError {
+                        AlertManager.showGenericAlert(withTitle: "An Error Occurred", message: error.message ?? "An unknown error has occurred.")
+                    }
+                    else {
+                        AlertManager.showGenericAlert(withTitle: "An Error Occurred", message: error.localizedDescription)
+                    }
+                    
                 }
-                
-                self?.searchURL(url, isYoutube: true)
-                
-            } error: { (error, _, _) in
-                
-                guard let error = error else {
-                    return
-                }
-                
-                AlertManager.showGenericAlert(withTitle: "An Error Occurred", message: error.localizedDescription)
                 
             }
             

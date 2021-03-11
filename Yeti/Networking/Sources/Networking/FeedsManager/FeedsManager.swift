@@ -654,6 +654,140 @@ extension FeedsManager {
     
 }
 
+// MARK: - Helpers
+extension FeedsManager {
+    
+    public func checkYoutube(url:URL, completion:((Result<URL, Error>) -> Void)?) {
+     
+        guard var components = URLComponents(string: url.absoluteString) else {
+            completion?(.failure(FeedsManagerError.general(message: "Please enter a valid URL.")))
+            return
+        }
+        
+        if components.scheme == nil {
+            components.scheme = "https"
+        }
+        
+        guard let _ = components.url else {
+            completion?(.failure(FeedsManagerError.general(message: "Please enter a valid URL.")))
+            return
+        }
+        
+        guard components.host?.contains("youtube.com") == true else {
+            completion?(.failure(FeedsManagerError.general(message: "Please enter a Youtube URL.")))
+            return
+        }
+        
+        let patternString = "\\/c(hannel)?\\/(.+)"
+        guard let regexp = try? NSRegularExpression(pattern: patternString, options: []) else {
+            completion?(.failure(FeedsManagerError.general(message: "An internal error occurred when fetching the Youtube URL.")))
+            return
+        }
+        
+        if components.path.contains("/user/") == true {
+            
+            // get it from the canonical head tag
+            
+        }
+        else {
+            
+            var channelID: String? = nil
+            var isChannelID: Bool = false
+            
+            regexp.enumerateMatches(in: components.path, options: [], range: NSMakeRange(0, components.path.count)) { (result, flags, stop) in
+                
+                guard let result = result else {
+                    return
+                }
+                
+                let matchingGroupRange = result.range(at: result.numberOfRanges - 1)
+                
+                channelID = (components.path as NSString).substring(with: matchingGroupRange)
+                isChannelID = result.range(at: 1).location != NSNotFound
+                
+                stop.pointee = true
+                
+            }
+            
+            if channelID != nil {
+                
+                if isChannelID == false {
+                    
+                    // get it from the canonical head tag
+                    
+                    return
+                    
+                }
+                
+                let cannonicalURL = URL(string: "https://www.youtube.com/feeds/videos.xml?channel_id=\(channelID!)")!
+                
+                completion?(.success(cannonicalURL))
+                
+            }
+            
+        }
+        
+    }
+    
+    public func getYoutubeCannonicalID(originalURL: URL, completion:((Result<URL, Error>) -> Void)?) {
+        
+        let request = URLRequest(url: originalURL)
+        
+        let session = URLSession.shared
+        
+        let task = session.dataTask(with: request) { (data, response, error) in
+            
+            if let error = error {
+                completion?(.failure(error))
+                return
+            }
+            
+            guard let data = data else {
+                completion?(.failure(FeedsManagerError.general(message: "No response was received from Youtube.")))
+                return
+            }
+            
+            guard let html = String(data: data, encoding: .utf8) else {
+                completion?(.failure(FeedsManagerError.general(message: "No response was received from Youtube.")))
+                return
+            }
+            
+            var cannonical: String? = nil
+            
+            let startString = "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"RSS\" href=\""
+            
+            let scanner = Scanner(string: html)
+            
+            repeat {
+                
+                cannonical = nil
+                
+                let _ = scanner.scanUpToString(startString)
+                
+                let nextIndex = String.Index(utf16Offset: scanner.currentIndex.utf16Offset(in: scanner.string) + startString.count, in: scanner.string)
+                
+                scanner.currentIndex = nextIndex
+                
+            } while (cannonical == originalURL.absoluteString)
+            
+            guard let c = cannonical,
+                  let url = URL(string: c) else {
+                
+                completion?(.failure(FeedsManagerError.general(message: "No response was received from Youtube.")))
+                return
+                
+            }
+            
+            completion?(.success(url))
+            
+        }
+        
+        task.resume()
+        
+    }
+    
+}
+
 extension String {
     
     public func hmac(key: String) -> String {

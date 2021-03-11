@@ -11,7 +11,6 @@
 #import "StoreKeychainPersistence.h"
 
 #import "StoreFooter.h"
-#import "FeedsManager.h"
 #import "YetiConstants.h"
 
 #import <DZKit/AlertManager.h>
@@ -23,6 +22,8 @@
 #import "PaddedLabel.h"
 
 #import "SettingsCell.h"
+
+#import "Elytra-Swift.h"
 
 @interface StoreVC () <RMStoreObserver> {
     BOOL _sendingReceipt;
@@ -79,13 +80,9 @@
     
     self.purhcasedProductIdentifiers = [[(StoreKeychainPersistence *)[store transactionPersistor] purchasedProductIdentifiers] allObjects];
     
-    [[DZActivityIndicatorManager shared] incrementCount];
-    
     [RMStore.defaultStore requestProducts:[NSSet setWithArray:_products] success:^(NSArray *products, NSArray *invalidProductIdentifiers) {
         
         self.selectedProduct = nil;
-        
-        [[DZActivityIndicatorManager shared] decrementCount];
         
         dispatch_async(dispatch_get_main_queue(), ^{
            
@@ -103,7 +100,6 @@
         
         dispatch_async(dispatch_get_main_queue(), ^{
            
-            [[DZActivityIndicatorManager shared] decrementCount];
             [AlertManager showGenericAlertWithTitle:@"Failed to load Products" message:error.localizedDescription];
             
             [footer.activityIndicator stopAnimating];
@@ -113,37 +109,37 @@
 
     }];
     
-    if (MyFeedsManager.user.subscription == nil
-        || (MyFeedsManager.user.subscription != nil &&
-            (MyFeedsManager.user.subscription.error != nil
-             || MyFeedsManager.user.subscription.expiry == nil
-             )
-            )
-        ) {
-        
-        [self getSubscription];
-        
-    }
-    else {
-        
-        if ([MyFeedsManager.user.subscription hasExpired]) {
-            
-            [self getSubscription];
-            
-        }
-        else {
-            
-            NSDate *expiry = MyFeedsManager.user.subscription.expiry;
-            
-            if ([NSCalendar.currentCalendar isDateInToday:expiry]) {
-                
-                [self getSubscription];
-                
-            }
-            
-        }
-        
-    }
+    // @TODO
+    
+//    if (FeedsManager.user.subscription == nil
+//        || (FeedsManager.user.subscription != nil &&
+//            (MyFeedsManager.user.subscription.expired == nil)
+//            )
+//        ) {
+//
+//        [self getSubscription];
+//
+//    }
+//    else {
+//
+//        if ([MyFeedsManager.user.subscription hasExpired]) {
+//
+//            [self getSubscription];
+//
+//        }
+//        else {
+//
+//            NSDate *expiry = MyFeedsManager.user.subscription.expiry;
+//
+//            if ([NSCalendar.currentCalendar isDateInToday:expiry]) {
+//
+//                [self getSubscription];
+//
+//            }
+//
+//        }
+//
+//    }
     
     self.buyButton.enabled = NO;
     
@@ -238,91 +234,92 @@
     
     NSString *baseText;
     
-    if (MyFeedsManager.user.subscription != nil) {
-        
-        if (MyFeedsManager.user.subscription.error != nil) {
-            
-            baseText = MyFeedsManager.user.subscription.error.localizedDescription;
-            
-        }
-        else if (MyFeedsManager.user.subscription.expiry != nil) {
-            
-            NSDateFormatter *formatter = [NSDateFormatter new];
-            formatter.dateStyle = NSDateFormatterMediumStyle;
-            formatter.timeStyle = NSDateFormatterShortStyle;
-            
-            if (MyFeedsManager.user.subscription.hasExpired) {
-            
-                baseText = formattedString(@"Your subscription expired on %@", [formatter stringFromDate:MyFeedsManager.user.subscription.expiry]);
-                
-            }
-            else if (MyFeedsManager.user.subscription.isLifetime == NO &&  MyFeedsManager.user.subscription.status.integerValue == 2) {
-                
-                baseText = formattedString(@"Your free trial will end on %@", [formatter stringFromDate:MyFeedsManager.user.subscription.expiry]);
-                
-            }
-            else {
-                
-                if (MyFeedsManager.user.subscription.isLifetime) {
-                    
-                    baseText = @"Your account has a Lifetime subscription. Enjoy!";
-                    
-                }
-                else {
-                    
-                    baseText = formattedString(@"Your subscription will renew on %@", [formatter stringFromDate:MyFeedsManager.user.subscription.expiry]);
-                    
-                }
-                
-            }
-            
-        }
-        
-    }
-    
-    if (baseText == nil) {
-        baseText = @"Select a subscription type.";
-    }
-    
-    if (MyFeedsManager.user.subscription.isExternal) {
-        
-        baseText = formattedString(@"%@\nYour subscription is managed externally.", baseText);
-        
-    }
-    
-    NSDictionary *topLineAttributes = @{NSForegroundColorAttributeName: tableHeader.textColor,
-                                        NSFontAttributeName: tableHeader.font
-    };
-    
-    NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:baseText attributes:topLineAttributes];
-    
-    NSMutableParagraphStyle *para = [NSParagraphStyle defaultParagraphStyle].mutableCopy;
-    para.lineSpacing = 1.5f;
-    
-    NSString *additionalText = @"\n\nYour Subscription Includes:\n- No limit on number of Feeds & Folders\n- Real-Time Push Notifications\n- Available on iOS, iPadOS and macOS\n- Feed Recommendations updated hourly\n- Integrated Syncing across all your devices\n- Support Indie Development";
-    
-    NSDictionary *bottomLineAttributes = @{NSForegroundColorAttributeName: tableHeader.textColor,
-                                           NSFontAttributeName: [UIFont preferredFontForTextStyle:UIFontTextStyleBody],
-                                           NSParagraphStyleAttributeName: para
-    };
-    
-    NSDictionary *middleLineAttributes = @{NSForegroundColorAttributeName: UIColor.labelColor,
-                                           NSFontAttributeName: [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline],
-                                           NSParagraphStyleAttributeName: para
-    };
-    
-    NSMutableAttributedString *attrs2 = [[NSMutableAttributedString alloc] initWithString:additionalText attributes:bottomLineAttributes];
-    
-    NSRange middleLineRange = [additionalText rangeOfString:@"Your Subscription Includes:"];
-    [attrs2 setAttributes:middleLineAttributes range:middleLineRange];
-    
-    [attrs appendAttributedString:attrs2];
-    
-    tableHeader.attributedText = attrs;
-    
-    [tableHeader sizeToFit];
-    [tableHeader setNeedsUpdateConstraints];
-    [tableHeader setNeedsLayout];
+    // @TODO
+//    if (MyFeedsManager.user.subscription != nil) {
+//
+//        if (MyFeedsManager.user.subscription.error != nil) {
+//
+//            baseText = MyFeedsManager.user.subscription.error.localizedDescription;
+//
+//        }
+//        else if (MyFeedsManager.user.subscription.expiry != nil) {
+//
+//            NSDateFormatter *formatter = [NSDateFormatter new];
+//            formatter.dateStyle = NSDateFormatterMediumStyle;
+//            formatter.timeStyle = NSDateFormatterShortStyle;
+//
+//            if (MyFeedsManager.user.subscription.hasExpired) {
+//
+//                baseText = formattedString(@"Your subscription expired on %@", [formatter stringFromDate:MyFeedsManager.user.subscription.expiry]);
+//
+//            }
+//            else if (MyFeedsManager.user.subscription.isLifetime == NO &&  MyFeedsManager.user.subscription.status.integerValue == 2) {
+//
+//                baseText = formattedString(@"Your free trial will end on %@", [formatter stringFromDate:MyFeedsManager.user.subscription.expiry]);
+//
+//            }
+//            else {
+//
+//                if (MyFeedsManager.user.subscription.isLifetime) {
+//
+//                    baseText = @"Your account has a Lifetime subscription. Enjoy!";
+//
+//                }
+//                else {
+//
+//                    baseText = formattedString(@"Your subscription will renew on %@", [formatter stringFromDate:MyFeedsManager.user.subscription.expiry]);
+//
+//                }
+//
+//            }
+//
+//        }
+//
+//    }
+//
+//    if (baseText == nil) {
+//        baseText = @"Select a subscription type.";
+//    }
+//
+//    if (MyFeedsManager.user.subscription.isExternal) {
+//
+//        baseText = formattedString(@"%@\nYour subscription is managed externally.", baseText);
+//
+//    }
+//
+//    NSDictionary *topLineAttributes = @{NSForegroundColorAttributeName: tableHeader.textColor,
+//                                        NSFontAttributeName: tableHeader.font
+//    };
+//
+//    NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:baseText attributes:topLineAttributes];
+//
+//    NSMutableParagraphStyle *para = [NSParagraphStyle defaultParagraphStyle].mutableCopy;
+//    para.lineSpacing = 1.5f;
+//
+//    NSString *additionalText = @"\n\nYour Subscription Includes:\n- No limit on number of Feeds & Folders\n- Real-Time Push Notifications\n- Available on iOS, iPadOS and macOS\n- Feed Recommendations updated hourly\n- Integrated Syncing across all your devices\n- Support Indie Development";
+//
+//    NSDictionary *bottomLineAttributes = @{NSForegroundColorAttributeName: tableHeader.textColor,
+//                                           NSFontAttributeName: [UIFont preferredFontForTextStyle:UIFontTextStyleBody],
+//                                           NSParagraphStyleAttributeName: para
+//    };
+//
+//    NSDictionary *middleLineAttributes = @{NSForegroundColorAttributeName: UIColor.labelColor,
+//                                           NSFontAttributeName: [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline],
+//                                           NSParagraphStyleAttributeName: para
+//    };
+//
+//    NSMutableAttributedString *attrs2 = [[NSMutableAttributedString alloc] initWithString:additionalText attributes:bottomLineAttributes];
+//
+//    NSRange middleLineRange = [additionalText rangeOfString:@"Your Subscription Includes:"];
+//    [attrs2 setAttributes:middleLineAttributes range:middleLineRange];
+//
+//    [attrs appendAttributedString:attrs2];
+//
+//    tableHeader.attributedText = attrs;
+//
+//    [tableHeader sizeToFit];
+//    [tableHeader setNeedsUpdateConstraints];
+//    [tableHeader setNeedsLayout];
     
 }
 
@@ -392,7 +389,6 @@
     
     [self setButtonsState:NO];
     
-    [[DZActivityIndicatorManager shared] incrementCount];
     [[RMStore defaultStore] restoreTransactionsOnSuccess:^(NSArray <SKPaymentTransaction *> *transactions) {
         
         [self setButtonsState:YES];
@@ -401,7 +397,6 @@
         
     } failure:^(NSError *error) {
         
-        [[DZActivityIndicatorManager shared] decrementCount];
         [AlertManager showGenericAlertWithTitle:@"Restore Transactions Failed" message:error.localizedDescription];
         
         [self setButtonsState:YES];
@@ -420,8 +415,6 @@
         return;
     }
     
-    [[DZActivityIndicatorManager shared] incrementCount];
-    
     [[RMStore defaultStore] addPayment:productID success:^(SKPaymentTransaction *transaction) {
         
         [self setButtonsState:YES];
@@ -430,7 +423,6 @@
         
     } failure:^(SKPaymentTransaction *transaction, NSError *error) {
         
-        [[DZActivityIndicatorManager shared] decrementCount];
         [AlertManager showGenericAlertWithTitle:@"Payment Transaction Failed" message:error.localizedDescription];
         
         [self setButtonsState:YES];
@@ -440,7 +432,6 @@
 
 - (void)processTransactions:(NSArray <SKPaymentTransaction *> *)transactions {
     
-    [[DZActivityIndicatorManager shared] decrementCount];
     [self resetSelectedCellState];
     
     [self sendReceipt];
@@ -454,15 +445,16 @@
 
 - (void)getSubscription {
     
-    [MyFeedsManager getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-      
-        [self setupHeaderText];
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-       
-        [AlertManager showGenericAlertWithTitle:@"Subscription Check Failed" message:@"Elytra failed to retrive the latest status of your subscription."];
-        
-    }];
+    // @TODO
+//    [MyFeedsManager getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        [self setupHeaderText];
+//
+//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        [AlertManager showGenericAlertWithTitle:@"Subscription Check Failed" message:@"Elytra failed to retrive the latest status of your subscription."];
+//
+//    }];
     
 }
 
@@ -545,10 +537,10 @@
     return YES;
 #endif
     
-    if (MyFeedsManager.user.subscription.isExternal == YES
-        && MyFeedsManager.user.subscription.hasExpired == NO) {
-        return NO;
-    }
+//    if (MyFeedsManager.user.subscription.isExternal == YES
+//        && MyFeedsManager.user.subscription.hasExpired == NO) {
+//        return NO;
+//    }
     
     return [self.purhcasedProductIdentifiers containsObject:IAPLifetime] == NO;
     

@@ -10,7 +10,7 @@
 #import <DZKit/NSString+Extras.h>
 #import <SDWebImage/UIImageView+WebCache.h>
 
-#import "FeedsManager.h"
+#import "Elytra-Swift.h"
 
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <DZKit/NSArray+RZArrayCandy.h>

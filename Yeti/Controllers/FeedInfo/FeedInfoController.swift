@@ -8,13 +8,15 @@
 
 import UIKit
 import SDWebImage
+import DBManager
+import Models
 
 @objc final class FeedInfoController: UITableViewController {
     
     var feed: Feed? {
         didSet {
             if let f = feed {
-                let m = MyDBManager.metadata(for: f) as! Dictionary<String, Any>
+                let m = DBManager.shared.metadataForFeed(f)
                 metadata = m
             }
             else {
@@ -23,7 +25,7 @@ import SDWebImage
         }
     }
     
-    var metadata: Dictionary<String, Any>?
+    var metadata: FeedMeta?
     
     weak var faviconView: UIImageView?
     
@@ -95,17 +97,13 @@ import SDWebImage
         }
         else {
             
-            if let proxyPath: String = self.feed?.faviconProxyURI(forSize: 48) {
+            if let proxyURL = self.feed?.faviconProxyURI(size: 48) {
                 
-                if let url: URL = URL.init(string: proxyPath) {
-                
-                    self.faviconView?.sd_setImage(with: url, completed: { (image: UIImage?, error: Error?, _, _) in
-                        
-                        self.feed?.faviconImage = image
-                        
-                    })
+                self.faviconView?.sd_setImage(with: proxyURL, completed: { (image: UIImage?, error: Error?, _, _) in
                     
-                }
+                    self.feed?.faviconImage = image
+                    
+                })
                 
             }
             
@@ -132,7 +130,7 @@ import SDWebImage
         else if (section == 1) {
             return 1
         }
-        else if (section == 2 && self.feed?.extra.url != nil) {
+        else if (section == 2 && self.feed?.extra?.url != nil) {
             return 1
         }
         
@@ -157,7 +155,7 @@ import SDWebImage
             }
             else if (indexPath.row == 1) {
                 
-                let realtime = (self.feed?.isHubSubscribed == true || (self.feed?.rpcCount?.intValue ?? 0) > 2)
+                let realtime = (self.feed?.hubSubscribed == true || ((self.feed?.rpcCount ?? 0) > 2))
                 
                 cell.label.text = realtime ? "Push Notifications" : "Local Notifications"
                 cell.toggle.addTarget(self, action: #selector(didTogglePush(toggle:)), for: .valueChanged)
@@ -165,18 +163,18 @@ import SDWebImage
                 if (realtime) {
                     
                     // realtime
-                    cell.toggle.setOn(self.feed?.isSubscribed ?? false, animated: false)
+                    cell.toggle.setOn(self.feed?.subscribed ?? false, animated: false)
                     
                 }
                 else {
                     
                     // local
                     
-                    if let m: Dictionary = metadata {
+                    if let m = metadata {
                         
-                        let val:NSNumber = (m[kFeedLocalNotifications] ?? NSNumber.init(value: false)) as! NSNumber
+                        let val = (m.localNotifications ?? false)
                         
-                        cell.toggle.setOn(val.boolValue, animated: false)
+                        cell.toggle.setOn(val, animated: false)
                     }
                     
                 }
@@ -187,11 +185,11 @@ import SDWebImage
                 cell.label.text = "Safari Reader Mode"
                 cell.toggle.addTarget(self, action: #selector(didToggleSafariReaderMode(toggle:)), for: .valueChanged)
                 
-                if let m: Dictionary = metadata {
+                if let m = metadata {
                     
-                    let val:NSNumber = (m[kFeedSafariReaderMode] ?? NSNumber.init(value: false)) as! NSNumber
+                    let val = m.readerMode
                     
-                    cell.toggle.setOn(val.boolValue, animated: false)
+                    cell.toggle.setOn(val, animated: false)
                 }
                 else {
                     cell.toggle.setOn(false, animated: false)
@@ -203,13 +201,13 @@ import SDWebImage
         else if (indexPath.section == 1) {
             
             cell.toggle.isHidden = true
-            cell.label.text = self.feed?.url ?? ""
+            cell.label.text = self.feed?.url.absoluteString ?? ""
             
         }
         else if (indexPath.section == 2) {
             
             cell.toggle.isHidden = true
-            cell.label.text = self.feed?.extra.url ?? ""
+            cell.label.text = self.feed?.extra?.url?.absoluteString ?? ""
             
         }
 
@@ -221,7 +219,7 @@ import SDWebImage
         if (section == 1) {
             return "Feed URL"
         }
-        else if (section == 2 && self.feed?.extra.url != nil) {
+        else if (section == 2 && self.feed?.extra?.url != nil) {
             return "Website URL"
         }
         
@@ -233,7 +231,7 @@ import SDWebImage
         
         if (section == 0) {
             
-            let isRealtime = (self.feed?.isHubSubscribed ?? false) || (self.feed?.rpcCount?.intValue ?? 0) > 2;
+            let isRealtime = (self.feed?.hubSubscribed ?? false) || (self.feed?.rpcCount ?? 0) > 2;
             
             let mainString = isRealtime ? "This feed supports real-time notifications." : "Notifications for this feed will be near real-time."
             
@@ -248,24 +246,22 @@ import SDWebImage
     
     override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         
-        if (indexPath.section == 1 || (indexPath.section == 2 && self.feed?.extra.url != nil)) {
+        if (indexPath.section == 1 || (indexPath.section == 2 && self.feed?.extra?.url != nil)) {
             
-            weak var weakSelf = self
-            
-            let config = UIContextMenuConfiguration.init(identifier: nil, previewProvider: nil) { _ in
+            let config = UIContextMenuConfiguration.init(identifier: nil, previewProvider: nil) { [weak self] _ in
                 
                 let copy: UIAction = UIAction.init(title: "Copy", image: UIImage.init(systemName: "doc.on.doc"), identifier: nil, discoverabilityTitle: "Copy URL", attributes: .init(), state: .off) { _ in
 
-                    var path: String = ""
+                    var url: URL? = nil
                     
                     if (indexPath.section == 1) {
-                        path = weakSelf?.feed?.url ?? ""
+                        url = self?.feed?.url
                     }
                     else if (indexPath.section == 2) {
-                        path = weakSelf?.feed?.extra.url ?? ""
+                        url = self?.feed?.extra?.url
                     }
                     
-                    if let url = URL.init(string: path) {
+                    if let url = url {
                         
                         DispatchQueue.main.async {
                             UIPasteboard.general.url = url
@@ -277,20 +273,20 @@ import SDWebImage
                 
                 let share: UIAction = UIAction.init(title: "Share", image: UIImage.init(systemName: "square.and.arrow.up"), identifier: nil, discoverabilityTitle: "Share URL", attributes: .init(), state: .off) { _ in
                     
-                    var path: String = ""
+                    var url: URL? = nil
                     
                     if (indexPath.section == 1) {
-                        path = weakSelf?.feed?.url ?? ""
+                        url = self?.feed?.url
                     }
                     else if (indexPath.section == 2) {
-                        path = weakSelf?.feed?.extra.url ?? ""
+                        url = self?.feed?.extra?.url
                     }
                     
-                    if let url = URL.init(string: path) {
+                    if let url = url {
                         
                         DispatchQueue.main.async {
                             let instance = UIActivityViewController.init(activityItems: [url], applicationActivities: nil)
-                            weakSelf?.present(instance, animated: true, completion: nil)
+                            self?.present(instance, animated: true, completion: nil)
                         }
                         
                     }
@@ -320,47 +316,49 @@ import SDWebImage
         }
         
         // check which push type the feed supports.
-        if (feed.isHubSubscribed || ((feed.rpcCount?.intValue ?? 0) > 2)) {
+        if (feed.hubSubscribed || ((feed.rpcCount ?? 0) > 2)) {
             
             // supports push
-            if (feed.isSubscribed == true && toggle.isOn == false) {
+            if (feed.subscribed == true && toggle.isOn == false) {
                 
                 // unsubscribe
-                MyFeedsManager.unsubscribe(feed) { (_, _, _) in
-                    
-                    feed.isSubscribed = false
-                    
-                    MyDBManager.update(feed)
-                    
-                } error: { (error: Error?, _, _) in
-                    
-                    guard let err = error else {
-                        return
-                    }
-                    
-                    AlertManager.showGenericAlert(withTitle: "Unsubscribe Failed", message: err.localizedDescription)
-                    
-                }
+                // @TODO: Unsubscribe from notifications
+//                MyFeedsManager.unsubscribe(feed) { (_, _, _) in
+//
+//                    feed.isSubscribed = false
+//
+//                    MyDBManager.update(feed)
+//
+//                } error: { (error: Error?, _, _) in
+//
+//                    guard let err = error else {
+//                        return
+//                    }
+//
+//                    AlertManager.showGenericAlert(withTitle: "Unsubscribe Failed", message: err.localizedDescription)
+//
+//                }
                 
             }
-            else if (feed.isSubscribed == false && toggle.isOn == true) {
+            else if (feed.subscribed == false && toggle.isOn == true) {
              
                 // subscribe
-                MyFeedsManager.subscribe(feed) { (_, _, _) in
-                    
-                    feed.isSubscribed = true
-                    
-                    MyDBManager.update(feed)
-                    
-                } error: { (error: Error?, _, _) in
-                    
-                    guard let err = error else {
-                        return
-                    }
-                    
-                    AlertManager.showGenericAlert(withTitle: "Unsubscribe Failed", message: err.localizedDescription)
-                    
-                }
+                // @TODO: Subscribe from notifications
+//                MyFeedsManager.subscribe(feed) { (_, _, _) in
+//
+//                    feed.isSubscribed = true
+//
+//                    MyDBManager.update(feed)
+//
+//                } error: { (error: Error?, _, _) in
+//
+//                    guard let err = error else {
+//                        return
+//                    }
+//
+//                    AlertManager.showGenericAlert(withTitle: "Unsubscribe Failed", message: err.localizedDescription)
+//
+//                }
 
             }
             
@@ -371,25 +369,25 @@ import SDWebImage
             
             if var m = metadata {
                 
-                let val:NSNumber = (m[kFeedLocalNotifications] ?? NSNumber.init(value: false)) as! NSNumber
+                let val = m.localNotifications
                 
                 var changed = false
                 
-                if (val.boolValue == true && toggle.isOn == false) {
+                if (val == true && toggle.isOn == false) {
                     
-                    m[kFeedLocalNotifications] = NSNumber.init(value: false)
+                    m.localNotifications = false
                     changed = true
                     
                 }
-                else if (val.boolValue == false && toggle.isOn == true) {
+                else if (val == false && toggle.isOn == true) {
                     
-                    m[kFeedLocalNotifications] = NSNumber.init(value: true)
+                    m.localNotifications = true
                     changed = true
                     
                 }
                 
                 if (changed) {
-                    MyDBManager.update(feed, metadata: m)
+                    DBManager.shared.update(feed: feed, metadata: m)
                 }
                 
             }
@@ -406,25 +404,25 @@ import SDWebImage
         
         if var m = metadata {
             
-            let val:NSNumber = (m[kFeedSafariReaderMode] ?? NSNumber.init(value: false)) as! NSNumber
+            let val = m.readerMode
             
             var changed = false
             
-            if (val.boolValue == true && toggle.isOn == false) {
+            if (val == true && toggle.isOn == false) {
                 
-                m[kFeedSafariReaderMode] = NSNumber.init(value: false)
+                m.readerMode = false
                 changed = true
                 
             }
-            else if (val.boolValue == false && toggle.isOn == true) {
+            else if (val == false && toggle.isOn == true) {
                 
-                m[kFeedSafariReaderMode] = NSNumber.init(value: true)
+                m.readerMode = true
                 changed = true
                 
             }
             
             if (changed) {
-                MyDBManager.update(feed, metadata: m)
+                DBManager.shared.update(feed: feed, metadata: m)
             }
             
         }

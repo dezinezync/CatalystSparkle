@@ -12,7 +12,7 @@
 #import <DZKit/NSString+Extras.h>
 #import <DZKit/AlertManager.h>
 
-#import "FeedsManager.h"
+#import "Elytra-Swift.h"
 #import "YTNavigationController.h"
 
 #import "YetiConstants.h"
@@ -109,81 +109,82 @@
     SidebarVC *sidebarVC = self.mainCoordinator.sidebarVC;
     
     if (self.folder) {
-        // editing the title
-        [MyFeedsManager renameFolder:self.folder to:title success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                strongify(self);
-                
-                self->_isUpdating = NO;
-                
-                [self.mainCoordinator.sidebarVC setupData];
-                
-//                self.cancelButton.enabled = YES;
-                
-                [sidebarVC setupData];
-                
-                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
-//                [self didTapCancel];
-                
-            });
-
-            
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-           
-            [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription];
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                
-                strongify(self);
-                
-                self->_isUpdating = NO;
-                
-                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeError];
-                [self.notificationGenerator prepare];
-                
-                textField.enabled = YES;
-//                self.cancelButton.enabled = YES;
-                
-            });
-            
-        }];
+        // @TODO: editing the title
+//        [MyFeedsManager renameFolder:self.folder to:title success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                strongify(self);
+//
+//                self->_isUpdating = NO;
+//
+//                [self.mainCoordinator.sidebarVC setupData];
+//
+////                self.cancelButton.enabled = YES;
+//
+//                [sidebarVC setupData];
+//
+//                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
+////                [self didTapCancel];
+//
+//            });
+//
+//
+//        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//            [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription];
+//
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//
+//                strongify(self);
+//
+//                self->_isUpdating = NO;
+//
+//                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeError];
+//                [self.notificationGenerator prepare];
+//
+//                textField.enabled = YES;
+////                self.cancelButton.enabled = YES;
+//
+//            });
+//
+//        }];
     }
     else {
-        [MyFeedsManager addFolder:title success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                strongify(self);
-                
-                self->_isUpdating = NO;
-                
-//                self.cancelButton.enabled = YES;
-                
-                [sidebarVC setupData];
-                
-                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
-//                [self didTapCancel];
-                
-            });
-            
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription];
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                strongify(self);
-                
-                self->_isUpdating = NO;
-                
-                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeError];
-                [self.notificationGenerator prepare];
-                
-                textField.enabled = YES;
-//                self.cancelButton.enabled = YES;
-                
-            });
-            
-        }];
+        // @TODO
+//        [MyFeedsManager addFolder:title success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                strongify(self);
+//
+//                self->_isUpdating = NO;
+//
+////                self.cancelButton.enabled = YES;
+//
+//                [sidebarVC setupData];
+//
+//                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
+////                [self didTapCancel];
+//
+//            });
+//
+//        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//            [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription];
+//
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                strongify(self);
+//
+//                self->_isUpdating = NO;
+//
+//                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeError];
+//                [self.notificationGenerator prepare];
+//
+//                textField.enabled = YES;
+////                self.cancelButton.enabled = YES;
+//
+//            });
+//
+//        }];
     }
     
     return YES;

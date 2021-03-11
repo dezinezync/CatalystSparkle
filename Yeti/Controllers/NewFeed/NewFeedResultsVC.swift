@@ -8,6 +8,16 @@
 
 import UIKit
 import FeedsLib
+import Models
+
+@objc protocol MoveFoldersDelegate: NSObjectProtocol {
+    /// This delegate method is called when the user successfully moves the Feed from one folder to another. Either of the folder params can be nil if the Feed is moved out from a folder or moved in to a new folder.
+    /// @param feed The feed which moved.
+    /// @param sourceFolder The source folder.
+    /// @param destinationFolder The destination folder.
+//    - (void)feed:(Feed * _Nonnull)feed didMoveFromFolder:(Folder * _Nullable)sourceFolder toFolder:(Folder * _Nullable)destinationFolder;
+    func feed(_ feed:Feed, didMove fromFolder:Folder, toFolder:Folder)
+}
 
 class NewFeedResultsVC: UITableViewController {
     

@@ -7,6 +7,7 @@
 //
 
 #import "FolderCell.h"
+#import "PrefsManager.h"
 
 @interface FolderCell ()
 

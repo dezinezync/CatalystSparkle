@@ -11,10 +11,6 @@
 
 #import "AppDelegate.h"
 
-#import "UnreadVC.h"
-#import "TodayVC.h"
-#import "BookmarksVC.h"
-#import "FolderVC.h"
 #import "NewFolderVC.h"
 #import "LaunchVC.h"
 #import "StoreVC.h"
@@ -26,6 +22,7 @@
 #import <sys/utsname.h>
 #import <UserNotifications/UserNotifications.h>
 #import "Keychain.h"
+#import "PrefsManager.h"
 
 #import "Elytra-Swift.h"
 
@@ -64,7 +61,7 @@ NSString* deviceName() {
         NSAssert(self.splitViewController != nil, @"A split view controller is needed to start the coordinator.");
     }
     
-    SidebarVC *sidebar = [[SidebarVC alloc] initWithDefaultLayout];
+    SidebarVC *sidebar = [[SidebarVC alloc] init];
     sidebar.mainCoordinator = self;
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:sidebar];
@@ -94,11 +91,11 @@ NSString* deviceName() {
     dispatch_async(dispatch_get_main_queue(), ^{
        
         if (showUnread) {
-            
-            CustomFeed *feed = [CustomFeed new];
-            feed.feedType = FeedVCTypeUnread;
-            
-            [self showCustomVC:feed];
+            // @TODO
+//            CustomFeed *feed = [[CustomFeed alloc] init];
+//            feed.feedType = FeedVCTypeUnread;
+//
+//            [self showCustomVC:feed];
             
         }
         
@@ -121,32 +118,32 @@ NSString* deviceName() {
     if (feed == nil) {
         return;
     }
-    
-    if (feed.feedType == FeedVCTypeUnread && (self.feedVC == nil || [self.feedVC isKindOfClass:UnreadVC.class] == NO)) {
-        
-        if (self.feedVC != nil) {
-            self.feedVC = nil;
-        }
-        
-        UnreadVC *unreadVC = [[UnreadVC alloc] init];
-        
-        [self _showSupplementaryController:unreadVC];
-        
-    }
-    else if (feed.feedType == FeedVCTypeToday) {
-        
-        TodayVC *todayVC = [[TodayVC alloc] init];
-        
-        [self _showSupplementaryController:todayVC];
-        
-    }
-    else if (feed.feedType == FeedVCTypeBookmarks) {
-        
-        BookmarksVC *bookmarksVC = [[BookmarksVC alloc] init];
-        
-        [self _showSupplementaryController:bookmarksVC];
-        
-    }
+    // @TODO
+//    if (feed.feedType == FeedVCTypeUnread && (self.feedVC == nil || [self.feedVC isKindOfClass:UnreadVC.class] == NO)) {
+//
+//        if (self.feedVC != nil) {
+//            self.feedVC = nil;
+//        }
+//
+//        UnreadVC *unreadVC = [[UnreadVC alloc] init];
+//
+//        [self _showSupplementaryController:unreadVC];
+//
+//    }
+//    else if (feed.feedType == FeedVCTypeToday) {
+//
+//        TodayVC *todayVC = [[TodayVC alloc] init];
+//
+//        [self _showSupplementaryController:todayVC];
+//
+//    }
+//    else if (feed.feedType == FeedVCTypeBookmarks) {
+//
+//        BookmarksVC *bookmarksVC = [[BookmarksVC alloc] init];
+//
+//        [self _showSupplementaryController:bookmarksVC];
+//
+//    }
     
 }
 
@@ -155,10 +152,10 @@ NSString* deviceName() {
     if (feed == nil) {
         return;
     }
-    
-    FeedVC *vc = [[FeedVC alloc] initWithFeed:feed];
-    
-    [self _showSupplementaryController:vc];
+    // @TODO
+//    FeedVC *vc = [[FeedVC alloc] initWithFeed:feed];
+//
+//    [self _showSupplementaryController:vc];
     
 }
 
@@ -167,10 +164,10 @@ NSString* deviceName() {
     if (folder == nil) {
         return;
     }
-    
-    FolderVC *vc = [[FolderVC alloc] initWithFolder:folder];
-    
-    [self _showSupplementaryController:vc];
+    // @TODO
+//    FolderVC *vc = [[FolderVC alloc] initWithFolder:folder];
+//
+//    [self _showSupplementaryController:vc];
     
 }
 
@@ -430,29 +427,29 @@ NSString* deviceName() {
 - (void)showContactInterface {
     
 //    NSURL *url = [NSURL URLWithString:@"mailto:support@elytra.app?subject=Elytra%20Support"];
-    
-    DZMessagingAttachment *attachment = [[DZMessagingAttachment alloc] init];
-    attachment.fileName = @"debugInfo.txt";
-    attachment.mimeType = @"text/plain";
-    
-    UIDevice *device = [UIDevice currentDevice];
-    NSString *model = deviceName();
-    NSString *iOSVersion = formattedString(@"%@ %@", device.systemName, device.systemVersion);
-    NSString *deviceUUID = MyFeedsManager.deviceID;
-    
-    NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
-    NSString *appVersion = [infoDict objectForKey:@"CFBundleShortVersionString"];
-    NSString *buildNumber = [infoDict objectForKey:@"CFBundleVersion"];
-    
-    NSString *formatted = formattedString(@"Model: %@ %@\nDevice UUID: %@\nAccount ID: %@\nApp: %@ (%@)", model, iOSVersion, deviceUUID, MyFeedsManager.user.uuid, appVersion, buildNumber);
-    
-    attachment.data = [formatted dataUsingEncoding:NSUTF8StringEncoding];
-    
-    [DZMessagingController presentEmailWithBody:@""
-                                        subject:@"Elytra Support"
-                                     recipients:@[@"support@elytra.app"]
-                                    attachments:@[attachment]
-                                 fromController:self.splitViewController];
+    // @TODO:
+//    DZMessagingAttachment *attachment = [[DZMessagingAttachment alloc] init];
+//    attachment.fileName = @"debugInfo.txt";
+//    attachment.mimeType = @"text/plain";
+//    
+//    UIDevice *device = [UIDevice currentDevice];
+//    NSString *model = deviceName();
+//    NSString *iOSVersion = formattedString(@"%@ %@", device.systemName, device.systemVersion);
+//    NSString *deviceUUID = MyFeedsManager.deviceID;
+//    
+//    NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
+//    NSString *appVersion = [infoDict objectForKey:@"CFBundleShortVersionString"];
+//    NSString *buildNumber = [infoDict objectForKey:@"CFBundleVersion"];
+//    
+//    NSString *formatted = formattedString(@"Model: %@ %@\nDevice UUID: %@\nAccount ID: %@\nApp: %@ (%@)", model, iOSVersion, deviceUUID, MyFeedsManager.user.uuid, appVersion, buildNumber);
+//    
+//    attachment.data = [formatted dataUsingEncoding:NSUTF8StringEncoding];
+//    
+//    [DZMessagingController presentEmailWithBody:@""
+//                                        subject:@"Elytra Support"
+//                                     recipients:@[@"support@elytra.app"]
+//                                    attachments:@[attachment]
+//                                 fromController:self.splitViewController];
     
 }
 
@@ -475,13 +472,13 @@ NSString* deviceName() {
     
     if (instance != nil) {
         
-        [DBManager.sharedInstance purgeDataForResync];
+        // @TODO: [DBManager.sharedInstance purgeDataForResync];
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.625 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             
 //                [instance performSelector:NSSelectorFromString(@"") withObject:instance.refreshControl];
             
-            [instance beginRefreshingAll:instance.refreshControl];
+            // @TODO: [instance beginRefreshingAll:instance.refreshControl];
             
         });
         
@@ -495,13 +492,13 @@ NSString* deviceName() {
     
     if (instance != nil) {
         
-        [DBManager.sharedInstance purgeFeedsForResync];
+        // @TODO: [DBManager.sharedInstance purgeFeedsForResync];
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             
 //                [instance performSelector:NSSelectorFromString(@"") withObject:instance.refreshControl];
             
-            [instance beginRefreshingAll:instance.refreshControl];
+            // @TODO: [instance beginRefreshingAll:instance.refreshControl];
             
         });
         
@@ -611,46 +608,46 @@ NSString* deviceName() {
 - (void)checkForPushNotifications {
     
     runOnMainQueueWithoutDeadlocking(^{
-        
-        BOOL didAsk = [NSUserDefaults.standardUserDefaults boolForKey:@"pushRequest"];
-        
-        if (didAsk) {
-            return;
-        }
-        
-        if (MyFeedsManager.user == nil || MyFeedsManager.user.userID == nil) {
-            return;
-        }
-        
-        if (UIApplication.sharedApplication.applicationState == UIApplicationStateBackground) {
-            return;
-        }
-        
-        if (UIApplication.sharedApplication.isRegisteredForRemoteNotifications == YES) {
-            return;
-        }
-        
-        [UNUserNotificationCenter.currentNotificationCenter getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
-           
-            if (settings.authorizationStatus == UNAuthorizationStatusDenied) {
-                // no permission, ignore.
-                return;
-            }
-            else if (settings.authorizationStatus == UNAuthorizationStatusNotDetermined) {
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    
-                    PushRequestVC *vc = [[PushRequestVC alloc] initWithNibName:@"PushRequestVC" bundle:nil];
-                    vc.mainCoordinator = self;
-                    vc.modalPresentationStyle = UIModalPresentationOverFullScreen;
-                    
-                    [self.splitViewController presentViewController:vc animated:YES completion:nil];
-                    
-                });
-                
-            }
-            
-        }];
+        // @TODO
+//        BOOL didAsk = [NSUserDefaults.standardUserDefaults boolForKey:@"pushRequest"];
+//
+//        if (didAsk) {
+//            return;
+//        }
+//
+//        if (MyFeedsManager.user == nil || MyFeedsManager.user.userID == nil) {
+//            return;
+//        }
+//
+//        if (UIApplication.sharedApplication.applicationState == UIApplicationStateBackground) {
+//            return;
+//        }
+//
+//        if (UIApplication.sharedApplication.isRegisteredForRemoteNotifications == YES) {
+//            return;
+//        }
+//
+//        [UNUserNotificationCenter.currentNotificationCenter getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
+//
+//            if (settings.authorizationStatus == UNAuthorizationStatusDenied) {
+//                // no permission, ignore.
+//                return;
+//            }
+//            else if (settings.authorizationStatus == UNAuthorizationStatusNotDetermined) {
+//
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//
+//                    PushRequestVC *vc = [[PushRequestVC alloc] initWithNibName:@"PushRequestVC" bundle:nil];
+//                    vc.mainCoordinator = self;
+//                    vc.modalPresentationStyle = UIModalPresentationOverFullScreen;
+//
+//                    [self.splitViewController presentViewController:vc animated:YES completion:nil];
+//
+//                });
+//
+//            }
+//
+//        }];
         
     });
     
@@ -702,41 +699,42 @@ NSString* deviceName() {
     }
 #endif
     
-    if ([controller isKindOfClass:FeedVC.class]) {
-        
-        self.feedVC = (FeedVC *)controller;
-        
-    }
-    
-    if ([controller isKindOfClass:UINavigationController.class] == NO) {
-        
-        controller.mainCoordinator = self;
-        
-    }
-    
-    if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular
-        && self.splitViewController.traitCollection.userInterfaceIdiom != UIUserInterfaceIdiomPhone) {
-        
-        if ([controller isKindOfClass:UINavigationController.class]) {
-            
-            [self.splitViewController setViewController:controller forColumn:UISplitViewControllerColumnSupplementary];
-            
-        }
-        else {
-            
-            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:controller];
-            
-            [self.splitViewController setViewController:nav forColumn:UISplitViewControllerColumnSupplementary];
-            
-        }
-        
-        return;
-        
-    }
-    
-    UINavigationController *nav = self.splitViewController.viewControllers.firstObject;
-    
-    [nav pushViewController:controller animated:YES];
+    // @TODO
+//    if ([controller isKindOfClass:FeedVC.class]) {
+//
+//        self.feedVC = (FeedVC *)controller;
+//
+//    }
+//
+//    if ([controller isKindOfClass:UINavigationController.class] == NO) {
+//
+//        controller.mainCoordinator = self;
+//
+//    }
+//
+//    if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular
+//        && self.splitViewController.traitCollection.userInterfaceIdiom != UIUserInterfaceIdiomPhone) {
+//
+//        if ([controller isKindOfClass:UINavigationController.class]) {
+//
+//            [self.splitViewController setViewController:controller forColumn:UISplitViewControllerColumnSupplementary];
+//
+//        }
+//        else {
+//
+//            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:controller];
+//
+//            [self.splitViewController setViewController:nav forColumn:UISplitViewControllerColumnSupplementary];
+//
+//        }
+//
+//        return;
+//
+//    }
+//
+//    UINavigationController *nav = self.splitViewController.viewControllers.firstObject;
+//
+//    [nav pushViewController:controller animated:YES];
     
 }
 

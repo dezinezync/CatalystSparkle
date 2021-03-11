@@ -25,7 +25,9 @@
 #import "DZWebViewController.h"
 #import <DZKit/UIViewController+AnimatedDeselect.h>
 
-#import "DBManager+CloudCore.h"
+#import "PrefsManager.h"
+
+// @TODO: DBManager + Settings + CloudCore
 
 #if TARGET_OS_MACCATALYST
 typedef NS_ENUM(NSUInteger, SectionOneRows) {
@@ -629,22 +631,23 @@ typedef NS_ENUM(NSUInteger, SectionOneRows) {
         NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
         formatter.dateFormat = @"YYYY-MM-dd HH:mm:ss";
         
-        NSDate *date = MyFeedsManager.unreadLastUpdate ?: NSDate.date;
-        
-        formatter.dateStyle = NSDateFormatterShortStyle;
-        formatter.timeStyle = NSDateFormatterShortStyle;
-        formatter.timeZone = [NSTimeZone localTimeZone];
-        
-        NSString *formatted = [formatter stringFromDate:date];
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            
-            _byLabel.text = formattedString(@"A Dezine Zync App.\nLast Synced: %@", formatted);
-            [_byLabel sizeToFit];
-            [_byLabel setNeedsLayout];
-            [_byLabel layoutIfNeeded];
-            
-        });
+        // @TODO
+//        NSDate *date = MyFeedsManager.unreadLastUpdate ?: NSDate.date;
+//        
+//        formatter.dateStyle = NSDateFormatterShortStyle;
+//        formatter.timeStyle = NSDateFormatterShortStyle;
+//        formatter.timeZone = [NSTimeZone localTimeZone];
+//        
+//        NSString *formatted = [formatter stringFromDate:date];
+//        
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            
+//            _byLabel.text = formattedString(@"A Dezine Zync App.\nLast Synced: %@", formatted);
+//            [_byLabel sizeToFit];
+//            [_byLabel setNeedsLayout];
+//            [_byLabel layoutIfNeeded];
+//            
+//        });
         
         [_footerView addSubview:_byLabel];
         
@@ -661,42 +664,42 @@ typedef NS_ENUM(NSUInteger, SectionOneRows) {
 
 - (void)toggleCWLogging {
     
-    BOOL isEnabled = MyFeedsManager.debugLoggingEnabled;
-    
-    UIAlertController *avc = nil;
-    
-    if (isEnabled) {
-        
-        avc = [UIAlertController alertControllerWithTitle:@"Stop Debug Session" message:@"Are you sure you want to stop the debug session?" preferredStyle:UIAlertControllerStyleAlert];
-        
-        [avc addAction:[UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            
-            CWLog(@"Debug Logging Session Ended");
-            
-            MyFeedsManager.debugLoggingEnabled = NO;
-            
-        }]];
-        
-        [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
-        
-    }
-    else {
-        
-        avc = [UIAlertController alertControllerWithTitle:@"Start Debug Session" message:@"Are you sure you want to start the debug session?" preferredStyle:UIAlertControllerStyleAlert];
-        
-        [avc addAction:[UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            
-            MyFeedsManager.debugLoggingEnabled = YES;
-            
-            CWLog(@"Debug Logging Session Started");
-            
-        }]];
-        
-        [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
-        
-    }
-    
-    [self presentViewController:avc animated:YES completion:nil];
+//    BOOL isEnabled = MyFeedsManager.debugLoggingEnabled;
+//
+//    UIAlertController *avc = nil;
+//
+//    if (isEnabled) {
+//
+//        avc = [UIAlertController alertControllerWithTitle:@"Stop Debug Session" message:@"Are you sure you want to stop the debug session?" preferredStyle:UIAlertControllerStyleAlert];
+//
+//        [avc addAction:[UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+//
+//            CWLog(@"Debug Logging Session Ended");
+//
+//            MyFeedsManager.debugLoggingEnabled = NO;
+//
+//        }]];
+//
+//        [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+//
+//    }
+//    else {
+//
+//        avc = [UIAlertController alertControllerWithTitle:@"Start Debug Session" message:@"Are you sure you want to start the debug session?" preferredStyle:UIAlertControllerStyleAlert];
+//
+//        [avc addAction:[UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+//
+//            MyFeedsManager.debugLoggingEnabled = YES;
+//
+//            CWLog(@"Debug Logging Session Started");
+//
+//        }]];
+//
+//        [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+//
+//    }
+//
+//    [self presentViewController:avc animated:YES completion:nil];
     
 }
 

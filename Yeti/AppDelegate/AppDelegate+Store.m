@@ -10,12 +10,13 @@
 #import <DZKit/AlertManager.h>
 
 #import <DZKit/NSArray+RZArrayCandy.h>
-#import "FeedsManager.h"
 
 #import <StoreKit/StoreKit.h>
 
 #import "StoreKeychainPersistence.h"
 #import "StoreReceiptVerifier.h"
+
+#import "Elytra-Swift.h"
 
 @implementation AppDelegate (Store) 
 
@@ -198,8 +199,10 @@
 
 - (BOOL)paymentQueue:(SKPaymentQueue *)queue shouldAddStorePayment:(SKPayment *)payment forProduct:(SKProduct *)product {
     
-    return MyFeedsManager.userID != nil && [MyFeedsManager.userID integerValue] > 0;
     
+    // @TODO
+//     return MyFeedsManager.userID != nil && [MyFeedsManager.userID integerValue] > 0;
+    return NO;
 }
 
 @end

@@ -7,9 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
-#import "FeedsManager.h"
-#import "MoveFoldersDelegate.h"
+#import "Elytra-Swift.h"
 
 @interface MoveFoldersVC : UITableViewController
 

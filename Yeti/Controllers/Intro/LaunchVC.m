@@ -12,10 +12,11 @@
 
 #import "Keychain.h"
 
-#import "FeedsManager.h"
-#import "DBManager.h"
+#import "Elytra-Swift.h"
 #import "IdentityVC.h"
 #import <DZKit/AlertManager.h>
+
+#import "YetiConstants.h"
 
 #import <AuthenticationServices/AuthenticationServices.h>
 
@@ -131,99 +132,99 @@
 - (void)processUUID:(NSString *)uuid {
     
     NSLog(@"Got %@", uuid);
-    
-    [MyFeedsManager getUserInformationFor:uuid success:^(User *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        [MyDBManager setUser:responseObject completion:^{
-            
-            if ((MyFeedsManager.user.subscription == nil
-                || MyFeedsManager.user.subscription.expiry == nil)
-                && [Keychain boolFor:kHasShownOnboarding error:nil] == NO) {
-                
-                TrialVC *vc = [[TrialVC alloc] initWithNibName:NSStringFromClass(TrialVC.class) bundle:nil];
-                
-                [self showViewController:vc sender:self];
-                
-                return;
-                
-            }
-            
-            if (MyFeedsManager.user.subscription != nil && MyFeedsManager.user.subscription.hasExpired == NO) {
-                
-                [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
-                
-                [Keychain add:kHasShownOnboarding boolean:YES];
-                
-                [self.navigationController dismissViewControllerAnimated:YES completion:nil];
-                
-                return;
-                
-            }
-            
-            // existing User
-            [MyFeedsManager getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                
-                BOOL expired = [MyFeedsManager.user subscription] != nil && [MyFeedsManager.user.subscription hasExpired] == YES;
-                
-                [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
-                
-                [self.navigationController dismissViewControllerAnimated:YES completion:^{
-                    
-                    if (expired) {
-                        
-                        [self.mainCoordinator showSubscriptionsInterface];
-                        
-                    }
-                    
-                }];
-                
-            } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                
-                [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
-                
-                [self.navigationController dismissViewControllerAnimated:YES completion:nil];
-                
-            }];
-            
-        }];
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        if ([error.localizedDescription isEqualToString:@"User not found"]) {
-            // create the new user.
-            
-            User *user = [User new];
-            user.uuid = uuid;
-            
-            [MyFeedsManager createUser:uuid success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                
-                NSLog(@"%@", responseObject);
-                
-                NSDictionary *userObj = [responseObject objectForKey:@"user"];
-                NSNumber *userID = [userObj objectForKey:@"id"];
-                
-                user.userID = userID;
-                
-                [MyDBManager setUser:user completion:^{
-                        
-                    TrialVC *vc = [[TrialVC alloc] initWithNibName:NSStringFromClass(TrialVC.class) bundle:nil];
-                    
-                    [self showViewController:vc sender:self];
-                    
-                }];
-                
-            } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-               
-                [AlertManager showGenericAlertWithTitle:@"Creating Account Failed" message:error.localizedDescription];
-                
-            }];
-            
-            return;
-        }
-       
-        [AlertManager showGenericAlertWithTitle:@"Error Signing In" message:error.localizedDescription];
-        
-    }];
+    // @TODO
+//    [MyFeedsManager getUserInformationFor:uuid success:^(User *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//        
+//        [MyDBManager setUser:responseObject completion:^{
+//            
+//            if ((MyFeedsManager.user.subscription == nil
+//                || MyFeedsManager.user.subscription.expiry == nil)
+//                && [Keychain boolFor:kHasShownOnboarding error:nil] == NO) {
+//                
+//                TrialVC *vc = [[TrialVC alloc] initWithNibName:NSStringFromClass(TrialVC.class) bundle:nil];
+//                
+//                [self showViewController:vc sender:self];
+//                
+//                return;
+//                
+//            }
+//            
+//            if (MyFeedsManager.user.subscription != nil && MyFeedsManager.user.subscription.hasExpired == NO) {
+//                
+//                [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
+//                
+//                [Keychain add:kHasShownOnboarding boolean:YES];
+//                
+//                [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+//                
+//                return;
+//                
+//            }
+//            
+//            // existing User
+//            [MyFeedsManager getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//                
+//                BOOL expired = [MyFeedsManager.user subscription] != nil && [MyFeedsManager.user.subscription hasExpired] == YES;
+//                
+//                [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
+//                
+//                [self.navigationController dismissViewControllerAnimated:YES completion:^{
+//                    
+//                    if (expired) {
+//                        
+//                        [self.mainCoordinator showSubscriptionsInterface];
+//                        
+//                    }
+//                    
+//                }];
+//                
+//            } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//                
+//                [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
+//                
+//                [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+//                
+//            }];
+//            
+//        }];
+//        
+//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//        
+//        if ([error.localizedDescription isEqualToString:@"User not found"]) {
+//            // create the new user.
+//            
+//            User *user = [User new];
+//            user.uuid = uuid;
+//            
+//            [MyFeedsManager createUser:uuid success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//                
+//                NSLog(@"%@", responseObject);
+//                
+//                NSDictionary *userObj = [responseObject objectForKey:@"user"];
+//                NSNumber *userID = [userObj objectForKey:@"id"];
+//                
+//                user.userID = userID;
+//                
+//                [MyDBManager setUser:user completion:^{
+//                        
+//                    TrialVC *vc = [[TrialVC alloc] initWithNibName:NSStringFromClass(TrialVC.class) bundle:nil];
+//                    
+//                    [self showViewController:vc sender:self];
+//                    
+//                }];
+//                
+//            } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//               
+//                [AlertManager showGenericAlertWithTitle:@"Creating Account Failed" message:error.localizedDescription];
+//                
+//            }];
+//            
+//            return;
+//        }
+//       
+//        [AlertManager showGenericAlertWithTitle:@"Error Signing In" message:error.localizedDescription];
+//        
+//    }];
     
 }
 

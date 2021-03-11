@@ -9,7 +9,6 @@
 //#import "NewFeedVC.h"
 
 #import "Folder.h"
-#import "SidebarVC.h"
 
 @interface NewFolderVC : UIViewController
 

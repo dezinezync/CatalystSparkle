@@ -8,7 +8,7 @@
 
 #import "StoreReceiptVerifier.h"
 #import "RMStore.h"
-#import "FeedsManager.h"
+#import "Elytra-Swift.h"
 
 @interface StoreReceiptVerifier () {
     NSInteger _refreshCount;
@@ -74,23 +74,25 @@
     
 #endif
     
-    [MyFeedsManager postAppReceipt:receipt success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        if (successBlock) {
-            successBlock();
-        }
-        
-        [NSNotificationCenter.defaultCenter postNotificationName:RMStoreReceiptDidValidate object:nil userInfo:@{RMStoreUserInfoTransactionKey: transaction}];
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        if (failureBlock) {
-            failureBlock(error);
-        }
-        
-        [NSNotificationCenter.defaultCenter postNotificationName:RMStoreReceiptFailedToValidate object:nil userInfo:@{RMStoreUserInfoTransactionKey: transaction}];
-        
-    }];
+    // @TODO: 
+    
+//    [MyFeedsManager postAppReceipt:receipt success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        if (successBlock) {
+//            successBlock();
+//        }
+//
+//        [NSNotificationCenter.defaultCenter postNotificationName:RMStoreReceiptDidValidate object:nil userInfo:@{RMStoreUserInfoTransactionKey: transaction}];
+//
+//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        if (failureBlock) {
+//            failureBlock(error);
+//        }
+//
+//        [NSNotificationCenter.defaultCenter postNotificationName:RMStoreReceiptFailedToValidate object:nil userInfo:@{RMStoreUserInfoTransactionKey: transaction}];
+//
+//    }];
     
 }
 

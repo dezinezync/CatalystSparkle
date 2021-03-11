@@ -73,26 +73,27 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kMoveFolderCell forIndexPath:indexPath];
         
         // Configure the cell...
-        if (indexPath.section == 0) {
-            cell.textLabel.text = @"None";
-            
-            if (self.feed.folderID == nil) {
-                cell.accessoryType = UITableViewCellAccessoryCheckmark;
-            }
-            else {
-                cell.accessoryType = UITableViewCellAccessoryNone;
-            }
-        }
-        else {
-            cell.textLabel.text = [item title];
-            
-            if (self.feed.folderID && [self.feed.folderID isEqualToNumber:item.folderID]) {
-                cell.accessoryType = UITableViewCellAccessoryCheckmark;
-            }
-            else {
-                cell.accessoryType = UITableViewCellAccessoryNone;
-            }
-        }
+        // @TODO
+//        if (indexPath.section == 0) {
+//            cell.textLabel.text = @"None";
+//
+//            if (self.feed.folderID == nil) {
+//                cell.accessoryType = UITableViewCellAccessoryCheckmark;
+//            }
+//            else {
+//                cell.accessoryType = UITableViewCellAccessoryNone;
+//            }
+//        }
+//        else {
+//            cell.textLabel.text = [item title];
+//
+//            if (self.feed.folderID && [self.feed.folderID isEqualToNumber:item.folderID]) {
+//                cell.accessoryType = UITableViewCellAccessoryCheckmark;
+//            }
+//            else {
+//                cell.accessoryType = UITableViewCellAccessoryNone;
+//            }
+//        }
         
         cell.textLabel.textColor = UIColor.labelColor;
         cell.detailTextLabel.textColor = UIColor.secondaryLabelColor;
@@ -125,7 +126,8 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
     
     [snapshot appendItemsWithIdentifiers:@[@"None"] intoSectionWithIdentifier:@0];
     
-    [snapshot appendItemsWithIdentifiers:ArticlesManager.shared.folders intoSectionWithIdentifier:@1];
+    // @TODO
+//    [snapshot appendItemsWithIdentifiers:ArticlesManager.shared.folders intoSectionWithIdentifier:@1];
     
     [self.DS applySnapshot:snapshot animatingDifferences:NO];
     
@@ -137,9 +139,10 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
     _feed = feed;
     
     if (_feed) {
-        if (_feed.folderID != nil) {
-            self.originalFolderID = _feed.folderID;
-        }
+        // @TODO
+//        if (_feed.folderID != nil) {
+//            self.originalFolderID = _feed.folderID;
+//        }
     }
 }
 
@@ -149,56 +152,57 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
 {
     
     // get the current folder ID so we can reload that cell. This may be nil
-    Folder *currentFolder = self.feed.folder;
+    // @TODO
+//    Folder *currentFolder = self.feed.folder;
+//
+//    if (indexPath.section == 0) {
+//
+//        self.feed.folderID = nil;
+//        self.feed.folder = nil;
+//
+//    }
+//    else {
+//
+//        Folder *newFolder = [self.DS itemIdentifierForIndexPath:indexPath];
+//
+//        self.feed.folderID = newFolder.folderID;
+//        self.feed.folder = newFolder;
+//
+//    }
     
-    if (indexPath.section == 0) {
-        
-        self.feed.folderID = nil;
-        self.feed.folder = nil;
-        
-    }
-    else {
-        
-        Folder *newFolder = [self.DS itemIdentifierForIndexPath:indexPath];
-
-        self.feed.folderID = newFolder.folderID;
-        self.feed.folder = newFolder;
-        
-    }
-    
-    NSArray <NSIndexPath *> *indices = @[indexPath];
-    
-    if (currentFolder != nil) {
-        
-        NSIndexPath *oldIndexPath = [self.DS indexPathForItemIdentifier:currentFolder];
-        
-        indices = [indices arrayByAddingObject:oldIndexPath];
-        
-    }
-    else {
-        indices = [indices arrayByAddingObject:[NSIndexPath indexPathForRow:0 inSection:0]];
-    }
-    
-    if (indices.count) {
-        
-        NSMutableSet *items = [NSMutableSet setWithCapacity:indices.count];
-        
-        for (NSIndexPath *indexPath in indices) {
-            
-            id obj = [self.DS itemIdentifierForIndexPath:indexPath];
-            
-            if (obj) {
-                [items addObject:obj];
-            }
-            
-        }
-        
-        NSDiffableDataSourceSnapshot *snapshot = [self.DS snapshot];
-        [snapshot reloadItemsWithIdentifiers:items.objectEnumerator.allObjects];
-        
-        [self.DS applySnapshot:snapshot animatingDifferences:YES];
-        
-    }
+//    NSArray <NSIndexPath *> *indices = @[indexPath];
+//
+//    if (currentFolder != nil) {
+//
+//        NSIndexPath *oldIndexPath = [self.DS indexPathForItemIdentifier:currentFolder];
+//
+//        indices = [indices arrayByAddingObject:oldIndexPath];
+//
+//    }
+//    else {
+//        indices = [indices arrayByAddingObject:[NSIndexPath indexPathForRow:0 inSection:0]];
+//    }
+//
+//    if (indices.count) {
+//
+//        NSMutableSet *items = [NSMutableSet setWithCapacity:indices.count];
+//
+//        for (NSIndexPath *indexPath in indices) {
+//
+//            id obj = [self.DS itemIdentifierForIndexPath:indexPath];
+//
+//            if (obj) {
+//                [items addObject:obj];
+//            }
+//
+//        }
+//
+//        NSDiffableDataSourceSnapshot *snapshot = [self.DS snapshot];
+//        [snapshot reloadItemsWithIdentifiers:items.objectEnumerator.allObjects];
+//
+//        [self.DS applySnapshot:snapshot animatingDifferences:YES];
+//
+//    }
     
 }
 
@@ -215,12 +219,13 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
         return;
     }
     
-    if (self.delegate != nil && _hasCalledDelegate == NO) {
-        
-        Folder *source = self.feed.folderID ? [MyFeedsManager folderForID:self.feed.folderID] : nil;
-        
-        [self.delegate feed:self.feed didMoveFromFolder:source toFolder:nil];
-    }
+    // @TODO
+//    if (self.delegate != nil && _hasCalledDelegate == NO) {
+//
+//        Folder *source = self.feed.folderID ? [MyFeedsManager folderForID:self.feed.folderID] : nil;
+//
+//        [self.delegate feed:self.feed didMoveFromFolder:source toFolder:nil];
+//    }
     
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
 }
@@ -234,112 +239,114 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
     if (self.originalFolderID != nil) {
         
         // if the new and original IDs are same, there's nothing to do here.
-        if (self.feed.folderID && [self.originalFolderID isEqualToNumber:self.feed.folderID]) {
-            [self didTapCancel];
-            return;
-        }
+        // @TODO
         
-        // it has been removed from this folder only
-        if (self.feed.folderID == nil) {
-            Folder *folder = [MyFeedsManager folderForID:self.originalFolderID];
-            
-            [MyFeedsManager updateFolder:folder add:nil remove:@[self.feed.feedID] success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                
-                strongify(self);
-                
-                if (self.delegate != nil) {
-                    [self.delegate feed:self.feed didMoveFromFolder:folder toFolder:nil];
-                    self->_hasCalledDelegate = YES;
-                }
-                
-                [self didTapCancel];
-                
-            } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-               
-                [AlertManager showGenericAlertWithTitle:@"Something Went Wrong" message:error.localizedDescription];
-                
-                strongify(self);
-                
-                [self enableButtons:YES];
-                
-            }];
-            
-            return;
-        }
-        
-        // it has been removed from the old one
-        // and added to a new folder
-        NSNumber *newFolderID = self.feed.folderID;
-        
-        Folder *folder = [MyFeedsManager folderForID:self.originalFolderID];
-        
-        [MyFeedsManager updateFolder:folder add:nil remove:@[self.feed.feedID] success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            if (newFolderID != nil) {
-                Folder *newFolder = [MyFeedsManager folderForID:newFolderID];
-                
-                [MyFeedsManager updateFolder:newFolder add:@[self.feed.feedID] remove:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                    
-                    strongify(self);
-                    
-                    if (self.delegate != nil) {
-                        [self.delegate feed:self.feed didMoveFromFolder:folder toFolder:newFolder];
-                        self->_hasCalledDelegate = YES;
-                    }
-                    
-                    [self didTapCancel];
-                    
-                } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                    
-                    [AlertManager showGenericAlertWithTitle:@"Something Went Wrong" message:error.localizedDescription];
-                    
-                    strongify(self);
-                    
-                    [self enableButtons:YES];
-                    
-                }];
-            }
-            else {
-                [self didTapCancel];
-            }
-            
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            [AlertManager showGenericAlertWithTitle:@"Something Went Wrong" message:error.localizedDescription];
-            
-            strongify(self);
-            
-            [self enableButtons:YES];
-            
-        }];
-        
-    }
-    else {
-        
-        // it didn't belong to a folder but now it does
-        Folder *folder = [MyFeedsManager folderForID:self.feed.folderID];
-        
-        [MyFeedsManager updateFolder:folder add:@[self.feed.feedID] remove:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            strongify(self);
-            
-            if (self.delegate != nil) {
-                [self.delegate feed:self.feed didMoveFromFolder:nil toFolder:folder];
-                self->_hasCalledDelegate = YES;
-            }
-            
-            [self didTapCancel];
-            
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            [AlertManager showGenericAlertWithTitle:@"Something Went Wrong" message:error.localizedDescription];
-            
-            strongify(self);
-            
-            [self enableButtons:YES];
-            
-        }];
-        
+//        if (self.feed.folderID && [self.originalFolderID isEqualToNumber:self.feed.folderID]) {
+//            [self didTapCancel];
+//            return;
+//        }
+//
+//        // it has been removed from this folder only
+//        if (self.feed.folderID == nil) {
+//            Folder *folder = [MyFeedsManager folderForID:self.originalFolderID];
+//
+//            [MyFeedsManager updateFolder:folder add:nil remove:@[self.feed.feedID] success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//                strongify(self);
+//
+//                if (self.delegate != nil) {
+//                    [self.delegate feed:self.feed didMoveFromFolder:folder toFolder:nil];
+//                    self->_hasCalledDelegate = YES;
+//                }
+//
+//                [self didTapCancel];
+//
+//            } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//                [AlertManager showGenericAlertWithTitle:@"Something Went Wrong" message:error.localizedDescription];
+//
+//                strongify(self);
+//
+//                [self enableButtons:YES];
+//
+//            }];
+//
+//            return;
+//        }
+//
+//        // it has been removed from the old one
+//        // and added to a new folder
+//        NSNumber *newFolderID = self.feed.folderID;
+//
+//        Folder *folder = [MyFeedsManager folderForID:self.originalFolderID];
+//
+//        [MyFeedsManager updateFolder:folder add:nil remove:@[self.feed.feedID] success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//            if (newFolderID != nil) {
+//                Folder *newFolder = [MyFeedsManager folderForID:newFolderID];
+//
+//                [MyFeedsManager updateFolder:newFolder add:@[self.feed.feedID] remove:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//                    strongify(self);
+//
+//                    if (self.delegate != nil) {
+//                        [self.delegate feed:self.feed didMoveFromFolder:folder toFolder:newFolder];
+//                        self->_hasCalledDelegate = YES;
+//                    }
+//
+//                    [self didTapCancel];
+//
+//                } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//                    [AlertManager showGenericAlertWithTitle:@"Something Went Wrong" message:error.localizedDescription];
+//
+//                    strongify(self);
+//
+//                    [self enableButtons:YES];
+//
+//                }];
+//            }
+//            else {
+//                [self didTapCancel];
+//            }
+//
+//        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//            [AlertManager showGenericAlertWithTitle:@"Something Went Wrong" message:error.localizedDescription];
+//
+//            strongify(self);
+//
+//            [self enableButtons:YES];
+//
+//        }];
+//
+//    }
+//    else {
+//
+//        // it didn't belong to a folder but now it does
+//        Folder *folder = [MyFeedsManager folderForID:self.feed.folderID];
+//
+//        [MyFeedsManager updateFolder:folder add:@[self.feed.feedID] remove:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//            strongify(self);
+//
+//            if (self.delegate != nil) {
+//                [self.delegate feed:self.feed didMoveFromFolder:nil toFolder:folder];
+//                self->_hasCalledDelegate = YES;
+//            }
+//
+//            [self didTapCancel];
+//
+//        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//            [AlertManager showGenericAlertWithTitle:@"Something Went Wrong" message:error.localizedDescription];
+//
+//            strongify(self);
+//
+//            [self enableButtons:YES];
+//
+//        }];
+//
     }
     
 }

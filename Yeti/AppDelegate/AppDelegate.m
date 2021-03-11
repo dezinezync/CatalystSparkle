@@ -17,9 +17,7 @@
 
 #import <UserNotifications/UNUserNotificationCenter.h>
 
-#import "SplitVC.h"
 #import "YetiConstants.h"
-#import "FeedsManager.h"
 #import "Keychain.h"
 
 #import "PhotosController.h"

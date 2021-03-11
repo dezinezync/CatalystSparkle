@@ -8,9 +8,10 @@
 
 #import "AppDelegate+BackgroundRefresh.h"
 
-#import "DBManager+CloudCore.h"
+// @TODO
+//#import "DBManager+CloudCore.h"
 
-#import "SplitVC.h"
+#import "Elytra-Swift.h"
 
 #define backgroundRefreshIdentifier @"com.yeti.refresh"
 
@@ -29,8 +30,8 @@
 - (void)application:(UIApplication *)application handleEventsForBackgroundURLSession:(nonnull NSString *)identifier completionHandler:(nonnull void (^)(void))completionHandler {
     
     NSLogDebug(@"Got a fresh background completion handler");
-    
-    MyFeedsManager.backgroundSession.backgroundCompletionHandler = completionHandler;
+    // @TODO
+//    MyFeedsManager.backgroundSession.backgroundCompletionHandler = completionHandler;
     
 }
 

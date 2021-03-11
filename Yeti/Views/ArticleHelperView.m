@@ -9,6 +9,7 @@
 #import "ArticleHelperView.h"
 #import "YetiThemeKit.h"
 #import "ArticleVC.h"
+#import "PrefsManager.h"
 
 @implementation ArticleHelperView
 

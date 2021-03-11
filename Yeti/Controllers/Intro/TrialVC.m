@@ -8,8 +8,6 @@
 
 #import "TrialVC.h"
 
-#import "FeedsManager.h"
-
 #import "RMStore.h"
 #import "UIImage+Color.h"
 #import "YetiConstants.h"
@@ -96,19 +94,20 @@
     
     weakify(self);
     
-    [MyFeedsManager startUserFreeTrial:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        NSLog(@"Expiry: %@, isTrial: %@", MyFeedsManager.user.subscription.expiry, MyFeedsManager.user.subscription.status.integerValue == 2 ? @"YES" : @"NO");
-        
-        strongify(self);
-        
-        return [self didComplete];
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        [AlertManager showGenericAlertWithTitle:@"Error Starting Trial" message:error.localizedDescription];
-        
-    }];
+    // @TODO
+//    [MyFeedsManager startUserFreeTrial:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        NSLog(@"Expiry: %@, isTrial: %@", MyFeedsManager.user.subscription.expiry, MyFeedsManager.user.subscription.status.integerValue == 2 ? @"YES" : @"NO");
+//
+//        strongify(self);
+//
+//        return [self didComplete];
+//
+//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        [AlertManager showGenericAlertWithTitle:@"Error Starting Trial" message:error.localizedDescription];
+//
+//    }];
     
 }
 
@@ -118,7 +117,8 @@
         
         [Keychain add:kHasShownOnboarding boolean:YES];
         
-        [MyAppDelegate.coordinator.sidebarVC beginRefreshingAll:nil];
+        // @TODO
+//        [MyAppDelegate.coordinator.sidebarVC beginRefreshingAll:nil];
         
         [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
         
@@ -141,8 +141,6 @@
     [self setButtonsState:NO];
     
     RMStore *store = [RMStore defaultStore];
-    
-    [[DZActivityIndicatorManager shared] incrementCount];
     
     [store requestProducts:[NSSet setWithArray:_products] success:^(NSArray *products, NSArray *invalidProductIdentifiers) {
         
@@ -179,13 +177,11 @@
             
             [self setButtonsState:YES];
             
-            [[DZActivityIndicatorManager shared] decrementCount];
             self.productsRequestFinished = YES;
         });
         
     } failure:^(NSError *error) {
         
-        [[DZActivityIndicatorManager shared] decrementCount];
         [AlertManager showGenericAlertWithTitle:@"Failed to load Products" message:error.localizedDescription];
         
     }];

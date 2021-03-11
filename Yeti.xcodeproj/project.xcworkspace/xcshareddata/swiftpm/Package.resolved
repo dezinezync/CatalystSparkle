@@ -39,7 +39,7 @@
       },
       {
         "package": "Swift-YapDatabase",
-        "repositoryURL": "git@github.com:mickeyl/SwiftYapDatabase.git",
+        "repositoryURL": "https://github.com/mickeyl/SwiftYapDatabase.git",
         "state": {
           "branch": "master",
           "revision": "e1befb00a014fa75721633950e100dddd343f496",

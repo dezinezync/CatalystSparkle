@@ -8,7 +8,7 @@
 
 #import "AccountVC.h"
 #import "SettingsCell.h"
-#import "FeedsManager.h"
+#import "Elytra-Swift.h"
 #import "UIColor+HEX.h"
 
 #import "LayoutConstants.h"
@@ -17,8 +17,6 @@
 #import "AccountFooterView.h"
 #import "DZWebViewController.h"
 #import <DZKit/DZMessagingController.h>
-
-#import "SplitVC.h"
 
 #import "StoreVC.h"
 #import "PaddedLabel.h"
@@ -107,11 +105,12 @@
     
     NSRegularExpression *exp = [NSRegularExpression regularExpressionWithPattern:@"\\d{6}\\.[a-zA-Z0-9]{32}\\.\\d{4}" options:kNilOptions error:nil];
     
-    NSString *UUID = MyFeedsManager.user.uuid;
-    
-    if (exp != nil && UUID.length > 0 && [exp numberOfMatchesInString:UUID options:kNilOptions range:NSMakeRange(0, UUID.length)] > 0) {
-        return 2;
-    }
+    // @TODO
+//    NSString *UUID = MyFeedsManager.user.uuid;
+//
+//    if (exp != nil && UUID.length > 0 && [exp numberOfMatchesInString:UUID options:kNilOptions range:NSMakeRange(0, UUID.length)] > 0) {
+//        return 2;
+//    }
     
     return 3;
     
@@ -170,7 +169,8 @@
                 switch (indexPath.row) {
                     case 0:
                     {
-                        cell.textLabel.text = MyFeedsManager.user.uuid;
+                        // @TODO
+//                        cell.textLabel.text = MyFeedsManager.user.uuid;
                         cell.textLabel.accessibilityValue = @"Account ID";
                         cell.selectionStyle = UITableViewCellSelectionStyleNone;
                     }
@@ -235,7 +235,8 @@
            
             UIAction *copyItem = [UIAction actionWithTitle:@"Copy Account ID" image:[UIImage systemImageNamed:@"doc.on.doc"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
                
-                [[UIPasteboard generalPasteboard] setString:MyFeedsManager.user.uuid];
+                // @TODO
+//                [[UIPasteboard generalPasteboard] setString:MyFeedsManager.user.uuid];
                 
             }];
             
@@ -320,17 +321,18 @@
 
 - (void)deactivateFromAPI {
     
-    [MyFeedsManager deactivateAccountWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-#ifndef DEBUG
-        [self userDidSendEmail];
-#endif
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-       
-        [AlertManager showGenericAlertWithTitle:@"Error Deactivating Account" message:error.localizedDescription];
-        
-    }];
+    // @TODO
+//    [MyFeedsManager deactivateAccountWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//#ifndef DEBUG
+//        [self userDidSendEmail];
+//#endif
+//
+//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        [AlertManager showGenericAlertWithTitle:@"Error Deactivating Account" message:error.localizedDescription];
+//
+//    }];
     
 }
 
@@ -339,11 +341,11 @@
     [self deactivateFromAPI];
     return;
     
-    NSString *formatted = formattedString(@"Deactivate Account: %@<br />User Conset: Yes<br />User confirmed subscription cancelled: Yes", MyFeedsManager.user.uuid);
-    
-    DZMessagingController.shared.delegate = self;
-    
-    [DZMessagingController presentEmailWithBody:formatted subject:@"Deactivate Elytra Account" recipients:@[@"support@elytra.app"] fromController:self];
+//    NSString *formatted = formattedString(@"Deactivate Account: %@<br />User Conset: Yes<br />User confirmed subscription cancelled: Yes", MyFeedsManager.user.uuid);
+//
+//    DZMessagingController.shared.delegate = self;
+//
+//    [DZMessagingController presentEmailWithBody:formatted subject:@"Deactivate Elytra Account" recipients:@[@"support@elytra.app"] fromController:self];
 }
 
 - (void)showReplaceIDController {
@@ -361,38 +363,39 @@
         
         NSString *text = [self->_textField text];
         
-        [MyFeedsManager getUserInformationFor:text success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            NSDictionary *user = [responseObject valueForKey:@"user"];
-            
-            if (!user) {
-                [AlertManager showGenericAlertWithTitle:@"No User" message:@"No user was found with this UUID."];
-                return;
-            }
-            
-            NSString *UUID = [user valueForKey:@"uuid"];
-            NSNumber *userID = [user valueForKey:@"id"];
-            
-//            if ([MyFeedsManager.user.userID isEqualToNumber:userID]) {
+        // @TODO
+//        [MyFeedsManager getUserInformationFor:text success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//            NSDictionary *user = [responseObject valueForKey:@"user"];
+//
+//            if (!user) {
+//                [AlertManager showGenericAlertWithTitle:@"No User" message:@"No user was found with this UUID."];
 //                return;
 //            }
-            
-            MyFeedsManager.user.uuid = UUID;
-            MyFeedsManager.userID = userID;
-            
-            asyncMain(^{
-                [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
-                
-                [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
-            });
-            
-            [AlertManager showGenericAlertWithTitle:@"Updated" message:@"Your account was successfully updated to use the new ID."];
-            
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            [AlertManager showGenericAlertWithTitle:@"Fetch Error" message:error.localizedDescription];
-            
-        }];
+//
+//            NSString *UUID = [user valueForKey:@"uuid"];
+//            NSNumber *userID = [user valueForKey:@"id"];
+//
+////            if ([MyFeedsManager.user.userID isEqualToNumber:userID]) {
+////                return;
+////            }
+//
+//            MyFeedsManager.user.uuid = UUID;
+//            MyFeedsManager.userID = userID;
+//
+//            asyncMain(^{
+//                [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
+//
+//                [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
+//            });
+//
+//            [AlertManager showGenericAlertWithTitle:@"Updated" message:@"Your account was successfully updated to use the new ID."];
+//
+//        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//            [AlertManager showGenericAlertWithTitle:@"Fetch Error" message:error.localizedDescription];
+//
+//        }];
         
         self->_okayAction = nil;
         self->_textField = nil;
@@ -464,22 +467,23 @@
     
 //    [DZMessagingController shared].delegate = nil;
     
-    [MyFeedsManager resetAccount];
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        UINavigationController *nav = self.navigationController;
-        
-        [nav popToRootViewControllerAnimated:NO];
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [nav dismissViewControllerAnimated:YES completion:^{
-                
-                SplitVC *v = (SplitVC *)[UIApplication.keyWindow rootViewController];
-                [v userNotFound];
-                
-            }];
-        });
-    });
+    // @TODO
+//    [MyFeedsManager resetAccount];
+//
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        UINavigationController *nav = self.navigationController;
+//
+//        [nav popToRootViewControllerAnimated:NO];
+//
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [nav dismissViewControllerAnimated:YES completion:^{
+//
+//                SplitVC *v = (SplitVC *)[UIApplication.keyWindow rootViewController];
+//                [v userNotFound];
+//
+//            }];
+//        });
+//    });
     
 }
 
@@ -514,15 +518,16 @@
         
         NSLog(@"Got %@", userIdentifier);
         
-        [MyFeedsManager signInWithApple:userIdentifier success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            [self.tableView reloadData];
-            
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-           
-            [AlertManager showGenericAlertWithTitle:@"Error Signing In" message:error.localizedDescription];
-            
-        }];
+        // @TODO
+//        [MyFeedsManager signInWithApple:userIdentifier success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//            [self.tableView reloadData];
+//
+//        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//            [AlertManager showGenericAlertWithTitle:@"Error Signing In" message:error.localizedDescription];
+//
+//        }];
         
     }
     

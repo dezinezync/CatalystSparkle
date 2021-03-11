@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "FeedsManager.h"
+#import "Elytra-Swift.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

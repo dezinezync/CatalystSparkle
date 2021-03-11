@@ -16,13 +16,13 @@
 #import "ArticleCell.h"
 #import "ArticleVC.h"
 
-#import "PagingManager.h"
-
 #import "CustomFeed.h"
 
 #import "BarPositioning.h"
 
 #import "FeedHeaderView.h"
+
+@class PagingManager;
 
 NS_ASSUME_NONNULL_BEGIN
 

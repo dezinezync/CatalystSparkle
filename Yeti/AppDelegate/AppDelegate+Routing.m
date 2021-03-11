@@ -8,10 +8,9 @@
 
 #import "AppDelegate+Routing.h"
 #import <JLRoutes/JLRoutes.h>
-#import "FeedsManager.h"
+#import "Elytra-Swift.h"
 #import "YetiConstants.h"
 
-#import "FeedVC.h"
 #import "ArticleVC.h"
 
 #import <DZKit/AlertManager.h>
@@ -21,6 +20,7 @@
 #import <DZKit/NSString+Extras.h>
 
 #import "AppKitGlue.h"
+#import "PrefsManager.h"
 
 @implementation AppDelegate (Routing)
 
@@ -393,31 +393,32 @@
 
 - (BOOL)addFeed:(NSURL *)url {
     // check if we already have this feed
-    Feed * have = nil;
-    
-    @try {
-        if (ArticlesManager.shared != nil && ArticlesManager.shared.feeds != nil) {
-            for (Feed *item in ArticlesManager.shared.feeds) { @autoreleasepool {
-                
-                if (item.url && [item.url isKindOfClass:NSURL.class]) {
-                    item.url = [(NSURL *)url absoluteString];
-                }
-                
-                if ([item.url isEqualToString:url.absoluteString]) {
-                    have = item;
-                    break;
-                }
-            } }
-        }
-    }
-    @catch (NSException *exc) {}
-    
-    if (have) {
-        
-        [AlertManager showGenericAlertWithTitle:@"Feed Exists" message:formattedString(@"You are already subscribed to %@", have.title)];
-        
-        return YES;
-    }
+    // @TODO Maybe?
+//    Feed * have = nil;
+//
+//    @try {
+////        if (ArticlesManager.shared != nil && ArticlesManager.shared.feeds != nil) {
+////            for (Feed *item in ArticlesManager.shared.feeds) { @autoreleasepool {
+////
+////                if (item.url && [item.url isKindOfClass:NSURL.class]) {
+////                    item.url = [(NSURL *)url absoluteString];
+////                }
+////
+////                if ([item.url isEqualToString:url.absoluteString]) {
+////                    have = item;
+////                    break;
+////                }
+////            } }
+////        }
+//    }
+//    @catch (NSException *exc) {}
+//
+//    if (have) {
+//
+//        [AlertManager showGenericAlertWithTitle:@"Feed Exists" message:formattedString(@"You are already subscribed to %@", have.title)];
+//
+//        return YES;
+//    }
     
     NSTimeInterval delay = [self popRootToRoot];
     
@@ -429,84 +430,85 @@
     });
     
     if ([url.absoluteString containsString:@"youtube.com"] == YES && [url.absoluteString containsString:@"videos.xml"] == NO) {
-        
-        [MyFeedsManager _checkYoutubeFeed:url success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            if (responseObject != nil && [responseObject isKindOfClass:NSString.class]) {
-                responseObject = [NSURL URLWithString:responseObject];
-            }
-            
-            [self addFeed:responseObject];
-            
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-           
-            [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:@"An error occurred when trying to fetch the Youtube URL."];
-            
-        }];
+        // @TODO
+//        [MyFeedsManager _checkYoutubeFeed:url success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//            if (responseObject != nil && [responseObject isKindOfClass:NSString.class]) {
+//                responseObject = [NSURL URLWithString:responseObject];
+//            }
+//
+//            [self addFeed:responseObject];
+//
+//        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//            [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:@"An error occurred when trying to fetch the Youtube URL."];
+//
+//        }];
         
     }
     else {
-        [MyFeedsManager addFeed:url success:^(Feed *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            // check again if we have the feed
-            BOOL haveItem = NO;
-            if (responseObject != nil && [responseObject isKindOfClass:Feed.class]) {
-                for (Feed *item in ArticlesManager.shared.feeds) {
-                    if ([item.title isEqualToString:responseObject.title]) {
-                        haveItem = YES;
-                        break;
-                    }
-                }
-            }
-            
-            strongify(self);
-            
-            [self _dismissAddingFeedDialog];
-            
-            if (!haveItem) {
-                // we don't have it.
-                ArticlesManager.shared.feeds = [ArticlesManager.shared.feeds arrayByAddingObject:responseObject];
-                
-                weakify(self);
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    strongify(self);
-                    [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
-                    [self.notificationGenerator prepare];
-                });
-                
-            }
-            else {
-                
-                weakify(self);
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    strongify(self);
-                    [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeWarning];
-                    [self.notificationGenerator prepare];
-                });
-                
-                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                    [AlertManager showGenericAlertWithTitle:@"Feed Exists" message:formattedString(@"You are already subscribed to %@", responseObject.title)];
-                });
-            }
-            
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            strongify(self);
-            
-            [self _dismissAddingFeedDialog];
-            
-            weakify(self);
-            dispatch_async(dispatch_get_main_queue(), ^{
-                strongify(self);
-                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeError];
-                [self.notificationGenerator prepare];
-            });
-            
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [AlertManager showGenericAlertWithTitle:@"Error Adding Feed" message:error.localizedDescription];
-            });
-            
-        }];
+        // @TODO
+//        [MyFeedsManager addFeed:url success:^(Feed *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//            // check again if we have the feed
+//            BOOL haveItem = NO;
+//            if (responseObject != nil && [responseObject isKindOfClass:Feed.class]) {
+//                for (Feed *item in ArticlesManager.shared.feeds) {
+//                    if ([item.title isEqualToString:responseObject.title]) {
+//                        haveItem = YES;
+//                        break;
+//                    }
+//                }
+//            }
+//
+//            strongify(self);
+//
+//            [self _dismissAddingFeedDialog];
+//
+//            if (!haveItem) {
+//                // we don't have it.
+//                ArticlesManager.shared.feeds = [ArticlesManager.shared.feeds arrayByAddingObject:responseObject];
+//
+//                weakify(self);
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    strongify(self);
+//                    [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
+//                    [self.notificationGenerator prepare];
+//                });
+//
+//            }
+//            else {
+//
+//                weakify(self);
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    strongify(self);
+//                    [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeWarning];
+//                    [self.notificationGenerator prepare];
+//                });
+//
+//                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//                    [AlertManager showGenericAlertWithTitle:@"Feed Exists" message:formattedString(@"You are already subscribed to %@", responseObject.title)];
+//                });
+//            }
+//
+//        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//            strongify(self);
+//
+//            [self _dismissAddingFeedDialog];
+//
+//            weakify(self);
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                strongify(self);
+//                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeError];
+//                [self.notificationGenerator prepare];
+//            });
+//
+//            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//                [AlertManager showGenericAlertWithTitle:@"Error Adding Feed" message:error.localizedDescription];
+//            });
+//
+//        }];
     }
     
     return YES;
@@ -522,75 +524,76 @@
         [self _showAddingFeedDialog];
     });
     
-    [MyFeedsManager addFeedByID:feedID success:^(Feed *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        // check again if we have the feed
-        BOOL haveItem = NO;
-        for (Feed *item in ArticlesManager.shared.feeds) {
-            if (item.feedID.integerValue == feedID.integerValue) {
-                haveItem = YES;
-                break;
-            }
-        }
-        
-        strongify(self);
-        
-        [self _dismissAddingFeedDialog];
-        
-        if (!haveItem) {
-            // we don't have it.
-            NSArray <Feed *> *feeds = ArticlesManager.shared.feeds;
-            feeds = [feeds arrayByAddingObject:responseObject];
-            
-            ArticlesManager.shared.feeds = feeds;
-            
-            weakify(self);
-            dispatch_async(dispatch_get_main_queue(), ^{
-                strongify(self);
-                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
-                [self.notificationGenerator prepare];
-            });
-            
-        }
-        else {
-            
-            weakify(self);
-            dispatch_async(dispatch_get_main_queue(), ^{
-                strongify(self);
-                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeWarning];
-                [self.notificationGenerator prepare];
-            });
-            
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [AlertManager showGenericAlertWithTitle:@"Feed Exists" message:formattedString(@"You are already subscribed to %@", responseObject.title)];
-            });
-        }
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        strongify(self);
-        
-        [self _dismissAddingFeedDialog];
-        
-        weakify(self);
-        dispatch_async(dispatch_get_main_queue(), ^{
-            strongify(self);
-            [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeError];
-            [self.notificationGenerator prepare];
-        });
-        
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            
-            NSString *title = @"Error Adding Feed";
-            
-            if (error.code == kFMErrorExisting) {
-                title = @"Already Subscribed.";
-            }
-            
-            [AlertManager showGenericAlertWithTitle:title message:error.localizedDescription];
-        });
-        
-    }];
+    // @TODO
+//    [MyFeedsManager addFeedByID:feedID success:^(Feed *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        // check again if we have the feed
+//        BOOL haveItem = NO;
+//        for (Feed *item in ArticlesManager.shared.feeds) {
+//            if (item.feedID.integerValue == feedID.integerValue) {
+//                haveItem = YES;
+//                break;
+//            }
+//        }
+//
+//        strongify(self);
+//
+//        [self _dismissAddingFeedDialog];
+//
+//        if (!haveItem) {
+//            // we don't have it.
+//            NSArray <Feed *> *feeds = ArticlesManager.shared.feeds;
+//            feeds = [feeds arrayByAddingObject:responseObject];
+//
+//            ArticlesManager.shared.feeds = feeds;
+//
+//            weakify(self);
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                strongify(self);
+//                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
+//                [self.notificationGenerator prepare];
+//            });
+//
+//        }
+//        else {
+//
+//            weakify(self);
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                strongify(self);
+//                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeWarning];
+//                [self.notificationGenerator prepare];
+//            });
+//
+//            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//                [AlertManager showGenericAlertWithTitle:@"Feed Exists" message:formattedString(@"You are already subscribed to %@", responseObject.title)];
+//            });
+//        }
+//
+//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        strongify(self);
+//
+//        [self _dismissAddingFeedDialog];
+//
+//        weakify(self);
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            strongify(self);
+//            [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeError];
+//            [self.notificationGenerator prepare];
+//        });
+//
+//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//
+//            NSString *title = @"Error Adding Feed";
+//
+//            if (error.code == kFMErrorExisting) {
+//                title = @"Already Subscribed.";
+//            }
+//
+//            [AlertManager showGenericAlertWithTitle:title message:error.localizedDescription];
+//        });
+//
+//    }];
     
     return YES;
     
@@ -616,99 +619,100 @@
     
     SceneDelegate * scene = (id)[[UIApplication.sharedApplication.connectedScenes.allObjects firstObject] delegate];
     
-    if (scene.coordinator.feedVC != nil
-        && scene.coordinator.feedVC.type == FeedVCTypeNatural
-        && [scene.coordinator.feedVC.feed.feedID isEqualToNumber:feedID])
-    {
-        
-        if (articleID != nil) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                strongify(self);
-                
-                [self showArticle:articleID];
-            });
-        }
-        
-    }
-    
-    else if (scene.coordinator.feedVC != nil) {
-        
-        FeedVC *feedVC = scene.coordinator.feedVC;
-        
-        if (feedVC.feed != nil && [feedVC.feed.feedID isEqualToNumber:feedID]) {
-            
-            if (articleID != nil) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    strongify(self);
-                    
-                    [self showArticle:articleID];
-                });
-            }
-            
-            return;
-            
-        }
-        else {
-            
-            /*
-             * The feedID is clearly different or is a custom feed. So deselect the selected items.
-             */
-            
-            NSArray <NSIndexPath *> * selectedItems = [feedVC.tableView indexPathsForSelectedRows];
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-               
-                for (NSIndexPath *indexPath in selectedItems) {
-                    
-                    [feedVC.tableView deselectRowAtIndexPath:indexPath animated:NO];
-                    
-                }
-                
-            });
-            
-        }
-        
-    }
-    
-#if !TARGET_OS_MACCATALYST
-    [self popToRoot];
-#endif
-    
-    if (scene.coordinator.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad
-        && scene.coordinator.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-        
-        if (feedID != nil && scene.coordinator.feedVC == nil) {
-            
-            Feed *feed = [MyFeedsManager feedForID:feedID];
-            
-            if (feed != nil) {
-                [scene.coordinator showFeedVC:feed];
-            }
-            
-        }
-        
-    }
-    
-    if (articleID != nil) {
-        
-        FeedItem *item = [[FeedItem alloc] init];
-        item.feedID = feedID;
-        item.identifier = articleID;
-        
-        ArticleVC *articleVC = [[ArticleVC alloc] initWithItem:item];
-        
-        [scene.coordinator showArticleVC:articleVC];
-        
-    }
-    else {
-        
-        Feed *feed = [MyFeedsManager feedForID:feedID];
-        
-        if (feed != nil) {
-            [scene.coordinator showFeedVC:feed];
-        }
-        
-    }
+    // @TODO
+//    if (scene.coordinator.feedVC != nil
+//        && scene.coordinator.feedVC.type == FeedVCTypeNatural
+//        && [scene.coordinator.feedVC.feed.feedID isEqualToNumber:feedID])
+//    {
+//
+//        if (articleID != nil) {
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                strongify(self);
+//
+//                [self showArticle:articleID];
+//            });
+//        }
+//
+//    }
+//
+//    else if (scene.coordinator.feedVC != nil) {
+//
+//        FeedVC *feedVC = scene.coordinator.feedVC;
+//
+//        if (feedVC.feed != nil && [feedVC.feed.feedID isEqualToNumber:feedID]) {
+//
+//            if (articleID != nil) {
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    strongify(self);
+//
+//                    [self showArticle:articleID];
+//                });
+//            }
+//
+//            return;
+//
+//        }
+//        else {
+//
+//            /*
+//             * The feedID is clearly different or is a custom feed. So deselect the selected items.
+//             */
+//
+//            NSArray <NSIndexPath *> * selectedItems = [feedVC.tableView indexPathsForSelectedRows];
+//
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//
+//                for (NSIndexPath *indexPath in selectedItems) {
+//
+//                    [feedVC.tableView deselectRowAtIndexPath:indexPath animated:NO];
+//
+//                }
+//
+//            });
+//
+//        }
+//
+//    }
+//
+//#if !TARGET_OS_MACCATALYST
+//    [self popToRoot];
+//#endif
+//
+//    if (scene.coordinator.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad
+//        && scene.coordinator.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+//
+//        if (feedID != nil && scene.coordinator.feedVC == nil) {
+//
+//            Feed *feed = [MyFeedsManager feedForID:feedID];
+//
+//            if (feed != nil) {
+//                [scene.coordinator showFeedVC:feed];
+//            }
+//
+//        }
+//
+//    }
+//
+//    if (articleID != nil) {
+//
+//        FeedItem *item = [[FeedItem alloc] init];
+//        item.feedID = feedID;
+//        item.identifier = articleID;
+//
+//        ArticleVC *articleVC = [[ArticleVC alloc] initWithItem:item];
+//
+//        [scene.coordinator showArticleVC:articleVC];
+//
+//    }
+//    else {
+//
+//        Feed *feed = [MyFeedsManager feedForID:feedID];
+//
+//        if (feed != nil) {
+//            [scene.coordinator showFeedVC:feed];
+//        }
+//
+//    }
     
 }
 
@@ -723,19 +727,19 @@
     }
     
     SceneDelegate * scene = (id)[[UIApplication.sharedApplication.connectedScenes.allObjects firstObject] delegate];
-    
-    if (scene.coordinator.feedVC != nil) {
-        scene.coordinator.feedVC.loadOnReady = articleID;
-    }
-    else {
-        
-        FeedItem *item = [FeedItem new];
-        item.identifier = articleID;
-        
-        ArticleVC *instance = [[ArticleVC alloc] initWithItem:item];
-        
-        [scene.coordinator showArticleVC:instance];
-    }
+    // @TODO
+//    if (scene.coordinator.feedVC != nil) {
+//        scene.coordinator.feedVC.loadOnReady = articleID;
+//    }
+//    else {
+//
+//        FeedItem *item = [FeedItem new];
+//        item.identifier = articleID;
+//
+//        ArticleVC *instance = [[ArticleVC alloc] initWithItem:item];
+//
+//        [scene.coordinator showArticleVC:instance];
+//    }
 }
 
 #pragma mark - External

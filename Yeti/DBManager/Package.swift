@@ -18,7 +18,7 @@ let package = Package(
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
-        .package(name: "Swift-YapDatabase", url: "git@github.com:mickeyl/SwiftYapDatabase.git", .branch("master")),
+        .package(name: "Swift-YapDatabase", url: "https://github.com/mickeyl/SwiftYapDatabase.git", .branch("master")),
         .package(name: "Models", path: "../Models"),
         .package(name: "Networking", path: "../Networking")
     ],
@@ -30,6 +30,7 @@ let package = Package(
             dependencies: [
                 "Models",
                 "Networking",
+                .product(name: "YapDatabase", package: "Swift-YapDatabase"),
                 .product(name: "SwiftYapDatabase", package: "Swift-YapDatabase")
             ]),
         .testTarget(
