@@ -23,7 +23,7 @@ private let SYNC_TOKEN = "syncToken-2.3.0"
 /// The last sync token we stored or the one sent by the server.
 private let SYNC_TOKEN_ID = "syncTokenID-2.3.0"
 
-class SyncCoordinator {
+public class SyncCoordinator: NSObject {
     
     public var totalProgress: Double = 1
     public var currentProgress: Double = 1
@@ -260,8 +260,7 @@ class SyncCoordinator {
     fileprivate var inProgressSyncToken: String?
     fileprivate var inProgressSyncTokenID: String?
     
-    #if os(iOS)
-    fileprivate lazy var internalProgressCallback: ((_ progress: Double, _ changeSet: ChangeSet?) -> Void) = { return { [weak self] (progress, changeSet) in
+    lazy var internalProgressCallback: ((_ progress: Double, _ changeSet: ChangeSet?) -> Void) = { return { [weak self] (progress, changeSet) in
         
         guard let sself = self else {
             return
@@ -326,7 +325,6 @@ class SyncCoordinator {
         }
         
     } }()
-    #endif
     
     private func updateReads(reads: [Int: Bool]) {
         

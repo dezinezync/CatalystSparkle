@@ -9,8 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "BarPositioning.h"
 
-#import "BookmarksManager.h"
-
 @class Feed;
 @class DZSectionedDatasource;
 @class DZBasicDatasource;

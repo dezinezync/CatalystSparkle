@@ -55,7 +55,7 @@ fileprivate enum Item: Hashable {
 
 @objc class SidebarVC: UICollectionViewController {
     
-    static let layout: UICollectionViewCompositionalLayout = {
+    lazy var layout: UICollectionViewCompositionalLayout = {
        
         var l = UICollectionViewCompositionalLayout { (section, environment) -> NSCollectionLayoutSection? in
             
@@ -145,16 +145,115 @@ fileprivate enum Item: Hashable {
     
     @objc convenience init() {
 
-        self.init(collectionViewLayout: layout)
+        self.init()
+        collectionView.setCollectionViewLayout(layout, animated: false)
 
     }
     
-    @objc func beginRefreshingAll(_ sender: Any?) {
+    override func viewDidLoad() {
+        
+        super.viewDidLoad()
+        
+        title = "Feeds"
+        
+        if traitCollection.userInterfaceIdiom == .phone {
+            collectionView.backgroundColor = .systemBackground
+        }
+        
+        #if targetEnvironment(macCatalyst)
+        
+        additionalSafeAreaInsets = UIEdgeInsets(top: 12, left: 0, bottom: 0, right: 0)
+        
+        scheduleTimerIfValid()
+        
+        #endif
+        
+        setupNavigationBar()
+        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        
+        super.viewWillAppear(animated)
+        
+//        #if !targetEnvironment(macCatalyst)
+        
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .automatic
+        
+        if SharedPrefs.useToolbar == true {
+            
+//            if DBManager.shared.sync
+            
+        }
+        
+//        #endif
+        
+    }
+    
+    // MARK: - Setups
+    func setupNavigationBar() {
+        
+        
         
     }
     
     @objc func setupData() {
         
     }
+    
+    // MARK: - Actions
+    @objc func beginRefreshingAll(_ sender: Any?) {
+        
+    }
+    
+    // Mark: - Mac
+    #if targetEnvironment(macCatalyst)
+    
+    var refreshTimer: Timer?
+    
+    @objc func didChangeTimerPreference () {
+        
+        if refreshTimer != nil {
+            refreshTimer?.invalidate()
+            refreshTimer = nil
+        }
+        
+        scheduleTimerIfValid()
+        
+    }
+    
+    @objc func scheduleTimerIfValid () {
+        
+        guard refreshTimer == nil else {
+            // already scheduled
+            return
+        }
+        
+        guard SharedPrefs.refreshFeedsInterval != "-1" else {
+            return
+        }
+        
+        let interval = (SharedPrefs.refreshFeedsInterval as NSString).doubleValue
+        
+        let timer = Timer(timeInterval: interval, repeats: false) { [weak self] (t) in
+            
+            guard let sself = self else { return }
+            
+            print("Timer called at \(t.fireDate), refreshing counters and feeds.")
+            
+            sself.beginRefreshingAll(nil)
+            
+        }
+        
+        print("Scheduling timer with time interval \(interval)")
+        
+        RunLoop.main.add(timer, forMode: .default)
+        
+        refreshTimer = timer
+        
+    }
+    
+    #endif
     
 }

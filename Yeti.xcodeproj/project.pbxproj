@@ -130,8 +130,6 @@
 		F0448D0C244463B7003B6AA7 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0448D00244463B7003B6AA7 /* CoreServices.framework */; };
 		F0469DF220A0514100163C4E /* dark.css in Resources */ = {isa = PBXBuildFile; fileRef = F0469DF120A0514100163C4E /* dark.css */; };
 		F0469DF420A0528000163C4E /* black.css in Resources */ = {isa = PBXBuildFile; fileRef = F0469DF320A0528000163C4E /* black.css */; };
-		F0472FCC25AC298A002227C0 /* AWSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F09B93A025ABF417004440E3 /* AWSCore.framework */; };
-		F0472FCD25AC298A002227C0 /* AWSCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F09B93A025ABF417004440E3 /* AWSCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F047CB6F2579F98E00395DC2 /* UIControlSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = F047CB6E2579F98E00395DC2 /* UIControlSubscription.swift */; };
 		F047F4E220C25FB900626968 /* Spectral-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4D420C25FB800626968 /* Spectral-Regular.ttf */; };
 		F047F4E620C25FB900626968 /* Spectral-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4D620C25FB800626968 /* Spectral-MediumItalic.ttf */; };
@@ -243,8 +241,6 @@
 		F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F099465F20AD86BE00E5520F /* StoreKit.framework */; };
 		F099466520AD8A8B00E5520F /* AppDelegate+Store.m in Sources */ = {isa = PBXBuildFile; fileRef = F099466420AD8A8B00E5520F /* AppDelegate+Store.m */; };
 		F09B3B351FBCB348001D4B09 /* UIViewController+ScrollLoad.m in Sources */ = {isa = PBXBuildFile; fileRef = F09B3B341FBCB348001D4B09 /* UIViewController+ScrollLoad.m */; };
-		F09B950C25ABF45E004440E3 /* AWSLogs.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F09B942625ABF417004440E3 /* AWSLogs.framework */; };
-		F09B950D25ABF45E004440E3 /* AWSLogs.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F09B942625ABF417004440E3 /* AWSLogs.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F09BE12820F1C370000D1EB9 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F09BE12720F1C370000D1EB9 /* Settings.bundle */; };
 		F09CB6A921637DE200F47036 /* elytraProcessor.js in Resources */ = {isa = PBXBuildFile; fileRef = F09CB6A821637DE200F47036 /* elytraProcessor.js */; };
 		F09CEA952508B2E6007941AD /* FeedHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F09CEA942508B2E6007941AD /* FeedHeaderView.m */; };
@@ -306,7 +302,6 @@
 		F0B21BBB208C7F4F007E5A3B /* NewFolderVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B21BB9208C7F4F007E5A3B /* NewFolderVC.m */; };
 		F0B21BBC208C7F4F007E5A3B /* NewFolderVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0B21BBA208C7F4F007E5A3B /* NewFolderVC.xib */; };
 		F0B4827D2455F65000EE5AA2 /* DZKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0B482792455F64900EE5AA2 /* DZKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F0B4827F2455F65600EE5AA2 /* YapDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0B482642455F62C00EE5AA2 /* YapDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F0B573C824FCB61F00364BC3 /* RMStore.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B573C624FCB57A00364BC3 /* RMStore.m */; };
 		F0B5BFA62060D57F0092DA31 /* AppDelegate+Routing.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B5BFA52060D57F0092DA31 /* AppDelegate+Routing.m */; };
 		F0B69C9F21B920A10032FD5A /* YTPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B69C9E21B920A10032FD5A /* YTPlayer.m */; };
@@ -1265,13 +1260,6 @@
 			remoteGlobalIDString = 9A7ACC4E20B0FF1000DDBEC1;
 			remoteInfo = AWSTranslateUnitTests;
 		};
-		F09B950525ABF42E004440E3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F09B932425ABF417004440E3 /* AWSiOSSDKv2.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 181270C01E8EB53900174785;
-			remoteInfo = AWSLogs;
-		};
 		F0B482612455F62C00EE5AA2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F0B482552455F62C00EE5AA2 /* YapDatabase.xcodeproj */;
@@ -1452,12 +1440,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				F0472FCD25AC298A002227C0 /* AWSCore.framework in Embed Frameworks */,
 				F0B4827D2455F65000EE5AA2 /* DZKit.framework in Embed Frameworks */,
 				F0E0E6EF2457FF2400DFFD17 /* JLRoutes.framework in Embed Frameworks */,
-				F09B950D25ABF45E004440E3 /* AWSLogs.framework in Embed Frameworks */,
 				F08C5E63238660B00055946F /* DZThemeKit.framework in Embed Frameworks */,
-				F0B4827F2455F65600EE5AA2 /* YapDatabase.framework in Embed Frameworks */,
 				F08C5E002386567F0055946F /* DZAppdelegate.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -1593,12 +1578,8 @@
 		F022B0D720DC2D9500030185 /* AccentCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccentCell.xib; sourceTree = "<group>"; };
 		F022B0DD20DC30DE00030185 /* AccentButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccentButton.h; sourceTree = "<group>"; };
 		F022B0DE20DC30DE00030185 /* AccentButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AccentButton.m; sourceTree = "<group>"; };
-		F02459C62058FFF1002906C3 /* FeedsVC+Search.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedsVC+Search.h"; sourceTree = "<group>"; };
-		F02459C72058FFF1002906C3 /* FeedsVC+Search.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedsVC+Search.m"; sourceTree = "<group>"; };
 		F02459C920590E6D002906C3 /* SearchResults.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SearchResults.h; sourceTree = "<group>"; };
 		F02459CA20590E6D002906C3 /* SearchResults.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SearchResults.m; sourceTree = "<group>"; };
-		F02459CC20590F03002906C3 /* FeedsSearchResults.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedsSearchResults.h; sourceTree = "<group>"; };
-		F02459CD20590F03002906C3 /* FeedsSearchResults.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedsSearchResults.m; sourceTree = "<group>"; };
 		F02B701E24EA7E5C00DD607F /* IDMPhotoBrowser.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = IDMPhotoBrowser.bundle; sourceTree = "<group>"; };
 		F02B701F24EA7E5C00DD607F /* IDMCaptionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDMCaptionView.h; sourceTree = "<group>"; };
 		F02B702024EA7E5C00DD607F /* IDMPBLocalizations.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = IDMPBLocalizations.bundle; sourceTree = "<group>"; };
@@ -1635,8 +1616,6 @@
 		F035A21520617EC3005A88EE /* YetiShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = YetiShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		F035A21B20617EC3005A88EE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		F035A21D20617EC3005A88EE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F0362B771FCEDC28009184E2 /* FeedsVC+Actions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedsVC+Actions.h"; sourceTree = "<group>"; };
-		F0362B781FCEDC28009184E2 /* FeedsVC+Actions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedsVC+Actions.m"; sourceTree = "<group>"; };
 		F03A5F5F20971BAE00CE7D5E /* ThemeVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ThemeVC.h; sourceTree = "<group>"; };
 		F03A5F6020971BAE00CE7D5E /* ThemeVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ThemeVC.m; sourceTree = "<group>"; };
 		F03AC02E205533D800FB111A /* CodeParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeParser.h; sourceTree = "<group>"; };
@@ -1737,8 +1716,6 @@
 		F067D35C23F43B350034B968 /* Customization.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Customization.m; sourceTree = "<group>"; };
 		F0695B1E20CE6B7600517AF8 /* UIViewController+Hairline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Hairline.h"; sourceTree = "<group>"; };
 		F0695B1F20CE6B7600517AF8 /* UIViewController+Hairline.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Hairline.m"; sourceTree = "<group>"; };
-		F06B765D20C278EC00FBCDE7 /* FeedsVC+Keyboard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedsVC+Keyboard.h"; sourceTree = "<group>"; };
-		F06B765E20C278EC00FBCDE7 /* FeedsVC+Keyboard.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedsVC+Keyboard.m"; sourceTree = "<group>"; };
 		F06B766220C27CD000FBCDE7 /* YTNavigationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YTNavigationController.h; sourceTree = "<group>"; };
 		F06B766320C27CD000FBCDE7 /* YTNavigationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YTNavigationController.m; sourceTree = "<group>"; };
 		F06C666322B2ABBA00D425E9 /* UIViewController+Stateful.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Stateful.h"; sourceTree = "<group>"; };
@@ -1765,8 +1742,6 @@
 		F070C3001FBABC3600912CCF /* YetiUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YetiUITests.m; sourceTree = "<group>"; };
 		F070C3021FBABC3600912CCF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F070C3201FBAC0E100912CCF /* Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Prefix.pch; sourceTree = "<group>"; };
-		F070C3321FBAC37600912CCF /* FeedsVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedsVC.h; sourceTree = "<group>"; };
-		F070C3331FBAC37600912CCF /* FeedsVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedsVC.m; sourceTree = "<group>"; };
 		F070C3491FBADF8D00912CCF /* FeedsCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedsCell.h; sourceTree = "<group>"; };
 		F070C34A1FBADF8D00912CCF /* FeedsCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedsCell.m; sourceTree = "<group>"; };
 		F070C34B1FBADF8D00912CCF /* FeedsCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FeedsCell.xib; sourceTree = "<group>"; };
@@ -1819,8 +1794,6 @@
 		F088CF43248E6C800010EBC0 /* YetiShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = YetiShare.entitlements; sourceTree = "<group>"; };
 		F088CF6C248E72020010EBC0 /* AppDelegate+Catalyst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+Catalyst.h"; sourceTree = "<group>"; };
 		F088CF6D248E72020010EBC0 /* AppDelegate+Catalyst.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+Catalyst.m"; sourceTree = "<group>"; };
-		F08993BC2108791D00A9978E /* FeedsVC+DragDrop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedsVC+DragDrop.h"; sourceTree = "<group>"; };
-		F08993BD2108791D00A9978E /* FeedsVC+DragDrop.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedsVC+DragDrop.m"; sourceTree = "<group>"; };
 		F08993C1210883E200A9978E /* FolderDrop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FolderDrop.h; sourceTree = "<group>"; };
 		F08C5DF0238656620055946F /* DZAppDelegate.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZAppDelegate.xcodeproj; path = Vendors/DZAppDelegate/DZAppDelegate.xcodeproj; sourceTree = "<group>"; };
 		F08C5E56238660A90055946F /* DZThemeKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZThemeKit.xcodeproj; path = Vendors/DZThemeKit/DZThemeKit.xcodeproj; sourceTree = "<group>"; };
@@ -2061,9 +2034,7 @@
 			files = (
 				F0E0E6EE2457FF2300DFFD17 /* JLRoutes.framework in Frameworks */,
 				F0E0DBBD22AE0F47006A2D93 /* WebKit.framework in Frameworks */,
-				F09B950C25ABF45E004440E3 /* AWSLogs.framework in Frameworks */,
 				F08C5E62238660B00055946F /* DZThemeKit.framework in Frameworks */,
-				F0472FCC25AC298A002227C0 /* AWSCore.framework in Frameworks */,
 				F02A4894252653C7001063E9 /* SDWebImage in Frameworks */,
 				F06EA86125F9C02400A4C855 /* DBManager in Frameworks */,
 				F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */,
@@ -2711,18 +2682,6 @@
 		F070C3131FBABCA300912CCF /* Feeds */ = {
 			isa = PBXGroup;
 			children = (
-				F070C3321FBAC37600912CCF /* FeedsVC.h */,
-				F070C3331FBAC37600912CCF /* FeedsVC.m */,
-				F0362B771FCEDC28009184E2 /* FeedsVC+Actions.h */,
-				F0362B781FCEDC28009184E2 /* FeedsVC+Actions.m */,
-				F02459C62058FFF1002906C3 /* FeedsVC+Search.h */,
-				F02459C72058FFF1002906C3 /* FeedsVC+Search.m */,
-				F06B765D20C278EC00FBCDE7 /* FeedsVC+Keyboard.h */,
-				F06B765E20C278EC00FBCDE7 /* FeedsVC+Keyboard.m */,
-				F08993BC2108791D00A9978E /* FeedsVC+DragDrop.h */,
-				F08993BD2108791D00A9978E /* FeedsVC+DragDrop.m */,
-				F02459CC20590F03002906C3 /* FeedsSearchResults.h */,
-				F02459CD20590F03002906C3 /* FeedsSearchResults.m */,
 				F0B21BB8208C7F4F007E5A3B /* NewFolderVC.h */,
 				F0B21BB9208C7F4F007E5A3B /* NewFolderVC.m */,
 				F0B21BBA208C7F4F007E5A3B /* NewFolderVC.xib */,
@@ -3369,7 +3328,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				F09B950625ABF42E004440E3 /* PBXTargetDependency */,
 				F0E0E6F12457FF2A00DFFD17 /* PBXTargetDependency */,
 				F08C5E65238660B60055946F /* PBXTargetDependency */,
 				F08C5E2F2386579C0055946F /* PBXTargetDependency */,
@@ -5071,11 +5029,6 @@
 			name = DZThemeKit;
 			targetProxy = F08C5E64238660B60055946F /* PBXContainerItemProxy */;
 		};
-		F09B950625ABF42E004440E3 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = AWSLogs;
-			targetProxy = F09B950525ABF42E004440E3 /* PBXContainerItemProxy */;
-		};
 		F0B7C850240B7272008D8F4F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			platformFilter = ios;
@@ -5361,7 +5314,6 @@
 				HEADER_SEARCH_PATHS = "$(inherited)/**";
 				INFOPLIST_FILE = Yeti/SupportingFiles/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -5420,7 +5372,6 @@
 				HEADER_SEARCH_PATHS = "$(inherited)/**";
 				INFOPLIST_FILE = Yeti/SupportingFiles/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -5622,7 +5573,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra.notificationContext;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
@@ -5652,7 +5603,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra.notificationContext;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};

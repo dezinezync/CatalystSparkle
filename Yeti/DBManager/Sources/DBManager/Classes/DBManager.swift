@@ -44,6 +44,8 @@ public final class DBManager {
     
     public static let shared = DBManager()
     
+    public var syncCoordinator: SyncCoordinator?
+    
     public init() {
         
         setupNotifications()

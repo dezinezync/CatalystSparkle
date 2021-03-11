@@ -669,34 +669,35 @@ NSString* deviceName() {
     }
     
 #if TARGET_OS_MACCATALYST
-    if (self.innerWindow == nil) {
-        
-        id nsWindow = [[[[MyAppDelegate mainScene] windows] firstObject] innerWindow];
-        
-        if (nsWindow == nil) {
-            // try again in 1s
-            
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            
-                id __nsWindow = [[[[MyAppDelegate mainScene] windows] firstObject] innerWindow];
-                
-                if (__nsWindow != nil) {
-                    
-                    self.innerWindow = __nsWindow;
-                    
-                    if (self.feedVC != nil) {
-                        [self.feedVC updateTitleView];
-                    }
-                    
-                }
-                
-            });
-            
-        }
-        
-        self.innerWindow = nsWindow;
-        
-    }
+    // @TODO 
+//    if (self.innerWindow == nil) {
+//
+//        id nsWindow = [[[[MyAppDelegate mainScene] windows] firstObject] innerWindow];
+//
+//        if (nsWindow == nil) {
+//            // try again in 1s
+//
+//            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//
+//                id __nsWindow = [[[[MyAppDelegate mainScene] windows] firstObject] innerWindow];
+//
+//                if (__nsWindow != nil) {
+//
+//                    self.innerWindow = __nsWindow;
+//
+//                    if (self.feedVC != nil) {
+//                        [self.feedVC updateTitleView];
+//                    }
+//
+//                }
+//
+//            });
+//
+//        }
+//
+//        self.innerWindow = nsWindow;
+//
+//    }
 #endif
     
     // @TODO
