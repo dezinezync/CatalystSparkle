@@ -71,6 +71,7 @@ public final class DBManager {
         }
         
         setupDatabase(db)
+        setupViews(db)
         
         return db
     }()
@@ -264,13 +265,17 @@ public final class DBManager {
             
             writeQueue.sync { [weak self] in
                 
+                guard let sself = self else {
+                    return
+                }
+                
                 self?.bgConnection.readWrite({ (t) in
                     
                     for f in newValue {
                         
                         let key = "\(f.feedID!)"
                         
-                        let metadata = self?.metadataForFeed(f)
+                        let metadata = sself._metadataForFeed(f)
                         
                         t.setObject(f, forKey: key, inCollection: .feeds, withMetadata: metadata)
                         
@@ -372,9 +377,90 @@ public final class DBManager {
         
     }
     
-    // @TODO: FeedBulkOperation
+    public func bulkUpdate(feeds operation:@escaping ((_ feed: Feed, _ metadta:FeedMeta) -> (Feed, FeedMeta))) {
+        
+        writeQueue.async { [weak self] in
+            
+            guard let sself = self else {
+                return
+            }
+            
+            sself.bgConnection.readWrite({ (t) in
+                
+                for feed in sself.feeds {
+                    
+                    let metadata = sself.metadataForFeed(feed)
+                    let op = operation(feed, metadata)
+                    
+                    let (updatedFeed, updatedMetadata) = op
+                    
+                    t.setObject(updatedFeed, forKey: "\(updatedFeed.feedID!)", inCollection: .feeds, withMetadata: updatedMetadata)
+                    
+                }
+                
+            })
+            
+        }
+        
+    }
     
-    // @TODO: Custom Feed Names
+    public func rename(feed: Feed, customTitle: String, completion:((Result<Bool, Error>) -> Void)?) {
+        
+        let localNameKey = "\(feed.feedID!)"
+        
+        // if the user provides a clear string, we remove the local name
+        if customTitle.count == 0 {
+            
+            writeQueue.async { [weak self] in
+                
+                // @TODO: Add CloudCore operation
+                
+                self?.bgConnection.asyncReadWrite({ (t) in
+                    
+                    t.removeObject(forKey: localNameKey, inCollection: .localNames)
+                    
+                    feed.localName = nil
+                    
+                    guard let completion = completion else {
+                        return
+                    }
+                    
+                    DispatchQueue.main.async {
+                        completion(.success(true))
+                    }
+                    
+                })
+                
+            }
+            
+        }
+        else {
+            
+            writeQueue.async { [weak self] in
+                
+                // @TODO: Add CloudCore operation
+                
+                self?.bgConnection.asyncReadWrite({ (t) in
+                    
+                    t.setObject(customTitle, forKey: localNameKey, inCollection: .localNames)
+                    
+                    feed.localName = customTitle
+                    
+                    guard let completion = completion else {
+                        return
+                    }
+                    
+                    DispatchQueue.main.async {
+                        completion(.success(true))
+                    }
+                    
+                })
+                
+            }
+            
+        }
+        
+    }
     
     // MARK: - Folders
     fileprivate var _folders = [Folder]()
@@ -700,11 +786,71 @@ extension DBManager {
     public func purgeFeedsForResync () {
         
         // @TODO: Persist Feed metadata
+        var preSyncMetadata = [UInt: FeedMeta]()
         
-        bgConnection.asyncReadWrite { (transaction) in
+        for feed in feeds {
+            
+            let metadata = self.metadataForFeed(feed)
+            
+            if metadata.localNotifications == true || metadata.readerMode == true {
+                preSyncMetadata[feed.feedID] = metadata
+            }
+            
+        }
+        
+        _feeds = []
+        _folders = []
+        
+        bgConnection.readWrite { (transaction) in
             
             transaction.removeAllObjects(inCollection: .feeds)
             transaction.removeAllObjects(inCollection: .folders)
+            
+        }
+        
+        _preSyncFeedMetadata = preSyncMetadata
+        
+    }
+    
+    public func cleanupDatabase() {
+        
+        // remove articles older than 1 month from the DB.
+        let interval = Date().timeIntervalSince1970
+        
+        writeQueue.async { [weak self] in
+            
+            guard let sself = self else {
+                return
+            }
+        
+            sself.bgConnection.asyncReadWrite { (t) in
+                
+                var keys = t.allKeys(inCollection: .articles).sorted()
+                
+                guard keys.count > 20 else {
+                    return
+                }
+                
+                // check the last 20 items
+                keys = keys.suffix(20)
+                
+                for key in keys {
+                    
+                    guard let metadata = t.metadata(forKey: key, inCollection: .articles) as? ArticleMeta else {
+                        continue
+                    }
+                    
+                    let timestamp = metadata.timestamp
+                    
+                    if ((interval - timestamp) > 2592000) {
+                        
+                        sself._delete(articleID: key, transaction: t)
+                        
+                    }
+                    
+                }
+                
+            }
             
         }
         
@@ -713,6 +859,18 @@ extension DBManager {
 }
 
 // MARK: - DB Registrations
+private let versionTag = "2021-03-10 17:28 IST"
+
+public enum DBManagerViews: String {
+    
+    case rootView
+    case feedView
+    case articlesView
+    case unreadsView
+    case bookmarksView
+    
+}
+
 extension DBManager {
     
     func setupDatabase (_ db: YapDatabase) {
@@ -735,6 +893,219 @@ extension DBManager {
         
     }
     
+    enum ViewGroup: String, CaseIterable {
+        case articles
+        case feeds
+        case folders
+    }
+    
+    func setupViews(_ db: YapDatabase) {
+        
+        let group = YapDatabaseViewGrouping.withKeyBlock { (t, collection, key) -> String? in
+            
+            switch collection {
+            case CollectionNames.articles.rawValue:
+                return ViewGroup.articles.rawValue
+            case CollectionNames.feeds.rawValue:
+                return ViewGroup.feeds.rawValue
+            case CollectionNames.folders.rawValue:
+                return ViewGroup.folders.rawValue
+            default:
+                return nil
+            }
+            
+        }
+        
+        let sort = YapDatabaseViewSorting.withObjectBlock { (t, group, c1, k1, o1, c2, k2, o2) -> ComparisonResult in
+            
+            if group == ViewGroup.feeds.rawValue {
+                
+                guard let f1 = o1 as? Feed, let f2 = o2 as? Feed else {
+                    return .orderedSame
+                }
+                
+                return f1.feedID.compare(other: f2.feedID)
+                
+            }
+            else if group == ViewGroup.folders.rawValue {
+                
+                guard let f1 = o1 as? Folder, let f2 = o2 as? Folder else {
+                    return .orderedSame
+                }
+                
+                return f1.title.compare(f2.title)
+                
+            }
+            else if group == ViewGroup.articles.rawValue {
+                
+                guard let a1 = o1 as? Article, let a2 = o2 as? Article else {
+                    return .orderedSame
+                }
+                
+                return a1.timestamp.compare(a2.timestamp)
+                
+            }
+            
+            return .orderedSame
+            
+        }
+        
+        let view = YapDatabaseAutoView(grouping: group, sorting: sort, versionTag: versionTag)
+        db.register(view, withName: .rootView)
+        
+        // the following views only deal with articles so we limit the scope with a deny list.
+        let options = YapDatabaseViewOptions()
+        
+        let allowList = YapWhitelistBlacklist(whitelist: Set([
+            CollectionNames.articles.rawValue
+        ]))
+        
+        options.allowedCollections = allowList
+        
+        // Feeds View
+        do {
+            
+            let grouping = YapDatabaseViewGrouping.withKeyBlock { (t, col, key) -> String? in
+                
+                if col == CollectionNames.articles.rawValue {
+                    return ViewGroup.articles.rawValue
+                }
+                
+                return nil
+                
+            }
+            
+            let sorting = YapDatabaseViewSorting.withMetadataBlock { (t, group, c1, k1, m1, c2, k2, m2) -> ComparisonResult in
+                
+                guard let md1 = m1 as? ArticleMeta, let md2 = m2 as? ArticleMeta else {
+                    return .orderedSame
+                }
+                
+                return md1.timestamp.compare(other: md2.timestamp)
+                
+            }
+            
+            let view = YapDatabaseAutoView(grouping: grouping, sorting: sorting, versionTag: versionTag)
+            
+            database.register(view, withName: .feedView)
+            
+            let filter = YapDatabaseViewFiltering.withMetadataBlock { [weak self] (t, g, c, k, m) -> Bool in
+                
+                guard c == CollectionNames.articles.rawValue else {
+                    return false
+                }
+                
+                guard let sself = self else {
+                    return false
+                }
+                
+                guard let metadata = m as? ArticleMeta else {
+                    return false
+                }
+                
+                guard let user = sself.user else {
+                    return true
+                }
+                
+                // Filters of the user
+                guard let filters = user.filters,
+                      filters.count > 0 else {
+                    return true
+                }
+                
+                // compare the title to each item in the filters
+                let wordCloud = metadata.titleWordCloud ?? []
+                
+                let set1 = Set(wordCloud)
+                let set2 = Set(filters)
+                
+                return set1.intersection(set2).count > 0
+                
+            }
+            
+            let articlesView = YapDatabaseFilteredView(parentViewName: DBManagerViews.rootView.rawValue, filtering: filter, versionTag: versionTag)
+            
+            db.register(articlesView, withName: .articlesView)
+            
+        }
+        
+        // Unreads View
+        do {
+            
+            let filter = YapDatabaseViewFiltering.withMetadataBlock { (t, g, c, k, m) -> Bool in
+                
+                guard c == CollectionNames.articles.rawValue else {
+                    return false
+                }
+                
+                guard let metadata = m as? ArticleMeta else {
+                    return false
+                }
+                
+                guard metadata.read == false else {
+                    return false
+                }
+                
+                // check date, should be within 14 days
+                let timestamp = metadata.timestamp
+                let now = Date().timeIntervalSince1970
+                
+                guard ((now - timestamp) > 1209600) else {
+                    return false
+                }
+                
+                return true
+                
+            }
+            
+            let unreadsView = YapDatabaseFilteredView(parentViewName: DBManagerViews.articlesView.rawValue, filtering: filter, versionTag: versionTag)
+            
+            db.register(unreadsView, withName: .unreadsView)
+            
+        }
+        
+        // Bookmarks
+        do {
+            
+            let filtering = YapDatabaseViewFiltering.withMetadataBlock { (t, g, c, k, m) -> Bool in
+                
+                guard c == CollectionNames.articles.rawValue else {
+                    return false
+                }
+                
+                guard let metadata = m as? ArticleMeta else {
+                    return false
+                }
+                
+                return metadata.bookmarked == true
+                
+            }
+            
+            let bookmarksView = YapDatabaseFilteredView(parentViewName: DBManagerViews.articlesView.rawValue, filtering: filtering, versionTag: versionTag)
+            
+            db.register(bookmarksView, withName: .bookmarksView)
+            
+        }
+        
+    }
+    
+}
+
+// MARK - YapDatabase Extensions
+extension YapDatabase {
+    
+    public func register(_ ext: YapDatabaseExtension, withName: DBManagerViews) {
+        
+        register(ext, withName: withName.rawValue)
+        
+    }
+    
+    public func view<R: Any>(for name:DBManagerViews, extensionType: R) -> R? {
+        
+        return registeredExtension(name.rawValue) as? R
+        
+    }
+    
 }
 
 extension YapDatabaseReadTransaction {
@@ -747,15 +1118,15 @@ extension YapDatabaseReadTransaction {
         
     }
     
-    func allKeys(inCollection: CollectionNames) -> [String] {
-        
-        return allKeys(inCollection: inCollection.rawValue)
-        
-    }
-    
     func metadata(forKey: String, inCollection: CollectionNames) -> Any? {
         
         return metadata(forKey: forKey, inCollection: inCollection.rawValue)
+        
+    }
+    
+    func allKeys(inCollection collection: CollectionNames) -> [String] {
+        
+        allKeys(inCollection: collection.rawValue)
         
     }
     
