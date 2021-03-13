@@ -94,32 +94,32 @@ class FeedCell: UICollectionViewListCell {
             
             content.image = feed.faviconImage ?? UIImage(systemName: "square.dashed")
             
-            feed.faviconImage.publisher.sink { [weak self] (image) in
-                
-                guard let sself = self else {
-                    return
-                }
-                
-                guard let cv = sself.superview as? UICollectionView else {
-                    return
-                }
-                
-                guard let cell = cv.cellForItem(at: indexPath) else {
-                    return
-                }
-                
-                var c = cell.contentConfiguration as! UIListContentConfiguration
-                
-                if image.size.width > image.size.height {
-                    // @TODO: Center the image here and let it overflow horizontally
-                }
-                
-                c.image = image
-                
-                cell.contentConfiguration = c
-                
-            }
-            .store(in: &cancellables)
+//            feed.faviconImage.publisher.sink { [weak self] (image) in
+//
+//                guard let sself = self else {
+//                    return
+//                }
+//
+//                guard let cv = sself.superview as? UICollectionView else {
+//                    return
+//                }
+//
+//                guard let cell = cv.cellForItem(at: indexPath) else {
+//                    return
+//                }
+//
+//                var c = cell.contentConfiguration as! UIListContentConfiguration
+//
+//                if image.size.width > image.size.height {
+//                    // @TODO: Center the image here and let it overflow horizontally
+//                }
+//
+//                c.image = image
+//
+//                cell.contentConfiguration = c
+//
+//            }
+//            .store(in: &cancellables)
             
             setupFavicon()
             
@@ -156,7 +156,10 @@ class FeedCell: UICollectionViewListCell {
     
     override func updateConfiguration(using state: UICellConfigurationState) {
         
-        var content = contentConfiguration as! UIListContentConfiguration
+        guard var content = contentConfiguration as? UIListContentConfiguration else {
+            return
+        }
+        
         var background = UIBackgroundConfiguration.listSidebarCell().updated(for: state)
         
         if state.isSelected == true {
@@ -207,6 +210,8 @@ class FeedCell: UICollectionViewListCell {
             return
         }
         
+        print("Downloading favicon for feed \(feed.displayTitle) with url \(url)")
+        
         let _ = SDWebImageManager.shared.loadImage(with: url, options: [.scaleDownLargeImages], progress: nil) { [weak self] (image, data, error, cacheType, finished, imageURL) in
             
             guard self?.feed != nil || self?.DS != nil || self?.feed.faviconImage == nil || image != nil else {
@@ -215,6 +220,14 @@ class FeedCell: UICollectionViewListCell {
             }
             
             self?.feed.faviconImage = image
+            
+            guard var content = self?.contentConfiguration as? UIListContentConfiguration else {
+                return
+            }
+            
+            content.image = image
+            
+            self?.contentConfiguration = content
             
         }
         

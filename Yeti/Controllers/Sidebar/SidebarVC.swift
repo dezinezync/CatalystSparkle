@@ -208,6 +208,10 @@ enum SidebarItem: Hashable {
         
         scheduleTimerIfValid()
         
+        #else
+        
+        additionalSafeAreaInsets = UIEdgeInsets(top: 44, left: 0, bottom: 0, right: 0)
+        
         #endif
         
         setupNavigationBar()
@@ -224,16 +228,16 @@ enum SidebarItem: Hashable {
         
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .automatic
-        
+
         if SharedPrefs.useToolbar == true {
-            
+
             if DBManager.shared.syncCoordinator != nil {
                 navigationController?.setToolbarHidden(false, animated: true)
             }
             else {
                 navigationController?.setToolbarHidden(true, animated: true)
             }
-            
+
         }
         
         #endif
@@ -277,19 +281,20 @@ enum SidebarItem: Hashable {
     
     func setupNavigationBar() {
         
+//        edgesForExtendedLayout = UIRectEdge(rawValue: 0)
         navigationController?.navigationBar.isTranslucent = true
         
         #if targetEnvironment(macCatalyst)
         navigationController?.setNavigationBarHidden(true, animated: false)
         #else
         if let displayModeItem = splitViewController?.displayModeButtonItem {
-            
+
             navigationItem.leftBarButtonItems = [displayModeItem, leftBarButtonItem]
-            
+
         }
-        
+
         navigationItem.rightBarButtonItem = rightBarButtonItem
-        
+
         navigationItem.hidesSearchBarWhenScrolling = false
         
         // @TODO: Search Controller
@@ -339,11 +344,11 @@ enum SidebarItem: Hashable {
     
     func setupNotifications() {
         
-        DBManager.shared.feeds.publisher.sink { [weak self] (_) in
-            
-            self?.setupData()
-            
-        }.store(in: &cancellables)
+//        DBManager.shared.feeds.publisher.sink { [weak self] (_) in
+//
+//            self?.setupData()
+//
+//        }.store(in: &cancellables)
         
         DBManager.shared.folders.publisher.sink { [weak self] (_) in
             

@@ -49,14 +49,15 @@ class CustomFeedCell: UICollectionViewListCell {
         content.imageProperties.maximumSize = CGSize(width: 24, height: 24)
         #endif
         
-        accessories = [UICellAccessory.disclosureIndicator()]
-        
+        content.imageProperties.tintColor = feed.color
         content.imageProperties.cornerRadius = 3
         content.imageProperties.reservedLayoutSize = content.imageProperties.maximumSize
         
         content.image = feed.image
         
         contentConfiguration = content
+        
+        accessories = [UICellAccessory.disclosureIndicator()]
         
     }
     

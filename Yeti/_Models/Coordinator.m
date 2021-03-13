@@ -66,7 +66,13 @@ NSString* deviceName() {
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:sidebar];
     
-    [self.splitViewController setViewController:nav forColumn:UISplitViewControllerColumnPrimary];
+    if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+        [self.splitViewController setViewController:nav forColumn:UISplitViewControllerColumnCompact];
+    }
+    
+    [self.splitViewController setViewController:sidebar forColumn:UISplitViewControllerColumnPrimary];
+    
+    self.sidebarVC = sidebar;
     
     UITraitCollection *traitCollection = UIApplication.sharedApplication.windows.firstObject.traitCollection;
     
@@ -85,8 +91,6 @@ NSString* deviceName() {
         showEmpty = YES;
         
     }
-
-    self.sidebarVC = sidebar;
     
     dispatch_async(dispatch_get_main_queue(), ^{
        
