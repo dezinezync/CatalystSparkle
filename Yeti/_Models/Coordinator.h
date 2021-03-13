@@ -95,6 +95,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)showOPMLInterfaceFrom:(id _Nullable)sender direct:(NSInteger)type;
 
+#pragma mark - Shared Containers
+
+- (void)writeToSharedFile:(NSString *)fileName data:(NSData *)data;
+
 #pragma mark - Helpers
 
 //- (UIImage *)imageForSortingOption:(YetiSortOption)option;

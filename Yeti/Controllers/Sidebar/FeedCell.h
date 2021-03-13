@@ -7,11 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Feed.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface FeedCell : UICollectionViewListCell <UnreadCountObservor>
+@interface FeedCell : UICollectionViewListCell 
 
 @property (nonatomic, weak, nullable) Feed *feed;
 @property (nonatomic, weak, nullable) UICollectionViewDiffableDataSource *DS;

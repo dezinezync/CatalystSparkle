@@ -8,6 +8,8 @@
 
 #import "FolderCell.h"
 #import "PrefsManager.h"
+#import "Elytra-Swift.h"
+#import "Folder.h"
 
 @interface FolderCell ()
 

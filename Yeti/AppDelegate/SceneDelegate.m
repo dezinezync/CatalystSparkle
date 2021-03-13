@@ -98,11 +98,12 @@
     
     [self.coordinator start];
     
-    if (activity != nil && [activity.activityType isEqualToString:@"restoration"]) {
-        
-        [self.window.rootViewController continueActivity:activity];
-        
-    }
+    // @TODO
+//    if (activity != nil && [activity.activityType isEqualToString:@"restoration"]) {
+//
+//        [self.window.rootViewController continueActivity:activity];
+//
+//    }
     
 #if TARGET_OS_MACCATALYST
     

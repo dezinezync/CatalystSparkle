@@ -20,6 +20,9 @@ public final class Article: NSObject, Codable, ObservableObject {
     public var enclosures: [Enclosure]?
     public var feedID: UInt!
     public var summary: String?
+    public var bookmarked: Bool! = false
+    public var read: Bool! = false
+    public var fulltext: Bool! = false
     
     enum CodingKeys: String, CodingKey {
         case identifier = "id"
@@ -37,10 +40,6 @@ public final class Article: NSObject, Codable, ObservableObject {
         case read
         case fulltext = "mercury"
     }
-    
-    @Published public var bookmarked: Bool! = false
-    @Published public var read: Bool! = false
-    @Published public var fulltext: Bool! = false
     
     public convenience init(from dict: [String: Any]) {
         

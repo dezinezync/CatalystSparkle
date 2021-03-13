@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "BetterCodable",
+        "repositoryURL": "https://github.com/marksands/BetterCodable.git",
+        "state": {
+          "branch": "master",
+          "revision": "99133960f4b07bedf16034ae47555905aaa40b9c",
+          "version": null
+        }
+      },
+      {
         "package": "DZNetworking",
         "repositoryURL": "https://github.com/DZNS/DZNetworking.git",
         "state": {

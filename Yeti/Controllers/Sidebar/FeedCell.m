@@ -13,6 +13,8 @@
 
 #import "NSString+ImageProxy.h"
 
+#import "Elytra-Swift.h"
+
 @implementation FeedCell
 
 - (void)configure:(Feed *)item indexPath:(nonnull NSIndexPath *)indexPath {

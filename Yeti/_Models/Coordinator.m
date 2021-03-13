@@ -212,7 +212,7 @@ NSString* deviceName() {
         return;
     }
     
-    LaunchVC *vc = [[LaunchVC alloc] initWithNibName:NSStringFromClass(LaunchVC.class) bundle:nil];
+    LaunchVC *vc = [[LaunchVC alloc] initWithNibName:@"LaunchVC" bundle:nil];
     vc.mainCoordinator = self;
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
@@ -657,6 +657,64 @@ NSString* deviceName() {
     
     [NSUserDefaults.standardUserDefaults setBool:YES forKey:@"pushRequest"];
     [NSUserDefaults.standardUserDefaults synchronize];
+    
+}
+
+#pragma mark - Shared Containers
+
+- (NSURL *)sharedContainerURL {
+    
+    return [NSFileManager.defaultManager containerURLForSecurityApplicationGroupIdentifier:@"group.elytra"];
+    
+}
+
+- (void)writeToSharedFile:(NSString *)fileName data:(NSData *)data {
+    
+    NSURL * baseURL = self.sharedContainerURL;
+    
+    NSURL *fileURL = [baseURL URLByAppendingPathComponent:fileName];
+    
+    NSFileManager *fileManager = NSFileManager.defaultManager;
+    
+    NSString *path = fileURL.filePathURL.path;
+    
+    NSError *error = nil;
+    
+    if ([fileManager fileExistsAtPath:path]) {
+        // first remove the existing file
+        NSLogDebug(@"Removing existing file from: %@", path);
+        
+        if ([fileManager removeItemAtPath:path error:&error] == NO) {
+            
+            NSLog(@"Error removing file: %@\nError: %@", path, error.localizedDescription);
+            
+            return;
+        }
+        
+    }
+    
+    if (data == nil) {
+        return;
+    }
+    
+    NSData *dataRep = [NSJSONSerialization dataWithJSONObject:data options:kNilOptions error:&error];
+    
+    if (error != nil) {
+        
+        NSLog(@"Error serialising data: %@", error.localizedDescription);
+        return;
+        
+    }
+    
+    if (dataRep == nil) {
+        return;
+    }
+    
+    if ([dataRep writeToFile:path atomically:YES] == NO) {
+        
+        NSLog(@"Failed to write data to %@", path);
+        
+    }
     
 }
 

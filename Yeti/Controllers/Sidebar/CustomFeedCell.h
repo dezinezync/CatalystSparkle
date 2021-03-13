@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "CustomFeed.h"
 #import "Coordinator.h"
 
 NS_ASSUME_NONNULL_BEGIN

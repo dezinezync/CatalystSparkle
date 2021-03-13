@@ -18,9 +18,10 @@
 
 #import "YetiConstants.h"
 
+
 #import <AuthenticationServices/AuthenticationServices.h>
 
-@interface LaunchVC () <ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding>
+@interface _LaunchVC () <ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding>
 
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *subtitleLabel;
@@ -35,7 +36,7 @@
 
 @end
 
-@implementation LaunchVC
+@implementation _LaunchVC
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -132,6 +133,8 @@
 - (void)processUUID:(NSString *)uuid {
     
     NSLog(@"Got %@", uuid);
+    
+    
     // @TODO
 //    [MyFeedsManager getUserInformationFor:uuid success:^(User *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
 //        

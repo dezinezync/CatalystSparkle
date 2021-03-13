@@ -29,6 +29,10 @@ public enum GroupNames: String, CaseIterable {
     
 }
 
+public extension Notification.Name {
+    static let userUpdated = Notification.Name(rawValue: "userUpdated")
+}
+
 private let DB_VERSION_TAG = "2020-12-23 10:20AM IST"
 
 extension NSNotification.Name {
@@ -46,6 +50,57 @@ public final class DBManager {
     
     public var syncCoordinator: SyncCoordinator?
     
+    fileprivate var _lastUpdated: Date!
+    
+    public var lastUpdated: Date? {
+        
+        get {
+            
+            if _lastUpdated != nil {
+                return _lastUpdated
+            }
+            
+            var d: String?
+            
+            bgConnection.read { (t) in
+                
+                d = t.object(forKey: "lastUpdate", inCollection: .sync) as? String
+                
+            }
+            
+            guard let ds = d else {
+                return nil
+            }
+            
+            let date = Subscription.dateFormatter.date(from: ds)
+            
+            return date
+            
+        }
+        
+        set {
+            
+            _lastUpdated = newValue
+            
+            bgConnection.readWrite { (t) in
+                
+                guard let value = newValue else {
+                    
+                    t.removeObject(forKey: "lastUpdate", inCollection: .sync)
+                    
+                    return
+                }
+                
+                let ds = Subscription.dateFormatter.string(from: value)
+                
+                t.setObject(ds, forKey: "lastUpdate", inCollection: .sync)
+                
+            }
+            
+        }
+        
+    }
+    
     public init() {
         
         setupNotifications()
@@ -53,29 +108,41 @@ public final class DBManager {
     }
     
     // MARK: - DB & Connections
+    fileprivate var _database: YapDatabase!
+    
     public lazy var database: YapDatabase = {
         
-        let fm = FileManager.default
-        #if DEBUG
-        let dbName = "elytra-debug.sqlite"
-        #else
-        let dbName = "elytra.sqlite"
-        #endif
-        
-        guard let baseURL = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
-            fatalError("DB Path could not be constructed")
+        guard _database == nil else {
+            return _database
         }
         
-        let dbURL = baseURL.appendingPathComponent(dbName, isDirectory: false)
-        
-        guard let db = YapDatabase(url: dbURL) else {
-            fatalError("Could not open DB")
+        self.writeQueue.sync {
+            
+            let fm = FileManager.default
+            #if DEBUG
+            let dbName = "elytra-debug.sqlite"
+            #else
+            let dbName = "elytra.sqlite"
+            #endif
+            
+            guard let baseURL = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
+                fatalError("DB Path could not be constructed")
+            }
+            
+            let dbURL = baseURL.appendingPathComponent(dbName, isDirectory: false)
+            
+            guard let db = YapDatabase(url: dbURL) else {
+                fatalError("Could not open DB")
+            }
+            
+            setupDatabase(db)
+            setupViews(db)
+            
+            _database = db
+            
         }
         
-        setupDatabase(db)
-        setupViews(db)
-        
-        return db
+        return _database
     }()
     
     public lazy var uiConnection: YapDatabaseConnection = {
@@ -96,7 +163,6 @@ public final class DBManager {
         config.metadataCacheEnabled = false
         
         return database.newConnection(config)
-        
         
     }()
     
@@ -176,7 +242,9 @@ public final class DBManager {
                     
                 }
                 
-                self._user = u
+                if u?.userID != nil, u?.uuid != nil {
+                    self._user = u
+                }
                 
                 return self._user
             }
@@ -189,6 +257,14 @@ public final class DBManager {
             
             _user = newValue
             setUser(newValue, completion: nil)
+            
+            var userInfo = [String: Any]()
+            
+            if _user != nil {
+                userInfo["user"] = _user
+            }
+            
+            NotificationCenter.default.post(name: .userUpdated, object: self, userInfo: userInfo)
             
         }
         
@@ -229,27 +305,23 @@ public final class DBManager {
             
             var f = [Feed]()
             
-            readQueue.async { [weak self] in
+            uiConnection.read({ (t) in
                 
-                self?.uiConnection.read({ (t) in
-                    
-                    let keys = t.allKeys(inCollection: .feeds)
-                    
-                    if keys.count == 0 {
-                        return;
-                    }
-                    
-                    for k in keys {
-                        
-                        let feed = t.object(forKey: k, inCollection: .feeds) as! Feed
-                        
-                        f.append(feed)
-                        
-                    }
-                    
-                })
+                let keys = t.allKeys(inCollection: .feeds)
                 
-            }
+                if keys.count == 0 {
+                    return;
+                }
+                
+                for k in keys {
+                    
+                    let feed = t.object(forKey: k, inCollection: .feeds) as! Feed
+                    
+                    f.append(feed)
+                    
+                }
+                
+            })
             
             _feeds = f
             
@@ -529,7 +601,7 @@ public final class DBManager {
                     
                     for folder in newValue {
                         
-                        let copy = folder.copy() as! Folder
+                        let copy = folder.codableCopy() as! Folder
                         copy.feeds = []
                         
                         t.setObject(copy, forKey: "\(copy.folderID!)", inCollection: .folders)
@@ -903,57 +975,67 @@ extension DBManager {
     
     func setupViews(_ db: YapDatabase) {
         
-        let group = YapDatabaseViewGrouping.withKeyBlock { (t, collection, key) -> String? in
+        do {
             
-            switch collection {
-            case CollectionNames.articles.rawValue:
-                return ViewGroup.articles.rawValue
-            case CollectionNames.feeds.rawValue:
-                return ViewGroup.feeds.rawValue
-            case CollectionNames.folders.rawValue:
-                return ViewGroup.folders.rawValue
-            default:
-                return nil
+            let group = YapDatabaseViewGrouping.withKeyBlock { (t, collection, key) -> String? in
+                
+                switch collection {
+                case CollectionNames.articles.rawValue:
+                    return ViewGroup.articles.rawValue
+                case CollectionNames.feeds.rawValue:
+                    return ViewGroup.feeds.rawValue
+                case CollectionNames.folders.rawValue:
+                    return ViewGroup.folders.rawValue
+                default:
+                    return nil
+                }
+                
             }
+            
+//            let sort = YapDatabaseViewSorting.withObjectBlock { (t, group, c1, k1, o1, c2: String?, k2: String?, o2: Any?) -> ComparisonResult in
+//
+//                if group == ViewGroup.feeds.rawValue {
+//
+//                    guard let f1 = o1 as? Feed, let f2 = o2 as? Feed else {
+//                        return .orderedSame
+//                    }
+//
+//                    return f1.feedID.compare(other: f2.feedID)
+//
+//                }
+//                else if group == ViewGroup.folders.rawValue {
+//
+//                    guard let f1 = o1 as? Folder, let f2 = o2 as? Folder else {
+//                        return .orderedSame
+//                    }
+//
+//                    return f1.title.compare(f2.title)
+//
+//                }
+//                else if group == ViewGroup.articles.rawValue {
+//
+//                    guard let a1 = o1 as? Article, let a2 = o2 as? Article else {
+//                        return .orderedSame
+//                    }
+//
+//                    return a1.timestamp.compare(a2.timestamp)
+//
+//                }
+//
+//                return .orderedSame
+//
+//            }
+            
+            let sort = YapDatabaseViewSorting.withKeyBlock { (t, group, c1, k1, c2, k2) -> ComparisonResult in
+                
+                return k1.compare(k2)
+                
+            }
+            
+            let view = YapDatabaseAutoView(grouping: group, sorting: sort, versionTag: versionTag)
+            db.register(view, withName: .rootView)
             
         }
-        
-        let sort = YapDatabaseViewSorting.withObjectBlock { (t, group, c1, k1, o1, c2, k2, o2) -> ComparisonResult in
-            
-            if group == ViewGroup.feeds.rawValue {
-                
-                guard let f1 = o1 as? Feed, let f2 = o2 as? Feed else {
-                    return .orderedSame
-                }
-                
-                return f1.feedID.compare(other: f2.feedID)
-                
-            }
-            else if group == ViewGroup.folders.rawValue {
-                
-                guard let f1 = o1 as? Folder, let f2 = o2 as? Folder else {
-                    return .orderedSame
-                }
-                
-                return f1.title.compare(f2.title)
-                
-            }
-            else if group == ViewGroup.articles.rawValue {
-                
-                guard let a1 = o1 as? Article, let a2 = o2 as? Article else {
-                    return .orderedSame
-                }
-                
-                return a1.timestamp.compare(a2.timestamp)
-                
-            }
-            
-            return .orderedSame
-            
-        }
-        
-        let view = YapDatabaseAutoView(grouping: group, sorting: sort, versionTag: versionTag)
-        db.register(view, withName: .rootView)
         
         // the following views only deal with articles so we limit the scope with a deny list.
         let options = YapDatabaseViewOptions()
@@ -989,7 +1071,7 @@ extension DBManager {
             
             let view = YapDatabaseAutoView(grouping: grouping, sorting: sorting, versionTag: versionTag)
             
-            database.register(view, withName: .feedView)
+            db.register(view, withName: .feedView)
             
             let filter = YapDatabaseViewFiltering.withMetadataBlock { [weak self] (t, g, c, k, m) -> Bool in
                 
@@ -1141,6 +1223,12 @@ extension YapDatabaseReadTransaction {
     func allKeys(inCollection collection: CollectionNames) -> [String] {
         
         allKeys(inCollection: collection.rawValue)
+        
+    }
+    
+    func ext(_ extensionName: DBManagerViews) -> YapDatabaseExtensionTransaction? {
+        
+        return ext(extensionName.rawValue)
         
     }
     

@@ -7,11 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Folder.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface FolderCell : UICollectionViewListCell <UnreadCountObservor>
+@interface FolderCell : UICollectionViewListCell 
 
 @property (nonatomic, weak, nullable) Folder *folder;
 

@@ -35,13 +35,35 @@ public final class FeedsManager: NSObject {
     
     public var additionalFeedsToSync = [Feed]()
     
+    var fullVersion: String = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String
+    var majorVersion: String {
+        return fullVersion.components(separatedBy: ".").first!
+    }
+    
     // MARK: - Sessions
     public var session: DZURLSession {
         get {
             #if os(macOS)
             return mainSession
             #else
-            return UIApplication.shared.applicationState == UIApplication.State.background ? backgroundSession : mainSession
+            var S: DZURLSession = mainSession
+            
+            if Thread.isMainThread == true {
+                S = UIApplication.shared.applicationState != UIApplication.State.active ? backgroundSession : mainSession
+            }
+            else {
+                let s = DispatchSemaphore(value: 0)
+                
+                DispatchQueue.main.async { [weak self] in
+                    S = (UIApplication.shared.applicationState != UIApplication.State.active ? self?.backgroundSession : self?.mainSession)!
+                    s.signal()
+                }
+                
+                s.wait()
+            }
+            
+            return S
+            
             #endif
         }
     }
@@ -70,14 +92,14 @@ public final class FeedsManager: NSObject {
         additionalHeaders["Accept"] = "application/json"
         additionalHeaders["Content-Type"] = "application/json"
         additionalHeaders["Accept-Encoding"] = "gzip"
-//        additionalHeaders["X-App-FullVersion"] = fullVersion
-//        additionalHeaders["X-App-MajorVersion"] = majorVersion
+        additionalHeaders["X-App-FullVersion"] = fullVersion
+        additionalHeaders["X-App-MajorVersion"] = majorVersion
         
         sessionConfiguration.httpAdditionalHeaders = additionalHeaders
         
         var s = DZURLSession(sessionConfiguration: sessionConfiguration)
         
-        s.baseURL = URL(string: "http://192.168.1.90:3000")
+        s.baseURL = URL(string: "https://staging.api.elytra.app")
 //        s.baseURL = URL(string: "https://api.elytra.app")
         
         #if !DEBUG
@@ -103,13 +125,16 @@ public final class FeedsManager: NSObject {
             let userID = sself.user?.userID ?? 0
             let uuid = sself.user?.uuid ?? "x890371abdgvdfggsnnaa="
             
+            let key = uuid.data(using: .utf8)?.base64EncodedString(options: .endLineWithLineFeed)
+            
             let timecode = "\(Date().timeIntervalSince1970)"
             let stringToSign = "\(userID)_\(uuid)_\(timecode)"
             
-            let signature = stringToSign.hmac(key: uuid)
+            let signature = stringToSign.hmac(key: key!)
             
             r.addValue(signature, forHTTPHeaderField: "Authorization")
             r.addValue("\(userID)", forHTTPHeaderField: "x-userid")
+            
 //            r.addValue("1", forHTTPHeaderField: "x-bypass")
             r.addValue(timecode, forHTTPHeaderField: "x-timestamp")
             
@@ -143,16 +168,14 @@ public final class FeedsManager: NSObject {
         additionalHeaders["Accept"] = "application/json"
         additionalHeaders["Content-Type"] = "application/json"
         additionalHeaders["Accept-Encoding"] = "gzip"
-//        additionalHeaders["X-App-FullVersion"] = fullVersion
-//        additionalHeaders["X-App-MajorVersion"] = majorVersion
+        additionalHeaders["X-App-FullVersion"] = fullVersion
+        additionalHeaders["X-App-MajorVersion"] = majorVersion
         
         sessionConfiguration.httpAdditionalHeaders = additionalHeaders
         
         var s = DZURLSession(sessionConfiguration: sessionConfiguration)
-        s.baseURL = URL(string: "http://192.168.1.90:3000")
-//        s.baseURL = URL(string: "https://api.elytra.app")
         
-        s.baseURL = URL(string: "http://192.168.1.90:3000")
+        s.baseURL = URL(string: "https://staging.api.elytra.app")
 //        s.baseURL = URL(string: "https://api.elytra.app")
         
         #if !DEBUG
@@ -179,10 +202,12 @@ public final class FeedsManager: NSObject {
             let userID = sself.user?.userID ?? 0
             let uuid = sself.user?.uuid ?? "x890371abdgvdfggsnnaa="
             
+            let key = uuid.data(using: .utf8)?.base64EncodedString(options: .endLineWithLineFeed)
+            
             let timecode = "\(Date().timeIntervalSince1970)"
             let stringToSign = "\(userID)_\(uuid)_\(timecode)"
             
-            let signature = stringToSign.hmac(key: uuid)
+            let signature = stringToSign.hmac(key: key!)
             
             r.addValue(signature, forHTTPHeaderField: "Authorization")
             r.addValue("\(userID)", forHTTPHeaderField: "x-userid")

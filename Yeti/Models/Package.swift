@@ -22,6 +22,11 @@ let package = Package(
             name: "HTMLEntities",
             url: "https://github.com/Kitura/swift-html-entities.git",
             from: "3.0.0"
+        ),
+        .package(
+            name: "BetterCodable",
+            url: "https://github.com/marksands/BetterCodable.git",
+            .branch("master")
         )
     ],
     targets: [
@@ -30,7 +35,8 @@ let package = Package(
         .target(
             name: "Models",
             dependencies: [
-                "HTMLEntities"
+                "HTMLEntities",
+                "BetterCodable"
             ]),
         .testTarget(
             name: "ModelsTests",

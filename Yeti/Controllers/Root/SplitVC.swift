@@ -17,6 +17,14 @@ import DBManager
         
         self.init(style: .tripleColumn)
         
+        FeedsManager.shared.user = DBManager.shared.user
+        
+    }
+    
+    override func viewDidLoad() {
+        
+        super.viewDidLoad()
+        
         if traitCollection.userInterfaceIdiom == .phone {
             primaryBackgroundStyle = .none
         }
@@ -33,9 +41,15 @@ import DBManager
         
         preferredSupplementaryColumnWidth = 320
         minimumSupplementaryColumnWidth = 320
+        
+        DispatchQueue.main.async { [weak self] in
+            self?.preferredSplitBehavior = .tile
+            self?.preferredDisplayMode = .twoBesideSecondary
+        }
         #else
         minimumPrimaryColumnWidth = 298
         minimumSupplementaryColumnWidth = 375
+        setupDisplayModes(size: view.bounds.size)
         #endif
         
         preferredSplitBehavior = .displace
@@ -43,21 +57,6 @@ import DBManager
         presentsWithGesture = true
         
         self.delegate = self
-        
-    }
-    
-    override func viewDidLoad() {
-        
-        super.viewDidLoad()
-        
-        #if !targetEnvironment(macCatalyst)
-        setupDisplayModes(size: view.bounds.size)
-        #else
-        DispatchQueue.main.async { [weak self] in
-            self?.preferredSplitBehavior = .tile
-            self?.preferredDisplayMode = .twoBesideSecondary
-        }
-        #endif
         
     }
     

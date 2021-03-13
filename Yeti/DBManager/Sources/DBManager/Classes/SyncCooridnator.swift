@@ -32,7 +32,7 @@ public class SyncCoordinator: NSObject {
     #if os(iOS)
     public var backgroundFetchHandler: ((_ result: UIBackgroundFetchResult) -> Void)?
     #endif
-    fileprivate var syncProgressCallback: ((_ progress: Double) -> Void)?
+    public var syncProgressCallback: ((_ progress: Double) -> Void)?
     
     fileprivate var syncQueue: OperationQueue?
     
@@ -183,7 +183,7 @@ public class SyncCoordinator: NSObject {
                     return
                 }
                 
-                if changeSet.pages == 0 {
+                if page == 1 && changeSet.pages == 0 {
                     DispatchQueue.main.async {
                         sself.internalProgressCallback(1, nil)
                     }

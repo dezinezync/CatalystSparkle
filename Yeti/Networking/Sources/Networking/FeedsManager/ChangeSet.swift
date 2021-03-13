@@ -17,4 +17,13 @@ public struct ChangeSet: Codable {
     public let reads: [Int: Bool]?
     public let pages: UInt
     
+    public enum CodingKeys: String, CodingKey {
+        case changeToken
+        case changeTokenID = "changeIDToken"
+        case customFeeds
+        case articles
+        case reads
+        case pages
+    }
+    
 }

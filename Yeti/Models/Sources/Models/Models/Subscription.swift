@@ -58,9 +58,10 @@ public final class Subscription: NSObject, Codable {
     
     public var created: Date!
     public var status: SubscriptionStatus! = .expired
-    public var preAppStore: Bool = false
-    public var lifetime: Bool = false
-    public var external: Bool = false
+    
+    public var preAppStore: Bool? = false
+    public var lifetime: Bool? = false
+    public var external: Bool? = false
     
     public convenience init(from dict: [String: Any]) {
         

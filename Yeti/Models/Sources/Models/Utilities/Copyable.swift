@@ -7,12 +7,12 @@
 
 import Foundation
 
-protocol Copyable {
-    func copy() -> Self
+public protocol Copyable {
+    func codableCopy() -> Self
 }
 
-extension Copyable {
-    func copy() -> Self where Self: Codable {
+public extension Copyable {
+    func codableCopy () -> Self where Self: Codable {
         do {
             let encoded = try JSONEncoder().encode(self)
             let decoded = try JSONDecoder().decode(Self.self, from: encoded)

@@ -8,6 +8,8 @@
 
 #import "CustomFeedCell.h"
 
+#import "Elytra-Swift.h"
+
 @implementation CustomFeedCell
 
 - (void)configure:(CustomFeed *)item indexPath:(nonnull NSIndexPath *)indexPath {
