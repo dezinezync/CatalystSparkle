@@ -51,7 +51,7 @@ import YapDatabase
     
 }
 
-fileprivate enum SidebarSection: Int, CaseIterable {
+enum SidebarSection: Int, CaseIterable {
     
     case custom
     case folders
@@ -94,7 +94,7 @@ enum SidebarItem: Hashable {
             var config = UICollectionLayoutListConfiguration(appearance: appearance)
             config.showsSeparators = false
             
-            if section == 0 {
+            if section == SidebarSection.custom.rawValue {
                 #if targetEnvironment(macCatalyst)
                 config.headerMode = .supplementary
                 #endif
@@ -102,7 +102,7 @@ enum SidebarItem: Hashable {
                 return NSCollectionLayoutSection.list(using: config, layoutEnvironment: environment)
             }
             
-            if section == 2 {
+            if section == SidebarSection.folders.rawValue {
                 // this is only applicable for feeds with folders
                 config.headerMode = .firstItemInSection
             }
@@ -682,8 +682,14 @@ enum SidebarItem: Hashable {
     
     @objc func beginRefreshingAll(_ sender: Any?) {
         
-        if let sender = sender as? UIRefreshControl,
-           sender.isRefreshing == true {
+        guard DBManager.shared.syncCoordinator == nil else {
+            
+            if let r = sender as? UIRefreshControl,
+               r.isRefreshing == false {
+                
+                r.beginRefreshing()
+                
+            }
             
             return
             

@@ -103,7 +103,11 @@ public final class DBManager {
     
     public init() {
         
-        setupNotifications()
+        let db = database
+        setupDatabase(db)
+        setupViews(db)
+        
+        setupNotifications(db)
         
     }
     
@@ -134,9 +138,6 @@ public final class DBManager {
             guard let db = YapDatabase(url: dbURL) else {
                 fatalError("Could not open DB")
             }
-            
-            setupDatabase(db)
-            setupViews(db)
             
             _database = db
             
@@ -192,10 +193,9 @@ public final class DBManager {
     // MARK: - Setups
     fileprivate var cancellables = [AnyCancellable]()
     
-    internal func setupNotifications() {
+    internal func setupNotifications(_ db: YapDatabase) {
         
-        NotificationCenter.default.publisher(for: .YapDatabaseModifiedNotification)
-            .subscribe(on: readQueue)
+        NotificationCenter.default.publisher(for: .YapDatabaseModified, object: db)
             .sink { [weak self] (note) in
                 
                 guard let sself = self else {
@@ -206,8 +206,8 @@ public final class DBManager {
                 let notes = sself.uiConnection.beginLongLivedReadTransaction()
                 let notes2 = sself.countsConnection.beginLongLivedReadTransaction()
                 
-                var uniqueNotes = Set(arrayLiteral: notes)
-                uniqueNotes = uniqueNotes.union(Set(arrayLiteral: notes2))
+                var uniqueNotes = Set(notes)
+                uniqueNotes = uniqueNotes.union(Set(notes2))
                 
                 let notifications = uniqueNotes.map { $0 }
                 
@@ -957,8 +957,9 @@ extension DBManager {
         
         db.registerCodableSerialization(Article.self, metadata: ArticleMeta.self, forCollection: .articles)
         
-        db.registerCodableSerialization(String.self, forCollection: .sync)
-        db.registerCodableSerialization(String.self, forCollection: .localNames)
+        // Setting these causes the serializer to fail.
+//        db.registerCodableSerialization(String.self, forCollection: .sync)
+//        db.registerCodableSerialization(String.self, forCollection: .localNames)
     
         db.registerCodableSerialization(Content.self, forCollection: .articlesContent)
         db.registerCodableSerialization(Content.self, forCollection: .articlesFulltext)

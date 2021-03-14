@@ -281,7 +281,7 @@ public class SyncCoordinator: NSObject {
                 if let syncToken = sself.inProgressSyncToken,
                    let syncTokenID = sself.inProgressSyncTokenID {
                     
-                    DBManager.shared.bgConnection.asyncReadWrite { (t) in
+                    DBManager.shared.bgConnection.readWrite { (t) in
                         
                         t.setObject(syncToken, forKey: SYNC_TOKEN, inCollection: .sync)
                         
@@ -292,12 +292,10 @@ public class SyncCoordinator: NSObject {
                             
                         }
                         
-                    } completionBlock: {
-                        
-                        sself.inProgressSyncToken = nil
-                        sself.inProgressSyncTokenID = nil
-                        
                     }
+                    
+                    sself.inProgressSyncToken = nil
+                    sself.inProgressSyncTokenID = nil
                     
                 }
                 

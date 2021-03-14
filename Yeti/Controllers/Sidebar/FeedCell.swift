@@ -127,7 +127,7 @@ class FeedCell: UICollectionViewListCell {
         
         contentConfiguration = content
         
-        let shouldIndent = isExploring == false && indexPath.section != 2
+        let shouldIndent = isExploring == false && indexPath.section != SidebarSection.folders.rawValue
         
         if shouldIndent == true {
             indentationLevel = 1
