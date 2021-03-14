@@ -624,7 +624,7 @@ public final class DBManager {
                     
                     for folder in newValue {
                         
-                        let copy = folder.codableCopy() as! Folder
+                        let copy = folder.codableCopy()
                         copy.feeds = []
                         
                         t.setObject(copy, forKey: "\(copy.folderID!)", inCollection: .folders)
@@ -956,7 +956,7 @@ extension DBManager {
 }
 
 // MARK: - DB Registrations
-private let versionTag = "2021-03-10 17:28 IST"
+private let versionTag = "2021-03-14 19:32 IST"
 
 public enum DBManagerViews: String {
     
@@ -989,12 +989,6 @@ extension DBManager {
         
     }
     
-    enum ViewGroup: String, CaseIterable {
-        case articles
-        case feeds
-        case folders
-    }
-    
     func setupViews(_ db: YapDatabase) {
         
         do {
@@ -1003,11 +997,11 @@ extension DBManager {
                 
                 switch collection {
                 case CollectionNames.articles.rawValue:
-                    return ViewGroup.articles.rawValue
+                    return GroupNames.articles.rawValue
                 case CollectionNames.feeds.rawValue:
-                    return ViewGroup.feeds.rawValue
+                    return GroupNames.feeds.rawValue
                 case CollectionNames.folders.rawValue:
-                    return ViewGroup.folders.rawValue
+                    return GroupNames.folders.rawValue
                 default:
                     return nil
                 }
@@ -1074,7 +1068,7 @@ extension DBManager {
             let grouping = YapDatabaseViewGrouping.withKeyBlock { (t, col, key) -> String? in
                 
                 if col == CollectionNames.articles.rawValue {
-                    return ViewGroup.articles.rawValue
+                    return GroupNames.articles.rawValue
                 }
                 
                 return nil

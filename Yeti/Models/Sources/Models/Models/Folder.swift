@@ -24,7 +24,12 @@ public final class Folder: NSObject, Codable, ObservableObject {
     public var feeds = [Feed]()
     
     // https://stackoverflow.com/a/59587459/1387258
-    public var unread: UInt {
+    @objc public var unread: UInt {
+        
+        guard feeds.count > 0 else {
+            return 0
+        }
+        
         return feeds.reduce(0) { (result, feed) -> UInt in
             return result + feed.unread
         }

@@ -837,6 +837,9 @@ enum SidebarItem: Hashable {
             
             if progress == 1 {
                 DBManager.shared.syncCoordinator = nil
+                
+                sself.updateCounters()
+                
             }
             
             if progress == 0 {
@@ -1095,6 +1098,66 @@ extension SidebarVC {
         }
         
         // @TODO: Restoration activity
+        
+    }
+    
+}
+
+extension SidebarVC {
+    
+    // @TODO: Move to Swift Coordinator
+    func updateCounters() {
+        
+        DBManager.shared.countsConnection.asyncRead { (t) in
+            
+            guard let txn = t.ext(DBManagerViews.unreadsView.rawValue) as? YapDatabaseFilteredViewTransaction else {
+                return
+            }
+            
+            let group = GroupNames.articles.rawValue
+            
+            let total = Int(txn.numberOfItems(inGroup: group))
+            
+            guard total > 0 else {
+                // set all feeds to 0
+                return
+            }
+            
+            // feedID : Unread Count
+            var feedsMapping = [UInt: UInt]()
+            
+            txn.enumerateKeysAndMetadata(inGroup: group, with: [], range: NSMakeRange(0, total)) { (c, k) -> Bool in
+                return true
+            } using: { (c, k, metadata, index, stop) in
+                
+                guard let metadata = metadata as? ArticleMeta,
+                      metadata.read == false else {
+                    return
+                }
+                
+                let feedID = metadata.feedID
+                
+                if feedsMapping[feedID] == nil {
+                    feedsMapping[feedID] = 0
+                }
+                
+                feedsMapping[feedID]! += 1
+                
+            }
+            
+            print(feedsMapping)
+            
+            for feedID in feedsMapping.keys {
+                
+                guard let feed = DBManager.shared.feedForID(feedID) else {
+                    continue
+                }
+                
+                feed.unread = feedsMapping[feedID]
+                
+            }
+            
+        }
         
     }
     

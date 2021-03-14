@@ -35,7 +35,9 @@ class FolderCell: UICollectionViewListCell {
         
         content.text = folder.title
         
-        folder.title.publisher.sink { [weak self] (title) in
+        folder.title.publisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] (title) in
             
             guard let sself = self else {
                 return
@@ -53,22 +55,29 @@ class FolderCell: UICollectionViewListCell {
         
         if SharedPrefs.showUnreadCounts == true {
             
-//            folder.publisher(for: \.unread).sink { [weak self] (unread) in
-//                
-//                guard let sself = self else {
-//                    return
-//                }
-//                
-//                guard var c = sself.contentConfiguration as? UIListContentConfiguration else {
-//                    return
-//                }
-//                
-//                c.secondaryText = "\(unread)"
-//                
-//                sself.contentConfiguration = c
-//                
-//            }
-//            .store(in: &cancellables)
+            folder.publisher(for: \.unread)
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] (unread) in
+                
+                guard let sself = self else {
+                    return
+                }
+                
+                guard var c = sself.contentConfiguration as? UIListContentConfiguration else {
+                    return
+                }
+                
+                if unread > 0 {
+                    c.secondaryText = "\(unread)"
+                }
+                else {
+                    c.secondaryText = nil
+                }
+                
+                sself.contentConfiguration = c
+                
+            }
+            .store(in: &cancellables)
             
         }
         
