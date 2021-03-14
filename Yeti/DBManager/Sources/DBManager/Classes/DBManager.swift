@@ -549,7 +549,9 @@ public final class DBManager {
             
             var f = [Folder]()
             
-            uiConnection.read { [weak self] (t) in
+            let connection = database.newConnection()
+            
+            connection.read { [weak self] (t) in
                 
                 let keys = t.allKeys(inCollection: .folders)
                 
@@ -974,7 +976,7 @@ extension DBManager {
         
         db.registerCodableSerialization(Folder.self, forCollection: .folders)
         
-        db.registerCodableSerialization(User.self, forCollection: .folders)
+        db.registerCodableSerialization(User.self, forCollection: .user)
         
         db.registerCodableSerialization(Article.self, metadata: ArticleMeta.self, forCollection: .articles)
         
@@ -984,8 +986,6 @@ extension DBManager {
     
         db.registerCodableSerialization(Content.self, forCollection: .articlesContent)
         db.registerCodableSerialization(Content.self, forCollection: .articlesFulltext)
-        
-        db.registerCodableSerialization(User.self, forCollection: .user)
         
     }
     
