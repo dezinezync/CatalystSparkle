@@ -171,6 +171,9 @@ enum SidebarItem: Hashable {
             else if case .feed(_) = item {
                 return cv.dequeueConfiguredReusableCell(using: sself.feedRegistration, for: indexPath, item: item)
             }
+            else if case .folder(_) = item {
+                return cv.dequeueConfiguredReusableCell(using: sself.folderRegistration, for: indexPath, item: item)
+            }
             
             return nil
             
@@ -311,7 +314,7 @@ enum SidebarItem: Hashable {
     }
     
     fileprivate var feedRegistration: UICollectionView.CellRegistration<FeedCell, SidebarItem>!
-//    fileprivate var folderRegistration: UICollectionView.CellRegistration<FolderCell, SidebarItem>!
+    fileprivate var folderRegistration: UICollectionView.CellRegistration<FolderCell, SidebarItem>!
     fileprivate var customFeedRegistration: UICollectionView.CellRegistration<CustomFeedCell, SidebarItem>!
     
     func setupCollectionView() {
@@ -335,6 +338,17 @@ enum SidebarItem: Hashable {
                 
                 cell.DS = self?.DS
                 cell.configure(item: item, indexPath: indexPath)
+                
+            }
+            
+        })
+        
+        folderRegistration = UICollectionView.CellRegistration<FolderCell, SidebarItem>(handler: { [weak self] (cell, indexPath, item) in
+            
+            if case .folder(_) = item {
+                
+                cell.DS = self?.DS
+                cell.configure(item, indexPath: indexPath)
                 
             }
             
@@ -454,57 +468,59 @@ enum SidebarItem: Hashable {
 
         DS.apply(customSnapshot, to: SidebarSection.custom.rawValue)
 
-//        var foldersSnapshot = NSDiffableDataSourceSectionSnapshot<SidebarItem>()
-//
-//        if DBManager.shared.feeds.count > 0 {
-//
-//            let alphaSort = NSSortDescriptor(key: "displayTitle", ascending: true, selector: #selector(NSString.localizedCompare(_:)))
-//
-//            if DBManager.shared.folders.count > 0 {
-//
-//                let uniqueFolders = DBManager.shared.folders.map { SidebarItem.folder($0) }
-//
-//                foldersSnapshot.append(uniqueFolders)
-//
-//                for folderItem in uniqueFolders {
-//
-//                    if case .folder(let folder) = folderItem {
-//
-//                        let feeds = folder.feeds.map { $0() }
-//
-//                        if feeds.count > 0 {
-//
-//                            let uniqueFeeds = (Array(Set(feeds)) as NSArray)
-//                                .sortedArray(using: [alphaSort])
-//                                .map { SidebarItem.feed($0 as! Feed) }
-//
-//                            foldersSnapshot.append(uniqueFeeds, to: folderItem)
-//
-//                        }
-//
-//                        // if the folder was originally in the expanded state, expand it from here too so the visual state is maintained.
-//                        if let sc = sectionSnapshot,
-//                           sc.items.count > 0,
-//                           sc.contains(folderItem) == true,
-//                           sc.isExpanded(folderItem) {
-//
-//                            foldersSnapshot.expand([folderItem])
-//
-//                        }
-//
-//                    }
-//
-//                }
-//
-//            }
-//
-//            DS.apply(foldersSnapshot, to: SidebarSection.folders.rawValue)
+        var foldersSnapshot = NSDiffableDataSourceSectionSnapshot<SidebarItem>()
+
+        if DBManager.shared.feeds.count > 0 {
+
+            if DBManager.shared.folders.count > 0 {
+
+                let uniqueFolders = DBManager.shared.folders.map { SidebarItem.folder($0) }
+
+                foldersSnapshot.append(uniqueFolders)
+
+                for folderItem in uniqueFolders {
+
+                    if case .folder(let folder) = folderItem {
+
+                        let feeds = folder.feeds.map { $0 }
+
+                        if feeds.count > 0 {
+
+                            let uniqueFeeds = Array(Set(feeds))
+                                .sorted(by: { (lhs, rhs) -> Bool in
+                                    
+                                    return lhs.displayTitle.localizedCompare(rhs.displayTitle) == .orderedAscending
+                                    
+                                })
+                                .map { SidebarItem.feed($0) }
+
+                            foldersSnapshot.append(uniqueFeeds, to: folderItem)
+
+                        }
+
+                        // if the folder was originally in the expanded state, expand it from here too so the visual state is maintained.
+                        if let sc = sectionSnapshot,
+                           sc.items.count > 0,
+                           sc.contains(folderItem) == true,
+                           sc.isExpanded(folderItem) {
+
+                            foldersSnapshot.expand([folderItem])
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+            DS.apply(foldersSnapshot, to: SidebarSection.folders.rawValue)
             
-            let feedsWithoutFolders = DBManager.shared.feeds //.filter { $0.folderID == nil || $0.folderID == 0 }
+            let feedsWithoutFolders = DBManager.shared.feeds.filter { $0.folderID == nil || $0.folderID == 0 }
+            
+            var feedsSnapshot = NSDiffableDataSourceSectionSnapshot<SidebarItem>()
             
             if feedsWithoutFolders.count > 0 {
-                
-                var feedsSnapshot = NSDiffableDataSourceSectionSnapshot<SidebarItem>()
                 
                 let alphaSorted = Array(Set(feedsWithoutFolders)).sorted { (lhs, rhs) -> Bool in
                     return lhs.displayTitle.localizedCompare(rhs.displayTitle) == .orderedAscending
@@ -512,11 +528,15 @@ enum SidebarItem: Hashable {
                     
                 feedsSnapshot.append(alphaSorted.map { SidebarItem.feed($0) })
                 
-                DS.apply(feedsSnapshot, to: SidebarSection.feeds.rawValue)
-                
             }
             
-//        }
+            DS.apply(feedsSnapshot, to: SidebarSection.feeds.rawValue)
+            
+        }
+        
+        if needsUpdateOfStructs == true {
+            needsUpdateOfStructs = false
+        }
         
         #if targetEnvironment(macCatalyst)
         
@@ -685,9 +705,9 @@ enum SidebarItem: Hashable {
         guard DBManager.shared.syncCoordinator == nil else {
             
             if let r = sender as? UIRefreshControl,
-               r.isRefreshing == false {
+               r.isRefreshing == true {
                 
-                r.beginRefreshing()
+                r.endRefreshing()
                 
             }
             
@@ -701,7 +721,15 @@ enum SidebarItem: Hashable {
         
     }
     
-    @objc public var needsUpdateOfStructs: Bool = false
+    @objc public var needsUpdateOfStructs: Bool = false {
+        
+        didSet {
+            if needsUpdateOfStructs == true {
+                setupData()
+            }
+        }
+        
+    }
     
     fileprivate var refreshFeedsCount: Int = 0
     
@@ -740,8 +768,8 @@ enum SidebarItem: Hashable {
                     DBManager.shared.feeds = feeds
                     DBManager.shared.folders = folders
                     
-                    if sself.needsUpdateOfStructs == true {
-                        sself.needsUpdateOfStructs = false
+                    if sself.needsUpdateOfStructs == false {
+                        sself.needsUpdateOfStructs = true
                     }
                     
                     sself.backgroundFetchHandler?(.newData)
@@ -806,6 +834,10 @@ enum SidebarItem: Hashable {
             let animated = UIApplication.shared.applicationState == UIApplication.State.active
             
             sself.progressView?.setProgress(Float(progress), animated: animated)
+            
+            if progress == 1 {
+                DBManager.shared.syncCoordinator = nil
+            }
             
             if progress == 0 {
                 sself.navigationController?.setToolbarHidden(false, animated: animated)

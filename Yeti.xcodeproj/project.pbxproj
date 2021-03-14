@@ -12,7 +12,6 @@
 		F003C20D2539685E00312913 /* Atkinson-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F003C2092539685D00312913 /* Atkinson-Italic.ttf */; };
 		F003C20E2539685E00312913 /* Atkinson-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F003C20A2539685E00312913 /* Atkinson-Regular.ttf */; };
 		F003C20F2539685E00312913 /* Atkinson-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F003C20B2539685E00312913 /* Atkinson-BoldItalic.ttf */; };
-		F004561024DE85B60094A6A3 /* FolderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F004560F24DE85B60094A6A3 /* FolderCell.m */; };
 		F00685FE251F780E00239C80 /* elytramac.bundle in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F0783C88248F685C00C7A280 /* elytramac.bundle */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F00B0C1723F432CA002BCF41 /* CustomizeVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F00B0C1623F432CA002BCF41 /* CustomizeVC.m */; };
 		F00B0C1C23F4390B002BCF41 /* CustomizeCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F00B0C1A23F4390B002BCF41 /* CustomizeCell.m */; };
@@ -101,6 +100,7 @@
 		F02B705124EA7E5C00DD607F /* IDMZoomingScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = F02B702924EA7E5C00DD607F /* IDMZoomingScrollView.m */; };
 		F02B705224EA7E5C00DD607F /* IDMPhotoBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = F02B702B24EA7E5C00DD607F /* IDMPhotoBrowser.m */; };
 		F02B705324EA7E5C00DD607F /* IDMTapDetectingView.m in Sources */ = {isa = PBXBuildFile; fileRef = F02B702D24EA7E5C00DD607F /* IDMTapDetectingView.m */; };
+		F031A69225FDC68B0046467A /* FolderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F031A69125FDC68B0046467A /* FolderCell.swift */; };
 		F032A750244D5F9A0024AC63 /* PrefsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F032A74F244D5F9A0024AC63 /* PrefsManager.m */; };
 		F032A75A244D7D680024AC63 /* YetiThemeKit.m in Sources */ = {isa = PBXBuildFile; fileRef = F032A759244D7D680024AC63 /* YetiThemeKit.m */; };
 		F032A75D244D7D8C0024AC63 /* YetiTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = F032A75B244D7D8C0024AC63 /* YetiTheme.m */; };
@@ -1459,8 +1459,6 @@
 		F003C2092539685D00312913 /* Atkinson-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Atkinson-Italic.ttf"; sourceTree = "<group>"; };
 		F003C20A2539685E00312913 /* Atkinson-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Atkinson-Regular.ttf"; sourceTree = "<group>"; };
 		F003C20B2539685E00312913 /* Atkinson-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Atkinson-BoldItalic.ttf"; sourceTree = "<group>"; };
-		F004560E24DE85B60094A6A3 /* FolderCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FolderCell.h; sourceTree = "<group>"; };
-		F004560F24DE85B60094A6A3 /* FolderCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FolderCell.m; sourceTree = "<group>"; };
 		F0068735251F808700239C80 /* PreferencePanes.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PreferencePanes.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk/System/Library/Frameworks/PreferencePanes.framework; sourceTree = DEVELOPER_DIR; };
 		F00710C6229FA1F0002943B2 /* BarPositioning.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BarPositioning.h; sourceTree = "<group>"; };
 		F00B0C1523F432CA002BCF41 /* CustomizeVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomizeVC.h; sourceTree = "<group>"; };
@@ -1597,6 +1595,7 @@
 		F02B702D24EA7E5C00DD607F /* IDMTapDetectingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IDMTapDetectingView.m; sourceTree = "<group>"; };
 		F02B702E24EA7E5C00DD607F /* IDMUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDMUtils.h; sourceTree = "<group>"; };
 		F02B702F24EA7E5C00DD607F /* IDMTapDetectingImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDMTapDetectingImageView.h; sourceTree = "<group>"; };
+		F031A69125FDC68B0046467A /* FolderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderCell.swift; sourceTree = "<group>"; };
 		F032A739244D5F9A0024AC63 /* PrefsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefsManager.h; sourceTree = "<group>"; };
 		F032A74F244D5F9A0024AC63 /* PrefsManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrefsManager.m; sourceTree = "<group>"; };
 		F032A758244D7D670024AC63 /* YetiThemeKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YetiThemeKit.h; sourceTree = "<group>"; };
@@ -3249,8 +3248,7 @@
 				F05AD60325F9E7DB003B2D69 /* SidebarVC.swift */,
 				F026F79325FB27DB004AC31E /* FeedCell.swift */,
 				F073101425FCE6FD0087658C /* CustomFeedCell.swift */,
-				F004560E24DE85B60094A6A3 /* FolderCell.h */,
-				F004560F24DE85B60094A6A3 /* FolderCell.m */,
+				F031A69125FDC68B0046467A /* FolderCell.swift */,
 				F050F30B2521FB980032328F /* SidebarSearchView.h */,
 				F050F30C2521FB980032328F /* SidebarSearchView.m */,
 			);
@@ -4871,6 +4869,7 @@
 				F02B704D24EA7E5C00DD607F /* IDMTapDetectingImageView.m in Sources */,
 				F0EFA63A205FDC5A00815ED7 /* ArticleHelperView.m in Sources */,
 				F00F647124EC1DE700E5727C /* Gallery.m in Sources */,
+				F031A69225FDC68B0046467A /* FolderCell.swift in Sources */,
 				F0A0500D21F0728A00A46524 /* NewFeedDeckController.m in Sources */,
 				F042ACF425244A0500AA440A /* NSObject+SimpleSwizzle.m in Sources */,
 				F00F643A24EC1BC700E5727C /* FeedItem.m in Sources */,
@@ -4916,7 +4915,6 @@
 				F00F643B24EC1BC700E5727C /* FeedMeta.m in Sources */,
 				F00F646A24EC1DE700E5727C /* Heading.m in Sources */,
 				F0EDADB825DE9B2A0074ED1E /* PreviewFolderCell.swift in Sources */,
-				F004561024DE85B60094A6A3 /* FolderCell.m in Sources */,
 				F07DCA3B20C517D20068ED51 /* UITableViewController+KeyboardScroll.m in Sources */,
 				F00F644024EC1BC700E5727C /* Content.m in Sources */,
 				F05C7A9F20D8E1F3007D6B5C /* TableHeader.m in Sources */,

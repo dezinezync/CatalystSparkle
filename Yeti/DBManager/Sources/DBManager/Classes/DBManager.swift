@@ -543,7 +543,7 @@ public final class DBManager {
         
         get {
             
-            guard _folders.count != 0 else {
+            guard _folders.count == 0 else {
                 return _folders
             }
             
@@ -555,27 +555,27 @@ public final class DBManager {
                 
                 for k in keys {
                     
-                    let folder = t.object(forKey: k, inCollection: .folders) as! Folder
+                    if let folder = t.object(forKey: k, inCollection: .folders) as? Folder {
                     
-                    if folder.feedIDs.count > 0 {
-                        
-                        for id in folder.feedIDs {
+                        if folder.feedIDs.count > 0 {
                             
-                            if let feed = self?.feedForID(id) {
+                            for id in folder.feedIDs {
                                 
-                                folder.feeds.append { () -> Feed? in
-                                    return feed
+                                if let feed = self?.feedForID(id) {
+                                    
+                                    folder.feeds.append(feed)
+                                    
+                                    feed.folderID = folder.folderID
+                                    
                                 }
-                                
-                                feed.folderID = folder.folderID
                                 
                             }
                             
                         }
                         
+                        f.append(folder)
+                        
                     }
-                    
-                    f.append(folder)
                     
                 }
                 
@@ -593,6 +593,27 @@ public final class DBManager {
             
             guard newValue.count > 0 else {
                 return
+            }
+            
+            if feeds.count > 0 {
+                
+                // Map feeds to folders
+                for folder in _folders {
+                    
+                    folder.feedIDs.forEach { (feedID) in
+                        
+                        if let feed = feeds.first(where: { $0.feedID == feedID }) {
+                            
+                            feed.folderID = folder.folderID
+                            
+                            folder.feeds.append(feed)
+                            
+                        }
+                        
+                    }
+                    
+                }
+                
             }
             
             writeQueue.async { [weak self] in

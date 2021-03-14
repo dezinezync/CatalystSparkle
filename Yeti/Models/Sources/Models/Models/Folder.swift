@@ -12,15 +12,7 @@ public final class Folder: NSObject, Codable, ObservableObject {
     public var title: String!
     public var folderID: UInt!
     public var expanded: Bool = false
-    public var feedIDs = Set<UInt>() {
-        didSet {
-            
-            let _ = feedIDs.map { $0 }
-            
-            //TODO: get from FeedsManager and update it to feeds weak array
-            
-        }
-    }
+    public var feedIDs = Set<UInt>()
     
     public enum CodingKeys: String, CodingKey {
         case title
@@ -29,17 +21,12 @@ public final class Folder: NSObject, Codable, ObservableObject {
         case expanded
     }
     
-    fileprivate enum AdditionalInfoKeys: String, CodingKey {
-        case feeds
-    }
-    
-    // https://stackoverflow.com/a/60707942/1387258
-    public var feeds = [() -> Feed?]()
+    public var feeds = [Feed]()
     
     // https://stackoverflow.com/a/59587459/1387258
     public var unread: UInt {
-        return feeds.reduce(0) { (result: UInt, closure: @escaping () -> Feed?) -> UInt in
-            return result + (closure()?.unread ?? 0)
+        return feeds.reduce(0) { (result, feed) -> UInt in
+            return result + feed.unread
         }
     }
     

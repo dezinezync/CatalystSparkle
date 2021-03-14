@@ -94,40 +94,13 @@ class FeedCell: UICollectionViewListCell {
             
             content.image = feed.faviconImage ?? UIImage(systemName: "square.dashed")
             
-//            feed.faviconImage.publisher.sink { [weak self] (image) in
-//
-//                guard let sself = self else {
-//                    return
-//                }
-//
-//                guard let cv = sself.superview as? UICollectionView else {
-//                    return
-//                }
-//
-//                guard let cell = cv.cellForItem(at: indexPath) else {
-//                    return
-//                }
-//
-//                var c = cell.contentConfiguration as! UIListContentConfiguration
-//
-//                if image.size.width > image.size.height {
-//                    // @TODO: Center the image here and let it overflow horizontally
-//                }
-//
-//                c.image = image
-//
-//                cell.contentConfiguration = c
-//
-//            }
-//            .store(in: &cancellables)
-            
             setupFavicon()
             
         }
         
         contentConfiguration = content
         
-        let shouldIndent = isExploring == false && indexPath.section != SidebarSection.folders.rawValue
+        let shouldIndent = isExploring == false && indexPath.section != SidebarSection.feeds.rawValue
         
         if shouldIndent == true {
             indentationLevel = 1
@@ -214,7 +187,7 @@ class FeedCell: UICollectionViewListCell {
         
         let _ = SDWebImageManager.shared.loadImage(with: url, options: [.scaleDownLargeImages], progress: nil) { [weak self] (image, data, error, cacheType, finished, imageURL) in
             
-            guard self?.feed != nil || self?.DS != nil || self?.feed.faviconImage == nil || image != nil else {
+            guard self?.feed != nil || self?.feed.faviconImage == nil || image != nil else {
                 self?.setupDefaultIcon()
                 return
             }
