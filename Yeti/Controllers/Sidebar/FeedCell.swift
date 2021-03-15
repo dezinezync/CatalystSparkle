@@ -212,12 +212,12 @@ class FeedCell: UICollectionViewListCell {
                 return
             }
             
+            sfeed.faviconImage = image
+            
             guard sself.feed != nil || sself.feed.faviconImage == nil || image != nil else {
                 sself.setupDefaultIcon()
                 return
             }
-            
-            sfeed.faviconImage = image
             
             guard var content = self?.contentConfiguration as? UIListContentConfiguration else {
                 return
