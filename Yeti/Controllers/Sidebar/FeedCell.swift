@@ -201,14 +201,23 @@ class FeedCell: UICollectionViewListCell {
         
         print("Downloading favicon for feed \(feed.displayTitle) with url \(url)")
         
-        let _ = SDWebImageManager.shared.loadImage(with: url, options: [.scaleDownLargeImages], progress: nil) { [weak self] (image, data, error, cacheType, finished, imageURL) in
+        let _ = SDWebImageManager.shared.loadImage(with: url, options: [.scaleDownLargeImages], progress: nil) { [weak self, weak feed] (image, data, error, cacheType, finished, imageURL) in
             
-            guard self?.feed != nil || self?.feed.faviconImage == nil || image != nil else {
-                self?.setupDefaultIcon()
+            guard let sself = self,
+                  let sfeed = feed else {
                 return
             }
             
-            self?.feed.faviconImage = image
+            guard sself.feed == sfeed else {
+                return
+            }
+            
+            guard sself.feed != nil || sself.feed.faviconImage == nil || image != nil else {
+                sself.setupDefaultIcon()
+                return
+            }
+            
+            sfeed.faviconImage = image
             
             guard var content = self?.contentConfiguration as? UIListContentConfiguration else {
                 return
@@ -216,7 +225,7 @@ class FeedCell: UICollectionViewListCell {
             
             content.image = image
             
-            self?.contentConfiguration = content
+            sself.contentConfiguration = content
             
         }
         
