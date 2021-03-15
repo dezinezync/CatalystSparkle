@@ -19,6 +19,8 @@ import YapDatabase
     case unread
     case today
     case bookmarks
+    case folder
+    case author
 }
 
 @objc class CustomFeed: NSObject {
@@ -1092,10 +1094,25 @@ extension SidebarVC {
         
         switch item {
         case .custom(let c):
-            mainCoordinator?.showCustomVC(c)
+            print(c)
+//            mainCoordinator?.showCustomVC(c)
         case .feed(let f):
-            print(f)
-//            mainCoordinator?.showFeedVC(f)
+            guard let splitVC = self.splitViewController else {
+                return
+            }
+            
+            let vc = FeedVC(style: .plain)
+            vc.feed = f
+            vc.type = .natural
+            
+            if splitVC.traitCollection.userInterfaceIdiom == .phone {
+                let nav = splitVC.viewControllers.first as! UINavigationController
+                nav.pushViewController(vc, animated: true)
+            }
+            else {
+                splitVC.setViewController(vc, for: .supplementary)
+            }
+            
         case .folder(let f):
             print(f)
 //            mainCoordinator.showFolderFeed(f)

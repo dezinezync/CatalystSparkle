@@ -10,9 +10,9 @@
 
 @protocol ScrollLoading <NSObject>
 
-- (BOOL)isLoadingNext;
+- (BOOL)isLoading;
 
-- (BOOL)cantLoadNext;
+- (BOOL)canLoadNext;
 
 - (void)loadNextPage;
 

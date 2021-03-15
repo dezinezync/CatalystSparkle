@@ -32,7 +32,7 @@
         
         if (delegate && [scrollView.delegate respondsToSelector:@selector(loadNextPage)]) {
             
-            if (![delegate isLoadingNext] && ![delegate cantLoadNext]) {
+            if (![delegate isLoading] && [delegate canLoadNext]) {
                 
                 NSLog(@"Loading next page for: %@", self);
                 

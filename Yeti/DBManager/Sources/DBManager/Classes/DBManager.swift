@@ -33,7 +33,7 @@ public extension Notification.Name {
     static let userUpdated = Notification.Name(rawValue: "userUpdated")
 }
 
-private let DB_VERSION_TAG = "2020-12-23 10:20AM IST"
+private let DB_VERSION_TAG = "2020-12-23 11:24AM IST"
 
 extension NSNotification.Name {
     static let YapDatabaseModifiedNotification = NSNotification.Name("YapDatabaseModifiedNotification")
@@ -957,7 +957,7 @@ extension DBManager {
 }
 
 // MARK: - DB Registrations
-private let versionTag = "2021-03-14 19:32 IST"
+private let versionTag = "2021-03-15 10:53 IST"
 
 public enum DBManagerViews: String {
     
@@ -1057,11 +1057,11 @@ extension DBManager {
         // the following views only deal with articles so we limit the scope with a deny list.
         let options = YapDatabaseViewOptions()
         
-        let allowList = YapWhitelistBlacklist(whitelist: Set([
-            CollectionNames.articles.rawValue
-        ]))
+        let all = Set(CollectionNames.allCases).filter { $0 != .articles }
         
-        options.allowedCollections = allowList
+        let denyList = YapWhitelistBlacklist(blacklist: all)
+        
+        options.allowedCollections = denyList
         
         // Feeds View
         do {

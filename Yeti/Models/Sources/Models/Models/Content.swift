@@ -7,6 +7,7 @@
 
 import Foundation
 import CoreGraphics
+import BetterCodable
 
 public struct ContentSize: Codable {
     
@@ -76,8 +77,8 @@ public final class Content: NSObject, Codable {
     
     public var content: String?
     public var ranges: [ContentRange]?
-    public var type: String!
-    public var url: URL?
+    @LossyOptional public var type: String!
+    @LossyOptional public var url: URL?
     public var alt: String?
     public var identifier: String?
     public var level: UInt?

@@ -101,6 +101,7 @@
 		F02B705224EA7E5C00DD607F /* IDMPhotoBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = F02B702B24EA7E5C00DD607F /* IDMPhotoBrowser.m */; };
 		F02B705324EA7E5C00DD607F /* IDMTapDetectingView.m in Sources */ = {isa = PBXBuildFile; fileRef = F02B702D24EA7E5C00DD607F /* IDMTapDetectingView.m */; };
 		F031A69225FDC68B0046467A /* FolderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F031A69125FDC68B0046467A /* FolderCell.swift */; };
+		F031A7B225FF1B870046467A /* FeedVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F031A7B125FF1B870046467A /* FeedVC.swift */; };
 		F032A750244D5F9A0024AC63 /* PrefsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F032A74F244D5F9A0024AC63 /* PrefsManager.m */; };
 		F032A75A244D7D680024AC63 /* YetiThemeKit.m in Sources */ = {isa = PBXBuildFile; fileRef = F032A759244D7D680024AC63 /* YetiThemeKit.m */; };
 		F032A75D244D7D8C0024AC63 /* YetiTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = F032A75B244D7D8C0024AC63 /* YetiTheme.m */; };
@@ -1596,6 +1597,7 @@
 		F02B702E24EA7E5C00DD607F /* IDMUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDMUtils.h; sourceTree = "<group>"; };
 		F02B702F24EA7E5C00DD607F /* IDMTapDetectingImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDMTapDetectingImageView.h; sourceTree = "<group>"; };
 		F031A69125FDC68B0046467A /* FolderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderCell.swift; sourceTree = "<group>"; };
+		F031A7B125FF1B870046467A /* FeedVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedVC.swift; sourceTree = "<group>"; };
 		F032A739244D5F9A0024AC63 /* PrefsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefsManager.h; sourceTree = "<group>"; };
 		F032A74F244D5F9A0024AC63 /* PrefsManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrefsManager.m; sourceTree = "<group>"; };
 		F032A758244D7D670024AC63 /* YetiThemeKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YetiThemeKit.h; sourceTree = "<group>"; };
@@ -2685,6 +2687,7 @@
 		F070C3131FBABCA300912CCF /* Feeds */ = {
 			isa = PBXGroup;
 			children = (
+				F031A7B125FF1B870046467A /* FeedVC.swift */,
 				F0B21BB8208C7F4F007E5A3B /* NewFolderVC.h */,
 				F0B21BB9208C7F4F007E5A3B /* NewFolderVC.m */,
 				F0B21BBA208C7F4F007E5A3B /* NewFolderVC.xib */,
@@ -4880,6 +4883,7 @@
 				F03C6040251F702200F442C7 /* DZStepper.m in Sources */,
 				F03AC035205533D900FB111A /* CodeParser.m in Sources */,
 				F032A760244D7F470024AC63 /* TypeFactory.m in Sources */,
+				F031A7B225FF1B870046467A /* FeedVC.swift in Sources */,
 				F001A8422505E8F0006175B9 /* SceneDelegate.m in Sources */,
 				F04E92BC21B5427B00AD1FB2 /* YTExtractor.m in Sources */,
 				F0E5F50824CEC854007E6D1E /* PhotosController.m in Sources */,

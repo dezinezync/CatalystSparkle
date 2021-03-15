@@ -11,16 +11,16 @@ import BetterCodable
 public final class Article: NSObject, Codable, ObservableObject {
     
     public var identifier: UInt!
-    public var title: String?
-    public var url: URL!
-    public var author: String?
+    @LossyOptional public var title: String?
+    @LossyOptional public var url: URL!
+    @LossyOptional public var author: String?
     public var content = [Content]()
     @LossyOptional public var coverImage: URL?
     public var guid: String!
     public var timestamp: Date!
     public var enclosures: [Enclosure]?
     public var feedID: UInt!
-    public var summary: String?
+    @LossyOptional public var summary: String?
     public var bookmarked: Bool! = false
     public var read: Bool! = false
     public var fulltext: Bool! = false

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import BetterCodable
 
 public struct _Range: Codable {
     
@@ -45,9 +46,9 @@ public struct _Range: Codable {
 public final class ContentRange: NSObject, Codable {
     
     public var element: String?
-    public var range: _Range!
+    @LossyOptional public var range: _Range!
     public var type: String?
-    public var url: URL?
+    @LossyOptional public var url: URL?
     public var level: UInt?
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
