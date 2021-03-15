@@ -22,6 +22,15 @@ public final class Folder: NSObject, Codable, ObservableObject {
         case expanded
     }
     
+    public var updatingCounters: Bool = false {
+        willSet {
+            if updatingCounters == true,
+               newValue == false {
+                updateCounters()
+            }
+        }
+    }
+    
     public var feeds = [Feed]() {
         didSet {
             
@@ -37,11 +46,12 @@ public final class Folder: NSObject, Codable, ObservableObject {
                         return
                     }
                     
-                    let value = sself.feeds.map { $0.unread }.reduce(0) { counter, newValue in
-                        counter + newValue
+                    guard sself.updatingCounters == false else {
+                        return
                     }
                     
-                    sself.unread = value
+                    sself.updateCounters()
+                    
                 }
             
         }
@@ -51,16 +61,6 @@ public final class Folder: NSObject, Codable, ObservableObject {
     fileprivate var feedsUnread: AnyCancellable!
     
     @Published public var unread: UInt = 0
-//    {
-//
-//        guard feeds.count > 0 else {
-//            return 0
-//        }
-//
-//        return feeds.reduce(0) { (result, feed) -> UInt in
-//            return result + feed.unread
-//        }
-//    }
     
     public convenience init(from dict: [String: Any]) {
         
@@ -120,6 +120,16 @@ extension Folder {
         dict["expanded"] = expanded
         
         return dict
+        
+    }
+    
+    public func updateCounters () {
+        
+        let value = self.feeds.map { $0.unread }.reduce(0) { counter, newValue in
+            counter + newValue
+        }
+        
+        unread = value
         
     }
     

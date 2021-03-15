@@ -1127,6 +1127,12 @@ extension SidebarVC {
                 return
             }
             
+            let folders = DBManager.shared.folders
+            
+            for folder in folders {
+                folder.updatingCounters = true
+            }
+            
             // feedID : Unread Count
             var feedsMapping = [UInt: UInt]()
             var totalToday: UInt = 0
@@ -1173,6 +1179,10 @@ extension SidebarVC {
                 
                 feed.unread = feedsMapping[feedID]
                 
+            }
+            
+            for folder in folders {
+                folder.updatingCounters = false
             }
             
         }

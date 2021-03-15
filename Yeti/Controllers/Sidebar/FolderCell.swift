@@ -58,23 +58,12 @@ class FolderCell: UICollectionViewListCell {
             folder.$unread
                 .receive(on: DispatchQueue.main)
                 .sink { [weak self] (unread) in
+                    
+                    guard let sself = self else {
+                        return
+                    }
                 
-                guard let sself = self else {
-                    return
-                }
-                
-                guard var c = sself.contentConfiguration as? UIListContentConfiguration else {
-                    return
-                }
-                
-                if unread > 0 {
-                    c.secondaryText = "\(unread)"
-                }
-                else {
-                    c.secondaryText = nil
-                }
-                
-                sself.contentConfiguration = c
+                    CoalescingQueue.standard.add(sself, #selector(sself.updateUnreadCount))
                 
             }
             .store(in: &cancellables)
@@ -163,6 +152,20 @@ class FolderCell: UICollectionViewListCell {
         
         backgroundConfiguration = background
         contentConfiguration = updatedContent
+        
+    }
+    
+    @objc func updateUnreadCount () {
+        
+        guard var content = contentConfiguration as? UIListContentConfiguration else {
+            return
+        }
+        
+        let unread = self.folder?.unread ?? 0
+        
+        content.secondaryText = unread > 0 ? "\(unread)" : ""
+        
+        contentConfiguration = content
         
     }
     
