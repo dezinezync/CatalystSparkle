@@ -55,7 +55,7 @@ class FolderCell: UICollectionViewListCell {
         
         if SharedPrefs.showUnreadCounts == true {
             
-            folder.publisher(for: \.unread)
+            folder.$unread
                 .receive(on: DispatchQueue.main)
                 .sink { [weak self] (unread) in
                 

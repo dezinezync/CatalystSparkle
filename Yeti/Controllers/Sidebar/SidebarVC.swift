@@ -321,11 +321,11 @@ enum SidebarItem: Hashable {
         
         self.collectionView.dragInteractionEnabled = true
         
-        customFeedRegistration = UICollectionView.CellRegistration<CustomFeedCell, SidebarItem>(handler: { (cell, indexPath, item) in
+        customFeedRegistration = UICollectionView.CellRegistration<CustomFeedCell, SidebarItem>(handler: { [weak self] (cell, indexPath, item) in
             
             if case .custom(_) = item {
                 
-//                cell.DS = self?.DS
+                cell.coordinator = self?.mainCoordinator
                 cell.configure(item: item, indexPath: indexPath)
                 
             }
@@ -1108,9 +1108,9 @@ extension SidebarVC {
     // @TODO: Move to Swift Coordinator
     func updateCounters() {
         
-        DBManager.shared.countsConnection.asyncRead { (t) in
+        DBManager.shared.countsConnection.asyncRead { [weak self] (t) in
             
-            guard let txn = t.ext(DBManagerViews.unreadsView.rawValue) as? YapDatabaseFilteredViewTransaction else {
+            guard let txn = t.ext(DBManagerViews.articlesView.rawValue) as? YapDatabaseFilteredViewTransaction else {
                 return
             }
             
@@ -1125,6 +1125,9 @@ extension SidebarVC {
             
             // feedID : Unread Count
             var feedsMapping = [UInt: UInt]()
+            var totalToday: UInt = 0
+            
+            let calendar = NSCalendar.current
             
             txn.enumerateKeysAndMetadata(inGroup: group, with: [], range: NSMakeRange(0, total)) { (c, k) -> Bool in
                 return true
@@ -1141,9 +1144,20 @@ extension SidebarVC {
                     feedsMapping[feedID] = 0
                 }
                 
+                if calendar.isDateInToday(Date(timeIntervalSince1970: metadata.timestamp)) {
+                    totalToday += 1
+                }
+                
                 feedsMapping[feedID]! += 1
                 
             }
+            
+            let unread = feedsMapping.values.reduce(0) { (result, c) -> UInt in
+                return result + c
+            }
+            
+            self?.mainCoordinator?.totalUnread = unread
+            self?.mainCoordinator?.totalToday = totalToday
             
             print(feedsMapping)
             

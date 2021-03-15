@@ -49,8 +49,24 @@ class FeedCell: UICollectionViewListCell {
             
             if SharedPrefs.showUnreadCounts == true {
                 
-                feed.$unread.sink { (unread) in
-                    content.secondaryText = (unread ?? 0) > 0 ? "\(unread!)" : ""
+                content.secondaryText = (feed.unread ?? 0) > 0 ? "\(feed.unread!)" : ""
+                
+                feed.$unread
+                    .receive(on: DispatchQueue.main)
+                    .sink { [weak self] (unread) in
+                    
+                        guard let sself = self else {
+                            return
+                        }
+                        
+                        guard var c = sself.contentConfiguration as? UIListContentConfiguration else {
+                            return
+                        }
+                        
+                        c.secondaryText = (unread ?? 0) > 0 ? "\(unread!)" : ""
+                        
+                        sself.contentConfiguration = content
+                        
                 }
                 .store(in: &cancellables)
                 

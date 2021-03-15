@@ -103,11 +103,10 @@ public final class DBManager {
     
     public init() {
         
-        let db = database
-        setupDatabase(db)
-        setupViews(db)
+        setupDatabase(self.database)
+        setupViews(self.database)
         
-        setupNotifications(db)
+        setupNotifications(self.database)
         
     }
     
@@ -132,6 +131,8 @@ public final class DBManager {
             guard let baseURL = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
                 fatalError("DB Path could not be constructed")
             }
+            
+            try? fm.createDirectory(at: baseURL, withIntermediateDirectories: true, attributes: nil)
             
             let dbURL = baseURL.appendingPathComponent(dbName, isDirectory: false)
             

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 public final class Folder: NSObject, Codable, ObservableObject {
     
@@ -21,19 +22,45 @@ public final class Folder: NSObject, Codable, ObservableObject {
         case expanded
     }
     
-    public var feeds = [Feed]()
-    
-    // https://stackoverflow.com/a/59587459/1387258
-    @objc public var unread: UInt {
-        
-        guard feeds.count > 0 else {
-            return 0
-        }
-        
-        return feeds.reduce(0) { (result, feed) -> UInt in
-            return result + feed.unread
+    public var feeds = [Feed]() {
+        didSet {
+            
+            if feedsUnread != nil {
+                feedsUnread.cancel()
+                feedsUnread = nil
+            }
+            
+            feedsUnread = Publishers.MergeMany(feeds.map { $0.$unread })
+                .sink { [weak self] _ in
+                    
+                    guard let sself = self else {
+                        return
+                    }
+                    
+                    let value = sself.feeds.map { $0.unread }.reduce(0) { counter, newValue in
+                        counter + newValue
+                    }
+                    
+                    sself.unread = value
+                }
+            
         }
     }
+    
+    // https://stackoverflow.com/a/59587459/1387258
+    fileprivate var feedsUnread: AnyCancellable!
+    
+    @Published public var unread: UInt = 0
+//    {
+//
+//        guard feeds.count > 0 else {
+//            return 0
+//        }
+//
+//        return feeds.reduce(0) { (result, feed) -> UInt in
+//            return result + feed.unread
+//        }
+//    }
     
     public convenience init(from dict: [String: Any]) {
         

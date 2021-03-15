@@ -14,6 +14,7 @@ import SDWebImage
 class CustomFeedCell: UICollectionViewListCell {
     
     weak var feed: CustomFeed!
+    weak var coordinator: MainCoordinator?
     var cancellables = [AnyCancellable]()
     
     func configure(item: SidebarItem, indexPath: IndexPath) {
@@ -34,10 +35,25 @@ class CustomFeedCell: UICollectionViewListCell {
         
         if SharedPrefs.showUnreadCounts == true {
             
-//            feed.$unread.sink { (unread) in
-//                content.secondaryText = (unread ?? 0) > 0 ? "\(unread!)" : ""
-//            }
-//            .store(in: &cancellables)
+            switch feed.feedType {
+            case .unread:
+                coordinator?.publisher(for: \.totalUnread)
+                    .receive(on: DispatchQueue.main)
+                    .sink(receiveValue: { [weak self] (unread) in
+                        self?.updateUnreadCount(unread)
+                    })
+                    .store(in: &cancellables)
+                
+            case .today:
+                coordinator?.publisher(for: \.totalToday)
+                    .receive(on: DispatchQueue.main)
+                    .sink(receiveValue: { [weak self] (unread) in
+                        self?.updateUnreadCount(unread)
+                    })
+                    .store(in: &cancellables)
+            default:
+                break
+            }
             
         }
         
@@ -79,7 +95,10 @@ class CustomFeedCell: UICollectionViewListCell {
     
     override func updateConfiguration(using state: UICellConfigurationState) {
         
-        var content = contentConfiguration as! UIListContentConfiguration
+        guard var content = contentConfiguration as? UIListContentConfiguration else {
+            return
+        }
+        
         var background = UIBackgroundConfiguration.listSidebarCell().updated(for: state)
         
         if state.isSelected == true {
@@ -95,6 +114,18 @@ class CustomFeedCell: UICollectionViewListCell {
         
         contentConfiguration = content
         backgroundConfiguration = background
+        
+    }
+    
+    func updateUnreadCount (_ unread: UInt) {
+        
+        guard var content = contentConfiguration as? UIListContentConfiguration else {
+            return
+        }
+        
+        content.secondaryText = unread > 0 ? "\(unread)" : ""
+        
+        contentConfiguration = content
         
     }
     

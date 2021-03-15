@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import BetterCodable
 
 public final class Article: NSObject, Codable, ObservableObject {
     
@@ -14,7 +15,7 @@ public final class Article: NSObject, Codable, ObservableObject {
     public var url: URL!
     public var author: String?
     public var content = [Content]()
-    public var coverImage: URL?
+    @LossyOptional public var coverImage: URL?
     public var guid: String!
     public var timestamp: Date!
     public var enclosures: [Enclosure]?

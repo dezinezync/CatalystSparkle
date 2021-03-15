@@ -27,6 +27,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MainCoordinator : NSObject
 
+@property (nonatomic, assign) NSUInteger totalToday;
+
+@property (nonatomic, assign) NSUInteger totalUnread;
+
 @property (nonatomic, strong) NSMutableArray <Coordinator *> * childCoordinators;
 
 @property (nonatomic, weak) SplitVC *splitViewController;
