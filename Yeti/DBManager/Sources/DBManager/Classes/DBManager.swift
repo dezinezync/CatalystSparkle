@@ -33,7 +33,7 @@ public extension Notification.Name {
     static let userUpdated = Notification.Name(rawValue: "userUpdated")
 }
 
-private let DB_VERSION_TAG = "2020-12-23 11:24AM IST"
+private let DB_VERSION_TAG = "2021-03-16 16:47AM IST"
 
 extension NSNotification.Name {
     static let YapDatabaseModifiedNotification = NSNotification.Name("YapDatabaseModifiedNotification")
@@ -1009,44 +1009,38 @@ extension DBManager {
                 
             }
             
-//            let sort = YapDatabaseViewSorting.withObjectBlock { (t, group, c1, k1, o1, c2: String?, k2: String?, o2: Any?) -> ComparisonResult in
-//
-//                if group == ViewGroup.feeds.rawValue {
-//
-//                    guard let f1 = o1 as? Feed, let f2 = o2 as? Feed else {
-//                        return .orderedSame
-//                    }
-//
-//                    return f1.feedID.compare(other: f2.feedID)
-//
-//                }
-//                else if group == ViewGroup.folders.rawValue {
-//
-//                    guard let f1 = o1 as? Folder, let f2 = o2 as? Folder else {
-//                        return .orderedSame
-//                    }
-//
-//                    return f1.title.compare(f2.title)
-//
-//                }
-//                else if group == ViewGroup.articles.rawValue {
-//
-//                    guard let a1 = o1 as? Article, let a2 = o2 as? Article else {
-//                        return .orderedSame
-//                    }
-//
-//                    return a1.timestamp.compare(a2.timestamp)
-//
-//                }
-//
-//                return .orderedSame
-//
-//            }
-            
-            let sort = YapDatabaseViewSorting.withKeyBlock { (t, group, c1, k1, c2, k2) -> ComparisonResult in
-                
-                return k1.compare(k2)
-                
+            let sort = YapDatabaseViewSorting.withObjectBlock { (t, group, c1, k1, o1, c2: String?, k2: String?, o2: Any?) -> ComparisonResult in
+
+                if group == GroupNames.feeds.rawValue {
+
+                    guard let f1 = o1 as? Feed, let f2 = o2 as? Feed else {
+                        return .orderedSame
+                    }
+
+                    return f1.feedID.compare(other: f2.feedID)
+
+                }
+                else if group == GroupNames.folders.rawValue {
+
+                    guard let f1 = o1 as? Folder, let f2 = o2 as? Folder else {
+                        return .orderedSame
+                    }
+
+                    return f1.title.compare(f2.title)
+
+                }
+                else if group == GroupNames.articles.rawValue {
+
+                    guard let a1 = o1 as? Article, let a2 = o2 as? Article else {
+                        return .orderedSame
+                    }
+
+                    return a1.timestamp.compare(a2.timestamp)
+
+                }
+
+                return .orderedSame
+
             }
             
             let view = YapDatabaseAutoView(grouping: group, sorting: sort, versionTag: versionTag)
@@ -1055,6 +1049,7 @@ extension DBManager {
         }
         
         // the following views only deal with articles so we limit the scope with a deny list.
+        // using an allowList does not work as expected.
         let options = YapDatabaseViewOptions()
         
         let all = Set(CollectionNames.allCases).filter { $0 != .articles }

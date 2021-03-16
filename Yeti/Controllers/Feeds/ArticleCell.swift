@@ -53,6 +53,8 @@ class ArticleCell: UITableViewCell {
         selectedBackgroundView?.backgroundColor = tintColor.withAlphaComponent(0.3)
         #endif
         
+        separatorInset = .zero
+        
         resetUI()
         
     }

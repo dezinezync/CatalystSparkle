@@ -37,8 +37,25 @@ public struct ContentSize: Codable {
         
         let values = try decoder.singleValueContainer()
         
-        let val = try values.decode(String.self)
-        self.size = setSize(size: val)
+        do {
+            let val = try values.decode([String: [Int]].self)
+            
+            if let size = val["size"], size.count == 2 {
+                self.size = CGSize(width: size.first!, height: size.last!)
+            }
+            
+        }
+        catch {
+            
+            do {
+                let val = try values.decode(String.self)
+                size = setSize(size: val)
+            }
+            catch {
+                print(error)
+            }
+            
+        }
         
     }
     

@@ -52,13 +52,16 @@ class FeedVC: UITableViewController {
         }
     }
     
+    static var sorting: FeedSorting = FeedSorting(rawValue: (SharedPrefs.sortingOption as NSString).integerValue)!
+    
     var sorting: FeedSorting = .descending {
         didSet {
-            setupViews()
+            SharedPrefs.sortingOption = "\(sorting)"
+            updateFeedSorting()
         }
     }
     
-    var articles = Set<Article>()
+    var articles = NSMutableOrderedSet()
     
     static var filteringTag: UInt = 0
     
@@ -83,14 +86,12 @@ class FeedVC: UITableViewController {
 
         setupFeed()
         setupData()
-        setupViews()
+        updateFeedSorting()
         
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        loadNextPage()
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
     }
     
     // MARK: - Setups
@@ -116,6 +117,75 @@ class FeedVC: UITableViewController {
     fileprivate var total: Int = -1
     fileprivate var currentPage: UInt = 0
     fileprivate var dbFilteredView: YapDatabaseFilteredView!
+    
+    func updateFeedSorting() {
+        
+        let sortingOption = self.sorting
+        
+        DBManager.shared.readQueue.async { [weak self] in
+            
+            let sortingClosure = YapDatabaseViewSorting.withMetadataBlock { (t, g, c1, k1, m1, c2, k2, m2) -> ComparisonResult in
+                
+                guard let a1 = m1 as? ArticleMeta, let a2 = m2 as? ArticleMeta else {
+                    return .orderedSame
+                }
+
+                let result = a1.timestamp.compare(other: a2.timestamp)
+                
+                if result == .orderedSame {
+                    return result
+                }
+                
+                if sortingOption.isAscending == true {
+                    
+                    return result
+                    
+                }
+                
+                if result == .orderedDescending {
+                    return .orderedAscending
+                }
+                
+                return .orderedDescending
+                
+            }
+            
+            DBManager.shared.bgConnection.readWrite { (t) in
+                
+                guard let sself = self else {
+                    return
+                }
+                
+                guard let txn = t.ext(DBManagerViews.feedView.rawValue) as? YapDatabaseAutoViewTransaction else {
+                    return
+                }
+                
+                FeedVC.filteringTag += 1
+                
+                txn.setSorting(sortingClosure, versionTag: "\(FeedVC.filteringTag)")
+                
+                DispatchQueue.main.async {
+                    sself._didSetSortingOption()
+                }
+                
+            }
+            
+        }
+        
+    }
+    
+    func _didSetSortingOption() {
+        
+        articles = NSMutableOrderedSet()
+        state = .empty
+        setupData()
+        
+        setupViews()
+        
+        total = -1
+        currentPage = 0
+        
+    }
     
     func setupViews() {
         
@@ -169,6 +239,8 @@ class FeedVC: UITableViewController {
         
         dbFilteredView = filteredView
         
+        loadNextPage()
+        
     }
     
     func setupState() {
@@ -209,9 +281,18 @@ class FeedVC: UITableViewController {
     
     func setupData() {
         
+        if Thread.isMainThread == false {
+            
+            DispatchQueue.main.async { [weak self] in
+                self?.setupData()
+            }
+            
+            return
+        }
+        
         var snapshot = NSDiffableDataSourceSnapshot<Int, Article>()
         snapshot.appendSections([0])
-        snapshot.appendItems(articles.map { $0 })
+        snapshot.appendItems(articles.map { $0 as! Article })
         
         DS.apply(snapshot, animatingDifferences: view.window != nil, completion: nil)
         
@@ -312,7 +393,7 @@ extension FeedVC: ScrollLoading {
                     return
                 }
                 
-                sself.articles.insert(article)
+                sself.articles.add(article)
                 
             }
             
