@@ -29,7 +29,9 @@ class ArticleCell: UITableViewCell {
     fileprivate var isShowingCover: Bool {
         return !coverImage.isHidden
     }
+    
     fileprivate var faviconTask: SDWebImageOperation?
+    fileprivate var coverTask: SDWebImageOperation?
     
     override func awakeFromNib() {
         
@@ -93,6 +95,9 @@ class ArticleCell: UITableViewCell {
         
         faviconTask?.cancel()
         faviconTask = nil
+        
+        coverTask?.cancel()
+        coverTask = nil
         
         semanticContentAttribute = .unspecified
         titleLabel.textAlignment = .left
@@ -323,25 +328,38 @@ class ArticleCell: UITableViewCell {
         
         coverImage.contentMode = .center
         
-        coverImage.sd_setImage(with: url, placeholderImage: UIImage(systemName: "rectangle.on.rectangle.angled"), options: [.scaleDownLargeImages, .retryFailed]) { [weak coverImage] (image, error, cacheType, imageURL) in
+        DispatchQueue.global(qos: .userInteractive).async { [weak self, weak coverImage] in
             
-            if let err = error,
-                proxyURL == url
-                    && (err as NSError).userInfo[SDWebImageErrorDownloadStatusCodeKey] as! Int == 404 {
+            self?.coverTask = SDWebImageManager.shared.loadImage(with: url, options: [.scaleDownLargeImages, .retryFailed], context: nil, progress: nil, completed: { (image, data, error, cacheType, finished, imageURL) in
                 
-                #if DEBUG
-                print("Failed to download cover image with URL:", proxyURL)
-                #endif
+                guard finished == true else {
+                    return
+                }
                 
-                return
+                if let err = error,
+                    proxyURL == url
+                        && (err as NSError).userInfo[SDWebImageErrorDownloadStatusCodeKey] as! Int == 404 {
+                    
+                    #if DEBUG
+                    print("Failed to download cover image with URL:", proxyURL)
+                    #endif
+                    
+                    return
+                    
+                }
                 
-            }
-            
-            guard let c = coverImage else {
-                return
-            }
-            
-            c.contentMode = .scaleAspectFill
+                guard let c = coverImage else {
+                    return
+                }
+                
+                DispatchQueue.main.async {
+                    
+                    c.image = image
+                    c.contentMode = .scaleAspectFill
+                    
+                }
+                
+            })
             
         }
         
@@ -458,39 +476,47 @@ extension ArticleCell {
             url = a
         }
         
-        faviconTask = SDWebImageManager.shared.loadImage(with: url, options: [], progress: nil, completed: { [weak self, weak attachment] (image, data, error, cacheType, finished, imageURL) in
+        DispatchQueue.global(qos: .userInteractive).async { [weak self, weak attachment] in
             
-            guard let sself = self,
-                  let a = attachment else {
-                return
-            }
-            
-            guard error == nil else {
+            self?.faviconTask = SDWebImageManager.shared.loadImage(with: url, options: [], progress: nil, completed: { (image, data, error, cacheType, finished, imageURL) in
                 
-                #if DEBUG
-                print("Failed to fetch favicon at:", url, error!.localizedDescription)
-                #endif
+                guard let sself = self,
+                      let a = attachment else {
+                    return
+                }
                 
-                return
+                guard error == nil else {
+                    
+                    #if DEBUG
+                    print("Failed to fetch favicon at:", url, error!.localizedDescription)
+                    #endif
+                    
+                    return
+                    
+                }
                 
-            }
+                guard let image = image else {
+                    return
+                }
+                
+                var bounds = a.bounds
+                bounds.origin = .zero
+                
+                guard let rounded = image.sd_roundedCornerImage(withRadius: (3 * UIScreen.main.scale), corners: .allCorners, borderWidth: 0, borderColor: nil) else {
+                    return
+                }
+                
+                DispatchQueue.main.async {
+                    
+                    a.image = rounded
+                    
+                    sself.titleLabel.setNeedsDisplay()
+                    
+                }
+                
+            })
             
-            guard let image = image else {
-                return
-            }
-            
-            var bounds = a.bounds
-            bounds.origin = .zero
-            
-            guard let rounded = image.sd_roundedCornerImage(withRadius: (3 * UIScreen.main.scale), corners: .allCorners, borderWidth: 0, borderColor: nil) else {
-                return
-            }
-            
-            a.image = rounded
-            
-            sself.titleLabel.setNeedsDisplay()
-            
-        })
+        }
         
     }
     
