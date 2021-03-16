@@ -89,6 +89,7 @@ class FeedVC: UITableViewController {
         
         setupFeed()
         setupData()
+        setupNavBar()
         
         if FeedVC.filteringTag == 0 {
             updateFeedSorting()
@@ -123,78 +124,13 @@ class FeedVC: UITableViewController {
         
     }
     
-    fileprivate var total: Int = -1
-    fileprivate var currentPage: UInt = 0
+    func setupNavBar() {
+        
+        
+        
+    }
+    
     fileprivate var dbFilteredView: YapDatabaseFilteredView!
-    
-    func updateFeedSorting() {
-        
-        let sortingOption = self.sorting
-        
-        DBManager.shared.readQueue.async { [weak self] in
-            
-            let sortingClosure = YapDatabaseViewSorting.withMetadataBlock { (t, g, c1, k1, m1, c2, k2, m2) -> ComparisonResult in
-                
-                guard let a1 = m1 as? ArticleMeta, let a2 = m2 as? ArticleMeta else {
-                    return .orderedSame
-                }
-
-                let result = a1.timestamp.compare(other: a2.timestamp)
-                
-                if result == .orderedSame {
-                    return result
-                }
-                
-                if sortingOption.isAscending == true {
-                    
-                    return result
-                    
-                }
-                
-                if result == .orderedDescending {
-                    return .orderedAscending
-                }
-                
-                return .orderedDescending
-                
-            }
-            
-            DBManager.shared.bgConnection.readWrite { (t) in
-                
-                guard let sself = self else {
-                    return
-                }
-                
-                guard let txn = t.ext(DBManagerViews.feedView.rawValue) as? YapDatabaseAutoViewTransaction else {
-                    return
-                }
-                
-                FeedVC.filteringTag += 1
-                
-                txn.setSorting(sortingClosure, versionTag: "\(FeedVC.filteringTag)")
-                
-                DispatchQueue.main.async {
-                    sself._didSetSortingOption()
-                }
-                
-            }
-            
-        }
-        
-    }
-    
-    func _didSetSortingOption() {
-        
-        articles = NSMutableOrderedSet()
-        state = .empty
-        setupData()
-        
-        setupViews()
-        
-        total = -1
-        currentPage = 0
-        
-    }
     
     func setupViews() {
         
@@ -314,6 +250,78 @@ class FeedVC: UITableViewController {
         snapshot.appendItems(articles.map { $0 as! Article })
         
         DS.apply(snapshot, animatingDifferences: view.window != nil, completion: nil)
+        
+    }
+    
+    func updateFeedSorting() {
+        
+        let sortingOption = self.sorting
+        
+        DBManager.shared.readQueue.async { [weak self] in
+            
+            let sortingClosure = YapDatabaseViewSorting.withMetadataBlock { (t, g, c1, k1, m1, c2, k2, m2) -> ComparisonResult in
+                
+                guard let a1 = m1 as? ArticleMeta, let a2 = m2 as? ArticleMeta else {
+                    return .orderedSame
+                }
+
+                let result = a1.timestamp.compare(other: a2.timestamp)
+                
+                if result == .orderedSame {
+                    return result
+                }
+                
+                if sortingOption.isAscending == true {
+                    
+                    return result
+                    
+                }
+                
+                if result == .orderedDescending {
+                    return .orderedAscending
+                }
+                
+                return .orderedDescending
+                
+            }
+            
+            DBManager.shared.bgConnection.readWrite { (t) in
+                
+                guard let sself = self else {
+                    return
+                }
+                
+                guard let txn = t.ext(DBManagerViews.feedView.rawValue) as? YapDatabaseAutoViewTransaction else {
+                    return
+                }
+                
+                FeedVC.filteringTag += 1
+                
+                txn.setSorting(sortingClosure, versionTag: "\(FeedVC.filteringTag)")
+                
+                DispatchQueue.main.async {
+                    sself._didSetSortingOption()
+                }
+                
+            }
+            
+        }
+        
+    }
+    
+    fileprivate var total: Int = -1
+    fileprivate var currentPage: UInt = 0
+    
+    func _didSetSortingOption() {
+        
+        articles = NSMutableOrderedSet()
+        state = .empty
+        setupData()
+        
+        setupViews()
+        
+        total = -1
+        currentPage = 0
         
     }
     
