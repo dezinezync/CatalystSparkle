@@ -33,7 +33,7 @@ public extension Notification.Name {
     static let userUpdated = Notification.Name(rawValue: "userUpdated")
 }
 
-private let DB_VERSION_TAG = "2021-03-16 16:47AM IST"
+private let DB_VERSION_TAG = "2021-03-16 18:16PM IST"
 
 extension NSNotification.Name {
     static let YapDatabaseModifiedNotification = NSNotification.Name("YapDatabaseModifiedNotification")
@@ -1104,8 +1104,7 @@ extension DBManager {
                 }
                 
                 // Filters of the user
-                guard let filters = user.filters,
-                      filters.count > 0 else {
+                guard user.filters.count > 0 else {
                     return true
                 }
                 
@@ -1113,13 +1112,13 @@ extension DBManager {
                 let wordCloud = metadata.titleWordCloud ?? []
                 
                 let set1 = Set(wordCloud)
-                let set2 = Set(filters)
+                let set2 = Set(user.filters)
                 
                 return set1.intersection(set2).count > 0
                 
             }
             
-            let articlesView = YapDatabaseFilteredView(parentViewName: DBManagerViews.rootView.rawValue, filtering: filter, versionTag: versionTag)
+            let articlesView = YapDatabaseFilteredView(parentViewName: DBManagerViews.feedView.rawValue, filtering: filter, versionTag: versionTag)
             
             db.register(articlesView, withName: .articlesView)
             

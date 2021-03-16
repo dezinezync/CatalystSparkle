@@ -11,7 +11,7 @@ public final class User: NSObject, Codable {
     
     public var uuid: String!
     public var userID: UInt!
-    public var filters: [String]? = [String]()
+    public var filters: [String] = [String]()
     public var subscription: Subscription!
     
     enum CodingKeys: String, CodingKey {
@@ -39,7 +39,7 @@ public final class User: NSObject, Codable {
             if let items = value as? Set<String> {
                 
                 items.forEach({
-                    filters?.append($0)
+                    filters.append($0)
                 })
                 
             }
@@ -47,7 +47,7 @@ public final class User: NSObject, Codable {
             else if let items = value as? [String] {
                 
                 items.forEach({
-                    filters?.append($0)
+                    filters.append($0)
                 })
                 
             }
@@ -115,10 +115,8 @@ extension User {
             
             var filters = [String]()
             
-            if let f = self.filters {
-                for filter in f {
-                    filters.append(filter)
-                }
+            for filter in self.filters {
+                filters.append(filter)
             }
             
             dict["filters"] = filters

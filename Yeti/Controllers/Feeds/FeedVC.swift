@@ -82,11 +82,20 @@ class FeedVC: UITableViewController {
     }()
 
     override func viewDidLoad() {
+        
         super.viewDidLoad()
 
+        tableView.tableFooterView = UIView()
+        
         setupFeed()
         setupData()
-        updateFeedSorting()
+        
+        if FeedVC.filteringTag == 0 {
+            updateFeedSorting()
+        }
+        else {
+            setupViews()
+        }
         
     }
     
@@ -225,21 +234,31 @@ class FeedVC: UITableViewController {
             
         }
         
-        dbFilteredView = DBManager.shared.database.registeredExtension(dbFilteredViewName) as? YapDatabaseFilteredView
-        
-        if dbFilteredView != nil {
-            DBManager.shared.database.unregisterExtension(withName: dbFilteredViewName)
+        DBManager.shared.writeQueue.async {
+            
+            if let _ = DBManager.shared.database.registeredExtension(dbFilteredViewName) as? YapDatabaseFilteredView {
+                DBManager.shared.database.unregisterExtension(withName: dbFilteredViewName)
+            }
+            
         }
         
-        FeedVC.filteringTag += 1
+        DBManager.shared.writeQueue.async { [weak self] in
+            
+            FeedVC.filteringTag += 1
+            
+            let filteredView = YapDatabaseFilteredView(parentViewName: baseViewName.rawValue, filtering: filtering, versionTag: "\(FeedVC.filteringTag)")
+            
+            DBManager.shared.database.register(filteredView, withName: dbFilteredViewName)
+            
+            self?.dbFilteredView = filteredView
+            
+        }
         
-        let filteredView = YapDatabaseFilteredView(parentViewName: baseViewName.rawValue, filtering: filtering, versionTag: "\(FeedVC.filteringTag)")
-        
-        DBManager.shared.database.register(filteredView, withName: dbFilteredViewName)
-        
-        dbFilteredView = filteredView
-        
-        loadNextPage()
+        DBManager.shared.writeQueue.async { [weak self] in
+            
+            self?.loadNextPage()
+            
+        }
         
     }
     
@@ -349,6 +368,10 @@ extension FeedVC: ScrollLoading {
     }
     
     func loadNextPage() {
+        
+        guard dbFilteredView != nil else {
+            return
+        }
         
         state = .loading
         

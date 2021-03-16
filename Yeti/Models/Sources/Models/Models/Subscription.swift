@@ -145,7 +145,7 @@ public final class Subscription: NSObject, Codable {
         }
         else if key == "preAppStore" {
             
-            preAppStore = value as! Bool
+            preAppStore = value as? Bool
             
         }
         else if key == "environment", let value = value as? String {

@@ -269,7 +269,7 @@ class ActionViewController: UIViewController {
                 
             }
             
-            guard let response = response else {
+            guard let _ = response else {
                 
                 let error = NSError(domain: "FeedsLib", code: 500, userInfo: [NSLocalizedDescriptionKey: "No response recevied for this URL."])
                 
