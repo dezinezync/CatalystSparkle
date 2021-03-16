@@ -45,8 +45,18 @@ class FeedVC: UITableViewController {
     
     var type: FeedType! = .natural
     var feed: Feed? = nil
-    var state: FeedVCState = .empty
-    var sorting: FeedSorting = .descending
+    
+    var state: FeedVCState = .empty {
+        didSet {
+            setupState()
+        }
+    }
+    
+    var sorting: FeedSorting = .descending {
+        didSet {
+            setupViews()
+        }
+    }
     
     var articles = Set<Article>()
     
@@ -54,9 +64,13 @@ class FeedVC: UITableViewController {
     
     lazy var DS: UITableViewDiffableDataSource<Int, Article> = {
        
-        var ds = UITableViewDiffableDataSource<Int, Article>(tableView: tableView) { (tableView, indexPath, article) -> UITableViewCell? in
+        var ds = UITableViewDiffableDataSource<Int, Article>(tableView: tableView) { [weak self] (tableView, indexPath, article) -> UITableViewCell? in
             
-            return UITableViewCell()
+            let cell = tableView.dequeueReusableCell(withIdentifier: ArticleCell.identifier, for: indexPath) as! ArticleCell
+            
+            cell.configure(article, feedType: (self?.type)!)
+            
+            return cell
             
         }
         
@@ -68,6 +82,7 @@ class FeedVC: UITableViewController {
         super.viewDidLoad()
 
         setupFeed()
+        setupData()
         setupViews()
         
     }
@@ -81,6 +96,8 @@ class FeedVC: UITableViewController {
     // MARK: - Setups
     
     func setupFeed() {
+        
+        ArticleCell.register(tableView)
         
         switch type {
         case .natural:
@@ -121,6 +138,8 @@ class FeedVC: UITableViewController {
                 return false
             }
             
+            // check filters
+            
             guard sself.sorting.isUnread == true else {
                 return true
             }
@@ -152,7 +171,89 @@ class FeedVC: UITableViewController {
         
     }
     
+    func setupState() {
+        
+        guard Thread.isMainThread == true else {
+            DispatchQueue.main.async { [weak self] in
+                self?.setupState()
+            }
+            return
+        }
+        
+        // if the state is empty and there are no articles,
+        // there is nothing to be done.
+        guard state != .empty, articles.count > 0 else {
+            showEmptyState()
+            return
+        }
+        
+        if state == .loading, articles.count == 0 {
+            showLoadingState()
+            return
+        }
+        
+        if state == .errored, articles.count == 0 {
+            // @TODO: Show error state
+            return
+        }
+        
+        removeEmptyState()
+        
+        if activityIndicator.isAnimating == true {
+            activityIndicator.stopAnimating()
+        }
+        
+        setupData()
+        
+    }
+    
+    func setupData() {
+        
+        var snapshot = NSDiffableDataSourceSnapshot<Int, Article>()
+        snapshot.appendSections([0])
+        snapshot.appendItems(articles.map { $0 })
+        
+        DS.apply(snapshot, animatingDifferences: view.window != nil, completion: nil)
+        
+    }
+    
     // MARK: - Updates
+    func showEmptyState () {
+        
+        
+        
+    }
+    
+    func removeEmptyState() {
+        
+        
+        
+    }
+    
+    lazy var activityIndicator = UIActivityIndicatorView(style: .large)
+    
+    func showLoadingState () {
+        
+        if (activityIndicator.superview == nil) {
+            
+            activityIndicator.sizeToFit()
+            activityIndicator.hidesWhenStopped = true
+            activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+            
+            view.addSubview(activityIndicator)
+            view.bringSubviewToFront(activityIndicator)
+            
+            NSLayoutConstraint.activate([
+                activityIndicator.centerXAnchor.constraint(equalTo: view.readableContentGuide.centerXAnchor),
+                activityIndicator.centerYAnchor.constraint(equalTo: view.readableContentGuide.centerYAnchor)
+            ])
+            
+        }
+        
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
+        
+    }
 
 }
 

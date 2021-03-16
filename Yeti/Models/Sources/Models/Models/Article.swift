@@ -11,9 +11,9 @@ import BetterCodable
 public final class Article: NSObject, Codable, ObservableObject {
     
     public var identifier: UInt!
-    @LossyOptional public var title: String?
+    public var title: String?
     @LossyOptional public var url: URL!
-    @LossyOptional public var author: String?
+    public var author: String?
     public var content = [Content]()
     @LossyOptional public var coverImage: URL?
     public var guid: String!

@@ -21,24 +21,7 @@
 #import <SDWebImage/UIImage+Transform.h>
 #import <SDWebImage/SDWebImageError.h>
 
-#if TARGET_OS_MACCATALYST
 
-#import "AppDelegate.h"
-
-// https://gist.github.com/steipete/9b279c94a35389c05bf5ea32336551ed
-@implementation UIImage (ResourceProxyHack)
-
-+ (UIImage *)_iconForResourceProxy:(id)proxy format:(int)format {
-    
-    // using this causes the app to use large amounts of memory.
-    // so we simply return nil for now until Apple implements it
-    // for catalyst 
-    return nil;
-}
-
-@end
-
-#endif
 
 NSString *const kArticleCell = @"com.yeti.cell.article";
 
