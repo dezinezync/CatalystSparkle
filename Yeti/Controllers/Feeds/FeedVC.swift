@@ -39,6 +39,21 @@ enum FeedSorting: Int {
         return self == .unreadAscending || self == .unreadDescending
     }
     
+    var imageName: String {
+        
+        switch self {
+        case .descending:
+            return "arrow.down.circle"
+        case .unreadDescending:
+            return "arrow.down.circle.fill"
+        case .ascending:
+            return "arrow.up.circle"
+        case .unreadAscending:
+            return "arrow.up.circle.fill"
+        }
+        
+    }
+    
 }
 
 class FeedVC: UITableViewController {
@@ -48,15 +63,46 @@ class FeedVC: UITableViewController {
     
     var state: FeedVCState = .empty {
         didSet {
-            setupState()
+            if Thread.isMainThread == true {
+                setupState()
+            }
+            else {
+                DispatchQueue.main.sync { [weak self] in
+                    self?.setupState()
+                }
+            }
         }
     }
     
-    static var sorting: FeedSorting = FeedSorting(rawValue: (SharedPrefs.sortingOption as NSString).integerValue)!
-    
-    var sorting: FeedSorting = .descending {
+    static var sorting: FeedSorting = FeedSorting(rawValue: (SharedPrefs.sortingOption as NSString).integerValue)! {
         didSet {
-            SharedPrefs.sortingOption = "\(sorting)"
+            
+            guard oldValue != sorting else {
+                return
+            }
+            
+            SharedPrefs.setValue("\(sorting)", forKey: "sortingOption")
+            
+        }
+    }
+    
+    weak var sortingBarItem: UIBarButtonItem? = nil
+    
+    var sorting: FeedSorting = FeedVC.sorting {
+        didSet {
+            
+            guard oldValue != sorting else {
+                return
+            }
+            
+            FeedVC.sorting = sorting
+            
+            DispatchQueue.main.async { [weak self] in
+                if let name = self?.sorting.imageName {
+                    self?.sortingBarItem?.image = UIImage(systemName: name)
+                }
+            }
+            
             updateFeedSorting()
         }
     }
@@ -64,6 +110,7 @@ class FeedVC: UITableViewController {
     var articles = NSMutableOrderedSet()
     
     static var filteringTag: UInt = 0
+    var sortingTag: UInt = 0
     
     lazy var DS: UITableViewDiffableDataSource<Int, Article> = {
        
@@ -126,7 +173,44 @@ class FeedVC: UITableViewController {
     
     func setupNavBar() {
         
+        var sortingActions: [UIAction] = [
+            
+            UIAction(title: "Unread - Latest First", image: UIImage(systemName: FeedSorting.unreadDescending.imageName), identifier: nil, discoverabilityTitle: nil, attributes: [], state: .off, handler: { [weak self] (_) in
+                
+                self?.sorting = .unreadDescending
+                
+            }),
+            UIAction(title: "Unread - Oldest First", image: UIImage(systemName: FeedSorting.unreadAscending.imageName), identifier: nil, discoverabilityTitle: nil, attributes: [], state: .off, handler: { [weak self] (_) in
+                
+                self?.sorting = .unreadAscending
+                
+            })
+            
+        ]
         
+        if type != .unread {
+            
+            sortingActions.append(UIAction(title: "All - Latest First", image: UIImage(systemName: FeedSorting.descending.imageName), identifier: nil, discoverabilityTitle: nil, attributes: [], state: .off, handler: { [weak self] (_) in
+                
+                self?.sorting = .descending
+                
+            }))
+            
+            sortingActions.append(UIAction(title: "All - Oldest First", image: UIImage(systemName: FeedSorting.ascending.imageName), identifier: nil, discoverabilityTitle: nil, attributes: [], state: .off, handler: { [weak self] (_) in
+                
+                self?.sorting = .ascending
+                
+            }))
+            
+        }
+        
+        let menu = UIMenu(title: "Sorting Options", image: nil, identifier: nil, options: [], children: sortingActions)
+        
+        let sortingItem = UIBarButtonItem(title: nil, image: UIImage(systemName: sorting.imageName), primaryAction: nil, menu: menu)
+        
+        navigationItem.rightBarButtonItems = [sortingItem]
+        
+        self.sortingBarItem = sortingItem
         
     }
     
@@ -153,20 +237,16 @@ class FeedVC: UITableViewController {
                 return false
             }
             
-            // check filters
+            return true
             
-            guard sself.sorting.isUnread == true else {
-                return true
-            }
-            
-            guard metadata.read == false else {
-                return false
-            }
-            
-            let now = Date().timeIntervalSince1970
-            let diff = now - metadata.timestamp
-            
-            return diff <= 1209600
+//            guard metadata.read == false else {
+//                return false
+//            }
+//
+//            let now = Date().timeIntervalSince1970
+//            let diff = now - metadata.timestamp
+//
+//            return diff <= 1209600
             
         }
         
@@ -200,13 +280,6 @@ class FeedVC: UITableViewController {
     
     func setupState() {
         
-        guard Thread.isMainThread == true else {
-            DispatchQueue.main.async { [weak self] in
-                self?.setupState()
-            }
-            return
-        }
-        
         // if the state is empty and there are no articles,
         // there is nothing to be done.
         guard state != .empty, articles.count > 0 else {
@@ -214,7 +287,7 @@ class FeedVC: UITableViewController {
             return
         }
         
-        if state == .loading, articles.count == 0 {
+        if total == -1 || (state == .loading && articles.count == 0) {
             showLoadingState()
             return
         }
@@ -295,9 +368,9 @@ class FeedVC: UITableViewController {
                     return
                 }
                 
-                FeedVC.filteringTag += 1
+                sself.sortingTag += 1
                 
-                txn.setSorting(sortingClosure, versionTag: "\(FeedVC.filteringTag)")
+                txn.setSorting(sortingClosure, versionTag: "\(sself.sortingTag)")
                 
                 DispatchQueue.main.async {
                     sself._didSetSortingOption()
@@ -311,6 +384,7 @@ class FeedVC: UITableViewController {
     
     fileprivate var total: Int = -1
     fileprivate var currentPage: UInt = 0
+    fileprivate var _loadNextRetries: UInt = 0
     
     func _didSetSortingOption() {
         
@@ -318,10 +392,11 @@ class FeedVC: UITableViewController {
         state = .empty
         setupData()
         
-        setupViews()
-        
         total = -1
         currentPage = 0
+        _loadNextRetries = 0
+        
+        setupViews()
         
     }
     
@@ -383,7 +458,7 @@ extension FeedVC: ScrollLoading {
         
         state = .loading
         
-        DBManager.shared.uiConnection.asyncRead { [weak self] (t) in
+        DBManager.shared.countsConnection.read { [weak self] (t) in
             
             guard let sself = self else {
                 return
@@ -392,7 +467,20 @@ extension FeedVC: ScrollLoading {
             guard let txn = t.extension(dbFilteredViewName) as? YapDatabaseFilteredViewTransaction else {
                 
                 if sself.currentPage == 0 {
-                    sself.state = .errored
+                    
+                    if sself._loadNextRetries < 2 {
+                        
+                        sself._loadNextRetries += 1
+                        
+                        DispatchQueue.main.async {
+                            sself.loadNextPage()
+                        }
+                        
+                    }
+                    else {
+                        sself.state = .errored
+                    }
+                    
                 }
                 
                 return
@@ -402,10 +490,6 @@ extension FeedVC: ScrollLoading {
             
             if sself.total == -1 {
                 sself.total = Int(txn.numberOfItems(inGroup: group))
-            }
-            
-            guard sself.total > 0 else {
-                return
             }
             
             let page = sself.currentPage + 1

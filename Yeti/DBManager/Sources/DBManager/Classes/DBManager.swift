@@ -33,7 +33,7 @@ public extension Notification.Name {
     static let userUpdated = Notification.Name(rawValue: "userUpdated")
 }
 
-private let DB_VERSION_TAG = "2021-03-16 18:16PM IST"
+private let DB_VERSION_TAG = "2021-03-16 20:11PM IST"
 
 extension NSNotification.Name {
     static let YapDatabaseModifiedNotification = NSNotification.Name("YapDatabaseModifiedNotification")
@@ -197,6 +197,7 @@ public final class DBManager {
     internal func setupNotifications(_ db: YapDatabase) {
         
         NotificationCenter.default.publisher(for: .YapDatabaseModified, object: db)
+            .receive(on: DispatchQueue.global(qos: .default))
             .sink { [weak self] (note) in
                 
                 guard let sself = self else {
@@ -1145,11 +1146,14 @@ extension DBManager {
                 let timestamp = metadata.timestamp
                 let now = Date().timeIntervalSince1970
                 
-                guard ((now - timestamp) > 1209600) else {
-                    return false
+                let diff = (now - timestamp)
+                
+                if diff < 0 {
+                    // future date
+                    return true
                 }
                 
-                return true
+                return diff <= 1209600
                 
             }
             
