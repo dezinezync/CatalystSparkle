@@ -147,6 +147,10 @@ class FeedVC: UITableViewController {
         
     }
     
+    deinit {
+        DBManager.shared.database.unregisterExtension(withName: dbFilteredViewName)
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
@@ -237,16 +241,23 @@ class FeedVC: UITableViewController {
                 return false
             }
             
-            return true
+            guard sself.sorting.isUnread == true else {
+                return true
+            }
             
-//            guard metadata.read == false else {
-//                return false
-//            }
-//
-//            let now = Date().timeIntervalSince1970
-//            let diff = now - metadata.timestamp
-//
-//            return diff <= 1209600
+            guard metadata.read == false else {
+                return false
+            }
+
+            let now = Date().timeIntervalSince1970
+            let diff = now - metadata.timestamp
+            
+            if diff < 0 {
+                // future date
+                return true
+            }
+
+            return diff <= 1209600
             
         }
         
@@ -500,6 +511,8 @@ extension FeedVC: ScrollLoading {
                 range.location = 0
             }
             
+            var context: UInt = 0
+            
             txn.enumerateRows(inGroup: group, with: [], range: range) { (a, b) -> Bool in
                 return true
             } using: { (c, k, o, m, index, stop) in
@@ -509,10 +522,24 @@ extension FeedVC: ScrollLoading {
                 }
                 
                 sself.articles.add(article)
+                context += 1
                 
             }
             
             sself.currentPage = page
+            
+            if context < 20 {
+                // we expected 20. so check.
+                
+                if sself.articles.count != sself.total {
+                    
+                    // some articles could not be fetched.
+                    // so lets correct our total
+                    sself.total -= (20 - Int(context))
+                    
+                }
+                
+            }
             
             sself.state = .loaded
 
