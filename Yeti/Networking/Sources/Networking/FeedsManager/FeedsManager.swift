@@ -630,6 +630,50 @@ extension FeedsManager {
         
     }
     
+    public func markRead(_ read: Bool, items: [Article], completion:((Result<[MarkReadItem], Error>) -> Void)?) {
+        
+        // mark in batches of 100
+        guard items.count <= 100 else {
+            
+            return
+        }
+        
+        let identifiers = items.map { $0.identifier }
+        
+        guard identifiers.count > 0 else {
+            return
+        }
+        
+        let path = "/article/\(read ? "true" : "false")"
+        let body = [
+            "articles": identifiers
+        ]
+        
+        session.POST(path: path, query: nil, body: body, resultType: [MarkReadItem].self) { (result) in
+            
+            switch result {
+            
+            case .failure(let error):
+                completion?(.failure(error))
+            
+            case .success((_, let result)):
+                
+                guard let r = result else {
+                    let error = NSError(domain: "FeedsManager", code: 500, userInfo: [NSLocalizedDescriptionKey: "An unknown error occurred and no response was received."])
+                    
+                    completion?(.failure(error as Error))
+                    
+                    return
+                }
+                
+                completion?(.success(r))
+                
+            }
+            
+        }
+        
+    }
+    
 }
 
 // MARK: - Sync
@@ -660,7 +704,7 @@ extension FeedsManager {
                 }
                 
                 if response.statusCode == 304 || changeSet == nil {
-                    let dummy = ChangeSet(changeToken: token, changeTokenID: tokenID, customFeeds: nil, articles: nil, reads: nil, pages: 0)
+                    let dummy = ChangeSet(changeToken: token, changeTokenID: tokenID, customFeeds: nil, articles: nil, reads: nil)
                     completion?(.success(dummy))
                     return
                 }

@@ -317,6 +317,7 @@
 		F0BC8C0025205CF100FADCBB /* GeneralPreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BFE25205CF000FADCBB /* GeneralPreferenceViewController.swift */; };
 		F0BC8C0125205CF100FADCBB /* GeneralPreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0BC8BFF25205CF000FADCBB /* GeneralPreferenceViewController.xib */; };
 		F0BC8C072520636200FADCBB /* Keychain.m in Sources */ = {isa = PBXBuildFile; fileRef = F01285C123436D8D00B8C277 /* Keychain.m */; };
+		F0BE4F6E26019DB4001D7692 /* AlertManager+Swift.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BE4F6D26019DB4001D7692 /* AlertManager+Swift.swift */; };
 		F0C16FB325DD4AAF005BAA9E /* NewFeedVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C16FB225DD4AAF005BAA9E /* NewFeedVC.swift */; };
 		F0C1704D25DD4B1D005BAA9E /* FeedsLib in Frameworks */ = {isa = PBXBuildFile; productRef = F0C1704C25DD4B1D005BAA9E /* FeedsLib */; };
 		F0C1705425DD4CFE005BAA9E /* NewFeedResultsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C1705325DD4CFE005BAA9E /* NewFeedResultsVC.swift */; };
@@ -1911,6 +1912,7 @@
 		F0BC8BF725205C4400FADCBB /* PreferencesController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesController.swift; sourceTree = "<group>"; };
 		F0BC8BFE25205CF000FADCBB /* GeneralPreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneralPreferenceViewController.swift; sourceTree = "<group>"; };
 		F0BC8BFF25205CF000FADCBB /* GeneralPreferenceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GeneralPreferenceViewController.xib; sourceTree = "<group>"; };
+		F0BE4F6D26019DB4001D7692 /* AlertManager+Swift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AlertManager+Swift.swift"; sourceTree = "<group>"; };
 		F0C16FB225DD4AAF005BAA9E /* NewFeedVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFeedVC.swift; sourceTree = "<group>"; };
 		F0C1705325DD4CFE005BAA9E /* NewFeedResultsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFeedResultsVC.swift; sourceTree = "<group>"; };
 		F0C49C6F260048F3009B8E34 /* ArticleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleCell.swift; sourceTree = "<group>"; };
@@ -2625,6 +2627,7 @@
 				F06EAA1225F9DB2D00A4C855 /* FeedProxy.swift */,
 				F0C49D0A26004B26009B8E34 /* UIImage+Proxy.h */,
 				F0C49D0B26004B26009B8E34 /* UIImage+Proxy.m */,
+				F0BE4F6D26019DB4001D7692 /* AlertManager+Swift.swift */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -4813,6 +4816,7 @@
 				F0F10A9A244C8020009FC108 /* NSDate+DateTools.m in Sources */,
 				F0B21BBB208C7F4F007E5A3B /* NewFolderVC.m in Sources */,
 				F045988A25FB6CD800C87B82 /* LaunchVC.swift in Sources */,
+				F0BE4F6E26019DB4001D7692 /* AlertManager+Swift.swift in Sources */,
 				F04815FC245FD88200F8091E /* AppDelegate+BackgroundRefresh.m in Sources */,
 				F04E92BF21B5429300AD1FB2 /* NSString+Components.m in Sources */,
 				F0D07206205E9EC500A042CD /* DZWebViewController.m in Sources */,

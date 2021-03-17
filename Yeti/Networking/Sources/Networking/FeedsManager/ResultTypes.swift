@@ -54,3 +54,10 @@ public struct GetArticlesResult: Hashable, Codable {
     public let articles: [Article]
     
 }
+
+public struct MarkReadItem: Hashable, Codable {
+    
+    public let articleID: Int
+    public let status: Bool
+    
+}

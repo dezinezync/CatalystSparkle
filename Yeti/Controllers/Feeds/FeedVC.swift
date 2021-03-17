@@ -11,6 +11,7 @@ import Models
 import DBManager
 import YapDatabase
 import SwiftYapDatabase
+import Networking
 
 fileprivate let dbFilteredViewName = "feedFilteredView"
 
@@ -212,7 +213,9 @@ class FeedVC: UITableViewController {
         
         let sortingItem = UIBarButtonItem(title: nil, image: UIImage(systemName: sorting.imageName), primaryAction: nil, menu: menu)
         
-        navigationItem.rightBarButtonItems = [sortingItem]
+        let allReadItem = UIBarButtonItem(image: UIImage(systemName: "checkmark"), style: .done, target: self, action: #selector(didTapMarkAll(_:)))
+        
+        navigationItem.rightBarButtonItems = [allReadItem, sortingItem]
         
         self.sortingBarItem = sortingItem
         
@@ -544,6 +547,186 @@ extension FeedVC: ScrollLoading {
             sself.state = .loaded
 
         }
+        
+    }
+    
+}
+
+// MARK - Actions
+extension FeedVC {
+    
+    @objc func didTapMarkAll( _ sender: UIBarButtonItem?) {
+        
+        guard SharedPrefs.showMarkReadPrompts == false else {
+            
+            AlertManager.showAlert(title: "Mark All Read?", message: "Are you sure you want to mark all unread articles as read?", confirm: "Yes", confirmHandler: { [weak self] (_) in
+                
+                self?.markAllRead(sender)
+                
+            }, cancel: "Cancel", cancelHandler: nil, from: self)
+            
+            return
+        }
+        
+        markAllRead(sender)
+        
+    }
+    
+    func markAllRead( _ sender: UIBarButtonItem?) {
+        
+        DBManager.shared.bgConnection.asyncReadWrite { [weak self] (t) in
+            
+            guard let txn = t.ext(dbFilteredViewName) as? YapDatabaseFilteredViewTransaction else {
+                return
+            }
+            
+            var items = [String: Article]()
+            var feedsMapping = [UInt: UInt]()
+            
+            let count = txn.numberOfItems(inGroup: GroupNames.articles.rawValue)
+            
+            guard count > 0 else {
+                return
+            }
+            
+            let calendar = Calendar.current
+            var inToday: UInt = 0
+            
+            // get all unread items from this view
+            txn.enumerateKeysAndMetadata(inGroup: GroupNames.articles.rawValue, with: [], range: NSMakeRange(0, Int(count))) { (_, _) -> Bool in
+                return true
+            } using: { (c, k, m, index, stop) in
+                
+                guard let metadata = m as? ArticleMeta else {
+                    return
+                }
+                
+                guard metadata.read == false else {
+                    return
+                }
+                
+                guard let o = t.object(forKey: k, inCollection: c) as? Article else {
+                    return
+                }
+                
+                items[k] = o
+                
+                if feedsMapping[metadata.feedID] == nil {
+                    feedsMapping[metadata.feedID] = 0
+                }
+                
+                feedsMapping[metadata.feedID]! += 1
+                
+                if calendar.isDateInToday(Date(timeIntervalSince1970: metadata.timestamp)) == true {
+                    inToday += 1
+                }
+                
+            }
+            
+            guard let sself = self else {
+                return
+            }
+
+            print("Marking \(items.count) items as read")
+            
+            sself.markRead(items, inToday: inToday, feedsMapping: feedsMapping)
+            
+        }
+        
+    }
+    
+    func markRead(_ inItems: [String: Article], inToday: UInt?, feedsMapping: [UInt: UInt]?) {
+        
+        var items = inItems
+        
+        FeedsManager.shared.markRead(true, items: items.values.map { $0 }) { [weak self] (result) in
+            
+            guard let sself = self else {
+                return
+            }
+            
+            switch result {
+            
+            case .failure(let err):
+                
+                let error = (err as NSError)
+                
+                AlertManager.showAlert(title: "An Error Occurred", message: error.localizedDescription, confirm: nil, cancel: "Okay")
+                
+                return
+                
+            case .success(let results):
+                
+                // get all successful items
+                let succeeded = results
+                    .filter { $0.status == true }
+                    .map { String($0.articleID) }
+                
+                items = items.filter({ (elem) -> Bool in
+                    
+                    return succeeded.contains(elem.key)
+                    
+                })
+                
+                for i in items { i.value.read = true }
+                
+                sself.mainCoordinator?.totalUnread -= UInt(items.count)
+                
+                if inToday != nil {
+                    sself.mainCoordinator?.totalToday -= inToday!
+                }
+                
+                DBManager.shared.add(articles: items.values.map { $0 }, strip: false)
+                
+                if feedsMapping != nil {
+                    for (key, count) in feedsMapping! {
+                        
+                        guard let feed = DBManager.shared.feedForID(key) else {
+                            print("Feed not found for ID:", key)
+                            continue
+                        }
+                        
+                        DispatchQueue.main.async {
+                            
+                            feed.unread -= count
+                            
+                            (sself.articles.objectEnumerator().allObjects as! [Article]).forEach { $0.read = true }
+                            
+                            sself.updateVisibleCells()
+                            
+                        }
+                        
+                    }
+                }
+            
+            }
+            
+        }
+        
+    }
+    
+    func updateVisibleCells () {
+        
+        var snapshot = DS.snapshot()
+        
+        guard let visible = tableView.indexPathsForVisibleRows,
+              visible.count > 0 else {
+            return
+        }
+        
+        var items = [Article]()
+        
+        visible.forEach {
+            
+            if let item = DS.itemIdentifier(for: $0) {
+                items.append(item)
+            }
+            
+        }
+        
+        snapshot.reloadItems(items)
+        
+        DS.apply(snapshot, animatingDifferences: tableView.window != nil, completion: nil)
         
     }
     

@@ -21,9 +21,9 @@ public final class Article: NSObject, Codable, ObservableObject {
     public var enclosures: [Enclosure]?
     public var feedID: UInt!
     @LossyOptional public var summary: String?
-    public var bookmarked: Bool! = false
-    public var read: Bool! = false
-    public var fulltext: Bool! = false
+    @LosslessValue<Bool> public var bookmarked: Bool = false
+    @LosslessValue<Bool> public var read: Bool = false
+    @LosslessValue<Bool> public var fulltext: Bool = false
     
     enum CodingKeys: String, CodingKey {
         case identifier = "id"

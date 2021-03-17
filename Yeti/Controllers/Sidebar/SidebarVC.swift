@@ -1104,6 +1104,7 @@ extension SidebarVC {
             let vc = FeedVC(style: .plain)
             vc.feed = f
             vc.type = .natural
+            vc.mainCoordinator = self.mainCoordinator
             
             if splitVC.traitCollection.userInterfaceIdiom == .phone {
                 let nav = splitVC.viewControllers.first as! UINavigationController
