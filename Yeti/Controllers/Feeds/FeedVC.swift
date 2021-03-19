@@ -57,6 +57,11 @@ enum FeedSorting: Int {
     
 }
 
+enum MarkDirection {
+    case newer
+    case older
+}
+
 class FeedVC: UITableViewController {
     
     var type: FeedType! = .natural
@@ -112,6 +117,8 @@ class FeedVC: UITableViewController {
     
     static var filteringTag: UInt = 0
     var sortingTag: UInt = 0
+    
+    var loadOnReady: UInt?
     
     lazy var DS: UITableViewDiffableDataSource<Int, Article> = {
        
@@ -178,46 +185,9 @@ class FeedVC: UITableViewController {
     
     func setupNavBar() {
         
-        var sortingActions: [UIAction] = [
-            
-            UIAction(title: "Unread - Latest First", image: UIImage(systemName: FeedSorting.unreadDescending.imageName), identifier: nil, discoverabilityTitle: nil, attributes: [], state: .off, handler: { [weak self] (_) in
-                
-                self?.sorting = .unreadDescending
-                
-            }),
-            UIAction(title: "Unread - Oldest First", image: UIImage(systemName: FeedSorting.unreadAscending.imageName), identifier: nil, discoverabilityTitle: nil, attributes: [], state: .off, handler: { [weak self] (_) in
-                
-                self?.sorting = .unreadAscending
-                
-            })
-            
-        ]
+        navigationItem.rightBarButtonItems = self.rightBarButtonItems()
         
-        if type != .unread {
-            
-            sortingActions.append(UIAction(title: "All - Latest First", image: UIImage(systemName: FeedSorting.descending.imageName), identifier: nil, discoverabilityTitle: nil, attributes: [], state: .off, handler: { [weak self] (_) in
-                
-                self?.sorting = .descending
-                
-            }))
-            
-            sortingActions.append(UIAction(title: "All - Oldest First", image: UIImage(systemName: FeedSorting.ascending.imageName), identifier: nil, discoverabilityTitle: nil, attributes: [], state: .off, handler: { [weak self] (_) in
-                
-                self?.sorting = .ascending
-                
-            }))
-            
-        }
         
-        let menu = UIMenu(title: "Sorting Options", image: nil, identifier: nil, options: [], children: sortingActions)
-        
-        let sortingItem = UIBarButtonItem(title: nil, image: UIImage(systemName: sorting.imageName), primaryAction: nil, menu: menu)
-        
-        let allReadItem = UIBarButtonItem(image: UIImage(systemName: "checkmark"), style: .done, target: self, action: #selector(didTapMarkAll(_:)))
-        
-        navigationItem.rightBarButtonItems = [allReadItem, sortingItem]
-        
-        self.sortingBarItem = sortingItem
         
     }
     
@@ -451,6 +421,31 @@ class FeedVC: UITableViewController {
         activityIndicator.startAnimating()
         
     }
+    
+    func updateVisibleCells () {
+        
+        var snapshot = DS.snapshot()
+        
+        guard let visible = tableView.indexPathsForVisibleRows,
+              visible.count > 0 else {
+            return
+        }
+        
+        var items = [Article]()
+        
+        visible.forEach {
+            
+            if let item = DS.itemIdentifier(for: $0) {
+                items.append(item)
+            }
+            
+        }
+        
+        snapshot.reloadItems(items)
+        
+        DS.apply(snapshot, animatingDifferences: tableView.window != nil, completion: nil)
+        
+    }
 
 }
 
@@ -552,7 +547,7 @@ extension FeedVC: ScrollLoading {
     
 }
 
-// MARK - Actions
+// MARK: - Actions
 extension FeedVC {
     
     @objc func didTapMarkAll( _ sender: UIBarButtonItem?) {
@@ -629,13 +624,23 @@ extension FeedVC {
 
             print("Marking \(items.count) items as read")
             
-            sself.markRead(items, inToday: inToday, feedsMapping: feedsMapping)
+            sself.markRead(items, inToday: inToday, feedsMapping: feedsMapping) { [weak self] (count, feed) in
+                
+                feed.unread -= count
+                
+                (self?.articles.objectEnumerator().allObjects as! [Article]).forEach { $0.read = true }
+                
+            } completion: { [weak self] in
+                
+                self?.updateVisibleCells()
+                
+            }
             
         }
         
     }
     
-    func markRead(_ inItems: [String: Article], inToday: UInt?, feedsMapping: [UInt: UInt]?) {
+    func markRead(_ inItems: [String: Article], inToday: UInt?, feedsMapping: [UInt: UInt]?, each:(( _ count: UInt, _ feed: Feed) -> Void)?, completion:(() -> Void)?) {
         
         var items = inItems
         
@@ -688,15 +693,17 @@ extension FeedVC {
                         
                         DispatchQueue.main.async {
                             
-                            feed.unread -= count
-                            
-                            (sself.articles.objectEnumerator().allObjects as! [Article]).forEach { $0.read = true }
-                            
-                            sself.updateVisibleCells()
+                            each?(count, feed)
                             
                         }
                         
                     }
+                }
+                
+                DispatchQueue.main.async {
+                    
+                    completion?()
+                    
                 }
             
             }
@@ -705,28 +712,346 @@ extension FeedVC {
         
     }
     
-    func updateVisibleCells () {
+    @objc func didTapBack() {
         
-        var snapshot = DS.snapshot()
+        navigationController?.popToRootViewController(animated: true)
         
-        guard let visible = tableView.indexPathsForVisibleRows,
-              visible.count > 0 else {
+    }
+    
+    @objc func didTapTitleView() {
+        
+        // @TODO 
+        
+    }
+    
+    @objc func markAllNewerRead(_ indexPath: IndexPath) {
+        
+        markDirectional(.newer, indexPath: indexPath)
+        
+    }
+    
+    @objc func markAllOlderRead(_ indexPath: IndexPath) {
+        
+        markDirectional(.older, indexPath: indexPath)
+        
+    }
+    
+    func markDirectional(_ direction: MarkDirection, indexPath: IndexPath) {
+        
+        let sorting = self.sorting
+        var feed: String?
+        
+        if type == .unread { feed = "unread" }
+        else if type == .today { feed = "today" }
+        else if type == .natural { feed = "\(self.feed!.feedID!)" }
+        
+        guard feed != nil else {
             return
         }
         
-        var items = [Article]()
+        guard let item = DS.itemIdentifier(for: indexPath) else {
+            return
+        }
         
-        visible.forEach {
+        var isDescending = sorting.isAscending == false
+        isDescending = (direction == .newer && isDescending) || (direction == .older && isDescending == false)
+        
+        let options: NSEnumerationOptions = isDescending == false ? .reverse : []
+        
+        // our unreads array count can't exceed this so we
+        // can use this as a control to stop enumerating.
+        let grandTotal = mainCoordinator?.totalUnread ?? 0
+        
+        DBManager.shared.readQueue.async { [weak self] in
             
-            if let item = DS.itemIdentifier(for: $0) {
-                items.append(item)
+            DBManager.shared.uiConnection.asyncRead { (t) in
+                
+                guard let txn = t.ext(dbFilteredViewName) as? YapDatabaseFilteredViewTransaction else {
+                    return
+                }
+                
+                let localID = item.identifier!
+                
+                let localTimestamp = item.timestamp.timeIntervalSince1970
+                
+                let total = Int(txn.numberOfItems(inGroup: GroupNames.articles.rawValue))
+            
+                var unreads = [String: Article]()
+                var feedsMapping = [UInt: UInt]()
+                var inToday: UInt = 0
+                
+                txn.enumerateKeysAndMetadata(inGroup: GroupNames.articles.rawValue, with: options, range: NSMakeRange(0, total)) { (_, _) -> Bool in
+                    return true
+                } using: { (c, k, meta, index, stop) in
+                    
+                    guard let metadata = meta as? ArticleMeta,
+                          metadata.read == false else {
+                        return
+                    }
+                    
+                    let keyID = UInt((k as NSString).integerValue)
+                    let keyTimestamp = metadata.timestamp
+                    
+                    if direction == .newer {
+                        
+                        // the item's time cannot be higher than
+                        // the reference item's time.
+                        if keyTimestamp < localTimestamp {
+                            return
+                        }
+                        else if keyTimestamp == localTimestamp,
+                                keyID < localID {
+                            
+                            // if the times are the same, we compare by
+                            // the identifier of the two items.
+                            return
+                            
+                        }
+                        
+                    }
+                    else {
+                        
+                        if keyTimestamp > localTimestamp {
+                            return
+                        }
+                        else if keyTimestamp == localTimestamp,
+                                keyID > localID {
+                            return
+                        }
+                        
+                    }
+                    
+                    if let item = t.object(forKey: k, inCollection: c) as? Article {
+                        
+                        unreads[k] = item
+                        
+                        if feedsMapping[metadata.feedID] == nil {
+                            feedsMapping[metadata.feedID] = 0
+                        }
+                        
+                        feedsMapping[metadata.feedID]! += 1
+                        
+                        if Calendar.current.isDateInToday(item.timestamp) {
+                            inToday += 1
+                        }
+                        
+                    }
+                    
+                    if grandTotal == unreads.count {
+                        stop.pointee = true
+                    }
+                    
+                }
+                
+                guard unreads.count > 0 else {
+                    return
+                }
+                
+                #if DEBUG
+                print("IDs: ", unreads.map { $0.key })
+                #endif
+                
+                guard let sself = self else {
+                    return
+                }
+                
+                sself.markRead(unreads, inToday: inToday, feedsMapping: feedsMapping, each: nil) {
+                    
+                    sself.reloadCells(from: indexPath, down: (options == .reverse))
+                    
+                }
+                
             }
             
         }
         
-        snapshot.reloadItems(items)
+    }
+    
+    func reloadCells(from indexPath: IndexPath, down:Bool) {
         
-        DS.apply(snapshot, animatingDifferences: tableView.window != nil, completion: nil)
+        var snapshot = self.DS.snapshot()
+        
+        var identifiers = [Article]()
+        
+        if down == true {
+            
+            // all current cells till the end of the dataset
+            for index in (indexPath.row..<snapshot.numberOfItems) {
+                
+                let ip = IndexPath(row: index, section: indexPath.section)
+                
+                if let item = DS.itemIdentifier(for: ip) {
+                    
+                    identifiers.append(item)
+                    
+                }
+                
+            }
+            
+        }
+        else {
+            
+            // current upto the 0th index
+            for index in (0...indexPath.row) {
+                
+                let ip = IndexPath(row: index, section: indexPath.section)
+                
+                if let item = DS.itemIdentifier(for: ip) {
+                    
+                    identifiers.append(item)
+                    
+                }
+                
+            }
+            
+        }
+        
+        snapshot.reloadItems(identifiers)
+        
+        DS.apply(snapshot, animatingDifferences: view.window != nil, completion: nil)
+        
+    }
+    
+}
+
+extension FeedVC: BarPositioning {
+    
+    func rightBarButtonItems() -> [UIBarButtonItem]? {
+        
+        var sortingActions: [UIAction] = [
+            
+            UIAction(title: "Unread - Latest First", image: UIImage(systemName: FeedSorting.unreadDescending.imageName), identifier: nil, discoverabilityTitle: nil, attributes: [], state: .off, handler: { [weak self] (_) in
+                
+                self?.sorting = .unreadDescending
+                
+            }),
+            UIAction(title: "Unread - Oldest First", image: UIImage(systemName: FeedSorting.unreadAscending.imageName), identifier: nil, discoverabilityTitle: nil, attributes: [], state: .off, handler: { [weak self] (_) in
+                
+                self?.sorting = .unreadAscending
+                
+            })
+            
+        ]
+        
+        if type != .unread {
+            
+            sortingActions.append(UIAction(title: "All - Latest First", image: UIImage(systemName: FeedSorting.descending.imageName), identifier: nil, discoverabilityTitle: nil, attributes: [], state: .off, handler: { [weak self] (_) in
+                
+                self?.sorting = .descending
+                
+            }))
+            
+            sortingActions.append(UIAction(title: "All - Oldest First", image: UIImage(systemName: FeedSorting.ascending.imageName), identifier: nil, discoverabilityTitle: nil, attributes: [], state: .off, handler: { [weak self] (_) in
+                
+                self?.sorting = .ascending
+                
+            }))
+            
+        }
+        
+        let menu = UIMenu(title: "Sorting Options", image: nil, identifier: nil, options: [], children: sortingActions)
+        
+        let sortingItem = UIBarButtonItem(title: nil, image: UIImage(systemName: sorting.imageName), primaryAction: nil, menu: menu)
+        
+        let allReadItem = UIBarButtonItem(image: UIImage(systemName: "checkmark"), style: .done, target: self, action: #selector(didTapMarkAll(_:)))
+        
+        self.sortingBarItem = sortingItem
+        
+        return [allReadItem, sortingItem]
+        
+    }
+    
+    var toolbarBarItems: [UIBarButtonItem]? {
+        
+        guard SharedPrefs.useToolbar == true else {
+            return nil
+        }
+        
+        let flex = UIBarButtonItem(systemItem: .flexibleSpace)
+        let fixed = UIBarButtonItem(systemItem: .fixedSpace)
+        fixed.width = 24
+        
+        guard let right = rightBarButtonItems() else {
+            return nil
+        }
+        
+        let items: [UIBarButtonItem] = right.enumerated()
+            .map { (index, item) -> [UIBarButtonItem] in
+            
+            if index == 0 {
+                return [item]
+            }
+            
+            return [flex, item]
+            
+        }.flatMap { $0 }
+        
+        return items
+        
+    }
+    
+}
+
+// MARK: - Article Loading
+extension FeedVC {
+    
+    @objc func loadArticle() {
+        
+        guard let articleID = loadOnReady,
+              let feed = self.feed else {
+            return
+        }
+        
+        let snapshot = DS.snapshot()
+        
+        guard snapshot.numberOfItems > 0 else {
+            return
+        }
+        
+        var index = NSNotFound
+        
+        for (idx, item) in snapshot.itemIdentifiers.enumerated() {
+            
+            if item.identifier == articleID {
+                index = idx
+                break
+            }
+            
+        }
+        
+        loadOnReady = nil
+        
+        guard index != NSNotFound else {
+            
+            let a = Article()
+            a.identifier = articleID
+            a.feedID = feed.feedID
+            
+            showArticle(a)
+            
+            return
+        }
+        
+        let indexPath = IndexPath(row: index, section: 0)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            
+            guard let sself = self,
+                  let tableView = sself.tableView else {
+                return
+            }
+            
+            tableView.selectRow(at: indexPath, animated: false, scrollPosition: .middle)
+            
+            sself.tableView(tableView, didSelectRowAt: indexPath)
+            
+        }
+        
+    }
+    
+    @objc func showArticle(_ article: Article) {
+        
+        // @TODO
         
     }
     

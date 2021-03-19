@@ -22,6 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSArray <UIBarButtonItem *> * _Nullable)toolbarItems;
 
+- (NSArray <UIBarButtonItem *> * _Nullable)toolbarBarItems;
+
 @end
 
 NS_ASSUME_NONNULL_END

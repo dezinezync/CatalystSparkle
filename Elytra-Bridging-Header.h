@@ -12,3 +12,4 @@
 #import "CheckWifi.h"
 #import "NSString+ImageProxy.h"
 #import "Paragraph.h"
+#import "BarPositioning.h"
