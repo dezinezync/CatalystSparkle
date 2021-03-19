@@ -1056,3 +1056,59 @@ extension FeedVC {
     }
     
 }
+
+// MARK: - Context Menus
+extension FeedVC {
+    
+    override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        
+        guard let item = DS.itemIdentifier(for: indexPath) else {
+            return nil
+        }
+        
+        let config = UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { (_) -> UIMenu? in
+            
+            var read: UIAction!
+            
+            if item.read == true {
+                
+                read = UIAction(title: "Mark Unread", image: UIImage(systemName: "circle"), identifier: nil, handler: { (_) in
+                    
+                    // @TODO
+                    
+                })
+                
+            }
+            else {
+                
+                read = UIAction(title: "Mark Read", image: UIImage(systemName: "largecircle.fill.circle"), identifier: nil, handler: { (_) in
+                    
+                    // @TODO
+                    
+                })
+                
+            }
+            
+            return UIMenu(title: "Article Actions", children: [read])
+            
+        }
+        
+        return config
+        
+    }
+    
+}
+
+extension FeedVC: UIAdaptivePresentationControllerDelegate {
+    
+    func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
+        
+        if traitCollection.horizontalSizeClass == .regular {
+            return .popover
+        }
+        
+        return .none
+        
+    }
+    
+}
