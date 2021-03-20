@@ -31,6 +31,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign) NSUInteger totalUnread;
 
+@property (nonatomic, assign) NSUInteger totalBookmarks;
+
 @property (nonatomic, strong) NSMutableArray <Coordinator *> * childCoordinators;
 
 @property (nonatomic, weak) SplitVC *splitViewController;

@@ -674,6 +674,38 @@ extension FeedsManager {
         
     }
     
+    public func mark(_ bookmark: Bool, item: Article, completion:((Result<MarkBookmarkItem, Error>) -> Void)?) {
+        
+        let path = "/article/\(item.identifier!)/bookmark"
+        let body = [
+            "bookmark": bookmark
+        ]
+        
+        session.POST(path: path, query: nil, body: body, resultType: MarkBookmarkItem.self) { (result) in
+            
+            switch result {
+            
+            case .failure(let error):
+                completion?(.failure(error))
+            
+            case .success((_, let result)):
+                
+                guard let r = result else {
+                    let error = NSError(domain: "FeedsManager", code: 500, userInfo: [NSLocalizedDescriptionKey: "An unknown error occurred and no response was received."])
+                    
+                    completion?(.failure(error as Error))
+                    
+                    return
+                }
+                
+                completion?(.success(r))
+                
+            }
+            
+        }
+        
+    }
+    
 }
 
 // MARK: - Sync

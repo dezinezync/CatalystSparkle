@@ -15,6 +15,14 @@ import Networking
 
 fileprivate let dbFilteredViewName = "feedFilteredView"
 
+class ArticlesDatasource: UITableViewDiffableDataSource<Int, Article> {
+
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+
+}
+
 enum FeedVCState: Int {
     case empty
     case loading
@@ -120,9 +128,9 @@ class FeedVC: UITableViewController {
     
     var loadOnReady: UInt?
     
-    lazy var DS: UITableViewDiffableDataSource<Int, Article> = {
+    lazy var DS: ArticlesDatasource = {
        
-        var ds = UITableViewDiffableDataSource<Int, Article>(tableView: tableView) { [weak self] (tableView, indexPath, article) -> UITableViewCell? in
+        var ds = ArticlesDatasource(tableView: tableView) { [weak self] (tableView, indexPath, article) -> UITableViewCell? in
             
             let cell = tableView.dequeueReusableCell(withIdentifier: ArticleCell.identifier, for: indexPath) as! ArticleCell
             
@@ -912,6 +920,43 @@ extension FeedVC {
         
     }
     
+    func reloadVisibleCells () {
+        
+        guard Thread.isMainThread == true else {
+            
+            DispatchQueue.main.async { [weak self] in
+                self?.reloadVisibleCells()
+            }
+            
+            return
+            
+        }
+        
+        var snapshot = DS.snapshot()
+        
+        var visible = [Article]()
+        
+        if let indices = tableView.indexPathsForVisibleRows,
+           indices.count > 0 {
+            
+            for indexPath in indices {
+                
+                if let item = DS.itemIdentifier(for: indexPath) {
+                    
+                    visible.append(item)
+                    
+                }
+                
+            }
+            
+        }
+        
+        snapshot.reloadItems(visible)
+        
+        DS.apply(snapshot, animatingDifferences: view.window != nil, completion: nil)
+        
+    }
+    
 }
 
 extension FeedVC: BarPositioning {
@@ -992,7 +1037,7 @@ extension FeedVC: BarPositioning {
     
 }
 
-// MARK: - Article Loading
+// MARK: - Article Provider
 extension FeedVC {
     
     @objc func loadArticle() {
@@ -1055,6 +1100,88 @@ extension FeedVC {
         
     }
     
+    @objc func userMarkedArticle(_ article: Article, read: Bool) {
+        
+        FeedsManager.shared.markRead(true, items: [article]) { [weak self] (result) in
+            
+            switch result {
+            case .failure(let error):
+                AlertManager.showGenericAlert(withTitle: "Error Marking \(read ? "Read" : "Unread")", message: error.localizedDescription)
+                
+            case .success(_):
+                
+                article.read = read
+                
+                DBManager.shared.add(article: article, strip: false)
+                
+                self?.reloadVisibleCells()
+                
+                let inToday = Calendar.current.isDateInToday(article.timestamp)
+                
+                let feed = DBManager.shared.feedForID(article.feedID)
+                
+                if read == true {
+                    
+                    self?.mainCoordinator?.totalUnread -= 1
+                    
+                    if inToday { self?.mainCoordinator?.totalToday -= 1 }
+                    
+                    feed?.unread -= 1
+                    
+                }
+                else {
+                    
+                    self?.mainCoordinator?.totalUnread += 1
+                    
+                    if inToday { self?.mainCoordinator?.totalToday += 1 }
+                    
+                    feed?.unread += 1
+                    
+                }
+                
+            }
+            
+        }
+        
+    }
+    
+    @objc func userMarkedArticle(_ article: Article, bookmark: Bool) {
+        
+        FeedsManager.shared.mark(bookmark, item: article) { [weak self] (result) in
+            
+            switch result {
+            
+            case .failure(let error):
+                AlertManager.showGenericAlert(withTitle: "Error \(bookmark ? "Bookmark" : "Unbookmark")ing", message: error.localizedDescription)
+            
+            case .success(let result):
+                
+                guard result.status == true else {
+                    
+                    AlertManager.showGenericAlert(withTitle: "Error \(bookmark ? "Bookmark" : "Unbookmark")ing", message: "An unknown error occurred when performing this action.")
+                    
+                    return
+                    
+                }
+                
+                article.bookmarked = bookmark
+                DBManager.shared.add(article: article, strip: false)
+                
+                if bookmark == true {
+                    self?.mainCoordinator?.totalBookmarks += 1
+                }
+                else {
+                    self?.mainCoordinator?.totalBookmarks -= 1
+                }
+                
+                self?.reloadVisibleCells()
+            
+            }
+            
+        }
+        
+    }
+    
 }
 
 // MARK: - Context Menus
@@ -1066,15 +1193,20 @@ extension FeedVC {
             return nil
         }
         
-        let config = UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { (_) -> UIMenu? in
+        let config = UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] (_) -> UIMenu? in
+            
+            guard let sself = self else {
+                return nil
+            }
             
             var read: UIAction!
+            var bookmark: UIAction!
             
             if item.read == true {
                 
                 read = UIAction(title: "Mark Unread", image: UIImage(systemName: "circle"), identifier: nil, handler: { (_) in
                     
-                    // @TODO
+                    sself.userMarkedArticle(item, read: false)
                     
                 })
                 
@@ -1083,17 +1215,276 @@ extension FeedVC {
                 
                 read = UIAction(title: "Mark Read", image: UIImage(systemName: "largecircle.fill.circle"), identifier: nil, handler: { (_) in
                     
-                    // @TODO
+                    sself.userMarkedArticle(item, read: true)
                     
                 })
                 
             }
             
-            return UIMenu(title: "Article Actions", children: [read])
+            if item.bookmarked == true {
+                
+                bookmark = UIAction(title: "Unbookmark", image: UIImage(systemName: "bookmark"), identifier: nil, handler: { (_) in
+                    
+                    sself.userMarkedArticle(item, bookmark: false)
+                    
+                })
+                
+            }
+            else {
+                
+                bookmark = UIAction(title: "Bookmark", image: UIImage(systemName: "bookmark.fill"), identifier: nil, handler: { (_) in
+                    
+                    sself.userMarkedArticle(item, bookmark: true)
+                    
+                })
+                
+            }
+            
+            let browser = UIAction(title: "Open in Browser", image: UIImage(systemName: "safari"), identifier: nil) { [weak item] (_) in
+                
+                guard let a = item else {
+                    return
+                }
+                
+                sself.openInBrowser(a)
+                
+            }
+            
+            let share = UIAction(title: "Share Article", image: UIImage(systemName: "square.and.arrow.up"), identifier: nil) { (_) in
+                
+                self?.wantsToShare(item, indexPath: indexPath)
+                
+            }
+            
+            if sself.type == .author || sself.type == .bookmarks || sself.type == .folder {
+                
+                return UIMenu(title: "Article Actions", children: [
+                    read,
+                    bookmark,
+                    browser,
+                    share
+                ])
+                
+            }
+            
+            let directionalNewerImageName = sself.sorting.isAscending ? "arrow.down.circle.fill" : "arrow.up.circle.fill"
+            
+            let directionalOlderImageName = sself.sorting.isAscending ? "arrow.up.circle.fill" : "arrow.down.circle.fill"
+            
+            let directionalNewer = UIAction(title: "Mark Newer Read", image: UIImage(systemName: directionalNewerImageName), identifier: nil) { (_) in
+                
+                self?.markAllNewerRead(indexPath)
+                
+            }
+            
+            let directionalOlder = UIAction(title: "Mark Older Read", image: UIImage(systemName: directionalOlderImageName), identifier: nil) { (_) in
+                
+                self?.markAllOlderRead(indexPath)
+                
+            }
+            
+            if sself.type == .natural,
+               let author = item.author?.stripHTML(),
+               author.isEmpty == false {
+                
+                let title = "Articles by \(author)"
+                
+                let authorAction = UIAction(title: title, image: UIImage(systemName: "person.fill"), identifier: nil) { (_) in
+                    
+                    sself.showAuthorVC(author)
+                    
+                }
+                
+                return UIMenu(title: "Article Actions", children: [
+                    read,
+                    bookmark,
+                    browser,
+                    share,
+                    authorAction,
+                    directionalNewer,
+                    directionalOlder
+                ])
+                
+            }
+            
+            return UIMenu(title: "Article Actions", children: [
+                read,
+                bookmark,
+                browser,
+                share,
+                directionalNewer,
+                directionalOlder
+            ])
             
         }
         
         return config
+        
+    }
+    
+    override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        
+        guard let item = DS.itemIdentifier(for: indexPath) else {
+            return nil
+        }
+        
+        let read = UIContextualAction(style: .normal, title: (item.read ? "Unread" : "Read")) { [weak self, weak item] (_, _, completion) in
+            
+            guard let sself = self, let sitem = item else {
+                return
+            }
+            
+            completion(true)
+            
+            sself.userMarkedArticle(sitem, read: !sitem.read)
+            
+        }
+        
+        read.image = UIImage(systemName: (item.read ? "circle" : "largecircle.fill.circle"))
+        read.backgroundColor = .systemBlue
+        
+        let bookmark = UIContextualAction(style: .normal, title: (item.bookmarked ? "Unbookmark" : "Bookmark")) { [weak self, weak item] (_, _, completion) in
+            
+            guard let sself = self, let sitem = item else {
+                return
+            }
+            
+            completion(true)
+            
+            sself.userMarkedArticle(sitem, bookmark: !sitem.bookmarked)
+            
+        }
+        
+        bookmark.image = UIImage(systemName: (item.read ? "bookmark" : "bookmark.fill"))
+        bookmark.backgroundColor = .systemOrange
+        
+        let c = UISwipeActionsConfiguration(actions: [read, bookmark])
+        c.performsFirstActionWithFullSwipe = true
+        
+        return c
+        
+    }
+    
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        
+        guard let item = DS.itemIdentifier(for: indexPath) else {
+            return nil
+        }
+        
+        let browser = UIContextualAction(style: .normal, title: "Browser") { [weak self, weak item] (_, _, completion) in
+            
+            completion(true)
+            
+            guard let sself = self , let a = item else {
+                return
+            }
+            
+            sself.openInBrowser(a)
+            
+        }
+        
+        browser.image = UIImage(systemName: "safari")
+        browser.backgroundColor = .systemTeal
+        
+        let share = UIContextualAction(style: .normal, title: "Share") { [weak self, weak item] (_, _, completion) in
+            
+            completion(true)
+            
+            guard let sself = self , let a = item else {
+                return
+            }
+            
+            sself.wantsToShare(a, indexPath: indexPath)
+            
+        }
+        
+        share.image = UIImage(systemName: "square.and.arrow.up")
+        share.backgroundColor = .systemGray
+        
+        let c = UISwipeActionsConfiguration(actions: [browser, share])
+        c.performsFirstActionWithFullSwipe = true
+        
+        return c
+        
+    }
+    
+    func wantsToShare(_ item: Article, indexPath: IndexPath) {
+        
+        guard Thread.isMainThread == true else {
+            
+            DispatchQueue.main.async { [weak self] in
+                self?.wantsToShare(item, indexPath: indexPath)
+            }
+            
+            return
+            
+        }
+        
+        let title = item.title ?? "Untitled"
+        
+        guard let url = item.url else {
+            return
+        }
+        
+        let avc = UIActivityViewController(activityItems: [title, url], applicationActivities: nil)
+        
+        if let pvc = avc.popoverPresentationController {
+            
+            pvc.sourceView = tableView
+            pvc.sourceRect = tableView.cellForRow(at: indexPath)?.frame ?? .zero
+            
+        }
+        
+        present(avc, animated: true, completion: nil)
+        
+    }
+    
+    func showAuthorVC(_ author: String) {
+        
+        guard Thread.isMainThread == true else {
+            
+            DispatchQueue.main.async { [weak self] in
+                self?.showAuthorVC(author)
+            }
+            
+            return
+            
+        }
+        
+        guard author.isEmpty == false else {
+            return
+        }
+        
+        // @TODO
+        
+    }
+    
+    func openInBrowser(_ item: Article) {
+        
+        var readerMode = false
+        
+        if (item.read == false) {
+            userMarkedArticle(item, read: true)
+        }
+        
+        if type == .natural {
+            
+            let metadata = DBManager.shared.metadataForFeed(feed!)
+            
+            readerMode = metadata.readerMode
+            
+        }
+        
+        let readerModeString = (readerMode ? "&ytreader=1" : "")
+        
+        if let url = URL(string: "yeti://external?link=\(item.url!)\(readerModeString)") {
+            
+            DispatchQueue.main.async {
+                UIApplication.shared.open(url)
+                
+            }
+            
+        }
         
     }
     

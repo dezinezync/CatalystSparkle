@@ -52,6 +52,12 @@ class CustomFeedCell: UICollectionViewListCell {
                     })
                     .store(in: &cancellables)
             default:
+                coordinator?.publisher(for: \.totalBookmarks)
+                    .receive(on: DispatchQueue.main)
+                    .sink(receiveValue: { [weak self] (bookmarks) in
+                        self?.updateUnreadCount(bookmarks)
+                    })
+                    .store(in: &cancellables)
                 break
             }
             

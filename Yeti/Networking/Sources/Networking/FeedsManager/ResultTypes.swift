@@ -61,3 +61,9 @@ public struct MarkReadItem: Hashable, Codable {
     public let status: Bool
     
 }
+
+public struct MarkBookmarkItem: Hashable, Codable {
+    
+    public let status: Bool
+    
+}
