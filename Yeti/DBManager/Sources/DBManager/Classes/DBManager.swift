@@ -538,6 +538,29 @@ public final class DBManager {
         
     }
     
+    public func delete(feed: Feed) {
+        
+        // remove it from the folders first
+        if let folderID = feed.folderID,
+           let folder = folder(for: folderID) {
+            
+            folder.feedIDs = Set(Array(folder.feedIDs).filter { $0 != folderID })
+            folder.feeds = folder.feeds.filter { $0 != feed }
+            
+            add(folder: folder)
+            
+        }
+        
+        feeds = feeds.filter { $0 != feed }
+        
+        uiConnection.readWrite { (t) in
+            
+            t.removeObject(forKey: "\(feed.feedID!)", inCollection: .feeds)
+            
+        }
+        
+    }
+    
     // MARK: - Folders
     fileprivate var _folders = [Folder]()
     
@@ -636,6 +659,53 @@ public final class DBManager {
                 }
                 
             }
+            
+        }
+        
+    }
+    
+    public func folder(for id: UInt) -> Folder? {
+        
+        return self.folders.first { (f) -> Bool in
+            return f.folderID == id
+        }
+        
+    }
+    
+    public func add(folder: Folder) {
+        
+        bgConnection.readWrite { (t) in
+            
+            t.setObject(folder, forKey: "\(folder.folderID!)", inCollection: .folders)
+            
+        }
+        
+    }
+    
+    public func delete(folder: Folder) {
+        
+        bgConnection.readWrite { [weak self] (t) in
+            
+            guard let sself = self else {
+                return
+            }
+            
+            // unset all feeds
+            for feedID in folder.feedIDs {
+                
+                if let feed = sself.feedForID(feedID) {
+                    
+                    feed.folderID = nil
+                    
+                    let metadata = sself.metadataForFeed(feed)
+                    
+                    t.setObject(feed, forKey: "\(feed.feedID!)", inCollection: .feeds, withMetadata: metadata)
+                    
+                }
+                
+            }
+            
+            t.removeObject(forKey: "\(folder.folderID!)", inCollection: .folders)
             
         }
         

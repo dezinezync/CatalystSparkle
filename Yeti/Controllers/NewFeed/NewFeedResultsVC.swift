@@ -16,7 +16,7 @@ import Models
     /// @param sourceFolder The source folder.
     /// @param destinationFolder The destination folder.
 //    - (void)feed:(Feed * _Nonnull)feed didMoveFromFolder:(Folder * _Nullable)sourceFolder toFolder:(Folder * _Nullable)destinationFolder;
-    func feed(_ feed:Feed, didMove fromFolder:Folder, toFolder:Folder)
+    func feed(_ feed:Feed, didMove fromFolder:Folder?, toFolder:Folder?)
 }
 
 class NewFeedResultsVC: UITableViewController {

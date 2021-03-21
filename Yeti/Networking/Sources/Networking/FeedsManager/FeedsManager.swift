@@ -598,7 +598,68 @@ extension FeedsManager {
         
     }
     
+    public func delete(feed id: UInt, completion:((Result<Bool, Error>) -> Void)?) {
+        
+        guard let user = user else {
+            completion?(.failure((NSError(domain: "Elytra", code: 401, userInfo: [NSLocalizedDescriptionKey: "User is not logged in."]) as Error)))
+            return
+        }
+        
+        let path = "/feeds/\(id)"
+        
+        session.DELETE(path: path, query: nil, resultType: [String: Bool].self) { (result) in
+            
+            switch result {
+            case .success(let (response, result)): do {
+                
+                guard (result?["status"] ?? false) == true else {
+                    completion?(.failure(NSError(domain: "FeedsManager", code: response?.statusCode ?? 500, userInfo: [NSLocalizedDescriptionKey: "An unknown error occurred when removing this feed from your account"])))
+                    return
+                }
+                
+                completion?(.success(true))
+                
+            }
+            case .failure(let error):
+                completion?(.failure(error))
+            }
+            
+        }
+        
+    }
+    
 }
+
+// MARK: - Folders {
+extension FeedsManager {
+    
+    public func delete(folder id: UInt, completion:((Result<Bool, Error>) -> Void)?) {
+        
+        guard let user = user else {
+            completion?(.failure((NSError(domain: "Elytra", code: 401, userInfo: [NSLocalizedDescriptionKey: "User is not logged in."]) as Error)))
+            return
+        }
+        
+        let path = "/folder"
+        
+        session.DELETE(path: path, query: ["folderID": "\(id)"], resultType: [String: Bool].self) { (result) in
+            
+            switch result {
+            case .success(let (response, result)): do {
+                
+                completion?(.success(true))
+                
+            }
+            case .failure(let error):
+                completion?(.failure(error))
+            }
+            
+        }
+        
+    }
+    
+}
+
 
 // MARK: - Articles
 extension FeedsManager {

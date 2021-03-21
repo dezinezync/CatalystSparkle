@@ -14,6 +14,12 @@ import Combine
 import Networking
 import YapDatabase
 
+class SidebarDS: UICollectionViewDiffableDataSource<Int, SidebarItem> {
+    
+    
+    
+}
+
 @objc enum FeedType: Int {
     case natural
     case unread
@@ -87,6 +93,11 @@ enum SidebarItem: Hashable {
     
     var cancellables = [AnyCancellable]()
     
+    // Rename Feed Variables
+    weak var alertDoneAction: UIAlertAction?
+    weak var alertTextField: UITextField?
+    weak var alertFeed: Feed?
+    
     lazy var layout: UICollectionViewCompositionalLayout = {
        
         var l = UICollectionViewCompositionalLayout { (section, environment) -> NSCollectionLayoutSection? in
@@ -159,9 +170,9 @@ enum SidebarItem: Hashable {
         
     }()
     
-    fileprivate lazy var DS: UICollectionViewDiffableDataSource<Int, SidebarItem> = {
+    fileprivate lazy var DS: SidebarDS = {
         
-        let ds = UICollectionViewDiffableDataSource<Int, SidebarItem>(collectionView: collectionView) { [weak self] (cv, indexPath, item: SidebarItem) -> UICollectionViewCell? in
+        let ds = SidebarDS(collectionView: collectionView) { [weak self] (cv, indexPath, item: SidebarItem) -> UICollectionViewCell? in
             
             guard let sself = self else {
                 return nil
@@ -703,6 +714,116 @@ enum SidebarItem: Hashable {
         return true
     }
     
+    func show(activityController: UIActivityViewController, indexPath: IndexPath?) {
+        
+        if let indexPath = indexPath,
+           splitViewController?.traitCollection.horizontalSizeClass == .regular,
+           let pvc = activityController.popoverPresentationController,
+           let attributes = collectionView.layoutAttributesForItem(at: indexPath) {
+            
+            pvc.sourceView = collectionView
+            pvc.sourceRect = attributes.frame
+            
+        }
+        
+        present(activityController, animated: true, completion: nil)
+        
+    }
+    
+    @objc func shareFeedURL(_ feed: Feed, indexPath: IndexPath) {
+        
+        guard let url = feed.url else {
+            return
+        }
+        
+        let avc = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+        
+        show(activityController: avc, indexPath: indexPath)
+        
+    }
+    
+    @objc func shareWebsiteURL(_ feed: Feed, indexPath: IndexPath) {
+        
+        guard let url = feed.extra?.url else {
+            return
+        }
+        
+        let avc = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+        
+        show(activityController: avc, indexPath: indexPath)
+        
+    }
+    
+    @objc func delete(feed: Feed, indexPath: IndexPath) {
+        
+        AlertManager.showDestructiveAlert(title: "Delete Feed", message: "Are you sure you want to delete this feed?", confirm: "Delete", confirmHandler: { [weak self] (_) in
+            
+            guard let sself = self else {
+                return
+            }
+            
+            FeedsManager.shared.delete(feed: feed.feedID) { (result) in
+                
+                switch result {
+                case .failure(let error):
+                    AlertManager.showGenericAlert(withTitle: "Error Deleting Feed", message: error.localizedDescription)
+                    
+                case .success(_):
+                    DBManager.shared.delete(feed: feed)
+                    
+                    DispatchQueue.main.async {
+                        sself.setupData()
+                    }
+                
+                }
+                
+            }
+            
+        }, cancel: "Cancel", cancelHandler: nil, from: self)
+        
+    }
+    
+    @objc func showInfo(feed: Feed, indexPath: IndexPath) {
+        
+        // @TODO
+        
+    }
+    
+    @objc func rename(folder: Folder, indexPath: IndexPath) {
+        
+        // @TODO
+        
+    }
+    
+    @objc func delete(folder: Folder, indexPath: IndexPath) {
+        
+        AlertManager.showDestructiveAlert(title: "Delete Folder", message: "Are you sure you want to delete this folder?", confirm: "Delete", confirmHandler: { [weak self] (_) in
+            
+            guard let sself = self else {
+                return
+            }
+            
+            FeedsManager.shared.delete(folder: folder.folderID) { (result) in
+                
+                switch result {
+                case .failure(let error):
+                    AlertManager.showGenericAlert(withTitle: "Error Deleting Feed", message: error.localizedDescription)
+                    
+                case .success(_):
+                    DBManager.shared.delete(folder: folder)
+                    
+                    DispatchQueue.main.async {
+                        sself.setupData()
+                    }
+                
+                }
+                
+            }
+            
+        }, cancel: "Cancel", cancelHandler: nil, from: self)
+        
+    }
+    
     // MARK: - Sync
     fileprivate var fetchingCounters: Bool = false
     
@@ -1090,7 +1211,7 @@ extension SidebarVC {
             return
         }
         
-        // @TODO:
+        // @TODO: Setup Taps
         
         switch item {
         case .custom(let c):
@@ -1120,6 +1241,112 @@ extension SidebarVC {
         }
         
         // @TODO: Restoration activity
+        
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        
+        guard let object = DS.itemIdentifier(for: indexPath) else {
+            return nil
+        }
+        
+        switch object {
+        case .feed(let f):
+            
+            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] (_) -> UIMenu? in
+                
+                guard let sself = self else {
+                    return nil
+                }
+                
+                var share: UIMenuElement!
+                
+                if f.canShowExtraLevel {
+                    
+                    let shareFeed = UIAction(title: "Share Feed URL", image: UIImage(systemName: "sqaure.and.arrow.up"), identifier: nil) { (_) in
+                        
+                        sself.shareFeedURL(f, indexPath: indexPath)
+                        
+                    }
+                    
+                    let shareWebsite = UIAction(title: "Share Website URL", image: UIImage(systemName: "sqaure.and.arrow.up"), identifier: nil) { (_) in
+                        
+                        sself.shareWebsiteURL(f, indexPath: indexPath)
+                        
+                    }
+                    
+                    share = UIMenu(title: "Share", children: [shareFeed, shareWebsite])
+                    
+                }
+                else {
+                    
+                    share = UIAction(title: "Share Feed URL", image: UIImage(systemName: "sqaure.and.arrow.up"), identifier: nil) { (_) in
+                        
+                        sself.shareFeedURL(f, indexPath: indexPath)
+                        
+                    }
+                    
+                }
+                
+                let rename = UIAction(title: "Rename", image: UIImage(systemName: "pencil"), identifier: nil) { (_) in
+                    
+                    sself.rename(feed: f, indexPath: indexPath)
+                    
+                }
+                
+                let move = UIAction(title: "Move", image: UIImage(systemName: "text.insert"), identifier: nil) { (_) in
+                    
+                    sself.move(feed: f, indexPath: indexPath)
+                    
+                }
+                
+                let feedInfo = UIAction(title: "Feed Info", image: UIImage(systemName: "info.circle.fill"), identifier: nil) { (_) in
+                    
+                    sself.showInfo(feed: f, indexPath: indexPath)
+                    
+                }
+                
+                let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), identifier: nil) { (_) in
+                    
+                    sself.delete(feed: f, indexPath: indexPath)
+                    
+                }
+                
+                delete.attributes = .destructive
+                
+                return UIMenu(title: "Feed Menu", children: [share, rename, feedInfo, move, delete])
+                
+            }
+            
+        case .folder(let f):
+            
+            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] (_) -> UIMenu? in
+                
+                guard let sself = self else {
+                    return nil
+                }
+                
+                let rename = UIAction(title: "Rename", image: UIImage(systemName: "pencil"), identifier: nil) { (_) in
+                    
+                    sself.rename(folder: f, indexPath: indexPath)
+                    
+                }
+                
+                let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), identifier: nil) { (_) in
+                    
+                    sself.delete(folder: f, indexPath: indexPath)
+                    
+                }
+                
+                delete.attributes = .destructive
+                
+                return UIMenu(title: "Folder Menu", children: [rename, delete])
+                
+            }
+            
+        default:
+            return nil
+        }
         
     }
     
@@ -1204,6 +1431,142 @@ extension SidebarVC {
             }
             
         }
+        
+    }
+    
+}
+
+// MARK: - Move Feed
+extension SidebarVC: MoveFoldersDelegate {
+    
+    func feed(_ feed: Feed, didMove fromFolder: Folder?, toFolder: Folder?) {
+        
+        guard fromFolder != nil && toFolder != nil else {
+            return
+        }
+        
+        setupData()
+        
+    }
+    
+    @objc func move(feed: Feed, indexPath: IndexPath) {
+        
+        // @TODO
+        
+    }
+    
+}
+
+// MARK: - Rename Feed
+extension SidebarVC: UITextFieldDelegate {
+    
+    func clearAlertProperties () {
+        alertDoneAction = nil
+        alertTextField = nil
+        alertFeed = nil
+    }
+    
+    @objc func rename(feed: Feed, indexPath: IndexPath) {
+        
+        alertFeed = feed
+        
+        let avc = UIAlertController(title: "Rename Feed", message: nil, preferredStyle: .alert)
+        
+        let done = UIAlertAction(title: "Done", style: .default) { [weak self] (_) in
+            
+            guard let sself = self,
+                  let stf = sself.alertTextField,
+                  let f = sself.alertFeed else {
+                
+                self?.clearAlertProperties()
+                
+                return
+            }
+            
+            let name = (stf.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+            
+            // @TODO: Perform FeedsManager op first
+            DBManager.shared.rename(feed: f, customTitle: name) { (result) in
+                
+                switch result {
+                case .failure(let err):
+                    AlertManager.showGenericAlert(withTitle: "Error Renaming", message: err.localizedDescription)
+                    
+                    
+                case .success(let result):
+                    
+                    if result == true {
+                        
+                        if let cell = sself.collectionView.cellForItem(at: indexPath) as? UICollectionViewListCell,
+                           var config = cell.contentConfiguration as? UIListContentConfiguration {
+                            
+                            config.text = f.displayTitle
+                            
+                            cell.contentConfiguration = config
+                            
+                        }
+                        
+                    }
+                    else {
+                        AlertManager.showGenericAlert()
+                    }
+                    
+                    sself.clearAlertProperties()
+                    
+                }
+                
+            }
+            
+            
+        }
+        
+        avc.addAction(done)
+        
+        alertDoneAction = done
+        
+        avc.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { [weak self] (_) in
+            
+            guard let sself = self else {
+                return
+            }
+            
+            sself.clearAlertProperties()
+            
+        }))
+        
+        avc.addTextField { [weak self] (t) in
+            
+            self?.alertTextField = t
+            
+            t.placeholder = "Feed Name"
+            t.text = feed.localName ?? ""
+            
+            t.delegate = self
+            
+        }
+        
+        if feed.localName != nil {
+            alertDoneAction?.isEnabled = true
+        }
+        else {
+            alertDoneAction?.isEnabled = ((feed.localName ?? feed.title)?.trimmingCharacters(in: .whitespaces).count ?? 0) >= 3
+        }
+        
+        present(avc, animated: true) { [weak self] in
+            
+            self?.alertTextField?.becomeFirstResponder()
+            
+        }
+        
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        
+        let newText = ((textField.text ?? "") as NSString).replacingCharacters(in: range, with: string).trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        alertDoneAction?.isEnabled = newText.count >= 3
+        
+        return true
         
     }
     
