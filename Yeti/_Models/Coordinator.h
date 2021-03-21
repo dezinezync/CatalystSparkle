@@ -82,13 +82,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)prepareFeedsForFullResync;
 
+- (void)showFeedInfo:(id _Nonnull)feed from:(UIViewController * _Nonnull)viewController;
+
 - (void)registerForNotifications:(void(^ _Nullable)(BOOL granted, NSError * _Nullable error))completion;
 
 - (void)checkForPushNotifications;
 
 - (void)didTapCloseForPushRequest;
-
-- (void)showFeedInfo:(Feed * _Nonnull)feed from:(UIViewController * _Nonnull)viewController;
 
 #if TARGET_OS_MACCATALYST
 

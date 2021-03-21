@@ -1290,7 +1290,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 //  @TODO  authorView.blogLabel.text = firstLine;
     authorView.authorLabel.text = sublineText;
     
-#if !TARGET_OS_MACCATALYSt
+#if !TARGET_OS_MACCATALYST
     for (UILabel *label in @[authorView.titleLabel, authorView.blogLabel, authorView.authorLabel]) {
         [label sizeToFit];
     }

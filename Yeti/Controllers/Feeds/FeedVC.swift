@@ -13,6 +13,7 @@ import YapDatabase
 import SwiftYapDatabase
 import Networking
 import Combine
+import Defaults
 
 fileprivate let dbFilteredViewName = "feedFilteredView"
 
@@ -90,14 +91,14 @@ class FeedVC: UITableViewController {
         }
     }
     
-    static var sorting: FeedSorting = FeedSorting(rawValue: (SharedPrefs.sortingOption as NSString).integerValue)! {
+    static var sorting: FeedSorting = FeedSorting(rawValue: Defaults[.feedSorting])! {
         didSet {
             
             guard oldValue != sorting else {
                 return
             }
             
-            SharedPrefs.setValue("\(sorting)", forKey: "sortingOption")
+            Defaults[.feedSorting] = sorting.rawValue
             
         }
     }
@@ -244,7 +245,7 @@ class FeedVC: UITableViewController {
     func setupNavBar() {
         
         navigationItem.rightBarButtonItems = self.rightBarButtonItems()
-        
+        navigationItem.largeTitleDisplayMode = .never
         
         
     }
@@ -781,7 +782,13 @@ extension FeedVC {
     
     @objc func didTapTitleView() {
         
-        // @TODO 
+        guard type == .natural,
+              let feed = self.feed,
+              let coordinator = mainCoordinator else {
+            return
+        }
+        
+        coordinator.showFeedInfo(feed, from: self)
         
     }
     

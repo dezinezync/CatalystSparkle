@@ -11,6 +11,15 @@
         }
       },
       {
+        "package": "Defaults",
+        "repositoryURL": "https://github.com/sindresorhus/Defaults",
+        "state": {
+          "branch": null,
+          "revision": "63dcea312f9cbd17064294a3ae99c9147704b65f",
+          "version": "4.2.1"
+        }
+      },
+      {
         "package": "DZNetworking",
         "repositoryURL": "https://github.com/DZNS/DZNetworking.git",
         "state": {

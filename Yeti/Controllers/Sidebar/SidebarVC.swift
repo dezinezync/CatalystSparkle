@@ -903,9 +903,8 @@ enum SidebarItem: Hashable {
                     
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                         
-                        if sself.refreshFeedsCount > 0 {
-                            sself.sync()
-                        }
+                        sself.refreshFeedsCount = 0
+                        sself.sync()
                         
                     }
                     
@@ -917,6 +916,8 @@ enum SidebarItem: Hashable {
                 }
                 
             }
+            
+            return
             
         }
         
@@ -947,8 +948,8 @@ enum SidebarItem: Hashable {
         
         updateSharedUnreadsData()
         
-        DBManager.shared.syncCoordinator = SyncCoordinator()
-        DBManager.shared.syncCoordinator?.syncProgressCallback = { [weak self] (progress) in
+        let syncCoordinator = SyncCoordinator()
+        syncCoordinator.syncProgressCallback = { [weak self] (progress) in
             
             guard let sself = self else {
                 return
@@ -1028,7 +1029,9 @@ enum SidebarItem: Hashable {
             
         }
         
-        DBManager.shared.syncCoordinator?.setupSync()
+        DBManager.shared.syncCoordinator = syncCoordinator
+        
+        syncCoordinator.setupSync()
         
     }
     
@@ -1359,7 +1362,7 @@ extension SidebarVC {
         
         DBManager.shared.countsConnection.asyncRead { [weak self] (t) in
             
-            guard let txn = t.ext(DBManagerViews.articlesView.rawValue) as? YapDatabaseFilteredViewTransaction else {
+            guard let txn = t.ext(DBManagerViews.unreadsView.rawValue) as? YapDatabaseFilteredViewTransaction else {
                 return
             }
             

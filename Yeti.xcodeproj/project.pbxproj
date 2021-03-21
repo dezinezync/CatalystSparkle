@@ -175,7 +175,6 @@
 		F05C7AA320D8E203007D6B5C /* TableHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = F05C7AA220D8E203007D6B5C /* TableHeader.xib */; };
 		F061508B24F62D18007F50A5 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F061508A24F62D18007F50A5 /* WidgetKit.framework */; };
 		F064A5322157638500A385AD /* LaunchVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F064A5302157638500A385AD /* LaunchVC.m */; };
-		F064A5332157638500A385AD /* LaunchVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F064A5312157638500A385AD /* LaunchVC.xib */; };
 		F064A5382157678900A385AD /* IdentityVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F064A5362157678900A385AD /* IdentityVC.xib */; };
 		F064A53B21576E7200A385AD /* UIImage+Color.m in Sources */ = {isa = PBXBuildFile; fileRef = F064A53A21576E7200A385AD /* UIImage+Color.m */; };
 		F064A53F21576F5600A385AD /* TrialVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F064A53D21576F5600A385AD /* TrialVC.m */; };
@@ -328,6 +327,8 @@
 		F0C8953525622CA0002F365E /* UITextField+CursorPosition.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C8953425622CA0002F365E /* UITextField+CursorPosition.m */; };
 		F0CA4589211DB99400D08E40 /* dark~ipad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0CA4587211DB99400D08E40 /* dark~ipad@2x.png */; };
 		F0CA799725AF4B4900DACA1B /* IdentityVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F064A5352157678900A385AD /* IdentityVC.m */; };
+		F0CB478B260712810098D372 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = F0CB478A260712810098D372 /* Defaults */; };
+		F0CB4815260712960098D372 /* Defaults+Elytra.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CB4814260712960098D372 /* Defaults+Elytra.swift */; };
 		F0CEA1742035B91B0082F4E7 /* NSString+Levenshtein.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CEA1732035B91B0082F4E7 /* NSString+Levenshtein.m */; };
 		F0CF4FC325DF700000E12411 /* String+URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CF4FC225DF700000E12411 /* String+URL.swift */; };
 		F0D01CC32118681C003A01DD /* dark@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0D01CC02118681B003A01DD /* dark@3x.png */; };
@@ -1928,6 +1929,7 @@
 		F0C8953325622CA0002F365E /* UITextField+CursorPosition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UITextField+CursorPosition.h"; sourceTree = "<group>"; };
 		F0C8953425622CA0002F365E /* UITextField+CursorPosition.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UITextField+CursorPosition.m"; sourceTree = "<group>"; };
 		F0CA4587211DB99400D08E40 /* dark~ipad@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dark~ipad@2x.png"; sourceTree = "<group>"; };
+		F0CB4814260712960098D372 /* Defaults+Elytra.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Defaults+Elytra.swift"; sourceTree = "<group>"; };
 		F0CEA1722035B91B0082F4E7 /* NSString+Levenshtein.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+Levenshtein.h"; sourceTree = "<group>"; };
 		F0CEA1732035B91B0082F4E7 /* NSString+Levenshtein.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+Levenshtein.m"; sourceTree = "<group>"; };
 		F0CF4F3525DF68BB00E12411 /* MoveFoldersDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MoveFoldersDelegate.h; sourceTree = "<group>"; };
@@ -2049,6 +2051,7 @@
 				F08C5E62238660B00055946F /* DZThemeKit.framework in Frameworks */,
 				F02A4894252653C7001063E9 /* SDWebImage in Frameworks */,
 				F06EA86125F9C02400A4C855 /* DBManager in Frameworks */,
+				F0CB478B260712810098D372 /* Defaults in Frameworks */,
 				F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */,
 				F0C1704D25DD4B1D005BAA9E /* FeedsLib in Frameworks */,
 				F08C5DFF2386567F0055946F /* DZAppdelegate.framework in Frameworks */,
@@ -2574,6 +2577,7 @@
 				F0DFBBF32570A36400246D8A /* CoalescingQueue.swift */,
 				F047CB6E2579F98E00395DC2 /* UIControlSubscription.swift */,
 				F0CF4F3525DF68BB00E12411 /* MoveFoldersDelegate.h */,
+				F0CB4814260712960098D372 /* Defaults+Elytra.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -3359,6 +3363,7 @@
 				F0C1704C25DD4B1D005BAA9E /* FeedsLib */,
 				F06EA86025F9C02400A4C855 /* DBManager */,
 				F06EA86725F9C02B00A4C855 /* Networking */,
+				F0CB478A260712810098D372 /* Defaults */,
 			);
 			productName = Yeti;
 			productReference = F070C2D91FBABC3500912CCF /* Elytra.app */;
@@ -3528,6 +3533,7 @@
 			packageReferences = (
 				F02A483825265210001063E9 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				F02A4892252653C7001063E9 /* XCRemoteSwiftPackageReference "SDWebImage" */,
+				F0CB4789260712810098D372 /* XCRemoteSwiftPackageReference "Defaults" */,
 			);
 			productRefGroup = F070C2DA1FBABC3500912CCF /* Products */;
 			projectDirPath = "";
@@ -4652,7 +4658,6 @@
 				F01E6E1724AC6C2500D1BD6E /* gold-dark.png in Resources */,
 				F00F646F24EC1DE700E5727C /* Gallery.xib in Resources */,
 				F0AF314720D28EFD00E074D6 /* IntroViewUUID.xib in Resources */,
-				F064A5332157638500A385AD /* LaunchVC.xib in Resources */,
 				F047F4E220C25FB900626968 /* Spectral-Regular.ttf in Resources */,
 				F0A5AE8820C19CB400CFA1D2 /* IBMPlexSerif-Medium.ttf in Resources */,
 				F047F4F020C25FB900626968 /* Spectral-Light.ttf in Resources */,
@@ -4786,6 +4791,7 @@
 				F0B5BFA62060D57F0092DA31 /* AppDelegate+Routing.m in Sources */,
 				F00F647024EC1DE700E5727C /* GalleryCell.m in Sources */,
 				F0DB58F923F575250008D871 /* CustomizationHeader.m in Sources */,
+				F0CB4815260712960098D372 /* Defaults+Elytra.swift in Sources */,
 				F0D071FB205E88AC00A042CD /* ImageLoadingVC.m in Sources */,
 				F088CF6E248E72020010EBC0 /* AppDelegate+Catalyst.m in Sources */,
 				F0FA473220CBAD7D0035B1F5 /* AccountFooterView.m in Sources */,
@@ -5806,6 +5812,14 @@
 				minimumVersion = 5.9.2;
 			};
 		};
+		F0CB4789260712810098D372 /* XCRemoteSwiftPackageReference "Defaults" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/Defaults";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.2.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -5849,6 +5863,11 @@
 		F0C1704C25DD4B1D005BAA9E /* FeedsLib */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = FeedsLib;
+		};
+		F0CB478A260712810098D372 /* Defaults */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F0CB4789260712810098D372 /* XCRemoteSwiftPackageReference "Defaults" */;
+			productName = Defaults;
 		};
 		F0D424222526557C00837194 /* SDWebImage */ = {
 			isa = XCSwiftPackageProductDependency;

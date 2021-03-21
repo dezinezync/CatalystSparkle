@@ -457,7 +457,7 @@ NSString* deviceName() {
     
 }
 
-- (void)showFeedInfo:(Feed *)feed from:(UIViewController *)viewController {
+- (void)showFeedInfo:(id)feed from:(UIViewController *)viewController {
     
     FeedInfoController *instance = [[FeedInfoController alloc] initWithFeed:feed];
     

@@ -11,12 +11,12 @@ import BetterCodable
 
 public struct ChangeSet: Codable {
     
-    public let changeToken: String!
-    public let changeTokenID: String!
-    public let customFeeds: [SyncChange]?
-    public let articles: [Article]?
-    public let reads: [Int: Bool]?
-    public let pages: UInt = 0
+    public var changeToken: String!
+    public var changeTokenID: String!
+    public var customFeeds: [SyncChange]?
+    public var articles: [Article]?
+    public var reads: [Int: Bool]?
+    @LosslessValue public var pages: UInt = 0
     
     public enum CodingKeys: String, CodingKey {
         case changeToken

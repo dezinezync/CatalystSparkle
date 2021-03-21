@@ -183,13 +183,6 @@ public class SyncCoordinator: NSObject {
                     return
                 }
                 
-                if page == 1 && changeSet.pages == 0 {
-                    DispatchQueue.main.async {
-                        sself.internalProgressCallback(1, nil)
-                    }
-                    return
-                }
-                
                 sself.inProgressSyncToken = changeSet.changeToken
                 sself.inProgressSyncTokenID = changeSet.changeTokenID
                 
