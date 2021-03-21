@@ -149,12 +149,15 @@ public final class DBManager {
     
     public lazy var uiConnection: YapDatabaseConnection = {
         
-        var c = database.newConnection()
+        var config = database.newConnection()
         
-        c.enableExceptionsForImplicitlyEndingLongLivedReadTransaction()
-        c.beginLongLivedReadTransaction()
+        config.objectCacheEnabled = false
+        config.metadataCacheLimit = 50
         
-        return c
+        config.enableExceptionsForImplicitlyEndingLongLivedReadTransaction()
+        config.beginLongLivedReadTransaction()
+        
+        return config
         
     }()
     

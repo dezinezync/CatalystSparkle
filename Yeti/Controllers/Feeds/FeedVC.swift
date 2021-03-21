@@ -325,10 +325,19 @@ class FeedVC: UITableViewController {
         
         // if the state is empty and there are no articles,
         // there is nothing to be done.
-        guard state != .empty, articles.count > 0 else {
-            showEmptyState()
+        guard state != .empty else {
+            
+            if total == -1 {
+                showLoadingState()
+            }
+            else {
+                showEmptyState()
+            }
+            
             return
         }
+        
+        removeEmptyState()
         
         if total == -1 || (state == .loading && articles.count == 0) {
             showLoadingState()
@@ -340,10 +349,12 @@ class FeedVC: UITableViewController {
             return
         }
         
-        removeEmptyState()
-        
         if activityIndicator.isAnimating == true {
             activityIndicator.stopAnimating()
+        }
+        
+        if state == .loaded, total == 0 {
+            showEmptyState()
         }
         
         setupData()
@@ -447,15 +458,89 @@ class FeedVC: UITableViewController {
     }
     
     // MARK: - Updates
+    var isShowingEmptyState: Bool = false
+    
+    var _emptyView: UIView?
+    
+    var emptyViewDisplayTitle: String {
+        return feed!.displayTitle
+    }
+    
+    func emptyView () -> UIView {
+        
+        let titleText = sorting.isUnread ? "No unread articles" : "No recent articles"
+       
+        let title = UILabel()
+        title.font = .preferredFont(forTextStyle: .headline)
+        title.textColor = .secondaryLabel
+        title.text = titleText.capitalized(with: Locale.current)
+        title.numberOfLines = 0
+        title.textAlignment = .center
+        
+        let subtitle = UILabel()
+        subtitle.font = .preferredFont(forTextStyle: .subheadline)
+        subtitle.textColor = .secondaryLabel
+        subtitle.numberOfLines = 0
+        subtitle.textAlignment = .center
+        
+        subtitle.text = "\(titleText) in \(emptyViewDisplayTitle)."
+        
+        if sorting.isUnread == true {
+            subtitle.text = "\(subtitle.text!) You're all caught up."
+        }
+        
+        let stack = UIStackView(arrangedSubviews: [title, subtitle])
+        stack.alignment = .center
+        stack.distribution = .fillEqually
+        stack.spacing = UIStackView.spacingUseSystem
+        stack.axis = .vertical
+        stack.isBaselineRelativeArrangement = true
+        
+        let widthConstraint = stack.widthAnchor.constraint(lessThanOrEqualToConstant: 351)
+        widthConstraint.priority = UILayoutPriority(rawValue: 999)
+        widthConstraint.isActive = true
+        
+        return stack
+        
+    }
+    
     func showEmptyState () {
         
+        guard isShowingEmptyState == false else {
+            return
+        }
         
+        if _emptyView != nil {
+            removeEmptyState()
+        }
+        
+        let emptyView = emptyView()
+        emptyView.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(emptyView)
+        
+        _emptyView = emptyView
+        isShowingEmptyState = true
+        
+        NSLayoutConstraint.activate([
+            emptyView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            emptyView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor)
+        ])
         
     }
     
     func removeEmptyState() {
         
+        guard isShowingEmptyState == true else {
+            return
+        }
         
+        guard let view = _emptyView else {
+            return
+        }
+        
+        view.removeFromSuperview()
+        _emptyView = nil
         
     }
     
