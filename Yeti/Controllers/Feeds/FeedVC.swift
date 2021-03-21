@@ -12,6 +12,7 @@ import DBManager
 import YapDatabase
 import SwiftYapDatabase
 import Networking
+import Combine
 
 fileprivate let dbFilteredViewName = "feedFilteredView"
 
@@ -74,6 +75,7 @@ class FeedVC: UITableViewController {
     
     var type: FeedType! = .natural
     var feed: Feed? = nil
+    var cancellables = [AnyCancellable]()
     
     var state: FeedVCState = .empty {
         didSet {
@@ -172,6 +174,7 @@ class FeedVC: UITableViewController {
     }
     
     // MARK: - Setups
+    weak var titleView: FeedTitleView?
     
     func setupFeed() {
         
@@ -184,6 +187,53 @@ class FeedVC: UITableViewController {
             }
             
             self.title = feed.displayTitle
+            
+            let titleView = FeedTitleView()
+            
+            feed.displayTitle.publisher
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] (_) in
+                    
+                    guard let sself = self,
+                          let tv = sself.titleView,
+                          let f = sself.feed else {
+                        return
+                    }
+                    
+                    tv.titleLabel.text = f.displayTitle
+                    
+                }
+                .store(in: &cancellables)
+            
+            feed.$unread.receive(on: DispatchQueue.main)
+                .sink { [weak self] (unread) in
+                    
+                    guard let sself = self else {
+                        return
+                    }
+                    
+                    let count = unread ?? 0
+                    
+                    sself.titleView?.countLabel.text = "\(count) Unread\(count == 1 ? "" : "s")"
+                    
+                }
+                .store(in: &cancellables)
+            
+            if let image = feed.faviconImage {
+                titleView.faviconView.image = image
+            }
+            else if let url = feed.faviconProxyURI(size: 24) {
+                titleView.faviconView.sd_setImage(with: url) { (image, _, _, _) in
+                    
+                    if let image = image {
+                        feed.faviconImage = image
+                    }
+                    
+                }
+            }
+            
+            navigationItem.titleView = titleView
+            self.titleView = titleView
             
         default:
             break
@@ -310,11 +360,14 @@ class FeedVC: UITableViewController {
             return
         }
         
+        let isEmpty = DS.snapshot().numberOfItems == 0
+        let animated = isEmpty == true ? false : (view.window != nil)
+        
         var snapshot = NSDiffableDataSourceSnapshot<Int, Article>()
         snapshot.appendSections([0])
         snapshot.appendItems(articles.map { $0 as! Article })
         
-        DS.apply(snapshot, animatingDifferences: view.window != nil, completion: nil)
+        DS.apply(snapshot, animatingDifferences: animated, completion: nil)
         
     }
     

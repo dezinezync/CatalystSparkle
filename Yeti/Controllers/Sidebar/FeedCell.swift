@@ -59,13 +59,7 @@ class FeedCell: UICollectionViewListCell {
                             return
                         }
                         
-                        guard var c = sself.contentConfiguration as? UIListContentConfiguration else {
-                            return
-                        }
-                        
-                        c.secondaryText = (unread ?? 0) > 0 ? "\(unread!)" : ""
-                        
-                        sself.contentConfiguration = content
+                        sself.updateUnreadCount(unread ?? 0)
                         
                 }
                 .store(in: &cancellables)
@@ -164,6 +158,18 @@ class FeedCell: UICollectionViewListCell {
         
         contentConfiguration = content
         backgroundConfiguration = background
+        
+    }
+    
+    func updateUnreadCount (_ unread: UInt) {
+        
+        guard var content = contentConfiguration as? UIListContentConfiguration else {
+            return
+        }
+        
+        content.secondaryText = unread > 0 ? "\(unread)" : ""
+        
+        contentConfiguration = content
         
     }
     
