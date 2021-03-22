@@ -9,15 +9,15 @@ import Foundation
 import CoreGraphics
 import BetterCodable
 
-public struct ContentSize: Codable {
+@objcMembers public final class ContentSize: NSObject, Codable {
     
-    var size: CGSize = CGSize()
+    public var size: CGSize = CGSize()
     
-    var width: CGFloat {
+    public var width: CGFloat {
         return size.width
     }
     
-    var height: CGFloat {
+    public var height: CGFloat {
         return size.height
     }
     
@@ -29,11 +29,14 @@ public struct ContentSize: Codable {
         self.size = size
     }
     
-    public init(size: String) {
+    public init(withString size: String) {
+        super.init()
         self.size = setSize(size: size)
     }
     
-    public init(from decoder: Decoder) throws {
+    required public init(from decoder: Decoder) throws {
+        
+        super.init()
         
         let values = try decoder.singleValueContainer()
         
@@ -59,7 +62,7 @@ public struct ContentSize: Codable {
         
     }
     
-    private mutating func setSize(size: String) -> CGSize {
+    private func setSize(size: String) -> CGSize {
         let comps = size.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespaces) }.map { ($0 as NSString).doubleValue }
         
         if comps.count == 2 {
@@ -74,7 +77,7 @@ public struct ContentSize: Codable {
     
 }
 
-public final class Content: NSObject, Codable {
+@objcMembers public final class Content: NSObject, Codable {
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case content
@@ -98,7 +101,8 @@ public final class Content: NSObject, Codable {
     @LossyOptional public var url: URL?
     public var alt: String?
     public var identifier: String?
-    public var level: UInt?
+    // changed from UInt to Double so it can be bridged from Swift > ObjC
+    public var level: Double? = 0
     public var items: [Content]?
     public var attributes: [String: String]?
     public var videoID: String?
@@ -122,7 +126,7 @@ public final class Content: NSObject, Codable {
         
     }
     
-    public convenience init(from array: [[String: Any]]) {
+    public convenience init(fromArray array: [[String: Any]]) {
         
         self.init()
         
@@ -186,7 +190,7 @@ public final class Content: NSObject, Codable {
             }
         }
         else if key == "level" {
-            if let value = value as? UInt {
+            if let value = value as? Double {
                 level = value
             }
         }
@@ -227,7 +231,7 @@ public final class Content: NSObject, Codable {
                 size = ContentSize(size: value)
             }
             else if let value = value as? String {
-                size = ContentSize(size: value)
+                size = ContentSize(withString: value)
             }
         }
         else if key == "srcSet" || key == "srcset" {

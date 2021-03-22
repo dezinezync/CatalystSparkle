@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-public final class Folder: NSObject, Codable, ObservableObject {
+@objcMembers public final class Folder: NSObject, Codable, ObservableObject {
     
     public var title: String!
     public var folderID: UInt!

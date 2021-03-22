@@ -7,7 +7,7 @@
 //
 
 #import "PushVC.h"
-#import "FeedsCell.h"
+
 #import "Elytra-Swift.h"
 
 #import <DZKit/AlertManager.h>
@@ -52,7 +52,7 @@
 
 - (void)setupTableView {
     
-    [FeedsCell registerOn:self.tableView];
+//    [FeedsCell registerOn:self.tableView];
     
     self.tableView.estimatedRowHeight = 44.f;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
@@ -71,18 +71,20 @@
     
     self.DS = [[UITableViewDiffableDataSource alloc] initWithTableView:self.tableView cellProvider:^UITableViewCell * _Nullable(UITableView * _Nonnull tableView, NSIndexPath * _Nonnull indexPath, id _Nonnull feed) {
         
-        FeedsCell *cell = (FeedsCell *)[tableView dequeueReusableCellWithIdentifier:kFeedsCell forIndexPath:indexPath];
+        return nil;
         
-        cell.backgroundColor = UIColor.systemBackgroundColor;
-        
-        if (feed) {
-            [cell configure:feed];
-        }
-        
-        cell.countLabel.hidden = YES;
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        
-        return cell;
+//        FeedsCell *cell = (FeedsCell *)[tableView dequeueReusableCellWithIdentifier:kFeedsCell forIndexPath:indexPath];
+//
+//        cell.backgroundColor = UIColor.systemBackgroundColor;
+//
+//        if (feed) {
+//            [cell configure:feed];
+//        }
+//
+//        cell.countLabel.hidden = YES;
+//        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+//
+//        return cell;
         
     }];
     

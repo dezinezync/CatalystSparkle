@@ -19,14 +19,8 @@
 		F00B0FA020F487090012EB03 /* EmptyCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F00B0F9E20F487090012EB03 /* EmptyCell.m */; };
 		F00B0FA220F487090012EB03 /* EmptyCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F00B0F9F20F487090012EB03 /* EmptyCell.xib */; };
 		F00F643A24EC1BC700E5727C /* FeedItem.m in Sources */ = {isa = PBXBuildFile; fileRef = F00F642424EC1BC600E5727C /* FeedItem.m */; };
-		F00F643B24EC1BC700E5727C /* FeedMeta.m in Sources */ = {isa = PBXBuildFile; fileRef = F00F642524EC1BC600E5727C /* FeedMeta.m */; };
 		F00F643C24EC1BC700E5727C /* Subscription.m in Sources */ = {isa = PBXBuildFile; fileRef = F00F642724EC1BC600E5727C /* Subscription.m */; };
-		F00F643D24EC1BC700E5727C /* MetaOpenGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = F00F642824EC1BC600E5727C /* MetaOpenGraph.m */; };
-		F00F643E24EC1BC700E5727C /* Author.m in Sources */ = {isa = PBXBuildFile; fileRef = F00F642B24EC1BC600E5727C /* Author.m */; };
 		F00F643F24EC1BC700E5727C /* VideoInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = F00F642D24EC1BC600E5727C /* VideoInfo.m */; };
-		F00F644024EC1BC700E5727C /* Content.m in Sources */ = {isa = PBXBuildFile; fileRef = F00F643124EC1BC600E5727C /* Content.m */; };
-		F00F644124EC1BC700E5727C /* Enclosure.m in Sources */ = {isa = PBXBuildFile; fileRef = F00F643324EC1BC600E5727C /* Enclosure.m */; };
-		F00F644324EC1BC700E5727C /* Feed.m in Sources */ = {isa = PBXBuildFile; fileRef = F00F643824EC1BC600E5727C /* Feed.m */; };
 		F00F644424EC1BC700E5727C /* Range.m in Sources */ = {isa = PBXBuildFile; fileRef = F00F643924EC1BC600E5727C /* Range.m */; };
 		F00F644524EC1BC900E5727C /* Subscription.m in Sources */ = {isa = PBXBuildFile; fileRef = F00F642724EC1BC600E5727C /* Subscription.m */; };
 		F00F644B24EC1D5200E5727C /* YetiConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = F00F644A24EC1D5200E5727C /* YetiConstants.m */; };
@@ -87,7 +81,6 @@
 		F022B0DA20DC2D9500030185 /* AccentCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F022B0D720DC2D9500030185 /* AccentCell.xib */; };
 		F022B0DF20DC30DE00030185 /* AccentButton.m in Sources */ = {isa = PBXBuildFile; fileRef = F022B0DE20DC30DE00030185 /* AccentButton.m */; };
 		F026F79425FB27DB004AC31E /* FeedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F026F79325FB27DB004AC31E /* FeedCell.swift */; };
-		F026F7A125FB34DB004AC31E /* Folder.m in Sources */ = {isa = PBXBuildFile; fileRef = F026F79F25FB34DB004AC31E /* Folder.m */; };
 		F02A483A25265210001063E9 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = F02A483925265210001063E9 /* SDWebImageSwiftUI */; };
 		F02A4894252653C7001063E9 /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = F02A4893252653C7001063E9 /* SDWebImage */; };
 		F02AFA9024CC00F80002A699 /* Coordinator.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EE6CD824CABEE000E987FC /* Coordinator.m */; };
@@ -199,8 +192,6 @@
 		F070C2EC1FBABC3600912CCF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C2EB1FBABC3600912CCF /* main.m */; };
 		F070C2F61FBABC3600912CCF /* YetiTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C2F51FBABC3600912CCF /* YetiTests.m */; };
 		F070C3011FBABC3600912CCF /* YetiUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C3001FBABC3600912CCF /* YetiUITests.m */; };
-		F070C34C1FBADF8D00912CCF /* FeedsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C34A1FBADF8D00912CCF /* FeedsCell.m */; };
-		F070C34D1FBADF8D00912CCF /* FeedsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F070C34B1FBADF8D00912CCF /* FeedsCell.xib */; };
 		F070C3591FBAE7A200912CCF /* ArticleVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C3571FBAE7A200912CCF /* ArticleVC.m */; };
 		F070C35A1FBAE7A200912CCF /* ArticleVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F070C3581FBAE7A200912CCF /* ArticleVC.xib */; };
 		F0710D292062D3090097CCD5 /* NewVCAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = F0710D282062D3090097CCD5 /* NewVCAnimator.m */; };
@@ -238,7 +229,6 @@
 		F08C5E002386567F0055946F /* DZAppdelegate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DFC238656620055946F /* DZAppdelegate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F08C5E62238660B00055946F /* DZThemeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5E5D238660A90055946F /* DZThemeKit.framework */; };
 		F08C5E63238660B00055946F /* DZThemeKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5E5D238660A90055946F /* DZThemeKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F093319424EC14A90066FA41 /* CustomFeed.m in Sources */ = {isa = PBXBuildFile; fileRef = F093318E24EC14A90066FA41 /* CustomFeed.m */; };
 		F093319924EC14A90066FA41 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = F093318824EC14A90066FA41 /* User.m */; };
 		F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F099465F20AD86BE00E5520F /* StoreKit.framework */; };
 		F099466520AD8A8B00E5520F /* AppDelegate+Store.m in Sources */ = {isa = PBXBuildFile; fileRef = F099466420AD8A8B00E5520F /* AppDelegate+Store.m */; };
@@ -254,7 +244,6 @@
 		F0A031BB2520F7B900076718 /* ArticlePreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0A031A02520F7B900076718 /* ArticlePreferenceViewController.swift */; };
 		F0A031BC2520F7B900076718 /* ArticlePreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0A031BA2520F7B900076718 /* ArticlePreferenceViewController.xib */; };
 		F0A0500D21F0728A00A46524 /* NewFeedDeckController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A0500C21F0728A00A46524 /* NewFeedDeckController.m */; };
-		F0A4797E20637D2100A20195 /* AddFeedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A4797D20637D2100A20195 /* AddFeedCell.m */; };
 		F0A589F5205A580300488015 /* LinguisticSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A589F4205A580300488015 /* LinguisticSearch.m */; };
 		F0A589F6205A580800488015 /* LinguisticSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A589F4205A580300488015 /* LinguisticSearch.m */; };
 		F0A5AE6420C197EF00CFA1D2 /* Merriweather-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0A5AE5C20C197EE00CFA1D2 /* Merriweather-Bold.ttf */; };
@@ -341,7 +330,6 @@
 		F0D071FB205E88AC00A042CD /* ImageLoadingVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D071F9205E88AC00A042CD /* ImageLoadingVC.m */; };
 		F0D07201205E960900A042CD /* ExternalAppsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D071FF205E960900A042CD /* ExternalAppsVC.m */; };
 		F0D07206205E9EC500A042CD /* DZWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D07204205E9EC400A042CD /* DZWebViewController.m */; };
-		F0D401F821F2FEC2008F45D0 /* AddFeedCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0D401F721F2FEC1008F45D0 /* AddFeedCell.xib */; };
 		F0D424232526557C00837194 /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = F0D424222526557C00837194 /* SDWebImage */; };
 		F0D98F5224EE4C8500B1F9F0 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0D98F5124EE4C8500B1F9F0 /* SwiftUI.framework */; };
 		F0D98F5524EE4C8500B1F9F0 /* UnreadsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D98F5424EE4C8500B1F9F0 /* UnreadsWidget.swift */; };
@@ -353,8 +341,6 @@
 		F0DB58FB23F575400008D871 /* CustomizationHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0DB58FA23F575400008D871 /* CustomizationHeader.xib */; };
 		F0DB58FF23F578E20008D871 /* CustomizationThemeCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DB58FD23F578E20008D871 /* CustomizationThemeCell.m */; };
 		F0DB590023F578E20008D871 /* CustomizationThemeCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0DB58FE23F578E20008D871 /* CustomizationThemeCell.xib */; };
-		F0DDA0F420E5F84C00C5D97E /* FeedsGridCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DDA0F220E5F84C00C5D97E /* FeedsGridCell.m */; };
-		F0DDA0F620E5F84C00C5D97E /* FeedsGridCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0DDA0F320E5F84C00C5D97E /* FeedsGridCell.xib */; };
 		F0DFBBF42570A36400246D8A /* CoalescingQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0DFBBF32570A36400246D8A /* CoalescingQueue.swift */; };
 		F0E0D51525208C3700A9E654 /* ImagesPreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0E0D4FA25208C3600A9E654 /* ImagesPreferenceViewController.xib */; };
 		F0E0D51625208C3700A9E654 /* ImagesPreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E0D51425208C3600A9E654 /* ImagesPreferenceViewController.swift */; };
@@ -1479,24 +1465,12 @@
 		F00B0F9E20F487090012EB03 /* EmptyCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EmptyCell.m; sourceTree = "<group>"; };
 		F00B0F9F20F487090012EB03 /* EmptyCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EmptyCell.xib; sourceTree = "<group>"; };
 		F00F642424EC1BC600E5727C /* FeedItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeedItem.m; sourceTree = "<group>"; };
-		F00F642524EC1BC600E5727C /* FeedMeta.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeedMeta.m; sourceTree = "<group>"; };
 		F00F642624EC1BC600E5727C /* Range.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Range.h; sourceTree = "<group>"; };
 		F00F642724EC1BC600E5727C /* Subscription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Subscription.m; sourceTree = "<group>"; };
-		F00F642824EC1BC600E5727C /* MetaOpenGraph.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MetaOpenGraph.m; sourceTree = "<group>"; };
-		F00F642A24EC1BC600E5727C /* Content.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Content.h; sourceTree = "<group>"; };
-		F00F642B24EC1BC600E5727C /* Author.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Author.m; sourceTree = "<group>"; };
-		F00F642C24EC1BC600E5727C /* FeedMeta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeedMeta.h; sourceTree = "<group>"; };
 		F00F642D24EC1BC600E5727C /* VideoInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoInfo.m; sourceTree = "<group>"; };
-		F00F642E24EC1BC600E5727C /* Feed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Feed.h; sourceTree = "<group>"; };
 		F00F642F24EC1BC600E5727C /* VideoInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoInfo.h; sourceTree = "<group>"; };
-		F00F643024EC1BC600E5727C /* Enclosure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Enclosure.h; sourceTree = "<group>"; };
-		F00F643124EC1BC600E5727C /* Content.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Content.m; sourceTree = "<group>"; };
 		F00F643224EC1BC600E5727C /* FeedItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeedItem.h; sourceTree = "<group>"; };
-		F00F643324EC1BC600E5727C /* Enclosure.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Enclosure.m; sourceTree = "<group>"; };
-		F00F643424EC1BC600E5727C /* MetaOpenGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetaOpenGraph.h; sourceTree = "<group>"; };
-		F00F643624EC1BC600E5727C /* Author.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Author.h; sourceTree = "<group>"; };
 		F00F643724EC1BC600E5727C /* Subscription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Subscription.h; sourceTree = "<group>"; };
-		F00F643824EC1BC600E5727C /* Feed.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Feed.m; sourceTree = "<group>"; };
 		F00F643924EC1BC600E5727C /* Range.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Range.m; sourceTree = "<group>"; };
 		F00F644924EC1D5200E5727C /* YetiConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YetiConstants.h; sourceTree = "<group>"; };
 		F00F644A24EC1D5200E5727C /* YetiConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YetiConstants.m; sourceTree = "<group>"; };
@@ -1584,8 +1558,6 @@
 		F02459C920590E6D002906C3 /* SearchResults.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SearchResults.h; sourceTree = "<group>"; };
 		F02459CA20590E6D002906C3 /* SearchResults.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SearchResults.m; sourceTree = "<group>"; };
 		F026F79325FB27DB004AC31E /* FeedCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCell.swift; sourceTree = "<group>"; };
-		F026F79F25FB34DB004AC31E /* Folder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Folder.m; sourceTree = "<group>"; };
-		F026F7A025FB34DB004AC31E /* Folder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Folder.h; sourceTree = "<group>"; };
 		F02B701E24EA7E5C00DD607F /* IDMPhotoBrowser.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = IDMPhotoBrowser.bundle; sourceTree = "<group>"; };
 		F02B701F24EA7E5C00DD607F /* IDMCaptionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDMCaptionView.h; sourceTree = "<group>"; };
 		F02B702024EA7E5C00DD607F /* IDMPBLocalizations.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = IDMPBLocalizations.bundle; sourceTree = "<group>"; };
@@ -1752,9 +1724,6 @@
 		F070C3001FBABC3600912CCF /* YetiUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YetiUITests.m; sourceTree = "<group>"; };
 		F070C3021FBABC3600912CCF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F070C3201FBAC0E100912CCF /* Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Prefix.pch; sourceTree = "<group>"; };
-		F070C3491FBADF8D00912CCF /* FeedsCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedsCell.h; sourceTree = "<group>"; };
-		F070C34A1FBADF8D00912CCF /* FeedsCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedsCell.m; sourceTree = "<group>"; };
-		F070C34B1FBADF8D00912CCF /* FeedsCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FeedsCell.xib; sourceTree = "<group>"; };
 		F070C3561FBAE7A200912CCF /* ArticleVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticleVC.h; sourceTree = "<group>"; };
 		F070C3571FBAE7A200912CCF /* ArticleVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArticleVC.m; sourceTree = "<group>"; };
 		F070C3581FBAE7A200912CCF /* ArticleVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ArticleVC.xib; sourceTree = "<group>"; };
@@ -1810,10 +1779,8 @@
 		F08C5E56238660A90055946F /* DZThemeKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZThemeKit.xcodeproj; path = Vendors/DZThemeKit/DZThemeKit.xcodeproj; sourceTree = "<group>"; };
 		F0919F641FD7C1A70098F48A /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		F093318524EC14A80066FA41 /* User.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
-		F093318724EC14A90066FA41 /* CustomFeed.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomFeed.h; sourceTree = "<group>"; };
 		F093318824EC14A90066FA41 /* User.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		F093318B24EC14A90066FA41 /* UnreadCountObservor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnreadCountObservor.h; sourceTree = "<group>"; };
-		F093318E24EC14A90066FA41 /* CustomFeed.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomFeed.m; sourceTree = "<group>"; };
 		F0953BAA25F36D9E005DE6C7 /* DBManager */ = {isa = PBXFileReference; lastKnownFileType = folder; name = DBManager; path = Yeti/DBManager; sourceTree = "<group>"; };
 		F099465F20AD86BE00E5520F /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		F099466320AD8A8A00E5520F /* AppDelegate+Store.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+Store.h"; sourceTree = "<group>"; };
@@ -1835,8 +1802,6 @@
 		F0A031BA2520F7B900076718 /* ArticlePreferenceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ArticlePreferenceViewController.xib; sourceTree = "<group>"; };
 		F0A0500B21F0728A00A46524 /* NewFeedDeckController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewFeedDeckController.h; sourceTree = "<group>"; };
 		F0A0500C21F0728A00A46524 /* NewFeedDeckController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewFeedDeckController.m; sourceTree = "<group>"; };
-		F0A4797C20637D2100A20195 /* AddFeedCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddFeedCell.h; sourceTree = "<group>"; };
-		F0A4797D20637D2100A20195 /* AddFeedCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AddFeedCell.m; sourceTree = "<group>"; };
 		F0A4798020639EB000A20195 /* ArticleHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticleHandler.h; sourceTree = "<group>"; };
 		F0A589EF205A4E7E00488015 /* LinguisticSearch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LinguisticSearch.m; sourceTree = "<group>"; };
 		F0A589F3205A580300488015 /* LinguisticSearch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LinguisticSearch.h; sourceTree = "<group>"; };
@@ -1956,7 +1921,6 @@
 		F0D07204205E9EC400A042CD /* DZWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DZWebViewController.m; sourceTree = "<group>"; };
 		F0D07205205E9EC400A042CD /* DZWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DZWebViewController.h; sourceTree = "<group>"; };
 		F0D07207205E9F6700A042CD /* attributions.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = attributions.html; sourceTree = "<group>"; };
-		F0D401F721F2FEC1008F45D0 /* AddFeedCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddFeedCell.xib; sourceTree = "<group>"; };
 		F0D98F4E24EE4C8500B1F9F0 /* UnreadsWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = UnreadsWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0D98F4F24EE4C8500B1F9F0 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		F0D98F5124EE4C8500B1F9F0 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -1972,9 +1936,6 @@
 		F0DB58FC23F578E20008D871 /* CustomizationThemeCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomizationThemeCell.h; sourceTree = "<group>"; };
 		F0DB58FD23F578E20008D871 /* CustomizationThemeCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomizationThemeCell.m; sourceTree = "<group>"; };
 		F0DB58FE23F578E20008D871 /* CustomizationThemeCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomizationThemeCell.xib; sourceTree = "<group>"; };
-		F0DDA0F120E5F84C00C5D97E /* FeedsGridCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedsGridCell.h; sourceTree = "<group>"; };
-		F0DDA0F220E5F84C00C5D97E /* FeedsGridCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedsGridCell.m; sourceTree = "<group>"; };
-		F0DDA0F320E5F84C00C5D97E /* FeedsGridCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FeedsGridCell.xib; sourceTree = "<group>"; };
 		F0DFBBF32570A36400246D8A /* CoalescingQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoalescingQueue.swift; sourceTree = "<group>"; };
 		F0E0D4FA25208C3600A9E654 /* ImagesPreferenceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ImagesPreferenceViewController.xib; sourceTree = "<group>"; };
 		F0E0D51425208C3600A9E654 /* ImagesPreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagesPreferenceViewController.swift; sourceTree = "<group>"; };
@@ -2647,29 +2608,13 @@
 			children = (
 				F0EE6CD724CABEE000E987FC /* Coordinator.h */,
 				F0EE6CD824CABEE000E987FC /* Coordinator.m */,
-				F026F7A025FB34DB004AC31E /* Folder.h */,
-				F026F79F25FB34DB004AC31E /* Folder.m */,
 				F032A75C244D7D8C0024AC63 /* YetiTheme.h */,
 				F032A75B244D7D8C0024AC63 /* YetiTheme.m */,
 				F093318B24EC14A90066FA41 /* UnreadCountObservor.h */,
-				F093318724EC14A90066FA41 /* CustomFeed.h */,
-				F093318E24EC14A90066FA41 /* CustomFeed.m */,
 				F093318524EC14A80066FA41 /* User.h */,
 				F093318824EC14A90066FA41 /* User.m */,
-				F00F643624EC1BC600E5727C /* Author.h */,
-				F00F642B24EC1BC600E5727C /* Author.m */,
-				F00F642A24EC1BC600E5727C /* Content.h */,
-				F00F643124EC1BC600E5727C /* Content.m */,
-				F00F643024EC1BC600E5727C /* Enclosure.h */,
-				F00F643324EC1BC600E5727C /* Enclosure.m */,
-				F00F642E24EC1BC600E5727C /* Feed.h */,
-				F00F643824EC1BC600E5727C /* Feed.m */,
 				F00F643224EC1BC600E5727C /* FeedItem.h */,
 				F00F642424EC1BC600E5727C /* FeedItem.m */,
-				F00F642C24EC1BC600E5727C /* FeedMeta.h */,
-				F00F642524EC1BC600E5727C /* FeedMeta.m */,
-				F00F643424EC1BC600E5727C /* MetaOpenGraph.h */,
-				F00F642824EC1BC600E5727C /* MetaOpenGraph.m */,
 				F00F642624EC1BC600E5727C /* Range.h */,
 				F00F643924EC1BC600E5727C /* Range.m */,
 				F00F643724EC1BC600E5727C /* Subscription.h */,
@@ -2775,9 +2720,6 @@
 			children = (
 				F00F644C24EC1D8900E5727C /* Article */,
 				F03C6024251F702200F442C7 /* Mac */,
-				F070C3491FBADF8D00912CCF /* FeedsCell.h */,
-				F070C34A1FBADF8D00912CCF /* FeedsCell.m */,
-				F070C34B1FBADF8D00912CCF /* FeedsCell.xib */,
 				F0D071F2205E76A500A042CD /* SettingsCell.h */,
 				F0D071F3205E76A500A042CD /* SettingsCell.m */,
 				F0EFA638205FDC5A00815ED7 /* ArticleHelperView.h */,
@@ -2785,9 +2727,6 @@
 				F0EFA63B205FDC7100815ED7 /* ArticleHelperView.xib */,
 				F0710D2A2062DAB70097CCD5 /* PaddedTextField.h */,
 				F0710D2B2062DAB70097CCD5 /* PaddedTextField.m */,
-				F0A4797C20637D2100A20195 /* AddFeedCell.h */,
-				F0A4797D20637D2100A20195 /* AddFeedCell.m */,
-				F0D401F721F2FEC1008F45D0 /* AddFeedCell.xib */,
 				F0519D4C20849EE400EB3FE0 /* FilterInputCell.h */,
 				F0519D4D20849EE400EB3FE0 /* FilterInputCell.m */,
 				F0519D4E20849EE400EB3FE0 /* FilterInputCell.xib */,
@@ -2814,9 +2753,6 @@
 				F022B0D720DC2D9500030185 /* AccentCell.xib */,
 				F022B0DD20DC30DE00030185 /* AccentButton.h */,
 				F022B0DE20DC30DE00030185 /* AccentButton.m */,
-				F0DDA0F120E5F84C00C5D97E /* FeedsGridCell.h */,
-				F0DDA0F220E5F84C00C5D97E /* FeedsGridCell.m */,
-				F0DDA0F320E5F84C00C5D97E /* FeedsGridCell.xib */,
 				F04416E420E618F8008AB1D3 /* CollectionHeader.h */,
 				F04416E520E618F8008AB1D3 /* CollectionHeader.m */,
 				F04416E620E618F8008AB1D3 /* CollectionHeader.xib */,
@@ -4624,7 +4560,6 @@
 				F0F35B0B257779CD0043982C /* FeedInfoController.xib in Resources */,
 				F01E6E2524AC6C2500D1BD6E /* red-dark.png in Resources */,
 				F01E6E1A24AC6C2500D1BD6E /* platinum.png in Resources */,
-				F0D401F821F2FEC2008F45D0 /* AddFeedCell.xib in Resources */,
 				F0A5AEB020C19DA200CFA1D2 /* IBMPlexSans-Italic.ttf in Resources */,
 				F0A5AE9E20C19CB400CFA1D2 /* IBMPlexSerif-MediumItalic.ttf in Resources */,
 				F01E6E1624AC6C2500D1BD6E /* gold-dark~ipad@2x.png in Resources */,
@@ -4635,7 +4570,6 @@
 				F01E6E1D24AC6C2500D1BD6E /* gold@2x.png in Resources */,
 				F04416E920E618F8008AB1D3 /* CollectionHeader.xib in Resources */,
 				F0A5AE9220C19CB400CFA1D2 /* IBMPlexSerif-BoldItalic.ttf in Resources */,
-				F070C34D1FBADF8D00912CCF /* FeedsCell.xib in Resources */,
 				F01E6E2024AC6C2500D1BD6E /* platinum-dark.png in Resources */,
 				F01E6E1124AC6C2500D1BD6E /* red@3x.png in Resources */,
 				F003C20F2539685E00312913 /* Atkinson-BoldItalic.ttf in Resources */,
@@ -4643,7 +4577,6 @@
 				F0A5AE6E20C197EF00CFA1D2 /* Merriweather-BlackItalic.ttf in Resources */,
 				F0F10A98244C8020009FC108 /* DateTools.bundle in Resources */,
 				F0C49D04260049D8009B8E34 /* ArticleCell.xib in Resources */,
-				F0DDA0F620E5F84C00C5D97E /* FeedsGridCell.xib in Resources */,
 				F0F35B2D2577A05D0043982C /* FeedInfoCell.xib in Resources */,
 				F01E6E2324AC6C2500D1BD6E /* platinum-dark@2x.png in Resources */,
 				F0D01CC72118681C003A01DD /* dark@2x.png in Resources */,
@@ -4806,12 +4739,10 @@
 				F0FA473220CBAD7D0035B1F5 /* AccountFooterView.m in Sources */,
 				F032A750244D5F9A0024AC63 /* PrefsManager.m in Sources */,
 				F018A2CF205D0F0B001E682B /* SettingsVC.m in Sources */,
-				F00F644124EC1BC700E5727C /* Enclosure.m in Sources */,
 				F0710D2C2062DAB70097CCD5 /* PaddedTextField.m in Sources */,
 				F07A31322297FC9D00822969 /* UIView+Anchoring.m in Sources */,
 				F064A53F21576F5600A385AD /* TrialVC.m in Sources */,
 				F078B638206637B40048DBEA /* EmptyVC.m in Sources */,
-				F0DDA0F420E5F84C00C5D97E /* FeedsGridCell.m in Sources */,
 				F0519D4B20848D4D00EB3FE0 /* FiltersVC.m in Sources */,
 				F03C4EBD2510CE8A008561DB /* NewFolderController.m in Sources */,
 				F0EDAC7625DE0C950074ED1E /* NewFeedReccomendationCell.swift in Sources */,
@@ -4841,7 +4772,6 @@
 				F0C16FB325DD4AAF005BAA9E /* NewFeedVC.swift in Sources */,
 				F0B0EA3424EC1EDD00D675B4 /* NSString+ImageProxy.m in Sources */,
 				F0F35B2C2577A05D0043982C /* FeedInfoCell.swift in Sources */,
-				F093319424EC14A90066FA41 /* CustomFeed.m in Sources */,
 				F01D71521FBC1A2500DF84B9 /* NSAttributedString+Trimming.m in Sources */,
 				F0213E7B2085E525000DDD4A /* AppDelegate+Push.m in Sources */,
 				F0EDAD9E25DE392B0074ED1E /* FeedPreviewVC.swift in Sources */,
@@ -4851,7 +4781,6 @@
 				F08011E42167345300F0CE81 /* OPMLDeckController.m in Sources */,
 				F0F10A9F244C8020009FC108 /* DTTimePeriodChain.m in Sources */,
 				F0695B2020CE6B7600517AF8 /* UIViewController+Hairline.m in Sources */,
-				F0A4797E20637D2100A20195 /* AddFeedCell.m in Sources */,
 				F0650657236036A90015F2C4 /* PushVC.m in Sources */,
 				F0C6E049234AFCF8001EED23 /* StoreReceiptVerifier.m in Sources */,
 				F00F648324EC1EAB00E5727C /* UIImage+Sizing.m in Sources */,
@@ -4895,9 +4824,7 @@
 				F00F644424EC1BC700E5727C /* Range.m in Sources */,
 				F064A53B21576E7200A385AD /* UIImage+Color.m in Sources */,
 				F0C1705425DD4CFE005BAA9E /* NewFeedResultsVC.swift in Sources */,
-				F00F643D24EC1BC700E5727C /* MetaOpenGraph.m in Sources */,
 				F06EAA1325F9DB2D00A4C855 /* FeedProxy.swift in Sources */,
-				F026F7A125FB34DB004AC31E /* Folder.m in Sources */,
 				F0F10A9D244C8020009FC108 /* DTError.m in Sources */,
 				F070C2DE1FBABC3600912CCF /* AppDelegate.m in Sources */,
 				F0DFBBF42570A36400246D8A /* CoalescingQueue.swift in Sources */,
@@ -4911,7 +4838,6 @@
 				F00F643A24EC1BC700E5727C /* FeedItem.m in Sources */,
 				F064A5322157638500A385AD /* LaunchVC.m in Sources */,
 				F00F647824EC1DE700E5727C /* Tweet.m in Sources */,
-				F00F644324EC1BC700E5727C /* Feed.m in Sources */,
 				F0E86491234793870089F9EF /* ArticleVC+Photos.m in Sources */,
 				F03C6040251F702200F442C7 /* DZStepper.m in Sources */,
 				F03AC035205533D900FB111A /* CodeParser.m in Sources */,
@@ -4924,7 +4850,6 @@
 				F0CA799725AF4B4900DACA1B /* IdentityVC.m in Sources */,
 				F00F646C24EC1DE700E5727C /* TweetImage.m in Sources */,
 				F0AF314420D287F400E074D6 /* IntroViewDefault.m in Sources */,
-				F00F643E24EC1BC700E5727C /* Author.m in Sources */,
 				F0D071EF205E75D700A042CD /* AccountVC.m in Sources */,
 				F099466520AD8A8B00E5520F /* AppDelegate+Store.m in Sources */,
 				F00F646E24EC1DE700E5727C /* List.m in Sources */,
@@ -4950,12 +4875,9 @@
 				F07889C125035E65007F3C55 /* UITableView+Sugar.m in Sources */,
 				F050E0B22154C16600225C6A /* StoreFooter.m in Sources */,
 				F032A75D244D7D8C0024AC63 /* YetiTheme.m in Sources */,
-				F070C34C1FBADF8D00912CCF /* FeedsCell.m in Sources */,
-				F00F643B24EC1BC700E5727C /* FeedMeta.m in Sources */,
 				F00F646A24EC1DE700E5727C /* Heading.m in Sources */,
 				F0EDADB825DE9B2A0074ED1E /* PreviewFolderCell.swift in Sources */,
 				F07DCA3B20C517D20068ED51 /* UITableViewController+KeyboardScroll.m in Sources */,
-				F00F644024EC1BC700E5727C /* Content.m in Sources */,
 				F05C7A9F20D8E1F3007D6B5C /* TableHeader.m in Sources */,
 				F0EE7E812608BBF600931FA2 /* UnreadVC.swift in Sources */,
 				F05AD5F325F9DE77003B2D69 /* SplitVC.swift in Sources */,

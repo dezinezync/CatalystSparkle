@@ -17,7 +17,7 @@ public let kFeedLocalNotifications = "com.elytra.feed.localNotifications"
 
 private let imageExtensions = ["png", "jpg", "jpeg", "svg", "bmp", "ico", "webp", "gif"]
 
-open class Feed: NSObject, Codable, ObservableObject {
+@objcMembers public class Feed: NSObject, Codable, ObservableObject {
 
     public var feedID: UInt!
     public var summary: String!

@@ -21,6 +21,8 @@
 #import <CoreSpotlight/CoreSpotlight.h>
 #import <BackgroundTasks/BackgroundTasks.h>
 
+#import "Elytra-Swift.h"
+
 #define backgroundRefreshIdentifier @"com.yeti.refresh"
 
 @interface UIViewController (ElytraStateRestoration)

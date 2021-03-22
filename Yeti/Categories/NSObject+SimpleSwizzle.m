@@ -6,6 +6,7 @@
 //  Copyright © 2020 Dezine Zync Studios. All rights reserved.
 //
 
+#import <UIKit/UIKit.h>
 #import "NSObject+SimpleSwizzle.h"
 #import <objc/runtime.h>
 

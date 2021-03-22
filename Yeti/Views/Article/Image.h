@@ -7,11 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Content.h"
 #import "YetiTheme.h"
 
 #import <SDWebImage/SDAnimatedImageView.h>
 #import <SDWebImage/UIImageView+WebCache.h>
+
+@class Content;
 
 @interface SizedImage : UIImageView
 

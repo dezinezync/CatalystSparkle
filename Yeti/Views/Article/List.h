@@ -7,8 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Content.h"
+//#import "Content.h"
 #import "Paragraph.h"
+
+@class Content;
 
 typedef NS_ENUM(NSInteger) {
     UnorderedList,

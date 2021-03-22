@@ -8,6 +8,7 @@
 
 #import "NewFolderController.h"
 #import <DZKit/NSString+Extras.h>
+#import "Elytra-Swift.h"
 
 @interface NewFolderController () <UITextFieldDelegate>
 
@@ -168,6 +169,7 @@
 
 - (void)addFolder:(NSString *)title {
     // @TODO
+    
 //    [MyFeedsManager addFolder:title success:^(Folder * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
 //
 //        self.completed = YES;

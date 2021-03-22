@@ -27,9 +27,9 @@ public enum FeedsManagerError : Error {
     
 }
 
-public final class FeedsManager: NSObject {
+@objc public final class FeedsManager: NSObject {
     
-    public static let shared = FeedsManager()
+    @objc public static let shared = FeedsManager()
     public var deviceID: String?
     public unowned var user: User?
     
@@ -635,7 +635,7 @@ extension FeedsManager {
     
     public func delete(folder id: UInt, completion:((Result<Bool, Error>) -> Void)?) {
         
-        guard let user = user else {
+        guard let _ = user else {
             completion?(.failure((NSError(domain: "Elytra", code: 401, userInfo: [NSLocalizedDescriptionKey: "User is not logged in."]) as Error)))
             return
         }
@@ -645,7 +645,7 @@ extension FeedsManager {
         session.DELETE(path: path, query: ["folderID": "\(id)"], resultType: [String: Bool].self) { (result) in
             
             switch result {
-            case .success(let (response, result)): do {
+            case .success(let (_, result)): do {
                 
                 completion?(.success(true))
                 

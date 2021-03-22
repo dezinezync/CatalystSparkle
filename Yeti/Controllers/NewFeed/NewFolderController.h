@@ -8,7 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import "Coordinator.h"
-#import "Folder.h"
+
+@class Folder;
 
 typedef void (^folderControllerCompletion)(Folder * _Nullable folder, BOOL completed, NSError * _Nullable error);
 

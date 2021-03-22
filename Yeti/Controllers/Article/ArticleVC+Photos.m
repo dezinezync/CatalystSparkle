@@ -20,6 +20,7 @@
 #import <SDWebImage/UIImage+MultiFormat.h>
 
 #import "NSString+ImageProxy.h"
+#import "Elytra-Swift.h"
 
 @implementation ArticleVC (Photos)
 
@@ -89,11 +90,12 @@
                 
                 NSString *title = nil;
                 
-                if (content.attributes != nil
-                    && (content.attributes[@"title"] || content.attributes[@"alt"])) {
-                    
-                    title = content.attributes[@"alt"] ?: content.attributes[@"title"];
-                }
+                // @TODO
+//                if (content.attributes != nil
+//                    && (content.attributes[@"title"] || content.attributes[@"alt"])) {
+//
+//                    title = content.attributes[@"alt"] ?: content.attributes[@"title"];
+//                }
                 
                 photo.caption = title;
                 

@@ -1,5 +1,6 @@
 #import <DZKit/DZObject.h>
-#import "Enclosure.h"
+
+@class Enclosure;
 
 @interface FeedItem : DZObject <NSSecureCoding, NSCopying> {
 

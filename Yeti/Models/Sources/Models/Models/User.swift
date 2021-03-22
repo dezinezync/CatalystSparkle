@@ -7,7 +7,7 @@
 
 import Foundation
 
-public final class User: NSObject, Codable {
+@objcMembers public final class User: NSObject, Codable {
     
     public var uuid: String!
     public var userID: UInt!

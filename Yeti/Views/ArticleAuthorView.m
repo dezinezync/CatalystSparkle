@@ -219,19 +219,19 @@
     SEL aSel = NSSelectorFromString(@"item");
     
     if (self.delegate != nil && [self.delegate respondsToSelector:aSel]) {
-        
-        FeedItem *item = DZS_SILENCE_CALL_TO_UNKNOWN_SELECTOR([self.delegate performSelector:aSel];);
-        
-        if (item == nil) {
-            return;
-        }
-        
-        // @TODO 
-//        DBManager.shared.removeFullText(...)
-        
-        [self mercurialButton:self.mercurialButton];
-        
-        item.mercury = NO;
+        // @TODO
+//        FeedItem *item = DZS_SILENCE_CALL_TO_UNKNOWN_SELECTOR([self.delegate performSelector:aSel];);
+//
+//        if (item == nil) {
+//            return;
+//        }
+//
+//        // @TODO
+////        DBManager.shared.removeFullText(...)
+//
+//        [self mercurialButton:self.mercurialButton];
+//
+//        item.mercury = NO;
         
     }
     

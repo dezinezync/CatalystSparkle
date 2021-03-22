@@ -1,12 +1,14 @@
 #import "FeedItem.h"
 
-#import "Content.h"
+//#import "Content.h"
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZKit/NSDate+ISO8601.h>
 
 #import "NSString+HTML.h"
 #import <DZKit/NSString+Extras.h>
 #import <CoreServices/CoreServices.h>
+
+#import "Elytra-Swift.h"
 
 @implementation FeedItem
 
@@ -120,7 +122,7 @@ static NSDateFormatter *_formatter = nil;
 
             NSMutableArray *myMembers = [NSMutableArray arrayWithCapacity:[value count]];
             for (id valueMember in value) {
-                Content *populatedMember = [Content instanceFromDictionary:valueMember];
+                Content *populatedMember = [valueMember isKindOfClass:NSDictionary.class] ? [[Content alloc] initFrom:valueMember] : [[Content alloc] initFromArray:valueMember];
                 [myMembers addObject:populatedMember];
             }
 
@@ -145,7 +147,7 @@ static NSDateFormatter *_formatter = nil;
 
             NSMutableArray *myMembers = [NSMutableArray arrayWithCapacity:[value count]];
             for (id valueMember in value) {
-                Enclosure *populatedMember = [Enclosure instanceFromDictionary:valueMember];
+                Enclosure *populatedMember = [[Enclosure alloc] init];
                 [myMembers addObject:populatedMember];
             }
 

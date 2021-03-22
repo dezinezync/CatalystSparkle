@@ -8,7 +8,9 @@
 
 #import <DZKit/NibView.h>
 
-#import "Content.h"
+//#import "Content.h"
+@class Content;
+
 #import "Paragraph.h"
 
 @interface TweetPara : Paragraph {

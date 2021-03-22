@@ -10,7 +10,6 @@
 #import "YetiConstants.h"
 
 #import "Paragraph.h"
-#import "Content.h"
 
 #import "YetiThemeKit.h"
 #import "ThemeVC.h"

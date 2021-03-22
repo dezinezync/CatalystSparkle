@@ -11,6 +11,8 @@
 #import "LayoutConstants.h"
 #import "GalleryCell.h"
 
+#import "Elytra-Swift.h"
+
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <SDWebImage/SDWebImagePrefetcher.h>
 
@@ -148,7 +150,7 @@
     // calculate the max height that fits the tallest image. The other images will use aspect-fit.
     for (Content *content in images) { @autoreleasepool {
         
-        CGSize size = content.size;
+        CGSize size = content.size.size;
         if ([content.attributes valueForKey:@"data-orig-size"]) {
             NSArray <NSString *> *comps = [content.attributes[@"data-orig-size"] componentsSeparatedByString:@","];
             size = CGSizeMake(comps[0].floatValue, comps[1].floatValue);
@@ -239,40 +241,41 @@
     
     Content *content = [self.images objectAtIndex:indexPath.item];
     
-    NSURL *url = [content urlCompliantWithUsersPreferenceForWidth:collectionView.bounds.size.width];
-    
-    weakify(self);
-    
-    [cell.imageView sd_setImageWithURL:url placeholderImage:nil options:SDWebImageScaleDownLargeImages completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
-        
-       strongify(self);
-        
-        if (!self)
-            return;
-
-        cell.backgroundColor = UIColor.systemBackgroundColor;
-        
-        if (!self->_unbounded)
-            return;
-        
-        if (image) {
-            
-            runOnMainQueueWithoutDeadlocking(^{
-                CGFloat width = floor(self.collectionView.bounds.size.width);
-                
-                CGSize size = image.size;
-                
-                CGFloat height = width * (size.height / size.width);
-                CGFloat suggestedMaxHeight = ceil(height);
-                
-                self.maxHeight = suggestedMaxHeight;
-                
-                [self setupHeight];
-            });
-            
-        }
-        
-    }];
+    // @TODO
+//    NSURL *url = [content urlCompliantWithUsersPreferenceForWidth:collectionView.bounds.size.width];
+//
+//    weakify(self);
+//
+//    [cell.imageView sd_setImageWithURL:url placeholderImage:nil options:SDWebImageScaleDownLargeImages completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+//
+//       strongify(self);
+//
+//        if (!self)
+//            return;
+//
+//        cell.backgroundColor = UIColor.systemBackgroundColor;
+//
+//        if (!self->_unbounded)
+//            return;
+//
+//        if (image) {
+//
+//            runOnMainQueueWithoutDeadlocking(^{
+//                CGFloat width = floor(self.collectionView.bounds.size.width);
+//
+//                CGSize size = image.size;
+//
+//                CGFloat height = width * (size.height / size.width);
+//                CGFloat suggestedMaxHeight = ceil(height);
+//
+//                self.maxHeight = suggestedMaxHeight;
+//
+//                [self setupHeight];
+//            });
+//
+//        }
+//
+//    }];
     
     return cell;
     
@@ -302,15 +305,16 @@
         
         Content *content = [self.images objectAtIndex:indexPath.item];
         
-        if (content.task == nil) {
+        // @TODO
+//        if (content.task == nil) {
+
+//            NSURL *url = [content urlCompliantWithUsersPreferenceForWidth:collectionView.bounds.size.width];
+//
+//            if (url != nil) {
+//                [prefetchURLs addObject:url];
+//            }
             
-            NSURL *url = [content urlCompliantWithUsersPreferenceForWidth:collectionView.bounds.size.width];
-            
-            if (url != nil) {
-                [prefetchURLs addObject:url];
-            }
-            
-        }
+//        }
     }
     
     if (prefetchURLs.count > 0) {

@@ -8,7 +8,7 @@
 
 #import "StoreReceiptVerifier.h"
 #import "RMStore.h"
-#import "Elytra-Swift.h"
+//#import "Elytra-Swift.h"
 
 @interface StoreReceiptVerifier () {
     NSInteger _refreshCount;

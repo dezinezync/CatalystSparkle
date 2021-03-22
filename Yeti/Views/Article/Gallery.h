@@ -8,9 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import <DZKit/NibView.h>
-#import "Content.h"
 
 #import "YetiTheme.h"
+
+@class Content;
 
 @interface Gallery : NibView
 

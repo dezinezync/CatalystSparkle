@@ -8,7 +8,7 @@
 
 //#import "NewFeedVC.h"
 
-#import "Folder.h"
+@class Folder;
 
 @interface NewFolderVC : UIViewController
 

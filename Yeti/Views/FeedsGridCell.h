@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Feed.h"
+
 
 extern NSString * const kFeedsGridCell;
 

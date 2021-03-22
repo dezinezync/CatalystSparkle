@@ -183,25 +183,25 @@ NSString* deviceName() {
     if (articleVC == nil) {
         return;
     }
-    
-    articleVC.mainCoordinator = self;
-    
-    [self _showDetailController:articleVC];
-    
-    if (self.splitViewController.traitCollection.userInterfaceIdiom != UIUserInterfaceIdiomMac
-        && self.splitViewController.view.bounds.size.width < 1024.f) {
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            
-            [UIView animateWithDuration:0.125 animations:^{
-                
-                [self.splitViewController setPreferredDisplayMode:UISplitViewControllerDisplayModeSecondaryOnly];
-            
-            }];
-            
-        });
-        
-    }
+    // @TODO
+//    articleVC.mainCoordinator = self;
+//
+//    [self _showDetailController:articleVC];
+//
+//    if (self.splitViewController.traitCollection.userInterfaceIdiom != UIUserInterfaceIdiomMac
+//        && self.splitViewController.view.bounds.size.width < 1024.f) {
+//
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//
+//            [UIView animateWithDuration:0.125 animations:^{
+//
+//                [self.splitViewController setPreferredDisplayMode:UISplitViewControllerDisplayModeSecondaryOnly];
+//
+//            }];
+//
+//        });
+//
+//    }
     
 }
 
@@ -372,7 +372,7 @@ NSString* deviceName() {
     OPMLVC *vc = [[OPMLVC alloc] initWithNibName:NSStringFromClass(OPMLVC.class) bundle:nil];
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-    nav.modalTransitionStyle = UIModalPresentationAutomatic;
+    nav.modalPresentationStyle = UIModalPresentationAutomatic;
     
     if (sender != nil) {
         
@@ -813,11 +813,11 @@ NSString* deviceName() {
         return;
     }
     
-    if ([controller isKindOfClass:ArticleVC.class]) {
-        
-        self.articleVC = (ArticleVC *)controller;
-        
-    }
+//    if ([controller isKindOfClass:ArticleVC.class]) {
+//        
+//        self.articleVC = (ArticleVC *)controller;
+//        
+//    }
     
     BOOL isEmptyVC = NO;
     

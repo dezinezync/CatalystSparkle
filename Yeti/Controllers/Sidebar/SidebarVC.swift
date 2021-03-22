@@ -785,13 +785,13 @@ enum SidebarItem: Hashable {
     
     @objc func showInfo(feed: Feed, indexPath: IndexPath) {
         
-        // @TODO
+        mainCoordinator?.showFeedInfo(feed, from: self)
         
     }
     
     @objc func rename(folder: Folder, indexPath: IndexPath) {
         
-        // @TODO
+        mainCoordinator?.showRenameFolderVC(folder)
         
     }
     

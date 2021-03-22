@@ -13,7 +13,7 @@
 
 #import "AppDelegate.h"
 
-#import "Content.h"
+//#import "Content.h"
 #import "YetiConstants.h"
 #import "CheckWifi.h"
 
@@ -858,9 +858,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             
         }
         
-        if (content.srcset != nil) {
+        if (content.srcSet != nil) {
             
-            NSArray *values = [content.srcset allValues];
+            NSArray *values = [content.srcSet allValues];
             
             values = [values rz_map:^id(id obj, NSUInteger id, NSArray *array) {
                
@@ -1543,7 +1543,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         content.images = [content.images rz_filter:^BOOL(Content *obj, NSUInteger idx, NSArray *array) {
            
-            return obj.url != nil && [obj.url containsString:@".gravatar.com/"] == NO;
+            return obj.url != nil && [obj.url.absoluteString containsString:@".gravatar.com/"] == NO;
             
         }];
         
@@ -1845,7 +1845,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     heading.backgroundColor = UIColor.redColor;
 #endif
 #endif
-    heading.level = content && content.level ? content.level.integerValue : 1;
+    // @TODO
+//    heading.level = content && content.level ? content.level.integerValue : 1;
     
     [heading setText:content.content ranges:content.ranges attributes:content.attributes];
     
@@ -1937,17 +1938,19 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         return;
     
     // ignores tracking images
-    if (content && CGSizeEqualToSize(content.size, CGSizeZero) == NO && content.size.width == 1.f && content.size.height == 1.f) {
+    if (content && CGSizeEqualToSize(content.size.size, CGSizeZero) == NO && content.size.width == 1.f && content.size.height == 1.f) {
         return;
     }
     
+    NSString *absolute = content.url ? content.url.absoluteString : @"";
+    
     // 9mac ads and some tracking scripts
     if (content.url && (
-            ([content.url containsString:@"ads"] && [content.url containsString:@"assoc"])
-            || ([content.url containsString:@"deal"] && [content.url containsString:@"Daily-Deals-"] == NO)
-            || ([content.url containsString:@"amaz"]
-            || [[content.url lastPathComponent] containsString:@".php"]
-            || [[content.url lastPathComponent] containsString:@".js"])
+            ([absolute containsString:@"ads"] && [absolute containsString:@"assoc"])
+            || ([absolute containsString:@"deal"] && [absolute containsString:@"Daily-Deals-"] == NO)
+            || ([absolute containsString:@"amaz"]
+            || [[absolute lastPathComponent] containsString:@".php"]
+            || [[absolute lastPathComponent] containsString:@".js"])
         )) {
         return;
     }
@@ -1957,7 +1960,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
      * but they also include the actual emoji in the alt text. We extract the
      * alt text and use that directly. 
      */
-    if (content.url && ([content.url containsString:@"/images/core/emoji"] || [content.url containsString:@"/wpcom-smileys"])) {
+    if (content.url && ([absolute containsString:@"/images/core/emoji"] || [absolute containsString:@"/wpcom-smileys"])) {
         
         NSDictionary *attributes = content.attributes;
         
@@ -1999,13 +2002,13 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 32.f);
     
-    if ([content valueForKey:@"size"] && CGSizeEqualToSize(content.size, CGSizeZero) == NO) {
-        frame.size = content.size;
+    if ([content valueForKey:@"size"] && CGSizeEqualToSize(content.size.size, CGSizeZero) == NO) {
+        frame.size = content.size.size;
     }
     
     CGFloat scale = (content.size.height + 24.f) / content.size.width;
     
-    if (((NSRange)[content.url rangeOfString:@"feeds.feedburner.com"]).location != NSNotFound) {
+    if (((NSRange)[absolute rangeOfString:@"feeds.feedburner.com"]).location != NSNotFound) {
         // example: http://feeds.feedburner.com/~ff/abduzeedo?d=yIl2AUoC8zA
         return;
     }
@@ -2039,7 +2042,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     [self.stackView addArrangedSubview:imageView];
     
-    if (!CGSizeEqualToSize(content.size, CGSizeZero) && scale != NAN) {
+    if (!CGSizeEqualToSize(content.size.size, CGSizeZero) && scale != NAN) {
         frame.size.width = content.size.width;
         
         if (scale != INFINITY) {
@@ -2072,53 +2075,54 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     CGFloat width = self.scrollView.bounds.size.width;
     
-    NSURL *url = [content urlCompliantWithUsersPreferenceForWidth:width];
-    NSURL *darkModeURL = [content urlCompliantWithUsersPreferenceForWidth:width darkModeOnly:YES];
+    // @TODO
+//    NSURL *url = [content urlCompliantWithUsersPreferenceForWidth:width];
+//    NSURL *darkModeURL = [content urlCompliantWithUsersPreferenceForWidth:width darkModeOnly:YES];
+//
+//    if (url == nil && darkModeURL == nil) {
+//
+//        [self.stackView removeArrangedSubview:imageView];
+//        [imageView removeFromSuperview];
+//
+//        imageView = nil;
+//
+//        return;
+//    }
     
-    if (url == nil && darkModeURL == nil) {
-        
-        [self.stackView removeArrangedSubview:imageView];
-        [imageView removeFromSuperview];
-        
-        imageView = nil;
-        
-        return;
-    }
-    
-    [self.images addPointer:(__bridge void *)imageView];
-    imageView.idx = self.images.count - 1;
-    
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnImage:)];
-    imageView.userInteractionEnabled = YES;
-    
-    [imageView addGestureRecognizer:tap];
-    
-    NSURLComponents *comps = [NSURLComponents componentsWithString:url.absoluteString];
-    
-    if (comps.host == nil) {
-        
-        NSLogDebug(@"No hostname for URL: %@", url);
-
-        NSURLComponents *articleURLComps = [NSURLComponents componentsWithString:self.item.articleURL];
-        
-        articleURLComps.path = [articleURLComps.path stringByAppendingPathComponent:url.absoluteString];
-
-        NSLogDebug(@"Attempted fixed URL: %@", articleURLComps.URL);
-        
-        url = articleURLComps.URL;
-        
-        if (darkModeURL != nil) {
-                
-            articleURLComps.path = darkModeURL.absoluteString;
-            
-            darkModeURL = articleURLComps.URL;
-            
-        }
-        
-    }
-    
-    imageView.URL = url;
-    imageView.darkModeURL = darkModeURL;
+//    [self.images addPointer:(__bridge void *)imageView];
+//    imageView.idx = self.images.count - 1;
+//
+//    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnImage:)];
+//    imageView.userInteractionEnabled = YES;
+//
+//    [imageView addGestureRecognizer:tap];
+//
+//    NSURLComponents *comps = [NSURLComponents componentsWithString:url.absoluteString];
+//
+//    if (comps.host == nil) {
+//
+//        NSLogDebug(@"No hostname for URL: %@", url);
+//
+//        NSURLComponents *articleURLComps = [NSURLComponents componentsWithString:self.item.articleURL];
+//
+//        articleURLComps.path = [articleURLComps.path stringByAppendingPathComponent:url.absoluteString];
+//
+//        NSLogDebug(@"Attempted fixed URL: %@", articleURLComps.URL);
+//
+//        url = articleURLComps.URL;
+//
+//        if (darkModeURL != nil) {
+//
+//            articleURLComps.path = darkModeURL.absoluteString;
+//
+//            darkModeURL = articleURLComps.URL;
+//
+//        }
+//
+//    }
+//
+//    imageView.URL = url;
+//    imageView.darkModeURL = darkModeURL;
     
     [self addLinebreak];
     

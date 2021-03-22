@@ -9,11 +9,11 @@
 #import <Foundation/Foundation.h>
 
 #import "EmptyVC.h"
-#import "ArticleVC.h"
 
 @class SidebarVC;
 @class SplitVC;
 @class FeedVC;
+@class ArticleVC;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -41,7 +41,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak, nullable) FeedVC *feedVC;
 
-@property (nonatomic, weak, nullable) ArticleVC *articleVC;
+// @TODO
+@property (nonatomic, weak, nullable) FeedVC *articleVC;
 
 @property (nonatomic, weak, nullable) EmptyVC *emptyVC;
 
@@ -57,7 +58,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)showFolderFeed:(id)folder;
 
-- (void)showArticleVC:(ArticleVC *)articleVC;
+//- (void)showArticleVC:(ArticleVC *)articleVC;
 
 - (void)showArticle:(id)article;
 

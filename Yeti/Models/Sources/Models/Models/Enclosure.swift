@@ -8,7 +8,7 @@
 import Foundation
 import BetterCodable
 
-public final class Enclosure: NSObject, Codable {
+@objcMembers public final class Enclosure: NSObject, Codable {
     
     public var length: Double?
     public var type: String!
