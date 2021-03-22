@@ -8,7 +8,7 @@
 import Foundation
 import BetterCodable
 
-public final class Article: NSObject, Codable, ObservableObject {
+open class Article: NSObject, Codable, ObservableObject {
     
     public var identifier: UInt!
     public var title: String?

@@ -13,3 +13,4 @@
 #import "NSString+ImageProxy.h"
 #import "Paragraph.h"
 #import "BarPositioning.h"
+#import "ArticleProvider.h"

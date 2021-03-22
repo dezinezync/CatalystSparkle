@@ -17,6 +17,8 @@ import Defaults
 
 fileprivate let dbFilteredViewName = "feedFilteredView"
 
+final class FeedItem: Article {}
+
 class ArticlesDatasource: UITableViewDiffableDataSource<Int, Article> {
 
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -77,6 +79,8 @@ class FeedVC: UITableViewController {
     var type: FeedType! = .natural
     var feed: Feed? = nil
     var cancellables = [AnyCancellable]()
+    
+    let feedbackGenerator = UISelectionFeedbackGenerator()
     
     var state: FeedVCState = .empty {
         didSet {
@@ -166,12 +170,13 @@ class FeedVC: UITableViewController {
         
     }
     
-    deinit {
-        DBManager.shared.database.unregisterExtension(withName: dbFilteredViewName)
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        setupState()
+    }
+    
+    deinit {
+        DBManager.shared.database.unregisterExtension(withName: dbFilteredViewName)
     }
     
     // MARK: - Setups
@@ -544,7 +549,7 @@ class FeedVC: UITableViewController {
         
     }
     
-    lazy var activityIndicator = UIActivityIndicatorView(style: .large)
+    lazy var activityIndicator = UIActivityIndicatorView(style: .medium)
     
     func showLoadingState () {
         
@@ -1183,7 +1188,7 @@ extension FeedVC: BarPositioning {
 }
 
 // MARK: - Article Provider
-extension FeedVC {
+extension FeedVC: ArticleProvider {
     
     @objc func loadArticle() {
         
@@ -1245,7 +1250,7 @@ extension FeedVC {
         
     }
     
-    @objc func userMarkedArticle(_ article: Article, read: Bool) {
+    @objc func userMarkedArticle(_ article: FeedItem, read: Bool) {
         
         FeedsManager.shared.markRead(true, items: [article]) { [weak self] (result) in
             
@@ -1290,29 +1295,29 @@ extension FeedVC {
         
     }
     
-    @objc func userMarkedArticle(_ article: Article, bookmark: Bool) {
+    @objc func userMarkedArticle(_ article: FeedItem, bookmarked: Bool) {
         
-        FeedsManager.shared.mark(bookmark, item: article) { [weak self] (result) in
+        FeedsManager.shared.mark(bookmarked, item: article) { [weak self] (result) in
             
             switch result {
             
             case .failure(let error):
-                AlertManager.showGenericAlert(withTitle: "Error \(bookmark ? "Bookmark" : "Unbookmark")ing", message: error.localizedDescription)
+                AlertManager.showGenericAlert(withTitle: "Error \(bookmarked ? "Bookmark" : "Unbookmark")ing", message: error.localizedDescription)
             
             case .success(let result):
                 
                 guard result.status == true else {
                     
-                    AlertManager.showGenericAlert(withTitle: "Error \(bookmark ? "Bookmark" : "Unbookmark")ing", message: "An unknown error occurred when performing this action.")
+                    AlertManager.showGenericAlert(withTitle: "Error \(bookmarked ? "Bookmark" : "Unbookmark")ing", message: "An unknown error occurred when performing this action.")
                     
                     return
                     
                 }
                 
-                article.bookmarked = bookmark
+                article.bookmarked = bookmarked
                 DBManager.shared.add(article: article, strip: false)
                 
-                if bookmark == true {
+                if bookmarked == true {
                     self?.mainCoordinator?.totalBookmarks += 1
                 }
                 else {
@@ -1321,6 +1326,125 @@ extension FeedVC {
                 
                 self?.reloadVisibleCells()
             
+            }
+            
+        }
+        
+    }
+    
+    func hasPreviousArticle(forArticle item: FeedItem) -> Bool {
+        
+        guard let indexPath = DS.indexPath(for: item) else {
+            return false
+        }
+        
+        return indexPath.row > 0 && DS.snapshot().numberOfItems > 2
+        
+    }
+    
+    func hasNextArticle(forArticle item: FeedItem) -> Bool {
+        
+        guard let indexPath = DS.indexPath(for: item) else {
+            return false
+        }
+        
+        let lastIndex = DS.snapshot().numberOfItems - 1
+        
+        guard indexPath.row != lastIndex else {
+            return false
+        }
+        
+        return lastIndex > 1
+        
+    }
+    
+    func previousArticle(for item: FeedItem) -> FeedItem? {
+        
+        guard let indexPath = DS.indexPath(for: item) else {
+            return nil
+        }
+        
+        guard indexPath.row > 0 else {
+            return nil
+        }
+        
+        let prevIndexPath = IndexPath(row: max(0, indexPath.row - 1), section: indexPath.section)
+        
+        let prevItem = DS.itemIdentifier(for: prevIndexPath) as? FeedItem
+        
+        if prevItem != nil { willChangeArticle() }
+        
+        return prevItem
+        
+    }
+    
+    func nextArticle(for item: FeedItem) -> FeedItem? {
+        
+        guard let indexPath = DS.indexPath(for: item) else {
+            return nil
+        }
+        
+        let max = DS.snapshot().numberOfItems
+        
+        guard indexPath.row < max else {
+            return nil
+        }
+        
+        let nextIndexPath = IndexPath(row: min(max - 1, indexPath.row + 1), section: indexPath.section)
+        
+        let nextItem = DS.itemIdentifier(for: nextIndexPath) as? FeedItem
+        
+        if nextItem != nil { willChangeArticle() }
+        
+        return nextItem
+        
+    }
+    
+    func willChangeArticle() {
+        
+        dispatchMainAsync { [weak self] in
+            self?.feedbackGenerator.selectionChanged()
+            self?.feedbackGenerator.prepare()
+        }
+        
+    }
+    
+    func didChange(toArticle item: FeedItem) {
+        
+        guard let indexPath = DS.indexPath(for: item) else {
+            return
+        }
+        
+        if type == .natural && item.read == false {
+            userMarkedArticle(item, read: true)
+        }
+        
+        dispatchMainAsync { [weak self] in
+            self?.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .middle)
+        }
+        
+        /**
+         * Say there are 20 objects in our DataStore
+         * Our index is at 14 (0-based)
+         * We're expecting the equation below to result 6 (20-14)
+         * Which actually would state that 5 articles are remaining.
+         */
+        let loadNextPage = (DS.snapshot().numberOfItems - indexPath.row) < 6
+        
+        if loadNextPage {
+            
+            dispatchMainAsync { [weak self] in
+                
+                guard let sself = self else {
+                    return
+                }
+                
+                if sself.responds(to: #selector(sself.self.scrollViewDidScroll(_:))) == true  {
+                    
+                    sself.scrollViewDidScroll(sself.tableView)
+                    
+                }
+                
             }
             
         }
@@ -1351,7 +1475,7 @@ extension FeedVC {
                 
                 read = UIAction(title: "Mark Unread", image: UIImage(systemName: "circle"), identifier: nil, handler: { (_) in
                     
-                    sself.userMarkedArticle(item, read: false)
+                    sself.userMarkedArticle(item as! FeedItem, read: false)
                     
                 })
                 
@@ -1360,7 +1484,7 @@ extension FeedVC {
                 
                 read = UIAction(title: "Mark Read", image: UIImage(systemName: "largecircle.fill.circle"), identifier: nil, handler: { (_) in
                     
-                    sself.userMarkedArticle(item, read: true)
+                    sself.userMarkedArticle(item as! FeedItem, read: true)
                     
                 })
                 
@@ -1370,7 +1494,7 @@ extension FeedVC {
                 
                 bookmark = UIAction(title: "Unbookmark", image: UIImage(systemName: "bookmark"), identifier: nil, handler: { (_) in
                     
-                    sself.userMarkedArticle(item, bookmark: false)
+                    sself.userMarkedArticle(item as! FeedItem, bookmarked: false)
                     
                 })
                 
@@ -1379,7 +1503,7 @@ extension FeedVC {
                 
                 bookmark = UIAction(title: "Bookmark", image: UIImage(systemName: "bookmark.fill"), identifier: nil, handler: { (_) in
                     
-                    sself.userMarkedArticle(item, bookmark: true)
+                    sself.userMarkedArticle(item as! FeedItem, bookmarked: true)
                     
                 })
                 
@@ -1481,7 +1605,7 @@ extension FeedVC {
             
             completion(true)
             
-            sself.userMarkedArticle(sitem, read: !sitem.read)
+            sself.userMarkedArticle(sitem as! FeedItem, read: !sitem.read)
             
         }
         
@@ -1496,7 +1620,7 @@ extension FeedVC {
             
             completion(true)
             
-            sself.userMarkedArticle(sitem, bookmark: !sitem.bookmarked)
+            sself.userMarkedArticle(sitem as! FeedItem, bookmarked: !sitem.bookmarked)
             
         }
         
@@ -1609,7 +1733,7 @@ extension FeedVC {
         var readerMode = false
         
         if (item.read == false) {
-            userMarkedArticle(item, read: true)
+            userMarkedArticle(item as! FeedItem, read: true)
         }
         
         if type == .natural {

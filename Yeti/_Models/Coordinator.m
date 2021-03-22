@@ -202,6 +202,10 @@ NSString* deviceName() {
     
 }
 
+- (void)showArticle:(Article *)article {
+    
+}
+
 - (void)showEmptyVC {
     
     EmptyVC *vc = [[EmptyVC alloc] initWithNibName:NSStringFromClass(EmptyVC.class) bundle:nil];

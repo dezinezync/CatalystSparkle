@@ -9,6 +9,26 @@
 import Foundation
 import Defaults
 
+func dispatchMainAsync(_ callback: (() -> Void)?) {
+    
+    guard let cb = callback else {
+        return
+    }
+    
+    guard Thread.isMainThread == true else {
+        
+        DispatchQueue.main.async {
+            cb()
+        }
+        
+        return
+        
+    }
+    
+    cb()
+    
+}
+
 extension Defaults.Keys {
     static let feedSorting = Key<FeedSorting.RawValue>("feedSorting", default: FeedSorting.descending.rawValue)
     //            ^            ^                        ^                      ^
