@@ -5265,9 +5265,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Yeti/Vendors/**",
-					"$(PROJECT_DIR)/Yeti/Vendors/WebPImageSerialization",
-					"$(PROJECT_DIR)/Yeti/Vendors/YapDatabase/YapDatabase/**",
-					"$(PROJECT_DIR)/Yeti/Vendors",
 				);
 				GCC_PREFIX_HEADER = Yeti/SupportingFiles/Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5324,9 +5321,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Yeti/Vendors/**",
-					"$(PROJECT_DIR)/Yeti/Vendors/WebPImageSerialization",
-					"$(PROJECT_DIR)/Yeti/Vendors/YapDatabase/YapDatabase/**",
-					"$(PROJECT_DIR)/Yeti/Vendors",
 				);
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREFIX_HEADER = Yeti/SupportingFiles/Prefix.pch;
