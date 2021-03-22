@@ -122,25 +122,25 @@ NSString* deviceName() {
     if (feed == nil) {
         return;
     }
-    // @TODO
-//    if (feed.feedType == FeedVCTypeUnread && (self.feedVC == nil || [self.feedVC isKindOfClass:UnreadVC.class] == NO)) {
-//
-//        if (self.feedVC != nil) {
-//            self.feedVC = nil;
-//        }
-//
-//        UnreadVC *unreadVC = [[UnreadVC alloc] init];
-//
-//        [self _showSupplementaryController:unreadVC];
-//
-//    }
-//    else if (feed.feedType == FeedVCTypeToday) {
-//
-//        TodayVC *todayVC = [[TodayVC alloc] init];
-//
-//        [self _showSupplementaryController:todayVC];
-//
-//    }
+    
+    if (feed.feedType == FeedTypeUnread && (self.feedVC == nil || [self.feedVC isKindOfClass:UnreadVC.class] == NO)) {
+
+        if (self.feedVC != nil) {
+            self.feedVC = nil;
+        }
+
+        UnreadVC *unreadVC = [[UnreadVC alloc] init];
+
+        [self _showSupplementaryController:unreadVC];
+
+    }
+    else if (feed.feedType == FeedTypeToday) {
+
+        TodayVC *todayVC = [[TodayVC alloc] init];
+
+        [self _showSupplementaryController:todayVC];
+
+    }
 //    else if (feed.feedType == FeedVCTypeBookmarks) {
 //
 //        BookmarksVC *bookmarksVC = [[BookmarksVC alloc] init];
@@ -157,9 +157,11 @@ NSString* deviceName() {
         return;
     }
     // @TODO
-//    FeedVC *vc = [[FeedVC alloc] initWithFeed:feed];
-//
-//    [self _showSupplementaryController:vc];
+    FeedVC *vc = [[FeedVC alloc] initWithStyle:UITableViewStylePlain];
+    vc.feed = feed;
+    vc.mainCoordinator = self;
+
+    [self _showSupplementaryController:vc];
     
 }
 
@@ -168,10 +170,11 @@ NSString* deviceName() {
     if (folder == nil) {
         return;
     }
-    // @TODO
-//    FolderVC *vc = [[FolderVC alloc] initWithFolder:folder];
-//
-//    [self _showSupplementaryController:vc];
+    
+    FolderVC *vc = [FolderVC new];
+    vc.folder = folder;
+
+    [self _showSupplementaryController:vc];
     
 }
 
@@ -735,73 +738,72 @@ NSString* deviceName() {
     }
     
 #if TARGET_OS_MACCATALYST
-    // @TODO 
-//    if (self.innerWindow == nil) {
-//
-//        id nsWindow = [[[[MyAppDelegate mainScene] windows] firstObject] innerWindow];
-//
-//        if (nsWindow == nil) {
-//            // try again in 1s
-//
-//            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//
-//                id __nsWindow = [[[[MyAppDelegate mainScene] windows] firstObject] innerWindow];
-//
-//                if (__nsWindow != nil) {
-//
-//                    self.innerWindow = __nsWindow;
-//
-//                    if (self.feedVC != nil) {
-//                        [self.feedVC updateTitleView];
-//                    }
-//
-//                }
-//
-//            });
-//
-//        }
-//
-//        self.innerWindow = nsWindow;
-//
-//    }
+    
+    if (self.innerWindow == nil) {
+
+        id nsWindow = [[[[MyAppDelegate mainScene] windows] firstObject] innerWindow];
+
+        if (nsWindow == nil) {
+            // try again in 1s
+
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+
+                id __nsWindow = [[[[MyAppDelegate mainScene] windows] firstObject] innerWindow];
+
+                if (__nsWindow != nil) {
+
+                    self.innerWindow = __nsWindow;
+
+                    if (self.feedVC != nil) {
+                        [self.feedVC updateTitleView];
+                    }
+
+                }
+
+            });
+
+        }
+
+        self.innerWindow = nsWindow;
+
+    }
 #endif
     
-    // @TODO
-//    if ([controller isKindOfClass:FeedVC.class]) {
-//
-//        self.feedVC = (FeedVC *)controller;
-//
-//    }
-//
-//    if ([controller isKindOfClass:UINavigationController.class] == NO) {
-//
-//        controller.mainCoordinator = self;
-//
-//    }
-//
-//    if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular
-//        && self.splitViewController.traitCollection.userInterfaceIdiom != UIUserInterfaceIdiomPhone) {
-//
-//        if ([controller isKindOfClass:UINavigationController.class]) {
-//
-//            [self.splitViewController setViewController:controller forColumn:UISplitViewControllerColumnSupplementary];
-//
-//        }
-//        else {
-//
-//            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:controller];
-//
-//            [self.splitViewController setViewController:nav forColumn:UISplitViewControllerColumnSupplementary];
-//
-//        }
-//
-//        return;
-//
-//    }
-//
-//    UINavigationController *nav = self.splitViewController.viewControllers.firstObject;
-//
-//    [nav pushViewController:controller animated:YES];
+    if ([controller isKindOfClass:FeedVC.class]) {
+
+        self.feedVC = (FeedVC *)controller;
+
+    }
+
+    if ([controller isKindOfClass:UINavigationController.class] == NO) {
+
+        controller.mainCoordinator = self;
+
+    }
+
+    if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular
+        && self.splitViewController.traitCollection.userInterfaceIdiom != UIUserInterfaceIdiomPhone) {
+
+        if ([controller isKindOfClass:UINavigationController.class]) {
+
+            [self.splitViewController setViewController:controller forColumn:UISplitViewControllerColumnSupplementary];
+
+        }
+        else {
+
+            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:controller];
+
+            [self.splitViewController setViewController:nav forColumn:UISplitViewControllerColumnSupplementary];
+
+        }
+
+        return;
+
+    }
+
+    UINavigationController *nav = self.splitViewController.viewControllers.firstObject;
+
+    [nav pushViewController:controller animated:YES];
     
 }
 

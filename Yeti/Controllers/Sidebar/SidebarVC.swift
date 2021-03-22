@@ -15,9 +15,7 @@ import Networking
 import YapDatabase
 
 class SidebarDS: UICollectionViewDiffableDataSource<Int, SidebarItem> {
-    
-    
-    
+       
 }
 
 @objc enum FeedType: Int {
@@ -31,16 +29,18 @@ class SidebarDS: UICollectionViewDiffableDataSource<Int, SidebarItem> {
 
 @objc class CustomFeed: NSObject {
     
-    let title: String
-    let image: UIImage?
-    let color: UIColor
-    let feedType: FeedType
+    @objc let title: String
+    @objc let image: UIImage?
+    @objc let color: UIColor
+    @objc let feedType: FeedType
     
-    required init(title: String, image: String, color: UIColor?, type: FeedType) {
+    @objc required init(title: String, image: String, color: UIColor?, type: FeedType) {
+        
         self.title = title
         self.image = UIImage(systemName: image)
         self.feedType = type
         self.color = color ?? .systemBlue
+        
     }
     
     override var hash: Int {
@@ -108,9 +108,9 @@ enum SidebarItem: Hashable {
             config.showsSeparators = false
             
             if section == SidebarSection.custom.rawValue {
-                #if targetEnvironment(macCatalyst)
-                config.headerMode = .supplementary
-                #endif
+//                #if targetEnvironment(macCatalyst)
+//                config.headerMode = .supplementary
+//                #endif
                 
                 return NSCollectionLayoutSection.list(using: config, layoutEnvironment: environment)
             }
@@ -1214,33 +1214,13 @@ extension SidebarVC {
             return
         }
         
-        // @TODO: Setup Taps
-        
         switch item {
         case .custom(let c):
-            print(c)
-//            mainCoordinator?.showCustomVC(c)
+            mainCoordinator?.showCustomVC(c)
         case .feed(let f):
-            guard let splitVC = self.splitViewController else {
-                return
-            }
-            
-            let vc = FeedVC(style: .plain)
-            vc.feed = f
-            vc.type = .natural
-            vc.mainCoordinator = self.mainCoordinator
-            
-            if splitVC.traitCollection.userInterfaceIdiom == .phone {
-                let nav = splitVC.viewControllers.first as! UINavigationController
-                nav.pushViewController(vc, animated: true)
-            }
-            else {
-                splitVC.setViewController(vc, for: .supplementary)
-            }
-            
+            mainCoordinator?.showFeedVC(f)
         case .folder(let f):
-            print(f)
-//            mainCoordinator.showFolderFeed(f)
+            mainCoordinator?.showFolderFeed(f)
         }
         
         // @TODO: Restoration activity

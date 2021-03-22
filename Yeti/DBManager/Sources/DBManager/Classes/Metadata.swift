@@ -34,8 +34,9 @@ public struct ArticleMeta: Codable {
     public var feedID: UInt
     public var timestamp: Double
     public var titleWordCloud: [String]?
+    public var author: String?
     
-    public init(feedID: UInt, read: Bool, bookmarked: Bool, fulltext: Bool, timestamp: Date, titleWordCloud: [String]?) {
+    public init(feedID: UInt, read: Bool, bookmarked: Bool, fulltext: Bool, timestamp: Date, titleWordCloud: [String]?, author: String?) {
         
         self.feedID = feedID
         self.read = read
@@ -43,6 +44,7 @@ public struct ArticleMeta: Codable {
         self.fulltext = fulltext
         self.timestamp = timestamp.timeIntervalSince1970
         self.titleWordCloud = titleWordCloud
+        self.author = author
         
     }
     

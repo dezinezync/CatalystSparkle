@@ -13,9 +13,7 @@
 
 @class SidebarVC;
 @class SplitVC;
-@class Folder;
-@class Feed;
-@class CustomFeed;
+@class FeedVC;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -41,8 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak) SidebarVC *sidebarVC;
 
-// @TODO: Change to FeedVC
-@property (nonatomic, weak, nullable) ArticleVC *feedVC;
+@property (nonatomic, weak, nullable) FeedVC *feedVC;
 
 @property (nonatomic, weak, nullable) ArticleVC *articleVC;
 
@@ -54,11 +51,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)start;
 
-- (void)showCustomVC:(CustomFeed *)feed;
+- (void)showCustomVC:(id)feed;
 
-- (void)showFeedVC:(Feed *)feed;
+- (void)showFeedVC:(id)feed;
 
-- (void)showFolderFeed:(Folder *)folder;
+- (void)showFolderFeed:(id)folder;
 
 - (void)showArticleVC:(ArticleVC *)articleVC;
 
@@ -74,7 +71,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)showNewFolderVC;
 
-- (void)showRenameFolderVC:(Folder *)folder;
+- (void)showRenameFolderVC:(id)folder;
 
 - (void)showSettingsVC;
 

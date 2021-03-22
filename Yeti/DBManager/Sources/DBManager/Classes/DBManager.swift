@@ -836,7 +836,7 @@ public final class DBManager {
                         .components(separatedBy: punctuations)
                         .filter { $0.count > 0 && $0.isEmpty == false }
                     
-                    let metadata = ArticleMeta(feedID: a.feedID, read: a.read, bookmarked: a.bookmarked, fulltext: a.fulltext, timestamp: a.timestamp, titleWordCloud: components)
+                    let metadata = ArticleMeta(feedID: a.feedID, read: a.read, bookmarked: a.bookmarked, fulltext: a.fulltext, timestamp: a.timestamp, titleWordCloud: components, author: a.author)
                     
                     t.setObject(a, forKey: "\(a.identifier!)", inCollection: .articles, withMetadata: metadata)
                     

@@ -15,9 +15,9 @@ import Networking
 import Combine
 import Defaults
 
-fileprivate let dbFilteredViewName = "feedFilteredView"
+let dbFilteredViewName = "feedFilteredView"
 
-final class FeedItem: Article {}
+//final class FeedItem: Article {}
 
 class ArticlesDatasource: UITableViewDiffableDataSource<Int, Article> {
 
@@ -74,10 +74,10 @@ enum MarkDirection {
     case older
 }
 
-class FeedVC: UITableViewController {
+@objc class FeedVC: UITableViewController {
     
-    var type: FeedType! = .natural
-    var feed: Feed? = nil
+    var type: FeedType = .natural
+    @objc var feed: Feed? = nil
     var cancellables = [AnyCancellable]()
     
     let feedbackGenerator = UISelectionFeedbackGenerator()
@@ -240,6 +240,12 @@ class FeedVC: UITableViewController {
             
             navigationItem.titleView = titleView
             self.titleView = titleView
+        
+        case .unread:
+            self.title = "Unread"
+        
+        case .today:
+            self.title = "Today"
             
         default:
             break
@@ -255,7 +261,7 @@ class FeedVC: UITableViewController {
         
     }
     
-    fileprivate var dbFilteredView: YapDatabaseFilteredView!
+    var dbFilteredView: YapDatabaseFilteredView!
     
     func setupViews() {
         
@@ -264,18 +270,29 @@ class FeedVC: UITableViewController {
         let filtering = YapDatabaseViewFiltering.withMetadataBlock { [weak self] (t, g, c, k, m) -> Bool in
             
             guard let sself = self,
-                  let feed = sself.feed else {
+                  let metadata = m as? ArticleMeta else {
                 return false
             }
             
-            guard let metadata = m as? ArticleMeta else {
-                return false
+            if sself.type == .natural || sself.type == .author {
+                
+                guard let feed = sself.feed else {
+                    return false
+                }
+                
+                let feedID = feed.feedID
+                
+                guard metadata.feedID == feedID else {
+                    return false
+                }
+                
             }
-            
-            let feedID = feed.feedID
-            
-            guard metadata.feedID == feedID else {
-                return false
+            else if sself.type == .today {
+                
+                if Calendar.current.isDateInToday(Date(timeIntervalSince1970: metadata.timestamp)) == false {
+                    return false
+                }
+                
             }
             
             guard sself.sorting.isUnread == true else {
@@ -362,29 +379,26 @@ class FeedVC: UITableViewController {
             showEmptyState()
         }
         
-        setupData()
-        
     }
     
     func setupData() {
         
-        if Thread.isMainThread == false {
+        dispatchMainAsync { [weak self] in
             
-            DispatchQueue.main.async { [weak self] in
-                self?.setupData()
+            guard let sself = self else {
+                return
             }
             
-            return
+            let isEmpty = sself.DS.snapshot().numberOfItems == 0
+            let animated = isEmpty == true ? false : (sself.view.window != nil)
+            
+            var snapshot = NSDiffableDataSourceSnapshot<Int, Article>()
+            snapshot.appendSections([0])
+            snapshot.appendItems(sself.articles.map { $0 as! Article })
+            
+            sself.DS.apply(snapshot, animatingDifferences: animated, completion: nil)
+            
         }
-        
-        let isEmpty = DS.snapshot().numberOfItems == 0
-        let animated = isEmpty == true ? false : (view.window != nil)
-        
-        var snapshot = NSDiffableDataSourceSnapshot<Int, Article>()
-        snapshot.appendSections([0])
-        snapshot.appendItems(articles.map { $0 as! Article })
-        
-        DS.apply(snapshot, animatingDifferences: animated, completion: nil)
         
     }
     
@@ -452,11 +466,13 @@ class FeedVC: UITableViewController {
         
         articles = NSMutableOrderedSet()
         state = .empty
-        setupData()
         
         total = -1
         currentPage = 0
         _loadNextRetries = 0
+        
+        setupData()
+        setupState()
         
         setupViews()
         
@@ -576,26 +592,34 @@ class FeedVC: UITableViewController {
     
     func updateVisibleCells () {
         
-        var snapshot = DS.snapshot()
-        
-        guard let visible = tableView.indexPathsForVisibleRows,
-              visible.count > 0 else {
-            return
-        }
-        
-        var items = [Article]()
-        
-        visible.forEach {
+        dispatchMainAsync { [weak self] in
             
-            if let item = DS.itemIdentifier(for: $0) {
-                items.append(item)
+            guard let sself = self else {
+                return
             }
             
+            var snapshot = sself.DS.snapshot()
+            
+            guard let visible = sself.tableView.indexPathsForVisibleRows,
+                  visible.count > 0 else {
+                return
+            }
+            
+            var items = [Article]()
+            
+            visible.forEach {
+                
+                if let item = sself.DS.itemIdentifier(for: $0) {
+                    items.append(item)
+                }
+                
+            }
+            
+            snapshot.reloadItems(items)
+            
+            sself.DS.apply(snapshot, animatingDifferences: sself.tableView.window != nil, completion: nil)
+            
         }
-        
-        snapshot.reloadItems(items)
-        
-        DS.apply(snapshot, animatingDifferences: tableView.window != nil, completion: nil)
         
     }
 
@@ -692,6 +716,10 @@ extension FeedVC: ScrollLoading {
             }
             
             sself.state = .loaded
+            
+            if context > 0 {
+                sself.setupData()
+            }
 
         }
         
@@ -1066,7 +1094,11 @@ extension FeedVC {
         
         snapshot.reloadItems(identifiers)
         
-        DS.apply(snapshot, animatingDifferences: view.window != nil, completion: nil)
+        dispatchMainAsync { [weak self] in
+            
+            self?.DS.apply(snapshot, animatingDifferences: self?.view.window != nil, completion: nil)
+            
+        }
         
     }
     
@@ -1103,7 +1135,11 @@ extension FeedVC {
         
         snapshot.reloadItems(visible)
         
-        DS.apply(snapshot, animatingDifferences: view.window != nil, completion: nil)
+        dispatchMainAsync { [weak self] in
+            
+            self?.DS.apply(snapshot, animatingDifferences: self?.view.window != nil, completion: nil)
+            
+        }
         
     }
     
@@ -1188,7 +1224,7 @@ extension FeedVC: BarPositioning {
 }
 
 // MARK: - Article Provider
-extension FeedVC: ArticleProvider {
+extension FeedVC {
     
     @objc func loadArticle() {
         
@@ -1250,7 +1286,7 @@ extension FeedVC: ArticleProvider {
         
     }
     
-    @objc func userMarkedArticle(_ article: FeedItem, read: Bool) {
+    @objc func userMarkedArticle(_ article: Article, read: Bool) {
         
         FeedsManager.shared.markRead(true, items: [article]) { [weak self] (result) in
             
@@ -1295,7 +1331,7 @@ extension FeedVC: ArticleProvider {
         
     }
     
-    @objc func userMarkedArticle(_ article: FeedItem, bookmarked: Bool) {
+    @objc func userMarkedArticle(_ article: Article, bookmarked: Bool) {
         
         FeedsManager.shared.mark(bookmarked, item: article) { [weak self] (result) in
             
@@ -1332,7 +1368,7 @@ extension FeedVC: ArticleProvider {
         
     }
     
-    func hasPreviousArticle(forArticle item: FeedItem) -> Bool {
+    func hasPreviousArticle(forArticle item: Article) -> Bool {
         
         guard let indexPath = DS.indexPath(for: item) else {
             return false
@@ -1342,7 +1378,7 @@ extension FeedVC: ArticleProvider {
         
     }
     
-    func hasNextArticle(forArticle item: FeedItem) -> Bool {
+    func hasNextArticle(forArticle item: Article) -> Bool {
         
         guard let indexPath = DS.indexPath(for: item) else {
             return false
@@ -1358,7 +1394,7 @@ extension FeedVC: ArticleProvider {
         
     }
     
-    func previousArticle(for item: FeedItem) -> FeedItem? {
+    func previousArticle(for item: Article) -> Article? {
         
         guard let indexPath = DS.indexPath(for: item) else {
             return nil
@@ -1370,7 +1406,7 @@ extension FeedVC: ArticleProvider {
         
         let prevIndexPath = IndexPath(row: max(0, indexPath.row - 1), section: indexPath.section)
         
-        let prevItem = DS.itemIdentifier(for: prevIndexPath) as? FeedItem
+        let prevItem = DS.itemIdentifier(for: prevIndexPath) as? Article
         
         if prevItem != nil { willChangeArticle() }
         
@@ -1378,7 +1414,7 @@ extension FeedVC: ArticleProvider {
         
     }
     
-    func nextArticle(for item: FeedItem) -> FeedItem? {
+    func nextArticle(for item: Article) -> Article? {
         
         guard let indexPath = DS.indexPath(for: item) else {
             return nil
@@ -1392,7 +1428,7 @@ extension FeedVC: ArticleProvider {
         
         let nextIndexPath = IndexPath(row: min(max - 1, indexPath.row + 1), section: indexPath.section)
         
-        let nextItem = DS.itemIdentifier(for: nextIndexPath) as? FeedItem
+        let nextItem = DS.itemIdentifier(for: nextIndexPath) as? Article
         
         if nextItem != nil { willChangeArticle() }
         
@@ -1409,7 +1445,7 @@ extension FeedVC: ArticleProvider {
         
     }
     
-    func didChange(toArticle item: FeedItem) {
+    func didChange(toArticle item: Article) {
         
         guard let indexPath = DS.indexPath(for: item) else {
             return
@@ -1475,7 +1511,7 @@ extension FeedVC {
                 
                 read = UIAction(title: "Mark Unread", image: UIImage(systemName: "circle"), identifier: nil, handler: { (_) in
                     
-                    sself.userMarkedArticle(item as! FeedItem, read: false)
+                    sself.userMarkedArticle(item, read: false)
                     
                 })
                 
@@ -1484,7 +1520,7 @@ extension FeedVC {
                 
                 read = UIAction(title: "Mark Read", image: UIImage(systemName: "largecircle.fill.circle"), identifier: nil, handler: { (_) in
                     
-                    sself.userMarkedArticle(item as! FeedItem, read: true)
+                    sself.userMarkedArticle(item, read: true)
                     
                 })
                 
@@ -1494,7 +1530,7 @@ extension FeedVC {
                 
                 bookmark = UIAction(title: "Unbookmark", image: UIImage(systemName: "bookmark"), identifier: nil, handler: { (_) in
                     
-                    sself.userMarkedArticle(item as! FeedItem, bookmarked: false)
+                    sself.userMarkedArticle(item, bookmarked: false)
                     
                 })
                 
@@ -1503,7 +1539,7 @@ extension FeedVC {
                 
                 bookmark = UIAction(title: "Bookmark", image: UIImage(systemName: "bookmark.fill"), identifier: nil, handler: { (_) in
                     
-                    sself.userMarkedArticle(item as! FeedItem, bookmarked: true)
+                    sself.userMarkedArticle(item, bookmarked: true)
                     
                 })
                 
@@ -1605,7 +1641,7 @@ extension FeedVC {
             
             completion(true)
             
-            sself.userMarkedArticle(sitem as! FeedItem, read: !sitem.read)
+            sself.userMarkedArticle(sitem, read: !sitem.read)
             
         }
         
@@ -1620,7 +1656,7 @@ extension FeedVC {
             
             completion(true)
             
-            sself.userMarkedArticle(sitem as! FeedItem, bookmarked: !sitem.bookmarked)
+            sself.userMarkedArticle(sitem, bookmarked: !sitem.bookmarked)
             
         }
         
@@ -1733,7 +1769,7 @@ extension FeedVC {
         var readerMode = false
         
         if (item.read == false) {
-            userMarkedArticle(item as! FeedItem, read: true)
+            userMarkedArticle(item, read: true)
         }
         
         if type == .natural {

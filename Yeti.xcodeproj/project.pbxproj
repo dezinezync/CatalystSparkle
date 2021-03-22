@@ -373,6 +373,9 @@
 		F0EDADAB25DE3B510074ED1E /* FeedPreviewHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0EDADA925DE3B510074ED1E /* FeedPreviewHeader.swift */; };
 		F0EDADAC25DE3B510074ED1E /* FeedPreviewHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0EDADAA25DE3B510074ED1E /* FeedPreviewHeader.xib */; };
 		F0EDADB825DE9B2A0074ED1E /* PreviewFolderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0EDADB725DE9B2A0074ED1E /* PreviewFolderCell.swift */; };
+		F0EE7E812608BBF600931FA2 /* UnreadVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0EE7E802608BBF600931FA2 /* UnreadVC.swift */; };
+		F0EE7F0B2608C56600931FA2 /* TodayVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0EE7F0A2608C56600931FA2 /* TodayVC.swift */; };
+		F0EE7F0D2608C64E00931FA2 /* FolderVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0EE7F0C2608C64E00931FA2 /* FolderVC.swift */; };
 		F0EEC86021ECB2420046BB12 /* reader.css in Resources */ = {isa = PBXBuildFile; fileRef = F0EEC85F21ECB2420046BB12 /* reader.css */; };
 		F0EFA63A205FDC5A00815ED7 /* ArticleHelperView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EFA639205FDC5A00815ED7 /* ArticleHelperView.m */; };
 		F0EFA63C205FDC7100815ED7 /* ArticleHelperView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0EFA63B205FDC7100815ED7 /* ArticleHelperView.xib */; };
@@ -1995,6 +1998,9 @@
 		F0EDADB725DE9B2A0074ED1E /* PreviewFolderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewFolderCell.swift; sourceTree = "<group>"; };
 		F0EE6CD724CABEE000E987FC /* Coordinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Coordinator.h; sourceTree = "<group>"; };
 		F0EE6CD824CABEE000E987FC /* Coordinator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Coordinator.m; sourceTree = "<group>"; };
+		F0EE7E802608BBF600931FA2 /* UnreadVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnreadVC.swift; sourceTree = "<group>"; };
+		F0EE7F0A2608C56600931FA2 /* TodayVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayVC.swift; sourceTree = "<group>"; };
+		F0EE7F0C2608C64E00931FA2 /* FolderVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderVC.swift; sourceTree = "<group>"; };
 		F0EEC85F21ECB2420046BB12 /* reader.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = reader.css; sourceTree = "<group>"; };
 		F0EFA638205FDC5A00815ED7 /* ArticleHelperView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticleHelperView.h; sourceTree = "<group>"; };
 		F0EFA639205FDC5A00815ED7 /* ArticleHelperView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArticleHelperView.m; sourceTree = "<group>"; };
@@ -2706,6 +2712,9 @@
 				F031A7B125FF1B870046467A /* FeedVC.swift */,
 				F0C49C6F260048F3009B8E34 /* ArticleCell.swift */,
 				F0C49D03260049D8009B8E34 /* ArticleCell.xib */,
+				F0EE7E802608BBF600931FA2 /* UnreadVC.swift */,
+				F0EE7F0A2608C56600931FA2 /* TodayVC.swift */,
+				F0EE7F0C2608C64E00931FA2 /* FolderVC.swift */,
 				F0B21BB8208C7F4F007E5A3B /* NewFolderVC.h */,
 				F0B21BB9208C7F4F007E5A3B /* NewFolderVC.m */,
 				F0B21BBA208C7F4F007E5A3B /* NewFolderVC.xib */,
@@ -4895,6 +4904,7 @@
 				F02B704D24EA7E5C00DD607F /* IDMTapDetectingImageView.m in Sources */,
 				F0EFA63A205FDC5A00815ED7 /* ArticleHelperView.m in Sources */,
 				F00F647124EC1DE700E5727C /* Gallery.m in Sources */,
+				F0EE7F0B2608C56600931FA2 /* TodayVC.swift in Sources */,
 				F031A69225FDC68B0046467A /* FolderCell.swift in Sources */,
 				F0A0500D21F0728A00A46524 /* NewFeedDeckController.m in Sources */,
 				F042ACF425244A0500AA440A /* NSObject+SimpleSwizzle.m in Sources */,
@@ -4931,6 +4941,7 @@
 				F0E86494234796B80089F9EF /* ArticlePhoto.m in Sources */,
 				F02AFA9024CC00F80002A699 /* Coordinator.m in Sources */,
 				F0AD76D520E2217C0003787B /* Reachability.m in Sources */,
+				F0EE7F0D2608C64E00931FA2 /* FolderVC.swift in Sources */,
 				F0B0EA4024EC20D800D675B4 /* NSString+GTMNSStringHTMLAdditions.m in Sources */,
 				F0F8DBBB21516EE80076156D /* NSPointerArray+AbstractionHelpers.m in Sources */,
 				F0C49C70260048F3009B8E34 /* ArticleCell.swift in Sources */,
@@ -4946,6 +4957,7 @@
 				F07DCA3B20C517D20068ED51 /* UITableViewController+KeyboardScroll.m in Sources */,
 				F00F644024EC1BC700E5727C /* Content.m in Sources */,
 				F05C7A9F20D8E1F3007D6B5C /* TableHeader.m in Sources */,
+				F0EE7E812608BBF600931FA2 /* UnreadVC.swift in Sources */,
 				F05AD5F325F9DE77003B2D69 /* SplitVC.swift in Sources */,
 				F0F10A99244C8020009FC108 /* DTTimePeriod.m in Sources */,
 				F0EDAD0525DE17A60074ED1E /* NewFeedResultCell.swift in Sources */,

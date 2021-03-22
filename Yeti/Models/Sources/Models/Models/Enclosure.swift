@@ -6,12 +6,13 @@
 //
 
 import Foundation
+import BetterCodable
 
 public final class Enclosure: NSObject, Codable {
     
     public var length: Double?
     public var type: String!
-    public var url: URL!
+    @LossyOptional public var url: URL!
     
     public convenience init(from dict: [String: Any]) {
         

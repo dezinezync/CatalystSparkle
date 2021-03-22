@@ -93,7 +93,8 @@ class FolderCell: UICollectionViewListCell {
         
         if accessories.count == 0 {
             
-            let disclosure = UICellAccessory.outlineDisclosure()
+            let options = UICellAccessory.OutlineDisclosureOptions(style: .cell)
+            let disclosure = UICellAccessory.outlineDisclosure(options: options)
             
             accessories = [disclosure]
             
