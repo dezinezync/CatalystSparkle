@@ -94,7 +94,7 @@ extension OpenGraph {
     
     public var dictionaryRepresentation: [String: Any] {
         
-        var dict = [String: Any]()
+        var dict: [String: Any] = [:]
         
         if let summary = summary {
             dict["summary"] = summary

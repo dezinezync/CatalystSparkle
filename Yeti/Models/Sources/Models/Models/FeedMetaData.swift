@@ -110,7 +110,7 @@ public final class FeedMetaData: NSObject, Codable {
            let value = value as? [String: Any] {
             
             if icons == nil {
-                icons = [String: URL]()
+                icons = [:]
             }
             
             value.forEach { (arg0) in
@@ -147,7 +147,7 @@ extension FeedMetaData {
     
     public var dictionaryRepresentation: [String: Any] {
         
-        var dict = [String: Any]()
+        var dict: [String: Any] = [:]
         
         dict["icons"] = icons
         

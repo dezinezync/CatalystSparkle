@@ -31,7 +31,7 @@ import Combine
         }
     }
     
-    public var feeds = [Feed]() {
+    public var feeds: [Feed] = [] {
         didSet {
             
             if feedsUnread != nil {
@@ -108,7 +108,7 @@ extension Folder {
     
     public var dictionaryRepresentation: [String: Any] {
         
-        var dict = [String: Any]()
+        var dict: [String: Any] = [:]
         
         dict["feedIDs"] = feedIDs.map { $0 }
         dict["id"] = folderID

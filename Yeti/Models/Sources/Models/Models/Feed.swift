@@ -329,7 +329,7 @@ extension Feed {
     
     var dictionaryRepresentation: [String: Any] {
         
-        var dict = [String: Any]()
+        var dict: [String: Any] = [:]
         
         for name in Feed.CodingKeys.allCases {
             

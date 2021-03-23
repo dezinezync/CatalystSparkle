@@ -382,7 +382,7 @@ public class SyncCoordinator: NSObject {
             return
         }
         
-        var grouped = [Feed: [Article]]()
+        var grouped: [Feed: [Article]] = [:]
         
         // group articles by Feed
         for article in articles {
@@ -416,7 +416,7 @@ public class SyncCoordinator: NSObject {
         
         if grouped.count > 0 {
             
-            let filters = (DBManager.shared.user?.filters ?? [String]()).map { $0 }
+            let filters: [String] = (DBManager.shared.user?.filters ?? []).map { $0 }
             
             for feed in grouped.keys {
                 

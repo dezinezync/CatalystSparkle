@@ -226,7 +226,7 @@ extension Subscription {
         
         get {
                 
-            var dict = [String: Any]()
+            var dict: [String: Any] = [:]
             dict["id"] = identifier
             dict["environment"] = environment.rawValue
             

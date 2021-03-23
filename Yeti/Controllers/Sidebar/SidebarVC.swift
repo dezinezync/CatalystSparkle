@@ -91,7 +91,7 @@ enum SidebarItem: Hashable {
 
 @objc class SidebarVC: UICollectionViewController {
     
-    var cancellables = [AnyCancellable]()
+    var cancellables: [AnyCancellable] = []
     
     // Rename Feed Variables
     weak var alertDoneAction: UIAlertAction?
@@ -1066,7 +1066,7 @@ enum SidebarItem: Hashable {
                     return
                 }
                 
-                var items = [Article]()
+                var items: [Article] = []
                 
                 txn.enumerateKeysAndObjects(inGroup: GroupNames.articles.rawValue, with: [], range: NSMakeRange(0, 10)) { (_, _) -> Bool in
                     return true
@@ -1082,7 +1082,7 @@ enum SidebarItem: Hashable {
 
                 DBManager.shared.readQueue.async {
                     
-                    var usableItems = [Article]()
+                    var usableItems: [Article] = []
                     
                     let coverItems = items.filter { $0.coverImage != nil }
                     
@@ -1362,7 +1362,7 @@ extension SidebarVC {
             }
             
             // feedID : Unread Count
-            var feedsMapping = [UInt: UInt]()
+            var feedsMapping: [UInt: UInt] = [:]
             var totalToday: UInt = 0
             
             let calendar = NSCalendar.current

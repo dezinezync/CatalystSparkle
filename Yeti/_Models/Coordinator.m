@@ -184,31 +184,33 @@ NSString* deviceName() {
     if (articleVC == nil) {
         return;
     }
-    // @TODO
-//    articleVC.mainCoordinator = self;
-//
-//    [self _showDetailController:articleVC];
-//
-//    if (self.splitViewController.traitCollection.userInterfaceIdiom != UIUserInterfaceIdiomMac
-//        && self.splitViewController.view.bounds.size.width < 1024.f) {
-//
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//
-//            [UIView animateWithDuration:0.125 animations:^{
-//
-//                [self.splitViewController setPreferredDisplayMode:UISplitViewControllerDisplayModeSecondaryOnly];
-//
-//            }];
-//
-//        });
-//
-//    }
+    
+    articleVC.mainCoordinator = self;
+
+    [self _showDetailController:articleVC];
+
+    if (self.splitViewController.traitCollection.userInterfaceIdiom != UIUserInterfaceIdiomMac
+        && self.splitViewController.view.bounds.size.width < 1024.f) {
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+
+            [UIView animateWithDuration:0.125 animations:^{
+
+                [self.splitViewController setPreferredDisplayMode:UISplitViewControllerDisplayModeSecondaryOnly];
+
+            }];
+
+        });
+
+    }
     
 }
 
 - (void)showArticle:(Article *)article {
     
     ArticleVC *vc = [[ArticleVC alloc] initWithItem:article];
+    
+    [self showArticleVC:vc];
     
 }
 

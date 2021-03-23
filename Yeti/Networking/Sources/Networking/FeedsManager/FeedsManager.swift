@@ -33,7 +33,7 @@ public enum FeedsManagerError : Error {
     public var deviceID: String?
     public unowned var user: User?
     
-    public var additionalFeedsToSync = [Feed]()
+    public var additionalFeedsToSync: [Feed] = []
     
     var fullVersion: String = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String
     var majorVersion: String {
@@ -87,7 +87,7 @@ public enum FeedsManagerError : Error {
         sessionConfiguration.waitsForConnectivity = false
         sessionConfiguration.shouldUseExtendedBackgroundIdleMode = true
         
-        var additionalHeaders = [String: String]()
+        var additionalHeaders: [String: String] = [:]
         
         additionalHeaders["Accept"] = "application/json"
         additionalHeaders["Content-Type"] = "application/json"
@@ -163,7 +163,7 @@ public enum FeedsManagerError : Error {
         sessionConfiguration.isDiscretionary = false
         sessionConfiguration.shouldUseExtendedBackgroundIdleMode = true
         
-        var additionalHeaders = [String: String]()
+        var additionalHeaders: [String: String] = [:]
         
         additionalHeaders["Accept"] = "application/json"
         additionalHeaders["Content-Type"] = "application/json"

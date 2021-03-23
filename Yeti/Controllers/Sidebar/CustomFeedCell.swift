@@ -15,7 +15,7 @@ class CustomFeedCell: UICollectionViewListCell {
     
     weak var feed: CustomFeed!
     weak var coordinator: MainCoordinator?
-    var cancellables = [AnyCancellable]()
+    var cancellables: [AnyCancellable] = []
     
     func configure(item: SidebarItem, indexPath: IndexPath) {
         

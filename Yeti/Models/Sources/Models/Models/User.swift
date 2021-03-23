@@ -11,7 +11,7 @@ import Foundation
     
     public var uuid: String!
     public var userID: UInt!
-    public var filters: [String] = [String]()
+    public var filters: [String] = []
     public var subscription: Subscription!
     
     enum CodingKeys: String, CodingKey {
@@ -109,11 +109,11 @@ extension User {
         
         get {
                 
-            var dict = [String: Any]()
+            var dict: [String: Any] = [:]
             dict["uuid"] = uuid
             dict["userID"] = NSNumber(integerLiteral: Int(userID))
             
-            var filters = [String]()
+            var filters: [String] = []
             
             for filter in self.filters {
                 filters.append(filter)

@@ -17,7 +17,7 @@ class FolderCell: UICollectionViewListCell {
     var indexPath: IndexPath?
     weak var DS: UICollectionViewDiffableDataSource<Int, SidebarItem>?
     
-    var cancellables = [AnyCancellable]()
+    var cancellables: [AnyCancellable] = []
     
     func configure(_ item: SidebarItem, indexPath: IndexPath) {
         

@@ -137,7 +137,7 @@ extension ContentRange {
     
     public var dictionaryRepresentation: [String: Any] {
         
-        var dict = [String: Any]()
+        var dict: [String: Any] = [:]
         
         for name in ContentRange.CodingKeys.allCases {
             

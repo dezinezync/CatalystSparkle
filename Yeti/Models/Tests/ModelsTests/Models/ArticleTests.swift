@@ -91,7 +91,7 @@ final class ArticleTests: XCTestCase {
         
     }
     
-    var disposables = [AnyCancellable]()
+    var disposables: [AnyCancellable] = []
     
     var isRead = false
     func testReadPublisher() {

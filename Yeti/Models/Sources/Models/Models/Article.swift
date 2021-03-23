@@ -10,11 +10,11 @@ import BetterCodable
 
 @objcMembers open class Article: NSObject, Codable, ObservableObject {
     
-    public var identifier: String!
+    @LossyOptional<String> public var identifier: String!
     public var title: String?
     @LossyOptional public var url: URL!
     public var author: String?
-    public var content = [Content]()
+    public var content: [Content] = []
     @LossyOptional public var coverImage: URL?
     public var guid: String!
     public var timestamp: Date!
@@ -255,7 +255,7 @@ extension Article {
     
     public var dictionaryRepresentation: [String: Any] {
         
-        var dict = [String: Any]()
+        var dict: [String: Any] = [:]
         
         dict["identifier"] = identifier
         dict["title"] = title

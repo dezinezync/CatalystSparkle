@@ -17,7 +17,7 @@ class FeedCell: UICollectionViewListCell {
     var indexPath: IndexPath!
     weak var DS: UICollectionViewDiffableDataSource<Int, SidebarItem>!
     
-    var cancellables = [AnyCancellable]()
+    var cancellables: [AnyCancellable] = []
     var isExploring: Bool = false
     var isAdding: Bool = false
     

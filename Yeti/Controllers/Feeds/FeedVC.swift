@@ -78,7 +78,7 @@ enum MarkDirection {
     
     var type: FeedType = .natural
     @objc var feed: Feed? = nil
-    var cancellables = [AnyCancellable]()
+    var cancellables: [AnyCancellable] = []
     
     let feedbackGenerator = UISelectionFeedbackGenerator()
     
@@ -605,7 +605,7 @@ enum MarkDirection {
                 return
             }
             
-            var items = [Article]()
+            var items: [Article] = []
             
             visible.forEach {
                 
@@ -765,8 +765,8 @@ extension FeedVC {
                 return
             }
             
-            var items = [String: Article]()
-            var feedsMapping = [UInt: UInt]()
+            var items: [String: Article] = [:]
+            var feedsMapping: [UInt: UInt] = [:]
             
             let count = txn.numberOfItems(inGroup: GroupNames.articles.rawValue)
             
@@ -973,8 +973,8 @@ extension FeedVC {
                 
                 let total = Int(txn.numberOfItems(inGroup: GroupNames.articles.rawValue))
             
-                var unreads = [String: Article]()
-                var feedsMapping = [UInt: UInt]()
+                var unreads: [String: Article] = [:]
+                var feedsMapping: [UInt: UInt] = [:]
                 var inToday: UInt = 0
                 
                 txn.enumerateKeysAndMetadata(inGroup: GroupNames.articles.rawValue, with: options, range: NSMakeRange(0, total)) { (_, _) -> Bool in
@@ -1068,7 +1068,7 @@ extension FeedVC {
         
         var snapshot = self.DS.snapshot()
         
-        var identifiers = [Article]()
+        var identifiers: [Article] = []
         
         if down == true {
             
@@ -1127,7 +1127,7 @@ extension FeedVC {
         
         var snapshot = DS.snapshot()
         
-        var visible = [Article]()
+        var visible: [Article] = []
         
         if let indices = tableView.indexPathsForVisibleRows,
            indices.count > 0 {

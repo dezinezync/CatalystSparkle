@@ -84,7 +84,7 @@ struct QueueCall: Equatable {
     private let maxInterval: TimeInterval
     private var lastCallTime = Date.distantFuture
     private var timer: Timer? = nil
-    private var calls = [QueueCall]()
+    private var calls: [QueueCall] = []
 
     @objc public init(name: String, interval: TimeInterval = 0.05, maxInterval: TimeInterval = 2.0) {
         self.name = name

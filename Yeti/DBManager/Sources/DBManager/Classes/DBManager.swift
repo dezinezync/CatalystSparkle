@@ -195,7 +195,7 @@ public final class DBManager {
     }()
     
     // MARK: - Setups
-    fileprivate var cancellables = [AnyCancellable]()
+    fileprivate var cancellables: [AnyCancellable] = []
     
     internal func setupNotifications(_ db: YapDatabase) {
         
@@ -263,7 +263,7 @@ public final class DBManager {
             _user = newValue
             setUser(newValue, completion: nil)
             
-            var userInfo = [String: Any]()
+            var userInfo: [String: Any] = [:]
             
             if _user != nil {
                 userInfo["user"] = _user
@@ -298,7 +298,7 @@ public final class DBManager {
     }
     
     // MARK: - Feeds
-    fileprivate var _feeds = [Feed]()
+    fileprivate var _feeds: [Feed] = []
     
     public var feeds: [Feed] {
         
@@ -308,7 +308,7 @@ public final class DBManager {
                 return _feeds
             }
             
-            var f = [Feed]()
+            var f: [Feed] = []
             
             uiConnection.read({ (t) in
                 
@@ -362,7 +362,7 @@ public final class DBManager {
                     
                 })
                 
-                _preSyncFeedMetadata = [UInt: FeedMeta]()
+                _preSyncFeedMetadata = [:]
                 
             }
             
@@ -376,7 +376,7 @@ public final class DBManager {
         
     }
     
-    fileprivate var _preSyncFeedMetadata = [UInt: FeedMeta]()
+    fileprivate var _preSyncFeedMetadata: [UInt: FeedMeta] = [:]
     
     fileprivate func _metadataForFeed(_ feed: Feed) -> FeedMeta {
         
@@ -565,7 +565,7 @@ public final class DBManager {
     }
     
     // MARK: - Folders
-    fileprivate var _folders = [Folder]()
+    fileprivate var _folders: [Folder] = []
     
     public var folders: [Folder] {
         
@@ -575,7 +575,7 @@ public final class DBManager {
                 return _folders
             }
             
-            var f = [Folder]()
+            var f: [Folder] = []
             
             let connection = database.newConnection()
             
@@ -956,7 +956,7 @@ extension DBManager {
     public func purgeFeedsForResync () {
         
         // @TODO: Persist Feed metadata
-        var preSyncMetadata = [UInt: FeedMeta]()
+        var preSyncMetadata: [UInt: FeedMeta] = [:]
         
         for feed in feeds {
             

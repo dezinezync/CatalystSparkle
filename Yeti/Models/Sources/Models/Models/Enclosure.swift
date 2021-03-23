@@ -76,7 +76,7 @@ extension Enclosure {
     
     public var dictionaryRepresentation: [String: Any] {
         
-        var dict = [String: Any]()
+        var dict: [String: Any] = [:]
         
         if let length = length {
             dict["length"] = length

@@ -287,7 +287,7 @@ extension Content {
     
     public var dictionaryRepresentation: [String: Any] {
         
-        var dict = [String: Any]()
+        var dict: [String: Any] = [:]
         
         if let content = content {
             dict["content"] = content
