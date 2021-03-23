@@ -57,7 +57,7 @@ public struct GetArticlesResult: Hashable, Codable {
 
 public struct MarkReadItem: Hashable, Codable {
     
-    public let articleID: Int
+    public let articleID: String
     public let status: Bool
     
 }

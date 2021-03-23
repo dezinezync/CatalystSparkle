@@ -1150,18 +1150,19 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         NSLog(@"Processing: %@", @([NSDate.date timeIntervalSinceDate:start]));
         
-        // @TODO
-//        if (self.item && self.item.isRead == NO) {
-//            // since v1.2, fetching the article marks it as read.
-////            [MyFeedsManager article:self.item markAsRead:YES];
-//
-//            if (self.providerDelegate && [self.providerDelegate respondsToSelector:@selector(userMarkedArticle:read:)]) {
-//                [self.providerDelegate userMarkedArticle:self.item read:YES];
-//            }
+        
+        if (self.item && self.item.read == NO) {
+            // since v1.2, fetching the article marks it as read.
+//            [MyFeedsManager article:self.item markAsRead:YES];
+
+            if (self.providerDelegate && [self.providerDelegate respondsToSelector:@selector(userMarkedArticle:read:)]) {
+                [self.providerDelegate userMarkedArticle:self.item read:YES];
+            }
 //            else {
+                // @TODO
 //                [MyFeedsManager article:self.item markAsRead:YES];
 //            }
-//        }
+        }
         
         [self.stackView layoutIfNeeded];
         
@@ -1315,29 +1316,28 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     // came from a push notification
     // or the providerDelegate is a non-base-DetailFeedVC (eg. DetailCustomVC)
     
-    // @TODO
-//    if (self.providerDelegate == nil ||
-//        (self.providerDelegate != nil && [self.providerDelegate isMemberOfClass:FeedVC.class] == NO)) {
-//
-//        // the blog label should redirect to the blog
-//        authorView.blogLabel.textColor = SharedPrefs.tintColor;
-//        [authorView.blogLabel setNeedsDisplay];
-//
-//        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnBlogLabel:)];
-//        tap.numberOfTapsRequired = 1;
-//        tap.delaysTouchesBegan = YES;
-//        tap.delaysTouchesEnded = NO;
-//
-//        if (@available(iOS 13.4, *)) {
-//
-//            UIPointerInteraction *interaction = [[UIPointerInteraction alloc] initWithDelegate:self];
-//            [authorView.blogLabel addInteraction:interaction];
-//
-//        }
-//
-//        [authorView.blogLabel addGestureRecognizer:tap];
-//
-//    }
+    if (self.providerDelegate == nil ||
+        (self.providerDelegate != nil && [self.providerDelegate isMemberOfClass:FeedVC.class] == NO)) {
+
+        // the blog label should redirect to the blog
+        authorView.blogLabel.textColor = SharedPrefs.tintColor;
+        [authorView.blogLabel setNeedsDisplay];
+
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnBlogLabel:)];
+        tap.numberOfTapsRequired = 1;
+        tap.delaysTouchesBegan = YES;
+        tap.delaysTouchesEnded = NO;
+
+        if (@available(iOS 13.4, *)) {
+
+            UIPointerInteraction *interaction = [[UIPointerInteraction alloc] initWithDelegate:self];
+            [authorView.blogLabel addInteraction:interaction];
+
+        }
+
+        [authorView.blogLabel addGestureRecognizer:tap];
+
+    }
     
 }
 
@@ -2073,55 +2073,55 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     imageView.content = content;
     
     // @TODO
-//    CGFloat width = self.scrollView.bounds.size.width;
-//
-//    NSURL *url = [content urlCompliantWithUsersPreferenceForWidth:width];
-//    NSURL *darkModeURL = [content urlCompliantWithUsersPreferenceForWidth:width darkModeOnly:YES];
-//
-//    if (url == nil && darkModeURL == nil) {
-//
-//        [self.stackView removeArrangedSubview:imageView];
-//        [imageView removeFromSuperview];
-//
-//        imageView = nil;
-//
-//        return;
-//    }
+    CGFloat width = self.scrollView.bounds.size.width;
+
+    NSURL *url = [content urlCompliantWithPreference:SharedPrefs.imageLoading width:width];
+    NSURL *darkModeURL = [content urlCompliantWithPreference:SharedPrefs.imageLoading width:width darkModeOnly:true];
+
+    if (url == nil && darkModeURL == nil) {
+
+        [self.stackView removeArrangedSubview:imageView];
+        [imageView removeFromSuperview];
+
+        imageView = nil;
+
+        return;
+    }
     
-//    [self.images addPointer:(__bridge void *)imageView];
-//    imageView.idx = self.images.count - 1;
-//
-//    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnImage:)];
-//    imageView.userInteractionEnabled = YES;
-//
-//    [imageView addGestureRecognizer:tap];
-//
-//    NSURLComponents *comps = [NSURLComponents componentsWithString:url.absoluteString];
-//
-//    if (comps.host == nil) {
-//
-//        NSLogDebug(@"No hostname for URL: %@", url);
-//
-//        NSURLComponents *articleURLComps = [NSURLComponents componentsWithString:self.item.articleURL];
-//
-//        articleURLComps.path = [articleURLComps.path stringByAppendingPathComponent:url.absoluteString];
-//
-//        NSLogDebug(@"Attempted fixed URL: %@", articleURLComps.URL);
-//
-//        url = articleURLComps.URL;
-//
-//        if (darkModeURL != nil) {
-//
-//            articleURLComps.path = darkModeURL.absoluteString;
-//
-//            darkModeURL = articleURLComps.URL;
-//
-//        }
-//
-//    }
-//
-//    imageView.URL = url;
-//    imageView.darkModeURL = darkModeURL;
+    [self.images addPointer:(__bridge void *)imageView];
+    imageView.idx = self.images.count - 1;
+
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnImage:)];
+    imageView.userInteractionEnabled = YES;
+
+    [imageView addGestureRecognizer:tap];
+
+    NSURLComponents *comps = [NSURLComponents componentsWithString:url.absoluteString];
+
+    if (comps.host == nil) {
+
+        NSLogDebug(@"No hostname for URL: %@", url);
+
+        NSURLComponents *articleURLComps = [NSURLComponents componentsWithString:self.item.url];
+
+        articleURLComps.path = [articleURLComps.path stringByAppendingPathComponent:url.absoluteString];
+
+        NSLogDebug(@"Attempted fixed URL: %@", articleURLComps.URL);
+
+        url = articleURLComps.URL;
+
+        if (darkModeURL != nil) {
+
+            articleURLComps.path = darkModeURL.absoluteString;
+
+            darkModeURL = articleURLComps.URL;
+
+        }
+
+    }
+
+    imageView.URL = url;
+    imageView.darkModeURL = darkModeURL;
     
     [self addLinebreak];
     
@@ -2808,7 +2808,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         }
         else if (!imageview.imageView.image && contains && !imageview.isLoading) {
 //            NSLogDebug(@"Point: %@ Loading image: %@", NSStringFromCGPoint(point), imageview.URL);
-            if (imageview.URL && ![imageview.URL.absoluteString isBlank]) {
+            if (imageview.URL && [imageview.URL.absoluteString isBlank] == NO) {
                 
                 imageview.loading = YES;
                 

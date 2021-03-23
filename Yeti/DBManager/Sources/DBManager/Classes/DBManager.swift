@@ -818,7 +818,7 @@ public final class DBManager {
                         
                     }
                     
-                    t.setObject(a.content, forKey: "\(a.identifier!)", inCollection: .articlesContent)
+                    t.setObject(a.content, forKey: a.identifier!, inCollection: .articlesContent)
                     
                     if strip == true {
                         a.content = []
@@ -838,7 +838,7 @@ public final class DBManager {
                     
                     let metadata = ArticleMeta(feedID: a.feedID, read: a.read, bookmarked: a.bookmarked, fulltext: a.fulltext, timestamp: a.timestamp, titleWordCloud: components, author: a.author)
                     
-                    t.setObject(a, forKey: "\(a.identifier!)", inCollection: .articles, withMetadata: metadata)
+                    t.setObject(a, forKey: a.identifier!, inCollection: .articles, withMetadata: metadata)
                     
                 }
                 

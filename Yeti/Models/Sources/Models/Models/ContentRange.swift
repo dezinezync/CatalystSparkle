@@ -61,10 +61,20 @@ import BetterCodable
     
     public var nsRange: NSRange {
         get {
-            range.range
+            if range != nil {
+                return range.range
+            }
+            else {
+                return NSRange()
+            }
         }
         set {
-            range.range = newValue
+            if self.range == nil {
+                self.range = _Range(range: newValue)
+            }
+            else {
+                range.range = newValue
+            }
         }
     }
     

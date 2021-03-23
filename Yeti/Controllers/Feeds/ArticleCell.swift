@@ -126,11 +126,11 @@ class ArticleCell: UITableViewCell {
             return false
         }
         
-        if SharedPrefs.imageBandwidth == .never {
+        if SharedPrefs.imageBandwidth == ImageBandwidthOption.loadingNever {
             return false
         }
         
-        else if SharedPrefs.imageBandwidth == .onlyWireless {
+        else if SharedPrefs.imageBandwidth == ImageBandwidthOption.loadingOnlyWireless {
             return CheckWiFi()
         }
         

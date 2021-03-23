@@ -9,12 +9,10 @@
 #import <Foundation/Foundation.h>
 #import "ArticleProvider.h"
 
-@class Article;
-
 @protocol ArticleHandler <NSObject>
 
-- (void)setupArticle:(Article * _Nonnull)article;
+- (void)setupArticle:(id  _Nonnull)article;
 
-- (Article * _Nonnull)currentArticle;
+- (id _Nullable)currentArticle;
 
 @end

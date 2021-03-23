@@ -112,24 +112,24 @@
             
         }
         
-        copy = formattedString(@"https://images.weserv.nl/?url=%@", [copy stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet.URLQueryAllowedCharacterSet]);
-        
-        CGFloat scale = UIScreen.mainScreen.scale;
-        
-//        if (usedSRCSet == NO) {
-            
-            NSString *extension = [self pathExtension] ?: @"jpeg";
-        
+        NSString *extension = [NSString stringWithFormat:@".%@", [self pathExtension] ?: @"jpeg"];
+    
         NSString *name = [[self lastPathComponent] stringByReplacingOccurrencesOfString:extension withString:@""];
         
-//            maxWidth = maxWidth * scale;
+        extension = [extension substringFromIndex:1];
         
+        if ([copy containsString:@"rackcdn"] == YES) {
+            copy = formattedString(@"https://images.weserv.nl/?url=%@", copy);
+        }
+        else {
+            copy = formattedString(@"https://images.weserv.nl/?url=%@", [copy stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet.URLQueryAllowedCharacterSet]);
+        }
+        
+        CGFloat scale = UIScreen.mainScreen.scale;
+                
         maxWidth += 80.f;
             
-            copy = formattedString(@"%@&w=%@&dpr=%@&output=%@&q=%@&filename=%@@%@x.%@&we", copy, @(maxWidth), @(UIScreen.mainScreen.scale), extension, @(quality), name, @(scale), extension);
-//        }
-        
-//        NSLog(@"weserv.nl proxy URL: %@", copy);
+        copy = formattedString(@"%@&w=%@&dpr=%@&output=%@&q=%@&filename=%@@%@x.%@&we", copy, @(maxWidth), @(UIScreen.mainScreen.scale), extension, @(quality), name, @(scale), extension);
         
     }
     

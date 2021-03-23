@@ -186,6 +186,10 @@ NSString* deviceName() {
     }
     
     articleVC.mainCoordinator = self;
+    
+    if (self.feedVC != nil) {
+        articleVC.providerDelegate = self.feedVC;
+    }
 
     [self _showDetailController:articleVC];
 

@@ -736,7 +736,7 @@ extension FeedVC {
             return
         }
         
-        mainCoordinator?.showArticle(item)
+        setupArticle(item)
         
     }
     
@@ -1235,7 +1235,7 @@ extension FeedVC: BarPositioning {
 }
 
 // MARK: - Article Provider
-extension FeedVC {
+extension FeedVC: ArticleHandler, ArticleProvider {
     
     @objc func loadArticle() {
         
@@ -1269,7 +1269,7 @@ extension FeedVC {
             a.identifier = articleID
             a.feedID = feed.feedID
             
-            showArticle(a)
+            setupArticle(a)
             
             return
         }
@@ -1291,13 +1291,31 @@ extension FeedVC {
         
     }
     
-    @objc func showArticle(_ article: Article) {
+    func setupArticle(_ article: Any) {
         
-        // @TODO
+        guard let a = article as? Article else {
+            return
+        }
+        
+        mainCoordinator?.showArticle(a)
         
     }
     
-    @objc func userMarkedArticle(_ article: Article, read: Bool) {
+    func currentArticle() -> Any? {
+        
+        guard let selected = tableView.indexPathForSelectedRow else {
+            return nil
+        }
+        
+        return DS.itemIdentifier(for: selected)
+        
+    }
+    
+    @objc func userMarkedArticle(_ article: Any, read: Bool) {
+        
+        guard let article = article as? Article else {
+            return
+        }
         
         FeedsManager.shared.markRead(true, items: [article]) { [weak self] (result) in
             
@@ -1342,7 +1360,11 @@ extension FeedVC {
         
     }
     
-    @objc func userMarkedArticle(_ article: Article, bookmarked: Bool) {
+    @objc func userMarkedArticle(_ article: Any, bookmarked: Bool) {
+        
+        guard let article = article as? Article else {
+            return
+        }
         
         FeedsManager.shared.mark(bookmarked, item: article) { [weak self] (result) in
             
@@ -1379,7 +1401,11 @@ extension FeedVC {
         
     }
     
-    func hasPreviousArticle(forArticle item: Article) -> Bool {
+    func hasPreviousArticle(forArticle item: Any) -> Bool {
+        
+        guard let item = item as? Article else {
+            return false
+        }
         
         guard let indexPath = DS.indexPath(for: item) else {
             return false
@@ -1389,7 +1415,11 @@ extension FeedVC {
         
     }
     
-    func hasNextArticle(forArticle item: Article) -> Bool {
+    func hasNextArticle(forArticle item: Any) -> Bool {
+        
+        guard let item = item as? Article else {
+            return false
+        }
         
         guard let indexPath = DS.indexPath(for: item) else {
             return false
@@ -1405,7 +1435,11 @@ extension FeedVC {
         
     }
     
-    func previousArticle(for item: Article) -> Article? {
+    func previousArticle(for item: Any) -> Any? {
+        
+        guard let item = item as? Article else {
+            return nil
+        }
         
         guard let indexPath = DS.indexPath(for: item) else {
             return nil
@@ -1417,7 +1451,7 @@ extension FeedVC {
         
         let prevIndexPath = IndexPath(row: max(0, indexPath.row - 1), section: indexPath.section)
         
-        let prevItem = DS.itemIdentifier(for: prevIndexPath) as? Article
+        let prevItem = DS.itemIdentifier(for: prevIndexPath)
         
         if prevItem != nil { willChangeArticle() }
         
@@ -1425,7 +1459,11 @@ extension FeedVC {
         
     }
     
-    func nextArticle(for item: Article) -> Article? {
+    func nextArticle(for item: Any) -> Any? {
+        
+        guard let item = item as? Article else {
+            return nil
+        }
         
         guard let indexPath = DS.indexPath(for: item) else {
             return nil
@@ -1439,7 +1477,7 @@ extension FeedVC {
         
         let nextIndexPath = IndexPath(row: min(max - 1, indexPath.row + 1), section: indexPath.section)
         
-        let nextItem = DS.itemIdentifier(for: nextIndexPath) as? Article
+        let nextItem = DS.itemIdentifier(for: nextIndexPath)
         
         if nextItem != nil { willChangeArticle() }
         
@@ -1456,7 +1494,11 @@ extension FeedVC {
         
     }
     
-    func didChange(toArticle item: Article) {
+    func didChange(toArticle item: Any) {
+        
+        guard let item = item as? Article else {
+            return
+        }
         
         guard let indexPath = DS.indexPath(for: item) else {
             return

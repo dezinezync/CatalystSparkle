@@ -374,6 +374,7 @@
 		F0F10A9D244C8020009FC108 /* DTError.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F10A93244C8020009FC108 /* DTError.m */; };
 		F0F10A9E244C8020009FC108 /* DTTimePeriodCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F10A94244C8020009FC108 /* DTTimePeriodCollection.m */; };
 		F0F10A9F244C8020009FC108 /* DTTimePeriodChain.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F10A96244C8020009FC108 /* DTTimePeriodChain.m */; };
+		F0F13EB12609A10E007D1B3B /* Content+URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F13EB02609A10E007D1B3B /* Content+URL.swift */; };
 		F0F193A52118BE9D003B61CC /* ImportVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F193A42118BE9D003B61CC /* ImportVC.m */; };
 		F0F35ADE25775EB00043982C /* FeedTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F35ADD25775EB00043982C /* FeedTitleView.swift */; };
 		F0F35B0A257779CD0043982C /* FeedInfoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F35B08257779CD0043982C /* FeedInfoController.swift */; };
@@ -1981,6 +1982,7 @@
 		F0F10A95244C8020009FC108 /* DTTimePeriodGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTTimePeriodGroup.h; sourceTree = "<group>"; };
 		F0F10A96244C8020009FC108 /* DTTimePeriodChain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTTimePeriodChain.m; sourceTree = "<group>"; };
 		F0F10A97244C8020009FC108 /* NSDate+DateTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+DateTools.h"; sourceTree = "<group>"; };
+		F0F13EB02609A10E007D1B3B /* Content+URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Content+URL.swift"; sourceTree = "<group>"; };
 		F0F193A32118BE9D003B61CC /* ImportVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImportVC.h; sourceTree = "<group>"; };
 		F0F193A42118BE9D003B61CC /* ImportVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImportVC.m; sourceTree = "<group>"; };
 		F0F35ADD25775EB00043982C /* FeedTitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedTitleView.swift; sourceTree = "<group>"; };
@@ -2596,6 +2598,7 @@
 				F0C49D0A26004B26009B8E34 /* UIImage+Proxy.h */,
 				F0C49D0B26004B26009B8E34 /* UIImage+Proxy.m */,
 				F0BE4F6D26019DB4001D7692 /* AlertManager+Swift.swift */,
+				F0F13EB02609A10E007D1B3B /* Content+URL.swift */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -4785,6 +4788,7 @@
 				F01285C323436D8D00B8C277 /* Keychain.m in Sources */,
 				F01A34BC219C556C00D020F3 /* TwoFingerPanGestureRecognizer.m in Sources */,
 				F0CF4FC325DF700000E12411 /* String+URL.swift in Sources */,
+				F0F13EB12609A10E007D1B3B /* Content+URL.swift in Sources */,
 				F0A589F5205A580300488015 /* LinguisticSearch.m in Sources */,
 				F02B705124EA7E5C00DD607F /* IDMZoomingScrollView.m in Sources */,
 				F070C3591FBAE7A200912CCF /* ArticleVC.m in Sources */,

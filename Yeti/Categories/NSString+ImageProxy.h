@@ -45,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param firstFrameForGIF If true, and the image url is for a gif, it returns the proxy URL if enabled to be used as the first frame/cover for the GIF preview.
 /// @param useImageProxy If true, the image proxy will be used. This is  ignored when firstFrameForGIF is true.
 /// @param sizePreference the size preference as determined by the user. 
-- (NSString *)pathForImageProxy:(BOOL)usedSRCSet maxWidth:(CGFloat)maxWidth quality:(CGFloat)quality firstFrameForGIF:(BOOL)firstFrameForGIF useImageProxy:(BOOL) useImageProxy sizePreference:(ImageLoadingOption)sizePreference forWidget:(BOOL)forWidget;
+- (NSString *)pathForImageProxy:(BOOL)usedSRCSet maxWidth:(CGFloat)maxWidth quality:(CGFloat)quality firstFrameForGIF:(BOOL)firstFrameForGIF useImageProxy:(BOOL) useImageProxy sizePreference:(ImageBandwidthOption)sizePreference forWidget:(BOOL)forWidget;
 
 - (NSURL * _Nullable)urlFromProxyURI;
 

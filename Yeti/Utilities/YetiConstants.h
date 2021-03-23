@@ -41,15 +41,16 @@ YETI_EXPORT NSNotificationName _Nonnull const ArticleCoverImagesPreferenceUpdate
 YETI_EXPORT NSString * _Nonnull const kShowArticleCoverImages;
 
 typedef NSString * ImageLoadingOption NS_STRING_ENUM;
+typedef NSString * ImageBandwidthOption NS_STRING_ENUM;
 
 YETI_EXPORT ImageLoadingOption _Nonnull const ImageLoadingLowRes;
 YETI_EXPORT ImageLoadingOption _Nonnull const ImageLoadingMediumRes;
 YETI_EXPORT ImageLoadingOption _Nonnull const ImageLoadingHighRes;
 
 YETI_EXPORT NSNotificationName _Nonnull const ImageBandWidthPreferenceUpdated;
-YETI_EXPORT ImageLoadingOption _Nonnull const ImageLoadingNever;
-YETI_EXPORT ImageLoadingOption _Nonnull const ImageLoadingOnlyWireless;
-YETI_EXPORT ImageLoadingOption _Nonnull const ImageLoadingAlways;
+YETI_EXPORT ImageBandwidthOption _Nonnull const ImageLoadingNever;
+YETI_EXPORT ImageBandwidthOption _Nonnull const ImageLoadingOnlyWireless;
+YETI_EXPORT ImageBandwidthOption _Nonnull const ImageLoadingAlways;
 
 typedef NSString * ExternalAppsScheme;
 

@@ -10,7 +10,7 @@ import BetterCodable
 
 @objcMembers open class Article: NSObject, Codable, ObservableObject {
     
-    @LossyOptional<String> public var identifier: String!
+    public var identifier: String!
     public var title: String?
     @LossyOptional public var url: URL!
     public var author: String?
