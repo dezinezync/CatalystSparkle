@@ -20,6 +20,7 @@
 */
 
 @class Content;
+@class Article;
 
 @interface ArticleVC : UIViewController <ArticleHandler, UIViewControllerRestoration, BarPositioning, UIContextMenuInteractionDelegate> {
     BOOL _showSearchBar;
@@ -38,9 +39,9 @@
 
 @property (nonatomic, assign) BOOL noAuth;
 
-- (instancetype _Nonnull)initWithItem:(FeedItem * _Nonnull)item;
+- (instancetype _Nonnull)initWithItem:(Article * _Nonnull)item;
 
-@property (nonatomic, strong) FeedItem * _Nullable item;
+@property (nonatomic, strong) Article * _Nullable item;
 
 @property (weak, nonatomic) IBOutlet UIStackView * _Nullable stackView;
 

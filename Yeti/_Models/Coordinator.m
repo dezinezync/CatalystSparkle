@@ -25,6 +25,7 @@
 #import "PrefsManager.h"
 
 #import "Elytra-Swift.h"
+#import "ArticleVC.h"
 
 NSString* deviceName() {
     struct utsname systemInfo;
@@ -206,6 +207,8 @@ NSString* deviceName() {
 }
 
 - (void)showArticle:(Article *)article {
+    
+    ArticleVC *vc = [[ArticleVC alloc] initWithItem:article];
     
 }
 

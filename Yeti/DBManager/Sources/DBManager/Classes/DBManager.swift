@@ -886,15 +886,13 @@ public final class DBManager {
         
     }
     
-    fileprivate func _delete(articleID: UInt) {
+    fileprivate func _delete(articleID: String) {
         
         writeQueue.sync { [weak self] in
             
             self?.bgConnection.asyncReadWrite({ (t) in
                 
-                let key = "\(articleID)"
-                
-                self?._delete(articleID: key, transaction: t)
+                self?._delete(articleID: articleID, transaction: t)
                 
             })
             

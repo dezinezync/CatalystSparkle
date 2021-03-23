@@ -133,7 +133,7 @@ enum MarkDirection {
     static var filteringTag: UInt = 0
     var sortingTag: UInt = 0
     
-    var loadOnReady: UInt?
+    var loadOnReady: String?
     
     lazy var DS: ArticlesDatasource = {
        
@@ -535,17 +535,17 @@ enum MarkDirection {
             removeEmptyState()
         }
         
-        let emptyView = emptyView()
-        emptyView.translatesAutoresizingMaskIntoConstraints = false
+        let ev = emptyView()
+        ev.translatesAutoresizingMaskIntoConstraints = false
         
-        view.addSubview(emptyView)
+        view.addSubview(ev)
         
-        _emptyView = emptyView
+        _emptyView = ev
         isShowingEmptyState = true
         
         NSLayoutConstraint.activate([
-            emptyView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
-            emptyView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor)
+            ev.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            ev.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor)
         ])
         
     }
@@ -729,6 +729,16 @@ extension FeedVC: ScrollLoading {
 
 // MARK: - Actions
 extension FeedVC {
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        guard let item = DS.itemIdentifier(for: indexPath) else {
+            return
+        }
+        
+        mainCoordinator?.showArticle(item)
+        
+    }
     
     @objc func didTapMarkAll( _ sender: UIBarButtonItem?) {
         
@@ -956,7 +966,8 @@ extension FeedVC {
                     return
                 }
                 
-                let localID = item.identifier!
+                let localIdentifier = item.identifier!
+                let localID = (localIdentifier as NSString).integerValue
                 
                 let localTimestamp = item.timestamp.timeIntervalSince1970
                 

@@ -16,6 +16,8 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <DZAppdelegate/UIApplication+KeyWindow.h>
 
+#import "Elytra-Swift.h"
+
 @implementation Link
 
 + (instancetype)withURL:(NSURL *)url location:(NSUInteger)location length:(NSUInteger)length {
@@ -188,7 +190,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
     
 }
 
-- (void)setText:(NSString *)text ranges:(NSArray<Range *> *)ranges attributes:(NSDictionary *)attributes
+- (void)setText:(NSString *)text ranges:(NSArray<ContentRange *> *)ranges attributes:(NSDictionary *)attributes
 {
     
     weakify(self);
@@ -208,7 +210,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
     }
 }
 
-- (NSAttributedString *)processText:(NSString *)text ranges:(NSArray <Range *> *)ranges attributes:(NSDictionary *)attributes { @autoreleasepool {
+- (NSAttributedString *)processText:(NSString *)text ranges:(NSArray <ContentRange *> *)ranges attributes:(NSDictionary *)attributes { @autoreleasepool {
     
     if (!text || [text isBlank])
         return [NSAttributedString new];
@@ -240,7 +242,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
     
     if (ranges && ranges.count) {
         
-        for (Range *range in ranges) { @autoreleasepool {
+        for (ContentRange *range in ranges) { @autoreleasepool {
             
             NSMutableDictionary *dict = @{}.mutableCopy;
             
@@ -249,14 +251,14 @@ static NSParagraphStyle * _paragraphStyle = nil;
                 __block BOOL hasExisitingAttributes = NO;
                 
                 // length cannot be more than the total length of the string
-                NSInteger location = range.range.location;
-                NSInteger length = range.range.length;
+                NSInteger location = range.nsRange.location;
+                NSInteger length = range.nsRange.length;
                 
                 if (length > 0 && (location + length) > attrs.length) {
-                    range.range = NSMakeRange(location, attrs.length - location);
+                    range.nsRange = NSMakeRange(location, attrs.length - location);
                 }
                 
-                [attrs enumerateAttribute:NSFontAttributeName inRange:range.range options:kNilOptions usingBlock:^(UIFont *  _Nullable value, NSRange range, BOOL * _Nonnull stop) {
+                [attrs enumerateAttribute:NSFontAttributeName inRange:range.nsRange options:kNilOptions usingBlock:^(UIFont *  _Nullable value, NSRange range, BOOL * _Nonnull stop) {
                    
                     if ([value.description containsString:@"italic"]) {
                         hasExisitingAttributes = YES;
@@ -277,18 +279,18 @@ static NSParagraphStyle * _paragraphStyle = nil;
                 __block BOOL hasExisitingAttributes = NO;
                 
                 // length cannot be more than the total length of the string
-                NSInteger location = range.range.location;
-                NSInteger length = range.range.length;
+                NSInteger location = range.nsRange.location;
+                NSInteger length = range.nsRange.length;
                 
                 if ((location + length) > attrs.length) {
-                    range.range = NSMakeRange(location, attrs.length - location);
+                    range.nsRange = NSMakeRange(location, attrs.length - location);
                 }
                 
-                if (range.range.length > NSNotFound) {
-                    range.range = NSMakeRange(location, 0);
+                if (range.nsRange.length > NSNotFound) {
+                    range.nsRange = NSMakeRange(location, 0);
                 }
                 
-                [attrs enumerateAttribute:NSFontAttributeName inRange:range.range options:kNilOptions usingBlock:^(UIFont *  _Nullable value, NSRange range, BOOL * _Nonnull stop) {
+                [attrs enumerateAttribute:NSFontAttributeName inRange:range.nsRange options:kNilOptions usingBlock:^(UIFont *  _Nullable value, NSRange range, BOOL * _Nonnull stop) {
                    
                     if ([value.description containsString:@"bold"]) {
                         hasExisitingAttributes = YES;
@@ -316,13 +318,13 @@ static NSParagraphStyle * _paragraphStyle = nil;
             }
             else if ([range.element isEqualToString:@"anchor"] && range.url) {
                 
-                NSURL *URL = [NSURL URLWithString:range.url];
+                NSURL *URL = range.url;
                 
                 if (URL) {
                     [dict setObject:URL forKey:NSLinkAttributeName];
                 }
                 
-                Link *link = [Link withURL:URL location:range.range.location length:range.range.length];
+                Link *link = [Link withURL:URL location:range.nsRange.location length:range.nsRange.length];
                 
                 if ([self.links containsObject:link] == NO) {
                     [self.links addObject:link];
@@ -356,8 +358,8 @@ static NSParagraphStyle * _paragraphStyle = nil;
             }
             
             @try {
-                if (range.range.location != NSNotFound && (range.range.location + range.range.length) <= attrs.length) {
-                    [attrs addAttributes:dict range:range.range];
+                if (range.nsRange.location != NSNotFound && (range.nsRange.location + range.nsRange.length) <= attrs.length) {
+                    [attrs addAttributes:dict range:range.nsRange];
                 }
             } @catch (NSException *exception) {
                 NSLog(@"Warn: %@", exception);

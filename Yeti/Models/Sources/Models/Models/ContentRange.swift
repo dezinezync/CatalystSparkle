@@ -8,7 +8,7 @@
 import Foundation
 import BetterCodable
 
-public struct _Range: Codable {
+@objcMembers public final class _Range: Codable {
     
     public var range: NSRange = NSRange()
     
@@ -28,8 +28,8 @@ public struct _Range: Codable {
         self.range = range
     }
     
-    public init(range: String) {
-        self.range = NSRangeFromString(range)
+    public init(string: String) {
+        self.range = NSRangeFromString(string)
     }
     
     public init(from decoder: Decoder) throws {
@@ -43,7 +43,7 @@ public struct _Range: Codable {
     
 }
 
-public final class ContentRange: NSObject, Codable {
+@objcMembers public final class ContentRange: NSObject, Codable {
     
     public var element: String?
     @LossyOptional public var range: _Range!
@@ -57,6 +57,15 @@ public final class ContentRange: NSObject, Codable {
         case url
         case level
         case range
+    }
+    
+    public var nsRange: NSRange {
+        get {
+            range.range
+        }
+        set {
+            range.range = newValue
+        }
     }
     
     public convenience init(from dict: [String: Any]) {
@@ -79,7 +88,7 @@ public final class ContentRange: NSObject, Codable {
                 range = _Range(range: value)
             }
             else if let value = value as? String {
-                range = _Range(range: value)
+                range = _Range(string: value)
             }
         }
         else if key == "type" {

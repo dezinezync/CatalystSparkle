@@ -10,6 +10,7 @@
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import "Gallery.h"
 #import "UITextField+CursorPosition.h"
+#import "Elytra-Swift.h"
 
 @implementation ArticleVC (Keyboard)
 
@@ -28,11 +29,11 @@
     openInBrowser.discoverabilityTitle = openInBrowser.title;
     
     UIKeyCommand *bookmark = [UIKeyCommand keyCommandWithInput:@"b" modifierFlags:UIKeyModifierCommand action:@selector(didTapBookmark:)];
-    bookmark.title = self.item.isBookmarked ? @"Unbookmark" : @"Bookmark";
+    bookmark.title = self.item.bookmarked ? @"Unbookmark" : @"Bookmark";
     bookmark.discoverabilityTitle = bookmark.title;
     
     UIKeyCommand *read = [UIKeyCommand keyCommandWithInput:@"r" modifierFlags:UIKeyModifierCommand action:@selector(didTapRead:)];
-    read.title = self.item.isRead ? @"Mark Unread" : @"Mark Read";
+    read.title = self.item.read ? @"Mark Unread" : @"Mark Read";
     read.discoverabilityTitle = read.title;
     
     UIKeyCommand *search = [UIKeyCommand keyCommandWithInput:@"f" modifierFlags:UIKeyModifierCommand action:@selector(didTapSearch)];

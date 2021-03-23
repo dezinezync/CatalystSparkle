@@ -9,12 +9,12 @@
 #import <Foundation/Foundation.h>
 #import "ArticleProvider.h"
 
-@class FeedItem;
+@class Article;
 
 @protocol ArticleHandler <NSObject>
 
-- (void)setupArticle:(FeedItem * _Nonnull)article;
+- (void)setupArticle:(Article * _Nonnull)article;
 
-- (FeedItem * _Nonnull)currentArticle;
+- (Article * _Nonnull)currentArticle;
 
 @end

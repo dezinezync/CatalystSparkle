@@ -103,14 +103,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     return NO;
 }
 
-- (instancetype)initWithItem:(FeedItem *)item
+- (instancetype)initWithItem:(Article *)item
 {
     if (self = [super initWithNibName:NSStringFromClass(ArticleVC.class) bundle:nil]) {
         
         self.item = item;
-        
-        self.restorationIdentifier = formattedString(@"%@-%@", NSStringFromClass(self.class), item.identifier);
-        self.restorationClass = self.class;
         
     }
     
@@ -190,7 +187,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     weakify(self);
     
     if (!(self.item != nil && self.item.content != nil
-          && (self.item.isBookmarked == YES || self.item.textFromContent != nil) )) {
+          && (self.item.bookmarked == YES || self.item.textFromContent != nil) )) {
         
         // this ensures that bookmarked articles render the title.
         // when this runs, the title has already been added to the view
@@ -760,12 +757,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }
 }
 
-- (FeedItem *)currentArticle
+- (Article *)currentArticle
 {
     return self.item;
 }
 
-- (void)setupArticle:(FeedItem *)article {
+- (void)setupArticle:(Article *)article {
     
     if (!article)
         return;
@@ -834,17 +831,19 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 //    }];
 }
 
-- (BOOL)_imageURL:(NSString *)url appearsInContent:(Content *)content {
+- (BOOL)_imageURL:(NSURL *)url appearsInContent:(Content *)content {
     
-    if ([url containsString:@"?"]) {
+    NSString *path = url.absoluteString;
+    
+    if ([path containsString:@"?"]) {
         
-        url = [url substringToIndex:[url rangeOfString:@"?" options:NSBackwardsSearch].location];
+        path = [path substringToIndex:[path rangeOfString:@"?" options:NSBackwardsSearch].location];
         
     }
     
     if (([content.type isEqualToString:@"image"] || [content.type isEqualToString:@"img"])) {
         
-        NSString *comparing = content.url.copy;
+        NSString *comparing = content.url.absoluteString.copy;
         
         if ([comparing containsString:@"?"]) {
             
@@ -852,7 +851,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             
         }
         
-        if ([comparing isEqualToString:url]) {
+        if ([comparing isEqualToString:path]) {
             
             return YES;
             
@@ -911,7 +910,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
 }
 
-- (BOOL)imageURLAppearsInContent:(NSString *)url {
+- (BOOL)imageURLAppearsInContent:(NSURL *)url {
     
     __block BOOL included = NO;
     
@@ -929,7 +928,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
 }
 
-- (void)_setupArticle:(FeedItem *)responseObject start:(NSDate *)start isChangingArticle:(BOOL)isChangingArticle {
+- (void)_setupArticle:(Article *)responseObject start:(NSDate *)start isChangingArticle:(BOOL)isChangingArticle {
     
     if (self == nil) {
         return;
@@ -939,7 +938,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     self.item = responseObject;
     
-    if (self.item.articleURL != nil && [[self.item.articleURL lowercaseString] containsString:@"iosicongallery"]) {
+    if (self.item.url != nil && [[self.item.url.absoluteString lowercaseString] containsString:@"iosicongallery"]) {
         self.isiOSIconGallery = YES;
     }
     
@@ -947,7 +946,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 //        [self didTapRead:nil];
 //    }
     
-    BOOL isYoutubeVideo = [self.item.articleURL containsString:@"youtube.com/watch"];
+    BOOL isYoutubeVideo = [self.item.url.absoluteString containsString:@"youtube.com/watch"];
     
     // add Body
     [self addTitle];
@@ -963,13 +962,13 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         Content *content = [Content new];
         content.type = @"youtube";
-        content.url = self.item.articleURL;
+        content.url = self.item.url;
         
         [self addYoutube:content];
         
     }
     
-    NSMutableArray <NSString *> *imagesFromEnclosures = @[].mutableCopy;
+    NSMutableArray <NSURL *> *imagesFromEnclosures = @[].mutableCopy;
     
     if (self.item.coverImage != nil) {
         
@@ -1011,7 +1010,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             // ensure it doesn't appear in the content
             if (isImage) {
                 
-                isImage = ![self imageURLAppearsInContent:obj.url.absoluteString];
+                isImage = ![self imageURLAppearsInContent:obj.url];
                 
             }
             
@@ -1028,7 +1027,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                     // single image, add as cover
                     Content *content = [Content new];
                     content.type = @"image";
-                    content.url = enclosures.firstObject.url.absoluteString;
+                    content.url = enclosures.firstObject.url;
                     content.fromEnclosure = YES;
                     
                     // only add to the gallery if the image hasn't already been included.
@@ -1057,7 +1056,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                         // single image, add as cover
                         Content *subcontent = [Content new];
                         subcontent.type = @"image";
-                        subcontent.url = enc.url.absoluteString;
+                        subcontent.url = enc.url;
                         subcontent.fromEnclosure = YES;
                         
                         // only add to the gallery if the image hasn't already been included.
@@ -1095,7 +1094,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                     // single image, add as cover
                     Content *subcontent = [Content new];
                     subcontent.type = @"video";
-                    subcontent.url = [[enc url] absoluteString];
+                    subcontent.url = enc.url;
                     
                     self.item.content = [@[subcontent] arrayByAddingObjectsFromArray:self.item.content];
                 }
@@ -1122,10 +1121,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                         obj.ranges = @[];
                     }
                     
-                    Range *rangeObj = [Range new];
+                    ContentRange *rangeObj = [ContentRange new];
                     rangeObj.element = @"anchor";
-                    rangeObj.url = self.item.articleURL;
-                    rangeObj.range = [obj.content rangeOfString:@"click here"];
+                    rangeObj.url = self.item.url;
+                    rangeObj.nsRange = [obj.content rangeOfString:@"click here"];
                     
                     if ([obj.ranges indexOfObject:rangeObj] == NSNotFound) {
                         obj.ranges = [obj.ranges arrayByAddingObject:rangeObj];
@@ -1240,7 +1239,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     ArticleLayoutFont fontPref = SharedPrefs.paraTitleFont ?: SharedPrefs.articleFont;
     CGFloat baseFontSize = 32.f;
 
-    if (self.item.articleTitle.length > 24) {
+    if (self.item.title.length > 24) {
         baseFontSize = 26.f;
     }
     
@@ -1260,7 +1259,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     ArticleAuthorView *authorView = [[ArticleAuthorView alloc] initWithNib];
     authorView.delegate = self;
     
-    if ([Paragraph languageDirectionForText:self.item.articleTitle] == NSLocaleLanguageDirectionRightToLeft) {
+    if ([Paragraph languageDirectionForText:self.item.title] == NSLocaleLanguageDirectionRightToLeft) {
         
         authorView.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
         
@@ -1275,7 +1274,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                                      NSKernAttributeName: @0,
                                      };
 
-    NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:self.item.articleTitle attributes:baseAttributes];
+    NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:self.item.title attributes:baseAttributes];
     
     // this will be reused later after setting up the label.
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 48.f);
@@ -1307,9 +1306,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 #endif
     
     // Hide full-text button for Youtube videos.
-    authorView.mercurialButton.hidden = ([self.item.articleURL containsString:@"youtube.com/watch"]);
+    authorView.mercurialButton.hidden = ([self.item.url.absoluteString containsString:@"youtube.com/watch"]);
     
-    authorView.mercurialed = self.item.mercury;
+    authorView.mercurialed = self.item.fulltext;
     
     [self.stackView addArrangedSubview:authorView];
     
@@ -1374,7 +1373,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     return NO;
 }
 
-- (void)processContent:(Content *)content index:(NSUInteger)idx imagesFromEnclosures:(NSArray <NSString *> *)imagesFromEnclosures {
+- (void)processContent:(Content *)content index:(NSUInteger)idx imagesFromEnclosures:(NSArray <NSURL *> *)imagesFromEnclosures {
     
     /**
      * 1. Check the first item in the list
@@ -1392,8 +1391,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (idx == 0 && isImage && hasCover && imagesFromEnclosures.count) {
        // check if the cover image and the first image
        // are the same entities
-       NSURLComponents *coverComponents = [NSURLComponents componentsWithString:self.item.coverImage];
-       NSURLComponents *imageComponents = [NSURLComponents componentsWithString:content.url];
+       NSURLComponents *coverComponents = [NSURLComponents componentsWithString:self.item.coverImage.absoluteString];
+       NSURLComponents *imageComponents = [NSURLComponents componentsWithString:content.url.absoluteString];
        
        if ([coverComponents.path isEqualToString:imageComponents.path]) {
            return;
@@ -1436,8 +1435,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                     && subcontent.content.length) {
                     
                     // add the URL as a range to the entire paragraph.
-                    Range *range = [Range new];
-                    range.range = NSMakeRange(0, subcontent.content.length);
+                    ContentRange *range = [ContentRange new];
+                    range.nsRange = NSMakeRange(0, subcontent.content.length);
                     range.element = @"anchor";
                     range.url = content.url;
                     
@@ -1671,12 +1670,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     // check if attributes has href
     if (![content.type isEqualToString:@"paragraph"]) {
         if (content.attributes && [content.attributes valueForKey:@"href"]) {
-            NSMutableArray <Range *> *ranges = content.ranges.mutableCopy;
+            NSMutableArray <ContentRange *> *ranges = content.ranges.mutableCopy;
             
-            Range *newRange = [Range new];
+            ContentRange *newRange = [ContentRange new];
             newRange.element = @"anchor";
-            newRange.range = NSMakeRange(0, content.content.length);
-            newRange.url = [content.attributes valueForKey:@"href"];
+            newRange.nsRange = NSMakeRange(0, content.content.length);
+            newRange.url = [NSURL URLWithString:[content.attributes valueForKey:@"href"]];
             
             [ranges addObject:newRange];
             
@@ -1684,11 +1683,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             rangeAdded = YES;
         }
         else if (content.url) {
-            NSMutableArray <Range *> *ranges = content.ranges.mutableCopy;
+            NSMutableArray <ContentRange *> *ranges = content.ranges.mutableCopy;
             
-            Range *newRange = [Range new];
+            ContentRange *newRange = [ContentRange new];
             newRange.element = @"anchor";
-            newRange.range = NSMakeRange(0, content.content.length);
+            newRange.nsRange = NSMakeRange(0, content.content.length);
             newRange.url = content.url;
             
             [ranges addObject:newRange];
@@ -1697,11 +1696,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             rangeAdded = YES;
         }
         else {
-            NSMutableArray <Range *> *ranges = content.ranges.mutableCopy;
+            NSMutableArray <ContentRange *> *ranges = content.ranges.mutableCopy;
             
-            Range *newRange = [Range new];
+            ContentRange *newRange = [ContentRange new];
             newRange.element = content.type;
-            newRange.range = NSMakeRange(0, content.content.length);
+            newRange.nsRange = NSMakeRange(0, content.content.length);
             
             [ranges addObject:newRange];
             
@@ -1859,7 +1858,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         NSAttributedString *attrs = heading.attributedText;
         
-        NSURL *url = formattedURL(@"%@#%@", self.item.articleURL, identifier);
+        NSURL *url = formattedURL(@"%@#%@", self.item.url.absoluteString, identifier);
         
         NSMutableDictionary *attributes = @{NSFontAttributeName: [UIFont systemFontOfSize:MAX(14.f, heading.bodyFont.pointSize - 8.f)]}.mutableCopy;
         
@@ -1932,7 +1931,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [self addImage:content link:nil];
 }
 
-- (void)addImage:(Content *)content link:(NSString *)link {
+- (void)addImage:(Content *)content link:(NSURL *)link {
     
     if (![self showImage])
         return;
@@ -2026,8 +2025,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }
     
     // make the imageView tappable
-    if (link != nil && [link isBlank] == NO) {
-        imageView.link = [NSURL URLWithString:link];
+    if (link != nil && [link.absoluteString isBlank] == NO) {
+        imageView.link = link;
     }
     
     if (self.isiOSIconGallery) {
@@ -2073,9 +2072,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     imageView.content = content;
     
-    CGFloat width = self.scrollView.bounds.size.width;
-    
     // @TODO
+//    CGFloat width = self.scrollView.bounds.size.width;
+//
 //    NSURL *url = [content urlCompliantWithUsersPreferenceForWidth:width];
 //    NSURL *darkModeURL = [content urlCompliantWithUsersPreferenceForWidth:width darkModeOnly:YES];
 //
@@ -2222,12 +2221,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             // check if attributes has href
             if (![content.type isEqualToString:@"paragraph"]) {
                 if (content.attributes && [content.attributes valueForKey:@"href"]) {
-                    NSMutableArray <Range *> *ranges = content.ranges.mutableCopy;
+                    NSMutableArray <ContentRange *> *ranges = content.ranges.mutableCopy;
                     
-                    Range *newRange = [Range new];
+                    ContentRange *newRange = [ContentRange new];
                     newRange.element = @"anchor";
-                    newRange.range = NSMakeRange(0, content.content.length);
-                    newRange.url = [content.attributes valueForKey:@"href"];
+                    newRange.nsRange = NSMakeRange(0, content.content.length);
+                    newRange.url = [NSURL URLWithString:[content.attributes valueForKey:@"href"]];
                     
                     [ranges addObject:newRange];
                     
@@ -2235,11 +2234,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                     rangeAdded = YES;
                 }
                 else if (content.url) {
-                    NSMutableArray <Range *> *ranges = content.ranges.mutableCopy;
+                    NSMutableArray <ContentRange *> *ranges = content.ranges.mutableCopy;
                     
-                    Range *newRange = [Range new];
+                    ContentRange *newRange = [ContentRange new];
                     newRange.element = @"anchor";
-                    newRange.range = NSMakeRange(0, content.content.length);
+                    newRange.nsRange = NSMakeRange(0, content.content.length);
                     newRange.url = content.url;
                     
                     [ranges addObject:newRange];
@@ -2467,7 +2466,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 0);
     Youtube *youtube = [[Youtube alloc] initWithFrame:frame];
-    youtube.URL = [NSURL URLWithString:content.url];
+    youtube.URL = content.url;
     
     _last = youtube;
     
@@ -2557,7 +2556,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     playerController.showsPlaybackControls = NO;
 #endif
     
-    playerController.player = [AVPlayer playerWithURL:[NSURL URLWithString:(content.url ?: content.content)]];
+    playerController.player = [AVPlayer playerWithURL:content.url];
     
     [self addChildViewController:playerController];
     
@@ -3067,7 +3066,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     if (URL.host == nil) {
         // absolute link in the article. Resovle to fully qualified URL
-        NSURLComponents *articleComp = [NSURLComponents componentsWithString:[self.item articleURL]];
+        NSURLComponents *articleComp = [NSURLComponents componentsWithString:[self.item.url absoluteString]];
         NSURLComponents *urlComp = [NSURLComponents componentsWithString:URL.absoluteString];
         
         urlComp.host = articleComp.host;
@@ -3111,7 +3110,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 //        }
         
         // links to sections within the article
-        if ([absolute containsString:self.item.articleURL] && ![absolute isEqualToString:self.item.articleURL]) {
+        if ([absolute containsString:self.item.url.absoluteString] && ![absolute isEqualToString:self.item.url.absoluteString]) {
             // get the section ID
             NSRange range = [absolute rangeOfString:@"#"];
             
@@ -3141,7 +3140,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         if ([text isEqualToString:linkedHeader]) {
             text = [[textView text] stringByReplacingOccurrencesOfString:linkedHeader withString:@""];
             
-            NSString *articleTitle = (self.item.articleTitle && ![self.item.articleTitle isBlank]) ? formattedString(@"- %@", self.item.articleTitle) : @"";
+            NSString *articleTitle = (self.item.title && ![self.item.title isBlank]) ? formattedString(@"- %@", self.item.title) : @"";
             text = formattedString(@"%@%@", text, articleTitle);
         }
         
@@ -3529,7 +3528,7 @@ NSString * const kScrollViewOffset = @"ScrollViewOffset";
 
 + (UIViewController *)viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
     
-    FeedItem *item = [coder decodeObjectForKey:kArticleData];
+    Article *item = [coder decodeObjectForKey:kArticleData];
     
     if (item != nil) {
         ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
@@ -3662,7 +3661,7 @@ NSString * const kScrollViewOffset = @"ScrollViewOffset";
     
     text = formattedString(@"\"%@\"", text);
     
-    UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[text, [NSURL URLWithString:self.item.articleURL]] applicationActivities:nil];
+    UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[text, self.item.url] applicationActivities:nil];
     
     if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
         

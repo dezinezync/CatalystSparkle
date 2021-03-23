@@ -11,21 +11,21 @@
 
 #import <Foundation/Foundation.h>
 
-@class FeedItem;
+@class Article;
 
 @protocol ArticleProvider <NSObject>
 
-- (BOOL)hasPreviousArticleForArticle:(FeedItem * _Nonnull)item;
-- (BOOL)hasNextArticleForArticle:(FeedItem * _Nonnull)item;
+- (BOOL)hasPreviousArticleForArticle:(Article * _Nonnull)item;
+- (BOOL)hasNextArticleForArticle:(Article * _Nonnull)item;
 
-- (FeedItem * _Nullable)previousArticleFor:(FeedItem * _Nonnull)item;
-- (FeedItem * _Nullable)nextArticleFor:(FeedItem * _Nonnull)item;
+- (Article * _Nullable)previousArticleFor:(Article * _Nonnull)item;
+- (Article * _Nullable)nextArticleFor:(Article * _Nonnull)item;
 
-- (void)didChangeToArticle:(FeedItem * _Nonnull)item;
+- (void)didChangeToArticle:(Article * _Nonnull)item;
 
-- (void)userMarkedArticle:(FeedItem * _Nonnull)article read:(BOOL)read;
+- (void)userMarkedArticle:(Article * _Nonnull)article read:(BOOL)read;
 
-- (void)userMarkedArticle:(FeedItem * _Nonnull)article bookmarked:(BOOL)bookmarked;
+- (void)userMarkedArticle:(Article * _Nonnull)article bookmarked:(BOOL)bookmarked;
 
 @end
 

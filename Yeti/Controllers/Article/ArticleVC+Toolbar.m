@@ -33,17 +33,17 @@
     }
     
     UIImage * readImage = [UIImage systemImageNamed:@"smallcircle.fill.circle"],
-            * bookmarkImage = [UIImage systemImageNamed:(self.item.isBookmarked ? @"bookmark.fill" : @"bookmark")],
+            * bookmarkImage = [UIImage systemImageNamed:(self.item.bookmarked ? @"bookmark.fill" : @"bookmark")],
             * searchImage = [UIImage systemImageNamed:@"magnifyingglass"];
 
     UIBarButtonItem *read = [[UIBarButtonItem alloc] initWithImage:readImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapRead:)];
-    read.accessibilityValue = self.item.isRead ? @"Mark article unread" : @"Mark article read";
-    read.accessibilityLabel = self.item.isRead ? @"Mark Unread" : @"Mark Read";
+    read.accessibilityValue = self.item.read ? @"Mark article unread" : @"Mark article read";
+    read.accessibilityLabel = self.item.read ? @"Mark Unread" : @"Mark Read";
     
     UIBarButtonItem *bookmark = [[UIBarButtonItem alloc] initWithImage:bookmarkImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapBookmark:)];
     
-    bookmark.accessibilityValue = self.item.isBookmarked ? @"Remove from bookmarks" : @"Bookmark article";
-    bookmark.accessibilityLabel = self.item.isBookmarked ? @"Unbookmark" : @"Bookmark";
+    bookmark.accessibilityValue = self.item.bookmarked ? @"Remove from bookmarks" : @"Bookmark article";
+    bookmark.accessibilityLabel = self.item.bookmarked ? @"Unbookmark" : @"Bookmark";
     
     UIBarButtonItem *search = [[UIBarButtonItem alloc] initWithImage:searchImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapSearch)];
     
@@ -226,8 +226,8 @@
     if (!self.item)
         return;
     
-    NSString *title = self.item.articleTitle;
-    NSURL *URL = formattedURL(@"%@", self.item.articleURL);
+    NSString *title = self.item.title;
+    NSURL *URL = formattedURL(@"%@", self.item.url);
     
     UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[title, @" ", URL] applicationActivities:nil];
     
@@ -346,11 +346,11 @@
     // @TODO
 //    [MyFeedsManager article:self.item markAsRead:(button == nil ? YES : !self.item.isRead)];
     
-    self.item.read = !self.item.isRead;
+    self.item.read = !self.item.read;
     
     if (isButton) {
         
-        button.image = self.item.isRead ? [UIImage systemImageNamed:@"smallcircle.fill.circle"] : [UIImage systemImageNamed:@"largecircle.fill.circle"];
+        button.image = self.item.read ? [UIImage systemImageNamed:@"smallcircle.fill.circle"] : [UIImage systemImageNamed:@"largecircle.fill.circle"];
         
     }
     
@@ -386,7 +386,7 @@
         return;
     }
     
-    NSURL *URL = formattedURL(@"yeti://external?link=%@", self.item.articleURL);
+    NSURL *URL = formattedURL(@"yeti://external?link=%@", self.item.url);
     
 #if TARGET_OS_MACCATALYST
     if (self->_shiftPressedBeforeClickingURL) {

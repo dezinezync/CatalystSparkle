@@ -12,7 +12,7 @@
 #import "TypeFactory.h"
 #import "PrefsManager.h"
 
-#import "Range.h"
+@class ContentRange;
 
 @interface Link : NSObject
 
@@ -56,7 +56,7 @@
 - (void)viewWillAppear;
 - (void)viewDidDisappear;
 
-- (void)setText:(NSString * _Nonnull)text ranges:(NSArray <Range *> * _Nullable)ranges attributes:(NSDictionary * _Nullable)attributes;
+- (void)setText:(NSString * _Nonnull)text ranges:(NSArray <ContentRange *> * _Nullable)ranges attributes:(NSDictionary * _Nullable)attributes;
 
 + (NSLocaleLanguageDirection)languageDirectionForText:(NSString * _Nonnull)text;
 
@@ -71,7 +71,7 @@
  @param ranges The appliable ranges
  @return An attributed string
  */
-- (NSAttributedString * _Nullable )processText:(NSString * _Nonnull)text ranges:(NSArray <Range *> * _Nonnull)ranges attributes:(NSDictionary * _Nonnull)attributes;
+- (NSAttributedString * _Nullable )processText:(NSString * _Nonnull)text ranges:(NSArray <ContentRange *> * _Nonnull)ranges attributes:(NSDictionary * _Nonnull)attributes;
 
 - (NSArray <UIView *> * _Nonnull)ignoreSubviewsFromLayouting;
 

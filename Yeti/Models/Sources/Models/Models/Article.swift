@@ -8,9 +8,9 @@
 import Foundation
 import BetterCodable
 
-open class Article: NSObject, Codable, ObservableObject {
+@objcMembers open class Article: NSObject, Codable, ObservableObject {
     
-    public var identifier: UInt!
+    public var identifier: String!
     public var title: String?
     @LossyOptional public var url: URL!
     public var author: String?
@@ -76,7 +76,7 @@ open class Article: NSObject, Codable, ObservableObject {
         }
         else if key == "id" || key == "identifer" {
             
-            if let value = value as? UInt {
+            if let value = value as? String {
                 identifier = value
             }
             
