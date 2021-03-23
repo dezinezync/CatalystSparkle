@@ -44,7 +44,7 @@ public let titleWordCloudKey = "titleWordCloud"
 
 public let notificationsKey = "notifications"
 
-public final class DBManager {
+@objcMembers public final class DBManager {
     
     public static let shared = DBManager()
     

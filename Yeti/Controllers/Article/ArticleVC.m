@@ -8,6 +8,7 @@
 
 #import "ArticleVC+Toolbar.h"
 #import "Elytra-Swift.h"
+//#import <Networking/Networking-Swift.h>
 
 #import "ArticleAuthorView.h"
 
@@ -1844,8 +1845,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     heading.backgroundColor = UIColor.redColor;
 #endif
 #endif
-    // @TODO
-//    heading.level = content && content.level ? content.level.integerValue : 1;
+    
+    heading.level = content && content.level ? content.level.integerValue : 1;
     
     [heading setText:content.content ranges:content.ranges attributes:content.attributes];
     
@@ -2072,7 +2073,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     imageView.content = content;
     
-    // @TODO
     CGFloat width = self.scrollView.bounds.size.width;
 
     NSURL *url = [content urlCompliantWithPreference:SharedPrefs.imageLoading width:width];
@@ -2610,6 +2610,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }
     
     // @TODO
+    
 //    Feed *feed = [MyFeedsManager feedForID:self.item.feedID];
 //
 //    if (feed == nil) {

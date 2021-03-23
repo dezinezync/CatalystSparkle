@@ -86,7 +86,7 @@ import BetterCodable
         case url
         case alt
         case identifier
-        case level
+        case levelInt = "level"
         case items
         case attributes
         case videoID
@@ -101,8 +101,7 @@ import BetterCodable
     @LossyOptional public var url: URL?
     public var alt: String?
     public var identifier: String?
-    // changed from UInt to Double so it can be bridged from Swift > ObjC
-    public var level: Double? = 0
+    public var levelInt: Int = 0
     public var items: [Content]?
     public var attributes: [String: String]?
     public var videoID: String?
@@ -117,6 +116,15 @@ import BetterCodable
     public var images: [Content]?
     
     public weak var downloadTask: URLSessionTask?
+    
+    public var level: NSNumber {
+        get {
+            return NSNumber(integerLiteral: levelInt)
+        }
+        set {
+            levelInt = newValue.intValue
+        }
+    }
     
     public convenience init(from dict: [String: Any]) {
         
@@ -190,8 +198,8 @@ import BetterCodable
             }
         }
         else if key == "level" {
-            if let value = value as? Double {
-                level = value
+            if let value = value as? Int {
+                levelInt = value
             }
         }
         else if key == "items" {
@@ -308,9 +316,7 @@ extension Content {
             dict["identifier"] = identifier
         }
         
-        if let level = level {
-            dict["level"] = level
-        }
+        dict["level"] = levelInt
         
         if let items = items {
             dict["items"] = items.map { $0.dictionaryRepresentation }

@@ -6,9 +6,11 @@ import PackageDescription
 let package = Package(
     name: "Networking",
     platforms: [
-        .macOS(.v11),
-        .iOS(.v14)
-    ],
+            .iOS(.v14),
+            .tvOS(.v14),
+            .watchOS(.v6),
+            .macOS(.v11)
+        ],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
@@ -19,7 +21,7 @@ let package = Package(
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
         .package(name: "Models", path: "../Models"),
-        .package(url: "https://github.com/DZNS/DZNetworking.git", .upToNextMajor(from: "2.0.4")),
+        .package(url: "https://github.com/DZNS/DZNetworking.git", .upToNextMajor(from: "2.0.5")),
         .package(url: "https://github.com/SwiftyJSON/SwiftyJSON.git", from: "4.0.0"),
     ],
     targets: [

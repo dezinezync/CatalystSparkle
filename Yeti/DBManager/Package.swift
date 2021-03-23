@@ -6,9 +6,11 @@ import PackageDescription
 let package = Package(
     name: "DBManager",
     platforms: [
-        .macOS(.v11),
-        .iOS(.v14)
-    ],
+            .iOS(.v14),
+            .tvOS(.v14),
+            .watchOS(.v6),
+            .macOS(.v11)
+        ],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
@@ -32,6 +34,9 @@ let package = Package(
                 "Networking",
                 .product(name: "YapDatabase", package: "Swift-YapDatabase"),
                 .product(name: "SwiftYapDatabase", package: "Swift-YapDatabase")
+            ],
+            swiftSettings: [
+                
             ]),
         .testTarget(
             name: "DBManagerTests",

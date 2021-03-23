@@ -27,9 +27,9 @@ public enum FeedsManagerError : Error {
     
 }
 
-@objc public final class FeedsManager: NSObject {
+@objcMembers public final class FeedsManager: NSObject {
     
-    @objc public static let shared = FeedsManager()
+    public static let shared = FeedsManager()
     public var deviceID: String?
     public unowned var user: User?
     

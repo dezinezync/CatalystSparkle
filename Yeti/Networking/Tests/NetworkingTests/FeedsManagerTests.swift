@@ -15,7 +15,7 @@ final class FeedsManagerTests: XCTestCase {
        let u = User()
         u.userID = 1
         u.uuid = "000714.d16a484c82844d25ae3016904bcdc9fd.0425"
-        u.filters: [String] = []
+        u.filters = []
         
         return u
     }()
