@@ -437,9 +437,13 @@ enum SidebarItem: Hashable {
             
                 FeedsManager.shared.user = DBManager.shared.user
             
-                if sself.initialSyncCompleted == false {
+                if DBManager.shared.user != nil,
+                   DBManager.shared.user?.subscription != nil,
+                   sself.initialSyncCompleted == false {
+                    
                     sself.needsUpdateOfStructs = true
                     sself.sync()
+                    
                 }
             
         }.store(in: &cancellables)
@@ -454,9 +458,13 @@ enum SidebarItem: Hashable {
             
                 FeedsManager.shared.user = DBManager.shared.user
             
-                if sself.initialSyncCompleted == false {
+                if DBManager.shared.user != nil,
+                   DBManager.shared.user?.subscription != nil,
+                   sself.initialSyncCompleted == false {
+                    
                     sself.needsUpdateOfStructs = true
                     sself.sync()
+                    
                 }
             
         }

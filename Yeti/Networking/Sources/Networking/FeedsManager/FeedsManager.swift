@@ -354,20 +354,11 @@ extension FeedsManager {
         session.PUT(path: "/1.7/trial", query: query, body: body, resultType: StartTrialResult.self) { [weak self] (result) in
             
             switch result {
-            case .success(let (_, results)):
-                guard let results = results else {
-                    completion?(.failure((NSError(domain: "Elytra", code: 404, userInfo: [NSLocalizedDescriptionKey: "An invalid response was received."]) as Error)))
-                    return
-                }
-
-                if results.status == true {
+            case .success(_):
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     
                     // done
-                    self?.getSubscription(completion: completion)
-                    
-                }
-                else {
-                    // we have an existing subscription
                     self?.getSubscription(completion: completion)
                     
                 }
@@ -382,7 +373,9 @@ extension FeedsManager {
     
     public func getSubscription(completion:((Result<Subscription, Error>) -> Void)?) {
         
-        session.GET(path: "/store", query: nil, resultType: GetSubscriptionResult.self) { (result) in
+        let query = ["env": Bundle.main.configurationString]
+        
+        session.GET(path: "/store", query: query, resultType: GetSubscriptionResult.self) { (result) in
             
             switch result {
             case .success(let (_, results)):
