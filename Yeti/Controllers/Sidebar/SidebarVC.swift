@@ -130,23 +130,35 @@ enum SidebarItem: Hashable {
                 
                 if case SidebarItem.feed(let feed) = item {
                     
-                    let delete = UIContextualAction(style: .destructive, title: "Delete") { (a, sourceView, completionHandler) in
+                    let delete = UIContextualAction(style: .destructive, title: "Delete") { [weak self, weak feed] (a, sourceView, completionHandler) in
                         
+                        guard let sself = self, let sfeed = feed else {
+                            return
+                        }
                         
+                        sself.delete(feed: sfeed, indexPath: indexPath, completion: completionHandler)
                         
                     }
                     
-                    let move = UIContextualAction(style: .normal, title: "Move") { (a, sourceView, completionHandler) in
+                    let move = UIContextualAction(style: .normal, title: "Move") { [weak self, weak feed] (a, sourceView, completionHandler) in
                         
+                        guard let sself = self, let sfeed = feed else {
+                            return
+                        }
                         
+                        sself.move(feed: sfeed, indexPath: indexPath, completion: completionHandler)
                         
                     }
                     
                     move.backgroundColor = UIColor(red: 0, green: 122/255, blue: 1, alpha: 1)
                     
-                    let share = UIContextualAction(style: .normal, title: "Share") { (a, sourceView, completionHandler) in
+                    let share = UIContextualAction(style: .normal, title: "Share") { [weak self, weak feed] (a, sourceView, completionHandler) in
                         
+                        guard let sself = self, let sfeed = feed else {
+                            return
+                        }
                         
+                        sself.shareFeedURL(sfeed, indexPath: indexPath, completion: completionHandler)
                         
                     }
                     
@@ -723,7 +735,7 @@ enum SidebarItem: Hashable {
         
     }
     
-    @objc func shareFeedURL(_ feed: Feed, indexPath: IndexPath) {
+    @objc func shareFeedURL(_ feed: Feed, indexPath: IndexPath, completion: ((_ completed: Bool) -> Void)?) {
         
         guard let url = feed.url else {
             return
@@ -731,7 +743,9 @@ enum SidebarItem: Hashable {
         
         let avc = UIActivityViewController(activityItems: [url], applicationActivities: nil)
         
-        show(activityController: avc, indexPath: indexPath)
+        present(avc, animated: true) {
+            completion?(true)
+        }
         
     }
     
@@ -747,11 +761,12 @@ enum SidebarItem: Hashable {
         
     }
     
-    @objc func delete(feed: Feed, indexPath: IndexPath) {
+    @objc func delete(feed: Feed, indexPath: IndexPath, completion: ((_ completed: Bool) -> Void)?) {
         
         AlertManager.showDestructiveAlert(title: "Delete Feed", message: "Are you sure you want to delete this feed?", confirm: "Delete", confirmHandler: { [weak self] (_) in
             
             guard let sself = self else {
+                completion?(false)
                 return
             }
             
@@ -759,9 +774,12 @@ enum SidebarItem: Hashable {
                 
                 switch result {
                 case .failure(let error):
+                    completion?(false)
                     AlertManager.showGenericAlert(withTitle: "Error Deleting Feed", message: error.localizedDescription)
                     
                 case .success(_):
+                    completion?(true)
+                    
                     DBManager.shared.delete(feed: feed)
                     
                     DispatchQueue.main.async {
@@ -1241,7 +1259,7 @@ extension SidebarVC {
                     
                     let shareFeed = UIAction(title: "Share Feed URL", image: UIImage(systemName: "sqaure.and.arrow.up"), identifier: nil) { (_) in
                         
-                        sself.shareFeedURL(f, indexPath: indexPath)
+                        sself.shareFeedURL(f, indexPath: indexPath, completion: nil)
                         
                     }
                     
@@ -1258,7 +1276,7 @@ extension SidebarVC {
                     
                     share = UIAction(title: "Share Feed URL", image: UIImage(systemName: "sqaure.and.arrow.up"), identifier: nil) { (_) in
                         
-                        sself.shareFeedURL(f, indexPath: indexPath)
+                        sself.shareFeedURL(f, indexPath: indexPath, completion: nil)
                         
                     }
                     
@@ -1272,7 +1290,7 @@ extension SidebarVC {
                 
                 let move = UIAction(title: "Move", image: UIImage(systemName: "text.insert"), identifier: nil) { (_) in
                     
-                    sself.move(feed: f, indexPath: indexPath)
+                    sself.move(feed: f, indexPath: indexPath, completion: nil)
                     
                 }
                 
@@ -1284,7 +1302,7 @@ extension SidebarVC {
                 
                 let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), identifier: nil) { (_) in
                     
-                    sself.delete(feed: f, indexPath: indexPath)
+                    sself.delete(feed: f, indexPath: indexPath, completion: nil)
                     
                 }
                 
@@ -1425,7 +1443,7 @@ extension SidebarVC: MoveFoldersDelegate {
         
     }
     
-    @objc func move(feed: Feed, indexPath: IndexPath) {
+    @objc func move(feed: Feed, indexPath: IndexPath, completion: ((_ completed: Bool) -> Void)?) {
         
         // @TODO
         
