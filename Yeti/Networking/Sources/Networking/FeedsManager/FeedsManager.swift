@@ -25,6 +25,12 @@ public enum FeedsManagerError : Error {
         return String(describing: self).replacingOccurrences(of: "general(message: \"", with: "").replacingOccurrences(of: "\")", with: "")
     }
     
+    static public func from(description: String, statusCode: Int) -> FeedsManagerError {
+        
+        return NSError(domain: "Elytra", code: statusCode, userInfo: [NSLocalizedDescriptionKey: description]) as! FeedsManagerError
+        
+    }
+    
 }
 
 @objcMembers public final class FeedsManager: NSObject {
@@ -664,6 +670,27 @@ extension FeedsManager {
 // MARK: - Articles
 extension FeedsManager {
     
+    public func getArticle(_ identifier: String, completion: ((Result<Article, Error>) -> Void)?) {
+        
+        session.GET(path: "/article/\(identifier)", query: nil, resultType: Article.self) { result in
+            
+            switch result {
+            case .success(let (res, article)):
+                guard let article = article else {
+                    completion?(.failure(FeedsManagerError.from(description: "An unknown error occurred when fetching this article.", statusCode: res?.statusCode ?? 500)))
+                    return
+                }
+                
+                completion?(.success(article))
+                
+            case .failure(let error):
+                completion?(.failure(error))
+            }
+            
+        }
+        
+    }
+    
     public func getArticles(forFeed feed:Feed, page: UInt = 1, completion:((Result<[Article], Error>) -> Void)?) {
         
         getArticles(forFeed: feed.feedID, page: page, completion: completion)
@@ -683,6 +710,27 @@ extension FeedsManager {
             case .success(let (_, aResult)):
                 let a = aResult?.articles ?? []
                 completion?(.success(a))
+            case .failure(let error):
+                completion?(.failure(error))
+            }
+            
+        }
+        
+    }
+    
+    public func getFullTextFor(_ articleID: String, completion:((Result<Article, Error>) -> Void)?) {
+        
+        session.GET(path: "/2.2/mercurial/\(articleID)", query: nil, resultType: Article.self) { result in
+            
+            switch result {
+            case .success(let (res, article)):
+                if let article = article {
+                    completion?(.success(article))
+                }
+                else {
+                    completion?(.failure(FeedsManagerError.from(description: "Failed to extract full text due to an unknown error.", statusCode: res?.statusCode ?? 500)))
+                }
+                
             case .failure(let error):
                 completion?(.failure(error))
             }

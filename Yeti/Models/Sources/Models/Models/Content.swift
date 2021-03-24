@@ -101,7 +101,7 @@ import BetterCodable
     @LossyOptional public var url: URL?
     public var alt: String?
     public var identifier: String?
-    public var levelInt: Int = 0
+    @LossyOptional public var levelInt: Int? = 0
     public var items: [Content]?
     public var attributes: [String: String]?
     public var videoID: String?
@@ -119,7 +119,7 @@ import BetterCodable
     
     public var level: NSNumber {
         get {
-            return NSNumber(integerLiteral: levelInt)
+            return NSNumber(integerLiteral: levelInt ?? 0)
         }
         set {
             levelInt = newValue.intValue

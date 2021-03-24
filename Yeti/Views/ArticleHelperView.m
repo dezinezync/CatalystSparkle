@@ -10,6 +10,7 @@
 #import "YetiThemeKit.h"
 #import "ArticleVC.h"
 #import "PrefsManager.h"
+#import "Elytra-Swift.h"
 
 @implementation ArticleHelperView
 
@@ -104,7 +105,7 @@
         return;
     }
     
-    FeedItem *article = [self.providerDelegate previousArticleFor:[self.handlerDelegate currentArticle]];
+    Article *article = [self.providerDelegate previousArticleFor:[self.handlerDelegate currentArticle]];
     
     if (article)
         [self.handlerDelegate setupArticle:article];
@@ -124,7 +125,7 @@
         return;
     }
     
-    FeedItem *article = [self.providerDelegate nextArticleFor:[self.handlerDelegate currentArticle]];
+    Article *article = [self.providerDelegate nextArticleFor:[self.handlerDelegate currentArticle]];
     
     if (article)
         [self.handlerDelegate setupArticle:article];

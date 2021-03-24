@@ -7,7 +7,7 @@
 
 import Foundation
 
-public final class FeedMetaData: NSObject, Codable {
+@objcMembers public final class FeedMetaData: NSObject, Codable {
     
     public var icons: [String: URL]?
     public var icon: URL?

@@ -2509,6 +2509,7 @@
 		F070C30F1FBABC7A00912CCF /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				F0CB4814260712960098D372 /* Defaults+Elytra.swift */,
 				F048E4A824EE84D1009A46F4 /* WidgetManager.swift */,
 				F0B0EA3924EC205500D675B4 /* CheckWifi.h */,
 				F0B0EA3824EC205500D675B4 /* CheckWifi.m */,
@@ -2543,7 +2544,6 @@
 				F0DFBBF32570A36400246D8A /* CoalescingQueue.swift */,
 				F047CB6E2579F98E00395DC2 /* UIControlSubscription.swift */,
 				F0CF4F3525DF68BB00E12411 /* MoveFoldersDelegate.h */,
-				F0CB4814260712960098D372 /* Defaults+Elytra.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";

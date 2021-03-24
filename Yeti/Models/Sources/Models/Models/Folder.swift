@@ -40,6 +40,7 @@ import Combine
             }
             
             feedsUnread = Publishers.MergeMany(feeds.map { $0.$unread })
+                .receive(on: DispatchQueue.main)
                 .sink { [weak self] _ in
                     
                     guard let sself = self else {

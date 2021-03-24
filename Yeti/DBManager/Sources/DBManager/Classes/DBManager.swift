@@ -716,7 +716,7 @@ public let notificationsKey = "notifications"
     
     // MARK: - Articles
     
-    public func article(for id: UInt, feedID: UInt) -> Article? {
+    public func article(for id: String, feedID: UInt) -> Article? {
         
         var a: Article! = nil
         
@@ -730,13 +730,13 @@ public let notificationsKey = "notifications"
         
     }
     
-    public func content(for articleID: UInt) -> [Content]? {
+    public func content(for articleID: String) -> [Content]? {
         
         var c: [Content]! = nil
         
         uiConnection.read { (t) in
             
-            c = t.object(forKey: "\(articleID)", inCollection: .articlesContent) as? [Content]
+            c = t.object(forKey: articleID, inCollection: .articlesContent) as? [Content]
             
         }
         
@@ -744,13 +744,13 @@ public let notificationsKey = "notifications"
         
     }
     
-    public func fullText(for articleID: UInt) -> [Content]? {
+    public func fullText(for articleID: String) -> [Content]? {
         
         var c: [Content]! = nil
         
         uiConnection.read { (t) in
             
-            c = t.object(forKey: "\(articleID)", inCollection: .articlesFulltext) as? [Content]
+            c = t.object(forKey: articleID, inCollection: .articlesFulltext) as? [Content]
             
         }
         
@@ -766,7 +766,7 @@ public let notificationsKey = "notifications"
     
     public func add(article: Article, strip: Bool) {
         
-        guard article.identifier != nil, article.feedID != nil else {
+        guard article.identifier != nil, article.feedID != 0 else {
             fatalError("Error adding article with no identifer or feed ID to the database.")
         }
         
@@ -848,7 +848,7 @@ public let notificationsKey = "notifications"
         
     }
     
-    public func add (fullText: [Content], articleID: UInt) {
+    public func add (fullText: [Content], articleID: String) {
         
         guard fullText.count != 0 else {
             return
@@ -866,7 +866,7 @@ public let notificationsKey = "notifications"
         
     }
     
-    public func delete(fullTextFor articleID: UInt) {
+    public func delete(fullTextFor articleID: String) {
         
         writeQueue.sync {
             

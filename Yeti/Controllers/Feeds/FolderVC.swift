@@ -35,11 +35,18 @@ class FolderVC: FeedVC {
         
         self.title = folder.title
         
+        let titleView = FeedTitleView()
+        titleView.faviconView.isHidden = true
+        
+        navigationItem.titleView = titleView
+        self.titleView = titleView
+        
         folder.title.publisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] (title) in
                 
                 self?.title = title
+                self?.titleView?.titleLabel.text = title
                 
             }
             .store(in: &cancellables)

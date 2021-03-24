@@ -19,7 +19,7 @@ import BetterCodable
     public var guid: String!
     public var timestamp: Date!
     public var enclosures: [Enclosure]?
-    public var feedID: UInt!
+    public var feedID: UInt = 0
     @LossyOptional public var summary: String?
     @LosslessValue<Bool> public var bookmarked: Bool = false
     @LosslessValue<Bool> public var read: Bool = false

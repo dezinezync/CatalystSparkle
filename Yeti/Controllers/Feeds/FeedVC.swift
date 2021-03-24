@@ -1341,7 +1341,8 @@ extension FeedVC: ArticleHandler, ArticleProvider {
                     
                     if inToday { self?.mainCoordinator?.totalToday -= 1 }
                     
-                    feed?.unread -= 1
+                    let unread = feed?.unread ?? 1
+                    feed?.unread = max(unread - 1, 0)
                     
                 }
                 else {
