@@ -205,7 +205,9 @@ class FeedCell: UICollectionViewListCell {
             return
         }
         
-        print("Downloading favicon for feed \(feed.displayTitle) with url \(url)")
+        #if DEBUG
+//        print("Downloading favicon for feed \(feed.displayTitle) with url \(url)")
+        #endif
         
         let _ = SDWebImageManager.shared.loadImage(with: url, options: [.scaleDownLargeImages], progress: nil) { [weak self, weak feed] (image, data, error, cacheType, finished, imageURL) in
             
