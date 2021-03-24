@@ -134,10 +134,10 @@ extension SplitVC: UISplitViewControllerDelegate {
     
     func splitViewController(_ svc: UISplitViewController, topColumnForCollapsingToProposedTopColumn proposedTopColumn: UISplitViewController.Column) -> UISplitViewController.Column {
         
-        if let a = mainCoordinator?.articleVC {
+        if let _ = mainCoordinator?.articleVC {
             return .secondary
         }
-        else if let f = mainCoordinator?.feedVC {
+        else if let _ = mainCoordinator?.feedVC {
             return .supplementary
         }
         else {
@@ -157,7 +157,7 @@ extension SplitVC {
         
         if str == "didBeginRefreshing:" || str == "didLongPressOnAllRead:" {
            
-            if let f = mainCoordinator?.feedVC as? UIViewController {
+            if let f = mainCoordinator?.feedVC {
             
                 return f.responds(to: aSelector)  ? f : nil
                 
@@ -168,7 +168,7 @@ extension SplitVC {
         }
         else if str == "didTapSearch" {
             
-            if let a = mainCoordinator?.articleVC as? UIViewController {
+            if let a = mainCoordinator?.articleVC {
                 
                 return a.responds(to: aSelector) ? a : nil
                 

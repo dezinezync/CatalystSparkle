@@ -27,7 +27,7 @@
 #import "Elytra-Swift.h"
 #import "ArticleVC.h"
 
-NSString* deviceName() {
+NSString* deviceName(void) {
     struct utsname systemInfo;
     uname(&systemInfo);
     
@@ -66,12 +66,14 @@ NSString* deviceName() {
     sidebar.mainCoordinator = self;
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:sidebar];
+    sidebar.navigationController.navigationBar.prefersLargeTitles = YES;
+    sidebar.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
     
     if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
         [self.splitViewController setViewController:nav forColumn:UISplitViewControllerColumnCompact];
     }
-    
-    [self.splitViewController setViewController:sidebar forColumn:UISplitViewControllerColumnPrimary];
+
+    [self.splitViewController setViewController:nav forColumn:UISplitViewControllerColumnPrimary];
     
     self.sidebarVC = sidebar;
     

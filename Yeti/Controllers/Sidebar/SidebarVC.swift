@@ -224,10 +224,6 @@ enum SidebarItem: Hashable {
         
         scheduleTimerIfValid()
         
-        #else
-        
-        additionalSafeAreaInsets = UIEdgeInsets(top: 44, left: 0, bottom: 0, right: 0)
-        
         #endif
         
         setupNavigationBar()
@@ -242,9 +238,6 @@ enum SidebarItem: Hashable {
         
         #if !targetEnvironment(macCatalyst)
         
-        navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.largeTitleDisplayMode = .automatic
-
         if SharedPrefs.useToolbar == true {
 
             if DBManager.shared.syncCoordinator != nil {
