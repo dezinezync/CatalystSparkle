@@ -123,7 +123,7 @@ public let notificationsKey = "notifications"
             
             let fm = FileManager.default
             #if DEBUG
-            let dbName = "elytra-v2.3.0f-debug.sqlite"
+            let dbName = "elytra-v2.3.0g-debug.sqlite"
             #else
             let dbName = "elytra-v2.3.0.sqlite"
             #endif
@@ -140,12 +140,12 @@ public let notificationsKey = "notifications"
                 fatalError("Could not open DB")
             }
             
-            #if DEBUG
-            let c = db.newConnection()
-            c.readWrite { t in
-                t.removeAllObjectsInAllCollections()
-            }
-            #endif
+//            #if DEBUG
+//            let c = db.newConnection()
+//            c.readWrite { t in
+//                t.removeAllObjectsInAllCollections()
+//            }
+//            #endif
             
             _database = db
             

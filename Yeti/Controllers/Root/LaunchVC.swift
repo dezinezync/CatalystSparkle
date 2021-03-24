@@ -90,10 +90,10 @@ import Models
             return
         }
         
-//        #if DEBUG
-//        process(uuid: "000768.e759fc828ab249ad98ceefc5f80279b3.1145")
-//        return
-//        #endif
+        #if DEBUG
+        process(uuid: "000768.e759fc828ab249ad98ceefc5f80279b3.1145")
+        return
+        #endif
         
         let provider = ASAuthorizationAppleIDProvider()
         let request = provider.createRequest()
