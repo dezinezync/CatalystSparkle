@@ -31,6 +31,36 @@ import DBManager
 // @TODO: Move to Coordinator.swift
 @objcMembers public class MyFeedsManager: NSObject {
     
+    // MARK: - User
+    static public func startFreeTrial(u: User?, completion: ((_ error: Error?, _ success: Bool) -> Void)?) {
+        
+        FeedsManager.shared.startFreeTrial { result in
+            
+            switch result {
+            case .success(let sub):
+                
+                guard let user = DBManager.shared.user else {
+                    completion?(nil, true)
+                    return
+                }
+                
+                user.subscription = sub
+                
+                DBManager.shared.user = user
+                
+                completion?(nil, true)
+                
+            case .failure(let error):
+                completion?(error, false)
+                
+            }
+            
+        }
+        
+    }
+    
+    // MARK: - Feeds & Articles
+    
     static public func feedFor(_ id: UInt) -> Feed? {
         
         return DBManager.shared.feed(for: id)

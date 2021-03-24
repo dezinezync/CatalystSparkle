@@ -382,19 +382,25 @@ enum SidebarItem: Hashable {
 //
 //        }.store(in: &cancellables)
         
-        DBManager.shared.folders.publisher.sink { [weak self] (_) in
+        DBManager.shared.folders.publisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] (_) in
             
             self?.setupData()
             
         }.store(in: &cancellables)
         
-        SharedPrefs.publisher(for: \.hideBookmarks).sink { [weak self] (_) in
+        SharedPrefs.publisher(for: \.hideBookmarks)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] (_) in
             
             self?.setupData()
             
         }.store(in: &cancellables)
         
-        NotificationCenter.default.publisher(for: NSNotification.Name.YTSubscriptionHasExpiredOrIsInvalid).sink { [weak self] (_) in
+        NotificationCenter.default.publisher(for: NSNotification.Name.YTSubscriptionHasExpiredOrIsInvalid)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] (_) in
             
             // don't run when the app is in the background or inactive
             guard UIApplication.shared.applicationState == .active else {
@@ -413,27 +419,45 @@ enum SidebarItem: Hashable {
             
         }.store(in: &cancellables)
         
-        NotificationCenter.default.publisher(for: NSNotification.Name(rawValue: YTSubscriptionPurchased)).sink { [weak self] (_) in
+        NotificationCenter.default.publisher(for: NSNotification.Name(rawValue: YTSubscriptionPurchased))
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] (_) in
             
             self?.navigationItem.rightBarButtonItem?.isEnabled = true
             
         }.store(in: &cancellables)
         
-        NotificationCenter.default.publisher(for: UserDidUpdate).sink { [weak self] (_) in
+        NotificationCenter.default.publisher(for: UserDidUpdate)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] (_) in
+                
+                guard let sself = self else {
+                    return
+                }
             
-            if self?.initialSyncCompleted == false {
-                self?.sync()
-            }
+                FeedsManager.shared.user = DBManager.shared.user
+            
+                if sself.initialSyncCompleted == false {
+                    sself.needsUpdateOfStructs = true
+                    sself.sync()
+                }
             
         }.store(in: &cancellables)
         
-        NotificationCenter.default.publisher(for: .userUpdated).sink { [weak self] (_) in
+        NotificationCenter.default.publisher(for: .userUpdated)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] (_) in
             
-            FeedsManager.shared.user = DBManager.shared.user
+                guard let sself = self else {
+                    return
+                }
             
-            if self?.initialSyncCompleted == false {
-                self?.sync()
-            }
+                FeedsManager.shared.user = DBManager.shared.user
+            
+                if sself.initialSyncCompleted == false {
+                    sself.needsUpdateOfStructs = true
+                    sself.sync()
+                }
             
         }
         .store(in: &cancellables)
@@ -556,7 +580,7 @@ enum SidebarItem: Hashable {
             
         }
         
-        if needsUpdateOfStructs == true {
+        if needsUpdateOfStructs == true && initialSyncCompleted == true {
             needsUpdateOfStructs = false
         }
         
@@ -885,8 +909,7 @@ enum SidebarItem: Hashable {
             initialSyncCompleted = true
         }
         
-        if ((DBManager.shared.feeds.count == 0 || DBManager.shared.folders.count == 0)
-            || (traitCollection.userInterfaceIdiom == .mac && needsUpdateOfStructs == true))
+        if (needsUpdateOfStructs == true)
             && refreshFeedsCount < 3 {
             
             refreshFeedsCount += 1
@@ -900,17 +923,23 @@ enum SidebarItem: Hashable {
                 switch result {
                 case .success(let result):
                     
-                    let feeds = result.feeds
-                    let folders = result.folders
-                    
-                    DBManager.shared.feeds = feeds
-                    DBManager.shared.folders = folders
-                    
-                    if sself.needsUpdateOfStructs == false {
-                        sself.needsUpdateOfStructs = true
+                    DispatchQueue.main.async {
+                        
+                        let feeds = result.feeds
+                        let folders = result.folders
+                        
+                        DBManager.shared.feeds = feeds
+                        DBManager.shared.folders = folders
+                        
+                        if sself.needsUpdateOfStructs == true {
+                            sself.needsUpdateOfStructs = false
+                        }
+                        
+                        sself.setupData()
+                        
+                        sself.backgroundFetchHandler?(.newData)
+                        
                     }
-                    
-                    sself.backgroundFetchHandler?(.newData)
                     
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                         

@@ -14,3 +14,4 @@
 #import "Paragraph.h"
 #import "BarPositioning.h"
 #import "ArticleHandler.h"
+#import "TrialVC.h"

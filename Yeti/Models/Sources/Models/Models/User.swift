@@ -11,13 +11,23 @@ import Foundation
     
     public var uuid: String!
     public var userID: UInt!
-    public var filters: [String] = []
     public var subscription: Subscription!
+    
+    var userFilters: [String]? = []
+    
+    public var filters: [String] {
+        get {
+            return userFilters ?? []
+        }
+        set {
+            userFilters = newValue
+        }
+    }
     
     enum CodingKeys: String, CodingKey {
         case uuid
         case userID = "id"
-        case filters
+        case userFilters = "filters"
         case subscription
     }
     

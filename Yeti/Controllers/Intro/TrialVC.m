@@ -18,6 +18,8 @@
 #import "Keychain.h"
 #import "AppDelegate.h"
 
+#import "Elytra-Swift.h"
+
 @interface TrialVC ()
 
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
@@ -93,6 +95,20 @@
     [self setButtonsState:NO];
     
     weakify(self);
+    
+    [MyFeedsManager startFreeTrialWithU:nil completion:^(NSError * _Nullable error, BOOL completed) {
+       
+        if (error != nil) {
+            [self setButtonsState:YES];
+            [AlertManager showGenericAlertWithTitle:@"Error Starting Trial" message:error.localizedDescription];
+            return;
+        }
+        
+        strongify(self);
+        
+        [self didComplete];
+        
+    }];
     
     // @TODO
 //    [MyFeedsManager startUserFreeTrial:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {

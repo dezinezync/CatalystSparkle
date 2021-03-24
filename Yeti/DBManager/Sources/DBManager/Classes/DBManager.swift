@@ -30,7 +30,7 @@ public enum GroupNames: String, CaseIterable {
 }
 
 public extension Notification.Name {
-    static let userUpdated = Notification.Name(rawValue: "userUpdated")
+    static let userUpdated = Notification.Name(rawValue: "com.yeti.note.userDidUpdate")
 }
 
 private let DB_VERSION_TAG = "2021-03-16 20:11PM IST"
@@ -123,9 +123,9 @@ public let notificationsKey = "notifications"
             
             let fm = FileManager.default
             #if DEBUG
-            let dbName = "elytra-debug.sqlite"
+            let dbName = "elytra-v2.3.0f-debug.sqlite"
             #else
-            let dbName = "elytra.sqlite"
+            let dbName = "elytra-v2.3.0.sqlite"
             #endif
             
             guard let baseURL = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
@@ -139,6 +139,13 @@ public let notificationsKey = "notifications"
             guard let db = YapDatabase(url: dbURL) else {
                 fatalError("Could not open DB")
             }
+            
+            #if DEBUG
+            let c = db.newConnection()
+            c.readWrite { t in
+                t.removeAllObjectsInAllCollections()
+            }
+            #endif
             
             _database = db
             

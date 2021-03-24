@@ -90,10 +90,10 @@ import Models
             return
         }
         
-        #if DEBUG
-        process(uuid: "000768.e759fc828ab249ad98ceefc5f80279b3.1145")
-        return
-        #endif
+//        #if DEBUG
+//        process(uuid: "000768.e759fc828ab249ad98ceefc5f80279b3.1145")
+//        return
+//        #endif
         
         let provider = ASAuthorizationAppleIDProvider()
         let request = provider.createRequest()
@@ -125,7 +125,7 @@ import Models
             switch result {
             case .failure(let error as NSError):
                 
-                if error.localizedDescription.contains("User not found") {
+                if error.code == 404 || error.localizedDescription.contains("User not found") {
                     
                     // create the user
                     FeedsManager.shared.createUser(uuid: uuid) { (result) in
@@ -139,6 +139,8 @@ import Models
                         }
                         
                     }
+                    
+                    return
                     
                 }
                 
@@ -163,8 +165,14 @@ import Models
         
         DBManager.shared.user = user
         
-        // @TODO: Trial VC
-        navigationController?.dismiss(animated: true, completion: nil)
+        guard user.subscription == nil else {
+            navigationController?.dismiss(animated: true, completion: nil)
+            return
+        }
+        
+        let trialVC = TrialVC(nibName: "TrialVC", bundle: Bundle.main)
+        
+        navigationController?.pushViewController(trialVC, animated: true)
         
     }
     
