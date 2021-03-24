@@ -741,8 +741,45 @@ extension FeedsManager {
     
     public func markRead(_ read: Bool, items: [Article], completion:((Result<[MarkReadItem], Error>) -> Void)?) {
         
+        let limit: UInt = 100
+        
         // mark in batches of 100
-        guard items.count <= 100 else {
+        guard items.count <= limit else {
+            
+            var counter: UInt = 0
+            let total: UInt = UInt(items.count)
+            
+            var retval: [MarkReadItem] = []
+            
+            while (counter < total) {
+                
+                let inLimit = (counter + limit) > total ? (total - counter) : limit
+                
+                let subarray = Array(items[Int(counter)..<Int(counter + inLimit)])
+                
+                let semaphore = DispatchSemaphore(value: 0)
+                
+                markRead(read, items: subarray) { result in
+                    
+                    switch result {
+                    case .failure(let error):
+                        print(error)
+                    case .success(let result):
+                        retval.append(contentsOf: result)
+                        print("Done iteration in \(counter)...\(inLimit)")
+                    }
+                    
+                    semaphore.signal()
+                    
+                }
+                
+                semaphore.wait()
+                
+                counter += limit
+                
+            }
+            
+            completion?(.success(retval))
             
             return
         }
