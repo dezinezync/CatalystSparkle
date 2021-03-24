@@ -186,6 +186,8 @@ enum MarkDirection {
         
         ArticleCell.register(tableView)
         
+        let titleView = FeedTitleView()
+        
         switch type {
         case .natural:
             guard let feed = feed else {
@@ -193,8 +195,6 @@ enum MarkDirection {
             }
             
             self.title = feed.displayTitle
-            
-            let titleView = FeedTitleView()
             
             feed.displayTitle.publisher
                 .receive(on: DispatchQueue.main)
@@ -237,19 +237,57 @@ enum MarkDirection {
                     
                 }
             }
-            
-            navigationItem.titleView = titleView
-            self.titleView = titleView
         
         case .unread:
             self.title = "Unread"
+            titleView.titleLabel.text = self.title;
+            titleView.faviconView.isHidden = true
+            
+            if let coordinator = mainCoordinator {
+                
+                coordinator.publisher(for: \.totalUnread)
+                    .receive(on: DispatchQueue.main)
+                    .sink { [weak self] count in
+                        
+                        guard let sself = self else {
+                            return
+                        }
+                        
+                        sself.titleView?.countLabel.text = "\(count) Unread\(count == 1 ? "" : "s")"
+                        
+                    }
+                    .store(in: &cancellables)
+                
+            }
         
         case .today:
             self.title = "Today"
+            titleView.titleLabel.text = self.title;
+            titleView.faviconView.isHidden = true
+            
+            if let coordinator = mainCoordinator {
+                
+                coordinator.publisher(for: \.totalToday)
+                    .receive(on: DispatchQueue.main)
+                    .sink { [weak self] count in
+                        
+                        guard let sself = self else {
+                            return
+                        }
+                        
+                        sself.titleView?.countLabel.text = "\(count) Unread\(count == 1 ? "" : "s")"
+                        
+                    }
+                    .store(in: &cancellables)
+                
+            }
             
         default:
             break
         }
+        
+        navigationItem.titleView = titleView
+        self.titleView = titleView
         
     }
     

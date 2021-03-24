@@ -35,11 +35,7 @@ class FolderVC: FeedVC {
         
         self.title = folder.title
         
-        let titleView = FeedTitleView()
-        titleView.faviconView.isHidden = true
-        
-        navigationItem.titleView = titleView
-        self.titleView = titleView
+        self.titleView?.faviconView.isHidden = true
         
         folder.title.publisher
             .receive(on: DispatchQueue.main)
