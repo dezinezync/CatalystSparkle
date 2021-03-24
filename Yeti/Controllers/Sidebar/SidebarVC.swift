@@ -1028,6 +1028,8 @@ enum SidebarItem: Hashable {
                 sself.progressLabel?.text = "Syncing Complete"
                 sself.progressLabel?.sizeToFit()
                 
+                sself.navigationController?.setToolbarHidden(true, animated: animated)
+                
                 if sself.isRefreshing == true {
                     
                     sself.isRefreshing = false
@@ -1061,10 +1063,6 @@ enum SidebarItem: Hashable {
                 
             }
             else {
-                
-                if progress >= 0.95 {
-                    sself.navigationController?.setToolbarHidden(true, animated: animated)
-                }
                 
                 if sself.navigationController?.isToolbarHidden == false {
                     
