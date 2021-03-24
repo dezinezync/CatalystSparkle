@@ -617,7 +617,13 @@ enum MarkDirection {
             
             snapshot.reloadItems(items)
             
+            let animation = sself.DS.defaultRowAnimation
+            
+            sself.DS.defaultRowAnimation = .none
+            
             sself.DS.apply(snapshot, animatingDifferences: sself.tableView.window != nil, completion: nil)
+            
+            sself.DS.defaultRowAnimation = animation
             
         }
         
@@ -761,7 +767,8 @@ extension FeedVC {
         
         DBManager.shared.bgConnection.asyncReadWrite { [weak self] (t) in
             
-            guard let txn = t.ext(dbFilteredViewName) as? YapDatabaseFilteredViewTransaction else {
+            guard let txn = t.ext(dbFilteredViewName) as? YapDatabaseFilteredViewTransaction,
+                  let feed = self?.feed else {
                 return
             }
             
@@ -771,6 +778,11 @@ extension FeedVC {
             let count = txn.numberOfItems(inGroup: GroupNames.articles.rawValue)
             
             guard count > 0 else {
+                
+                if feed.unread > 0 {
+                    feed.unread = 0
+                }
+                
                 return
             }
             
@@ -816,7 +828,8 @@ extension FeedVC {
             
             sself.markRead(items, inToday: inToday, feedsMapping: feedsMapping) { [weak self] (count, feed) in
                 
-                feed.unread -= count
+                let unread = feed.unread ?? count
+                feed.unread = max(unread - count, 0)
                 
                 (self?.articles.objectEnumerator().allObjects as! [Article]).forEach { $0.read = true }
                 
