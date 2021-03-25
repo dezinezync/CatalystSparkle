@@ -15,7 +15,7 @@ import Networking
 import Combine
 import Defaults
 
-let dbFilteredViewName = "feedFilteredView"
+let dbFilteredViewName: String = "feedFilteredView"
 
 //final class FeedItem: Article {}
 
@@ -161,24 +161,12 @@ enum MarkDirection {
         setupData()
         setupNavBar()
         
-        if FeedVC.filteringTag == 0 {
-            updateFeedSorting()
-        }
-        else {
-            setupViews()
-        }
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupState()
-    }
-    
-    deinit {
-        if self.type == .unread {
-            DBManager.shared.database.unregisterExtension(withName: dbFilteredViewName)
-        }
+        updateFeedSorting()
     }
     
     // MARK: - Setups
@@ -303,9 +291,110 @@ enum MarkDirection {
     
     var dbFilteredView: YapDatabaseFilteredView!
     
+    var dbAutoViewName: String {
+        
+        let sortingKey: Int = self.sorting.isAscending == true ? 1 : 2;
+        
+        var feedKey: String!
+        
+        switch type {
+        case .unread:
+            feedKey = "unread"
+        case .today:
+            feedKey = "today"
+        case .bookmarks:
+            feedKey = "bookmarks"
+        case .natural:
+            feedKey = "feed:\(feed!.feedID!)"
+        default:
+            feedKey = ""
+        }
+        
+        return "feedFilteredView::\(feedKey!)::\(sortingKey)"
+        
+    }
+    
+    func updateFeedSorting() {
+        
+        let sortingOption = self.sorting
+        
+        let registered: YapDatabaseExtensionConnection! = DBManager.shared.bgConnection.ext(dbAutoViewName)
+        
+        if registered != nil  {
+            // not required. already setup.
+            DispatchQueue.main.async { [weak self] in
+                self?._didSetSortingOption()
+            }
+            
+            return
+        }
+        
+        DBManager.shared.writeQueue.async { [weak self] in
+            
+            let sortingClosure = YapDatabaseViewSorting.withMetadataBlock { (t, g, c1, k1, m1, c2, k2, m2) -> ComparisonResult in
+                
+                guard let a1 = m1 as? ArticleMeta, let a2 = m2 as? ArticleMeta else {
+                    return .orderedSame
+                }
+
+                let result = a1.timestamp.compare(other: a2.timestamp)
+                
+                if result == .orderedSame {
+                    return result
+                }
+                
+                if sortingOption.isAscending == true {
+                    
+                    return result
+                    
+                }
+                
+                if result == .orderedDescending {
+                    return .orderedAscending
+                }
+                
+                return .orderedDescending
+                
+            }
+            
+            DBManager.shared.bgConnection.readWrite { (t) in
+                
+                guard let sself = self else {
+                    return
+                }
+                
+                let grouping = YapDatabaseViewGrouping.withKeyBlock { (t, col, key) -> String? in
+                    
+                    if col == CollectionNames.articles.rawValue {
+                        return GroupNames.articles.rawValue
+                    }
+                    
+                    return nil
+                    
+                }
+                
+                let options: YapDatabaseViewOptions = YapDatabaseViewOptions()
+                options.isPersistent = true
+                
+                let newView: YapDatabaseAutoView = YapDatabaseAutoView(grouping: grouping, sorting: sortingClosure, versionTag: "\(sself.sortingTag)", options: options)
+                
+                DBManager.shared.database.asyncRegister(newView, withName: sself.dbAutoViewName) { completed in
+                    
+                    DispatchQueue.main.async {
+                        sself._didSetSortingOption()
+                    }
+                    
+                }
+                
+            }
+            
+        }
+        
+    }
+    
     func setupViews() {
         
-        let baseViewName = sorting.isUnread == true ? DBManagerViews.unreadsView : DBManagerViews.articlesView
+        let baseViewName = dbAutoViewName
         
         let filtering = YapDatabaseViewFiltering.withMetadataBlock { [weak self] (t, g, c, k, m) -> Bool in
             
@@ -359,29 +448,29 @@ enum MarkDirection {
         }
         
         DBManager.shared.writeQueue.async {
-            
+
             if let _ = DBManager.shared.database.registeredExtension(dbFilteredViewName) as? YapDatabaseFilteredView {
                 DBManager.shared.database.unregisterExtension(withName: dbFilteredViewName)
             }
-            
+
         }
-        
+
         DBManager.shared.writeQueue.async { [weak self] in
-            
+
             FeedVC.filteringTag += 1
-            
-            let filteredView = YapDatabaseFilteredView(parentViewName: baseViewName.rawValue, filtering: filtering, versionTag: "\(FeedVC.filteringTag)")
-            
+
+            let filteredView = YapDatabaseFilteredView(parentViewName: baseViewName, filtering: filtering, versionTag: "\(FeedVC.filteringTag)")
+
             DBManager.shared.database.register(filteredView, withName: dbFilteredViewName)
-            
+
             self?.dbFilteredView = filteredView
-            
+
         }
-        
+
         DBManager.shared.writeQueue.async { [weak self] in
-            
+
             self?.loadNextPage()
-            
+
         }
         
     }
@@ -440,62 +529,6 @@ enum MarkDirection {
             snapshot.appendItems(sself.articles.map { $0 as! Article })
             
             sself.DS.apply(snapshot, animatingDifferences: animated, completion: nil)
-            
-        }
-        
-    }
-    
-    func updateFeedSorting() {
-        
-        let sortingOption = self.sorting
-        
-        DBManager.shared.readQueue.async { [weak self] in
-            
-            let sortingClosure = YapDatabaseViewSorting.withMetadataBlock { (t, g, c1, k1, m1, c2, k2, m2) -> ComparisonResult in
-                
-                guard let a1 = m1 as? ArticleMeta, let a2 = m2 as? ArticleMeta else {
-                    return .orderedSame
-                }
-
-                let result = a1.timestamp.compare(other: a2.timestamp)
-                
-                if result == .orderedSame {
-                    return result
-                }
-                
-                if sortingOption.isAscending == true {
-                    
-                    return result
-                    
-                }
-                
-                if result == .orderedDescending {
-                    return .orderedAscending
-                }
-                
-                return .orderedDescending
-                
-            }
-            
-            DBManager.shared.bgConnection.readWrite { (t) in
-                
-                guard let sself = self else {
-                    return
-                }
-                
-                guard let txn = t.ext(DBManagerViews.feedView.rawValue) as? YapDatabaseAutoViewTransaction else {
-                    return
-                }
-                
-                sself.sortingTag += 1
-                
-                txn.setSorting(sortingClosure, versionTag: "\(sself.sortingTag)")
-                
-                DispatchQueue.main.async {
-                    sself._didSetSortingOption()
-                }
-                
-            }
             
         }
         
@@ -822,7 +855,7 @@ extension FeedVC {
         
         DBManager.shared.bgConnection.asyncReadWrite { [weak self] (t) in
             
-            guard let txn = t.ext(dbFilteredViewName) as? YapDatabaseFilteredViewTransaction else {
+            guard let sself = self, let txn = t.ext(dbFilteredViewName) as? YapDatabaseFilteredViewTransaction else {
                 return
             }
             

@@ -62,6 +62,16 @@ class FolderVC: FeedVC {
         
     }
     
+    override var dbAutoViewName: String {
+        
+        let sortingKey: Int = self.sorting.isAscending == true ? 1 : 2;
+        
+        let feedKey: String = "folder:\(folder!.folderID!)"
+        
+        return "feedFilteredView::\(feedKey)::\(sortingKey)"
+        
+    }
+    
     override func setupViews() {
         
         let baseViewName = sorting.isUnread == true ? DBManagerViews.unreadsView : DBManagerViews.articlesView
