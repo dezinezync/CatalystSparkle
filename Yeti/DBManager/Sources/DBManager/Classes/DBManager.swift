@@ -789,70 +789,66 @@ public let notificationsKey = "notifications"
         
         let now = Date()
         
-        writeQueue.sync {
+        bgConnection.readWrite { (t) in
             
-            bgConnection.asyncReadWrite { (t) in
+            for a in articles {
                 
-                for a in articles {
+                if a.read == false,
+                   a.timestamp.timeIntervalSince(now) < -1209600 {
                     
-                    if a.read == false,
-                       a.timestamp.timeIntervalSince(now) < -1209600 {
-                        
-                        // articles older than 2 weeks are marked as read
-                        a.read = true
-                        
-                    }
+                    // articles older than 2 weeks are marked as read
+                    a.read = true
                     
-                    if a.content.count > 0 {
+                }
+                
+                if a.content.count > 0 {
+                    
+                    if a.summary == nil {
                         
-                        if a.summary == nil {
+                        if var summary = a.textFromContent {
                             
-                            if var summary = a.textFromContent {
+                            if summary.count > 200 {
                                 
-                                if summary.count > 200 {
-                                    
-                                    summary = ((summary as NSString).substring(to: 197)) as String
-                                    
-                                    summary += "..."
-                                    
-                                }
+                                summary = ((summary as NSString).substring(to: 197)) as String
                                 
-                                a.summary = summary
+                                summary += "..."
                                 
                             }
+                            
+                            a.summary = summary
                             
                         }
                         
                     }
                     
-                    if a.fulltext == true {
-                        t.setObject(a.content, forKey: a.identifier!, inCollection: .articlesFulltext)
-                    }
-                    else {
-                        t.setObject(a.content, forKey: a.identifier!, inCollection: .articlesContent)
-                    }
-                    
-                    if strip == true {
-                        a.content = []
-                    }
-                    
-                    let charSet: CharacterSet = .whitespaces
-                    var punctuations: CharacterSet = .punctuationCharacters
-                    
-                    punctuations.insert(charactersIn: ",./\\{}[]()!~`“‘…–≠=-÷:;&")
-                    
-                    let title = a.title ?? ""
-                    
-                    let components: [String]? = title.isEmpty == true ? nil : title.lowercased()
-                        .trimmingCharacters(in: charSet)
-                        .components(separatedBy: punctuations)
-                        .filter { $0.count > 0 && $0.isEmpty == false }
-                    
-                    let metadata = ArticleMeta(feedID: a.feedID, read: a.read, bookmarked: a.bookmarked, fulltext: a.fulltext, timestamp: a.timestamp, titleWordCloud: components, author: a.author)
-                    
-                    t.setObject(a, forKey: a.identifier!, inCollection: .articles, withMetadata: metadata)
-                    
                 }
+                
+                if a.fulltext == true {
+                    t.setObject(a.content, forKey: a.identifier!, inCollection: .articlesFulltext)
+                }
+                else {
+                    t.setObject(a.content, forKey: a.identifier!, inCollection: .articlesContent)
+                }
+                
+                if strip == true {
+                    a.content = []
+                }
+                
+                let charSet: CharacterSet = .whitespaces
+                var punctuations: CharacterSet = .punctuationCharacters
+                
+                punctuations.insert(charactersIn: ",./\\{}[]()!~`“‘…–≠=-÷:;&")
+                
+                let title = a.title ?? ""
+                
+                let components: [String]? = title.isEmpty == true ? nil : title.lowercased()
+                    .trimmingCharacters(in: charSet)
+                    .components(separatedBy: punctuations)
+                    .filter { $0.count > 0 && $0.isEmpty == false }
+                
+                let metadata = ArticleMeta(feedID: a.feedID, read: a.read, bookmarked: a.bookmarked, fulltext: a.fulltext, timestamp: a.timestamp, titleWordCloud: components, author: a.author)
+                
+                t.setObject(a, forKey: a.identifier!, inCollection: .articles, withMetadata: metadata)
                 
             }
             
@@ -866,13 +862,9 @@ public let notificationsKey = "notifications"
             return
         }
         
-        writeQueue.sync {
+        bgConnection.readWrite { (t) in
             
-            bgConnection.asyncReadWrite { (t) in
-                
-                t.setObject(fullText, forKey: "\(articleID)", inCollection: .articlesFulltext)
-                
-            }
+            t.setObject(fullText, forKey: "\(articleID)", inCollection: .articlesFulltext)
             
         }
         
@@ -880,13 +872,9 @@ public let notificationsKey = "notifications"
     
     public func delete(fullTextFor articleID: String) {
         
-        writeQueue.sync {
+        bgConnection.readWrite { (t) in
             
-            bgConnection.asyncReadWrite { (t) in
-                
-                t.removeObject(forKey: "\(articleID)", inCollection: .articlesFulltext)
-                
-            }
+            t.removeObject(forKey: "\(articleID)", inCollection: .articlesFulltext)
             
         }
         
@@ -900,15 +888,11 @@ public let notificationsKey = "notifications"
     
     fileprivate func _delete(articleID: String) {
         
-        writeQueue.sync { [weak self] in
+        bgConnection.readWrite({ (t) in
             
-            self?.bgConnection.asyncReadWrite({ (t) in
-                
-                self?._delete(articleID: articleID, transaction: t)
-                
-            })
+            _delete(articleID: articleID, transaction: t)
             
-        }
+        })
         
     }
     
@@ -922,25 +906,21 @@ public let notificationsKey = "notifications"
     
     public func delete(allArticlesFor feed: Feed) {
         
-        writeQueue.async { [weak self] in
+        let col = "\(CollectionNames.articles.rawValue):\(feed.feedID!)"
+        
+        bgConnection.asyncReadWrite({ (t) in
             
-            let col = "\(CollectionNames.articles.rawValue):\(feed.feedID!)"
+            let keys = t.allKeys(inCollection: col)
             
-            self?.bgConnection.asyncReadWrite({ (t) in
-                
-                let keys = t.allKeys(inCollection: col)
-                
-                t.removeAllObjects(inCollection: col)
-                
-                t.removeObjects(forKeys: keys, inCollection: .articlesContent)
-                
-                t.removeObjects(forKeys: keys, inCollection: .articlesFulltext)
-                
-                t.removeObject(forKey: "\(feed.feedID!)", inCollection: .feeds)
-                
-            })
+            t.removeAllObjects(inCollection: col)
             
-        }
+            t.removeObjects(forKeys: keys, inCollection: .articlesContent)
+            
+            t.removeObjects(forKeys: keys, inCollection: .articlesFulltext)
+            
+            t.removeObject(forKey: "\(feed.feedID!)", inCollection: .feeds)
+            
+        })
         
     }
     

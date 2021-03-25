@@ -2393,6 +2393,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     [self addLinebreak];
     
+    if (self.ytExtractor == nil) {
+        self.ytExtractor = [[YTExtractor alloc] init];
+    }
+    
     [self.ytExtractor extract:videoID success:^(VideoInfo * _Nonnull videoInfo) {
         
         if (videoInfo) {

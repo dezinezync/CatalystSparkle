@@ -1215,7 +1215,17 @@ extension FeedVC {
         
         dispatchMainAsync { [weak self] in
             
-            self?.DS.apply(snapshot, animatingDifferences: self?.view.window != nil, completion: nil)
+            guard let sself = self else {
+                return
+            }
+            
+            let animation = sself.DS.defaultRowAnimation
+            
+            sself.DS.defaultRowAnimation = .none
+            
+            sself.DS.apply(snapshot, animatingDifferences: self?.view.window != nil, completion: nil)
+            
+            sself.DS.defaultRowAnimation = animation
             
         }
         

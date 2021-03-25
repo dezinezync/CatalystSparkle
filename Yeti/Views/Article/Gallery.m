@@ -40,8 +40,8 @@
 @end
 
 @interface Gallery () <UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDataSourcePrefetching> {
-    // if the gallery is unbounded, this means there was no height information present
-    // in the images. So we keep it unbounded and reconfig ourseleves based on the
+    // if the gallery is unbounded, this means there was no height information present in the images.
+    // So we keep it unbounded and reconfig ourseleves based on the
     // first successful image load.
     BOOL _unbounded;
     
@@ -202,6 +202,9 @@
     if (_unbounded) {
         _unbounded = NO;
     }
+    else {
+        return;
+    }
     
     CGFloat width = floor(self.collectionView.bounds.size.width);
     
@@ -241,44 +244,69 @@
     
     Content *content = [self.images objectAtIndex:indexPath.item];
     
-    // @TODO
-//    NSURL *url = [content urlCompliantWithUsersPreferenceForWidth:collectionView.bounds.size.width];
-//
-//    weakify(self);
-//
-//    [cell.imageView sd_setImageWithURL:url placeholderImage:nil options:SDWebImageScaleDownLargeImages completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
-//
-//       strongify(self);
-//
-//        if (!self)
-//            return;
-//
-//        cell.backgroundColor = UIColor.systemBackgroundColor;
-//
-//        if (!self->_unbounded)
-//            return;
-//
-//        if (image) {
-//
-//            runOnMainQueueWithoutDeadlocking(^{
-//                CGFloat width = floor(self.collectionView.bounds.size.width);
-//
-//                CGSize size = image.size;
-//
-//                CGFloat height = width * (size.height / size.width);
-//                CGFloat suggestedMaxHeight = ceil(height);
-//
-//                self.maxHeight = suggestedMaxHeight;
-//
-//                [self setupHeight];
-//            });
-//
-//        }
-//
-//    }];
+    NSURL *url = [content urlCompliantWithPreference:SharedPrefs.imageLoading width:collectionView.bounds.size.width];
+
+    weakify(self);
+
+    [cell.imageView sd_setImageWithURL:url placeholderImage:nil options:SDWebImageScaleDownLargeImages completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+
+       strongify(self);
+
+        if (!self)
+            return;
+        
+        if (self->_unbounded == YES && indexPath.item != 0) {
+            return;
+        }
+
+        cell.backgroundColor = UIColor.systemBackgroundColor;
+
+        if (error != nil &&  [error.userInfo[SDWebImageErrorDownloadStatusCodeKey] integerValue] == 404) {
+            
+            // try normal url
+            NSURL *standardURL = [[url absoluteString] urlFromProxyURI];
+            
+            if (standardURL != nil) {
+                
+                [cell.imageView sd_setImageWithURL:standardURL completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+                    
+                    [self _setImageFromURL:image];
+                    
+                }];
+                
+                return;
+                
+            }
+            
+        }
+
+        [self _setImageFromURL:image];
+
+    }];
     
     return cell;
     
+}
+
+- (void)_setImageFromURL:(UIImage *)image {
+    
+    if (image != nil) {
+
+        runOnMainQueueWithoutDeadlocking(^{
+            
+            CGFloat width = floor(self.collectionView.bounds.size.width);
+
+            CGSize size = image.size;
+
+            CGFloat height = width * (size.height / size.width);
+            CGFloat suggestedMaxHeight = ceil(height);
+
+            self.maxHeight = suggestedMaxHeight;
+            
+            [self setupHeight];
+        });
+
+    }
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
@@ -305,16 +333,15 @@
         
         Content *content = [self.images objectAtIndex:indexPath.item];
         
-        // @TODO
-//        if (content.task == nil) {
+        if (content.downloadTask == nil) {
 
-//            NSURL *url = [content urlCompliantWithUsersPreferenceForWidth:collectionView.bounds.size.width];
-//
-//            if (url != nil) {
-//                [prefetchURLs addObject:url];
-//            }
+            NSURL *url = [content urlCompliantWithPreference:SharedPrefs.imageLoading width:collectionView.bounds.size.width];
+
+            if (url != nil) {
+                [prefetchURLs addObject:url];
+            }
             
-//        }
+        }
     }
     
     if (prefetchURLs.count > 0) {
