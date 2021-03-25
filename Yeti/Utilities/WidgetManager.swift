@@ -24,6 +24,8 @@ import DBManager
         
         WidgetCenter.shared.reloadTimelines(ofKind: name)
         
+        print("Reloaded \(name) widget")
+        
     }
     
 }

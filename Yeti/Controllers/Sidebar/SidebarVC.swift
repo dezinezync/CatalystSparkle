@@ -994,8 +994,6 @@ enum SidebarItem: Hashable {
         
         isRefreshing = true
         
-        updateSharedUnreadsData()
-        
         let syncCoordinator = SyncCoordinator()
         syncCoordinator.syncProgressCallback = { [weak self] (progress) in
             
@@ -1012,10 +1010,12 @@ enum SidebarItem: Hashable {
             sself.progressView?.setProgress(Float(progress), animated: animated)
             
             if progress == 1 {
+                
                 DBManager.shared.syncCoordinator = nil
                 
                 sself.updateCounters()
-                
+                sself.updateSharedUnreadsData()
+
             }
             
             if progress == 0 {
@@ -1102,7 +1102,7 @@ enum SidebarItem: Hashable {
             unreadWidgetsTimer = nil
         }
         
-        unreadWidgetsTimer = Timer(timeInterval: interval, repeats: false, block: { (timer) in
+        unreadWidgetsTimer = Timer(timeInterval: interval, repeats: false, block: { (_) in
             
             DBManager.shared.countsConnection.asyncRead { [weak self] (t) in
                 
@@ -1126,7 +1126,7 @@ enum SidebarItem: Hashable {
                     
                 }
 
-                DBManager.shared.readQueue.async {
+                DBManager.shared.writeQueue.async {
                     
                     var usableItems: [Article] = []
                     
@@ -1166,15 +1166,11 @@ enum SidebarItem: Hashable {
                         return a.timestamp > b.timestamp
                     }
                     
-//                    var dict: [String: Encodable] = [
-//                        "entries": list,
-//                        "date": Date()
-//                    ]
-                    
                     let encoder = JSONEncoder()
                     if let data = try? encoder.encode(list) {
                         
                         sself.mainCoordinator?.write(toSharedFile: "articles.json", data: data)
+                        WidgetManager.reloadTimeline(name: "UnreadsWidget")
                         
                     }
                     
@@ -1183,6 +1179,8 @@ enum SidebarItem: Hashable {
             }
             
         })
+        
+        RunLoop.main.add(unreadWidgetsTimer!, forMode: .common)
         
     }
     

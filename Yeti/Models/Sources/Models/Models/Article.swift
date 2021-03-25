@@ -25,7 +25,7 @@ import BetterCodable
     @LosslessValue<Bool> public var read: Bool = false
     @LosslessValue<Bool> public var fulltext: Bool = false
     
-    enum CodingKeys: String, CodingKey {
+    public enum CodingKeys: String, CodingKey {
         case identifier = "id"
         case title
         case url

@@ -11,6 +11,7 @@ import SwiftUI
 
 import SDWebImage
 import SDWebImageSwiftUI
+import Models
 
 extension Text {
     
@@ -46,13 +47,13 @@ private func loadImagesDataFromPackage (package: SimpleEntries, completion: Load
     
     let imageRequestGroup = DispatchGroup()
     
-    for entry: SimpleEntry in package.entries {
+    for entry in package.entries {
         
-        if (entry.favicon != nil && entry.favicon != "") {
+        if (entry.favicon != nil && entry.favicon?.absoluteString != "") {
             
             imageRequestGroup.enter()
             
-            SDWebImageManager.shared.loadImage(with: URL(string: entry.favicon!), options: .highPriority, progress: nil) { (image: UIImage?, _: Data?, error: Error?, _: SDImageCacheType, _: Bool, _: URL?) in
+            SDWebImageManager.shared.loadImage(with: entry.favicon, options: .highPriority, progress: nil) { (image: UIImage?, _: Data?, error: Error?, _: SDImageCacheType, _: Bool, _: URL?) in
                 
                 imageRequestGroup.leave()
                 
@@ -60,11 +61,11 @@ private func loadImagesDataFromPackage (package: SimpleEntries, completion: Load
             
         }
         
-        if (entry.imageURL != nil) {
+        if (entry.coverImage != nil) {
             
             imageRequestGroup.enter()
             
-            SDWebImageManager.shared.loadImage(with: URL(string: entry.imageURL!), options: .highPriority, progress: nil) { (image: UIImage?, _: Data?, error: Error?, _: SDImageCacheType, _: Bool, _: URL?) in
+            SDWebImageManager.shared.loadImage(with: entry.coverImage, options: .highPriority, progress: nil) { (image: UIImage?, _: Data?, error: Error?, _: SDImageCacheType, _: Bool, _: URL?) in
                 
                 imageRequestGroup.leave()
                 
@@ -96,9 +97,7 @@ struct UnreadsProvider: IntentTimelineProvider {
                     
                     let decoder = JSONDecoder();
                     
-                    json = try decoder.decode(SimpleEntries.self, from: data)
-                    
-                    var entries: [SimpleEntry] = json.entries
+                    let entries: [WidgetArticle] = try decoder.decode([WidgetArticle].self, from: data)
                     
                     for index in 0..<entries.count {
                         
@@ -110,13 +109,13 @@ struct UnreadsProvider: IntentTimelineProvider {
                         
                         if (configuration.showCovers?.boolValue == false) {
                                 
-                            entries[index].imageURL = nil
+                            entries[index].coverImage = nil
                             
                         }
                         
                     }
                     
-                    json.entries = entries
+                    json = SimpleEntries(date: Date(), entries: entries)
                     
                     return json
                 }
@@ -134,11 +133,11 @@ struct UnreadsProvider: IntentTimelineProvider {
     
     public func getSnapshot(for configuration: UnreadsIntent, in context: Context, completion: @escaping (SimpleEntries) -> Void) {
     
-        if let jsonData : SimpleEntries = loadData(name: "articles.json", configuration: configuration) {
+        if let jsonData: SimpleEntries = loadData(name: "articles.json", configuration: configuration) {
             
             if (configuration.showFavicons?.boolValue == false) {
                     
-                for var item in jsonData.entries {
+                for item in jsonData.entries {
                     
                     if (item.favicon != nil) {
                         item.favicon = nil
@@ -150,10 +149,10 @@ struct UnreadsProvider: IntentTimelineProvider {
             
             if (configuration.showCovers?.boolValue == false) {
                     
-                for var item in jsonData.entries {
+                for item in jsonData.entries {
                     
-                    if (item.imageURL != nil) {
-                        item.imageURL = nil
+                    if (item.coverImage != nil) {
+                        item.coverImage = nil
                     }
                     
                 }
@@ -206,53 +205,53 @@ struct UnreadsProvider: IntentTimelineProvider {
     
 }
 
-struct SimpleEntry: TimelineEntry, Hashable, Identifiable, Decodable {
-    
-    public let date: Date
-    public let title: String
-    public let author: String
-    public let blog: String
-    public var imageURL: String?
-    public var image: String?
-    public let identifier: Int
-    public let blogID: Int
-    public var favicon: String?
-    
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(identifier)
-    }
-    
-    var id : Int {
-        return hashValue
-    }
-    
-}
+//struct SimpleEntry: TimelineEntry, Hashable, Identifiable, Decodable {
+//
+//    public let date: Date
+//    public let title: String
+//    public let author: String
+//    public let blog: String
+//    public var imageURL: String?
+//    public var image: String?
+//    public let identifier: Int
+//    public let blogID: Int
+//    public var favicon: String?
+//
+//    func hash(into hasher: inout Hasher) {
+//        hasher.combine(identifier)
+//    }
+//
+//    var id : Int {
+//        return hashValue
+//    }
+//
+//}
 
 struct SimpleEntries: TimelineEntry, Decodable {
     public let date: Date
-    public var entries: [SimpleEntry]
+    public var entries: [WidgetArticle]
 }
 
 struct PlaceholderView : View {
     
     var body: some View {
         
-        ArticleView(entry: SimpleEntry(date: Date(), title: "Placeholder title", author: "Author", blog: "Blog", imageURL: nil, image: nil, identifier: 0, blogID: 0, favicon: ""))
+        WidgetArticleView(entry: WidgetArticle())
         .redacted(reason: .placeholder)
         
     }
     
 }
 
-struct ArticleView : View {
+struct WidgetArticleView : View {
     
     @Environment(\.widgetFamily) private var widgetFamily
     
-    var entry: SimpleEntry
+    var entry: WidgetArticle
     
     var body: some View {
         
-        Link(destination:URL(string: "elytra://feed/\(entry.blogID)/article/\(entry.identifier)")!) {
+        Link(destination:URL(string: "elytra://feed/\(entry.blogID ?? 0)/article/\(entry.identifier!)")!) {
             
             let maxDim : CGFloat = widgetFamily == .systemLarge ? 64 : 46;
             
@@ -262,7 +261,7 @@ struct ArticleView : View {
                     
                     if entry.favicon != nil {
                         
-                        WebImage(url: URL(string: entry.favicon!))
+                        WebImage(url: entry.favicon!)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(maxWidth: 24, maxHeight: 24, alignment: .center)
@@ -275,7 +274,7 @@ struct ArticleView : View {
                     
                     VStack(alignment: .leading, spacing: 2) {
                         
-                        Text(entry.title)
+                        Text(entry.title ?? "Untitled")
                             .platformTitleFont()
                             .foregroundColor(.primary)
                             .alignmentGuide(HorizontalAlignment.leading) { _ in 0 }
@@ -283,7 +282,7 @@ struct ArticleView : View {
                         
                         if (entry.author == entry.blog) {
                             
-                            Text(entry.blog)
+                            Text(entry.blog ?? "No Blog")
                                 .platformCaptionFont()
                                 .lineLimit(1)
                                 .foregroundColor(.secondary)
@@ -292,7 +291,7 @@ struct ArticleView : View {
                         }
                         else {
                             
-                            Text("\(entry.author) - \(entry.blog)")
+                            Text("\(entry.author ?? "") - \(entry.blog ?? "")")
                                 .platformCaptionFont()
                                 .lineLimit(1)
                                 .foregroundColor(.secondary)
@@ -304,9 +303,9 @@ struct ArticleView : View {
                     
                     Spacer(minLength: 4)
                     
-                    if entry.imageURL != nil {
+                    if entry.coverImage != nil {
                         
-                        WebImage(url: URL(string: entry.imageURL!))
+                        WebImage(url: entry.coverImage!)
                             .resizable()
                             .aspectRatio(contentMode: .fill)
                             .frame(minWidth: maxDim, maxWidth: maxDim, minHeight: maxDim, maxHeight: maxDim, alignment: .center)
@@ -362,7 +361,7 @@ struct UnreadsWidgetEntryView : View {
                         
                         LazyVStack(alignment: .leading, spacing: 4, pinnedViews: [], content: {
                             ForEach(0..<[entries.entries.count, 2].min()!, id: \.self) { count in
-                                ArticleView(entry: entries.entries[count])
+                                WidgetArticleView(entry: entries.entries[count])
                             }
                         })
                         
@@ -371,7 +370,7 @@ struct UnreadsWidgetEntryView : View {
                         
                         LazyVStack(alignment: .leading, spacing: 8, pinnedViews: [], content: {
                             ForEach(0..<[entries.entries.count, 4].min()!, id: \.self) { count in
-                                ArticleView(entry: entries.entries[count])
+                                WidgetArticleView(entry: entries.entries[count])
                             }
                         })
                         .alignmentGuide(.top) { _ in 0 }
@@ -403,50 +402,13 @@ struct UnreadsWidget: Widget {
                 UnreadsWidgetEntryView(entries: entries)
                 .previewContext(WidgetPreviewContext(family: .systemMedium))
         }
-        .configurationDisplayName("Unread Articles")
+        .configurationDisplayName("Unread WidgetArticles")
         .description("Latest unread articles from your account.")
         .supportedFamilies([.systemMedium, .systemLarge])
         
     }
     
 }
-
-#if DEBUG
-
-struct UnreadsWidget_Previews: PreviewProvider {
-
-    static var previews: some View {
-        
-        let entry1 = SimpleEntry(date: Date(), title: "Apple releases second macOS Big Sur public beta", author: "Michael Potuck", blog: "9to5Mac", imageURL: "https://9to5mac.com/wp-content/uploads/sites/6/2020/07/macOS-Big-Sur-changes-and-features.jpg?quality=82&strip=all&w=1600", image: nil, identifier: 15930957, blogID: 19, favicon: "https://images.weserv.nl/?url=https://9to5mac.com/apple-touch-icon-180x180.png&w=128&dpr=3&output=&q=0.800000011920929@3x.&we")
-        
-        let entry3 = SimpleEntry(date: Date(), title: "How This iPhone Got FIXED!", author: "", blog: "Linus Tech Tips", imageURL: "https://images.weserv.nl/?url=https://i2.ytimg.com/vi/u1MNgP3LFM4/hqdefault.jpg&w=160&dpr=3&output=jpg&q=0.800000011920929&filename=hqdefault.@3x.jpg&we", image: nil, identifier: 15930980, blogID: 336, favicon: "https://images.weserv.nl/?url=https://yt3.ggpht.com/a/AATXAJzGUJdH8PJ5d34Uk6CYZmAMWtam2Cpk6tU_Qw=s900-c-k-c0xffffffff-no-rj-mo&w=128&dpr=3&output=&q=0.800000011920929&filename=AATXAJzGUJdH8PJ5d34Uk6CYZmAMWtam2Cpk6tU_Qw=s900-c-k-c0xffffffff-no-rj-mo@3x.&we")
-        
-        let entry2 = SimpleEntry(date: Date(), title: "Apple hits $2 trillion – a record-breaking market cap milestone", author: "Tom Rolfe", blog: "TapSmart", imageURL: nil, image: nil, identifier: 15916691, blogID: 5959, favicon: "https://images.weserv.nl/?url=https://tapsmart-wpengine.netdna-ssl.com/wp-content/uploads/fbrfg/apple-touch-icon-180x180.png&w=128&dpr=3&output=&q=0.800000011920929@3x.&we")
-        
-        let json = SimpleEntries(date: Date(), entries: [entry1, entry2, entry3])
-        
-        UnreadsWidgetEntryView(entries: json)
-            .previewContext(WidgetPreviewContext(family: .systemLarge))
-            .previewDisplayName("Unreads Large")
-
-        UnreadsWidgetEntryView(entries: json)
-            .previewContext(WidgetPreviewContext(family: .systemMedium))
-            .previewDevice("Mac Catalyst")
-            .previewDisplayName("Unreads Medium")
-            .environment(\.colorScheme, .dark)
-        
-        let emptyEntries = SimpleEntries(date: Date(), entries: [])
-        
-        UnreadsWidgetEntryView(entries:emptyEntries)
-            .previewContext(WidgetPreviewContext(family: .systemMedium))
-            .previewDisplayName("Unreads Medium")
-            .environment(\.colorScheme, .dark)
-
-    }
-
-}
-
-#endif
 
 /* Bundler */
 @main
@@ -457,3 +419,40 @@ struct ElytraWidgets: WidgetBundle {
         CountersWidget()
     }
 }
+
+//#if DEBUG
+//
+//struct UnreadsWidget_Previews: PreviewProvider {
+//
+//    static var previews: some View {
+//
+//        let entry1 = WidgetArticle(timestamp: Date(), title: "Apple releases second macOS Big Sur public beta", author: "Michael Potuck", blog: "9to5Mac", imageURL: "https://9to5mac.com/wp-content/uploads/sites/6/2020/07/macOS-Big-Sur-changes-and-features.jpg?quality=82&strip=all&w=1600", image: nil, identifier: 15930957, blogID: 19, favicon: "https://images.weserv.nl/?url=https://9to5mac.com/apple-touch-icon-180x180.png&w=128&dpr=3&output=&q=0.800000011920929@3x.&we")
+//
+//        let entry3 = WidgetArticle(timestamp: Date(), title: "How This iPhone Got FIXED!", author: "", blog: "Linus Tech Tips", imageURL: "https://images.weserv.nl/?url=https://i2.ytimg.com/vi/u1MNgP3LFM4/hqdefault.jpg&w=160&dpr=3&output=jpg&q=0.800000011920929&filename=hqdefault.@3x.jpg&we", image: nil, identifier: 15930980, blogID: 336, favicon: "https://images.weserv.nl/?url=https://yt3.ggpht.com/a/AATXAJzGUJdH8PJ5d34Uk6CYZmAMWtam2Cpk6tU_Qw=s900-c-k-c0xffffffff-no-rj-mo&w=128&dpr=3&output=&q=0.800000011920929&filename=AATXAJzGUJdH8PJ5d34Uk6CYZmAMWtam2Cpk6tU_Qw=s900-c-k-c0xffffffff-no-rj-mo@3x.&we")
+//
+//        let entry2 = WidgetArticle(timestamp: Date(), title: "Apple hits $2 trillion – a record-breaking market cap milestone", author: "Tom Rolfe", blog: "TapSmart", imageURL: nil, image: nil, identifier: 15916691, blogID: 5959, favicon: "https://images.weserv.nl/?url=https://tapsmart-wpengine.netdna-ssl.com/wp-content/uploads/fbrfg/apple-touch-icon-180x180.png&w=128&dpr=3&output=&q=0.800000011920929@3x.&we")
+//
+//        let json = SimpleEntries(date: Date(), entries: [entry1, entry2, entry3])
+//
+//        UnreadsWidgetEntryView(entries: json)
+//            .previewContext(WidgetPreviewContext(family: .systemLarge))
+//            .previewDisplayName("Unreads Large")
+//
+//        UnreadsWidgetEntryView(entries: json)
+//            .previewContext(WidgetPreviewContext(family: .systemMedium))
+//            .previewDevice("Mac Catalyst")
+//            .previewDisplayName("Unreads Medium")
+//            .environment(\.colorScheme, .dark)
+//
+//        let emptyEntries = SimpleEntries(date: Date(), entries: [])
+//
+//        UnreadsWidgetEntryView(entries:emptyEntries)
+//            .previewContext(WidgetPreviewContext(family: .systemMedium))
+//            .previewDisplayName("Unreads Medium")
+//            .environment(\.colorScheme, .dark)
+//
+//    }
+//
+//}
+//
+//#endif

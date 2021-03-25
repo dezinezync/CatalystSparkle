@@ -719,20 +719,20 @@ NSString* deviceName(void) {
         return;
     }
     
-    NSData *dataRep = [NSJSONSerialization dataWithJSONObject:data options:kNilOptions error:&error];
+//    NSData *dataRep = [NSJSONSerialization dataWithJSONObject:data options:kNilOptions error:&error];
+//
+//    if (error != nil) {
+//
+//        NSLog(@"Error serialising data: %@", error.localizedDescription);
+//        return;
+//
+//    }
+//
+//    if (dataRep == nil) {
+//        return;
+//    }
     
-    if (error != nil) {
-        
-        NSLog(@"Error serialising data: %@", error.localizedDescription);
-        return;
-        
-    }
-    
-    if (dataRep == nil) {
-        return;
-    }
-    
-    if ([dataRep writeToFile:path atomically:YES] == NO) {
+    if ([data writeToFile:path atomically:YES] == NO) {
         
         NSLog(@"Failed to write data to %@", path);
         

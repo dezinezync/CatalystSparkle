@@ -599,7 +599,7 @@ extension FeedsManager {
     
     public func delete(feed id: UInt, completion:((Result<Bool, Error>) -> Void)?) {
         
-        guard let user = user else {
+        guard let _ = user else {
             completion?(.failure((NSError(domain: "Elytra", code: 401, userInfo: [NSLocalizedDescriptionKey: "User is not logged in."]) as Error)))
             return
         }
@@ -644,7 +644,7 @@ extension FeedsManager {
         session.DELETE(path: path, query: ["folderID": "\(id)"], resultType: [String: Bool].self) { (result) in
             
             switch result {
-            case .success(let (_, result)): do {
+            case .success(_): do {
                 
                 completion?(.success(true))
                 

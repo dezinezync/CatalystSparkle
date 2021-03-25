@@ -177,6 +177,7 @@
 		F0673B0320C6A1EB00C42062 /* OPMLVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0673B0020C6A1EB00C42062 /* OPMLVC.xib */; };
 		F067D35D23F43B350034B968 /* Customization.m in Sources */ = {isa = PBXBuildFile; fileRef = F067D35C23F43B350034B968 /* Customization.m */; };
 		F0695B2020CE6B7600517AF8 /* UIViewController+Hairline.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695B1F20CE6B7600517AF8 /* UIViewController+Hairline.m */; };
+		F069FE68260C28CC006271E9 /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = F069FE67260C28CC006271E9 /* Models */; };
 		F06B766420C27CD000FBCDE7 /* YTNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = F06B766320C27CD000FBCDE7 /* YTNavigationController.m */; };
 		F06C666522B2ABBA00D425E9 /* UIViewController+Stateful.m in Sources */ = {isa = PBXBuildFile; fileRef = F06C666422B2ABBA00D425E9 /* UIViewController+Stateful.m */; };
 		F06EA86125F9C02400A4C855 /* DBManager in Frameworks */ = {isa = PBXBuildFile; productRef = F06EA86025F9C02400A4C855 /* DBManager */; };
@@ -2061,6 +2062,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F069FE68260C28CC006271E9 /* Models in Frameworks */,
 				F02A483A25265210001063E9 /* SDWebImageSwiftUI in Frameworks */,
 				F0D98F5224EE4C8500B1F9F0 /* SwiftUI.framework in Frameworks */,
 				F0D424232526557C00837194 /* SDWebImage in Frameworks */,
@@ -3405,6 +3407,7 @@
 			packageProductDependencies = (
 				F02A483925265210001063E9 /* SDWebImageSwiftUI */,
 				F0D424222526557C00837194 /* SDWebImage */,
+				F069FE67260C28CC006271E9 /* Models */,
 			);
 			productName = UnreadsWidgetExtension;
 			productReference = F0D98F4E24EE4C8500B1F9F0 /* UnreadsWidgetExtension.appex */;
@@ -5294,7 +5297,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SUPPORTS_MACCATALYST = YES;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Elytra-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -5352,7 +5355,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SUPPORTS_MACCATALYST = YES;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Elytra-Bridging-Header.h";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
@@ -5784,6 +5787,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F02A4892252653C7001063E9 /* XCRemoteSwiftPackageReference "SDWebImage" */;
 			productName = SDWebImage;
+		};
+		F069FE67260C28CC006271E9 /* Models */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Models;
 		};
 		F06EA86025F9C02400A4C855 /* DBManager */ = {
 			isa = XCSwiftPackageProductDependency;
