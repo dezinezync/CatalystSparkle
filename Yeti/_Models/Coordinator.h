@@ -113,11 +113,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 #define DZS_SILENCE_CALL_TO_UNKNOWN_SELECTOR(expression) _Pragma("clang diagnostic push") _Pragma("clang diagnostic ignored \"-Warc-performSelector-leaks\"") expression _Pragma("clang diagnostic pop")
 
-@interface UIWindow (MacCatalystExtension)
-
-- (nullable NSObject *)innerWindow;
-
-@end
+//@interface UIWindow (MacCatalystExtension)
+//
+//- (nullable NSObject *)innerWindow;
+//
+//@end
 
 @interface UIViewController (Coordination)
 

@@ -933,33 +933,33 @@ static void *UIViewControllerMainCoordinatorKey;
 
 @end
 
-@implementation UIWindow (MacCatalystExtension)
-
-- (nullable NSObject *)innerWindow {
-    
-    id delegate = [[NSClassFromString(@"NSApplication") sharedApplication] delegate];
-    
-    const SEL hostWinSEL = NSSelectorFromString([NSString stringWithFormat:@"_%@Window%@Window:", @"host", @"ForUI"]);
-    
-    @try {
-        // There's also hostWindowForUIWindow 🤷‍♂️
-        DZS_SILENCE_CALL_TO_UNKNOWN_SELECTOR(id nsWindow = [delegate performSelector:hostWinSEL withObject:self];)
-            
-        // macOS 11.0 changed this to return an UINSWindowProxy
-        SEL attachedWin = NSSelectorFromString([NSString stringWithFormat:@"%@%@", @"attached", @"Window"]);
-        
-        if ([nsWindow respondsToSelector:attachedWin]) {
-            nsWindow = [nsWindow valueForKey:NSStringFromSelector(attachedWin)];
-        }
-        
-        return nsWindow;
-    }
-    @catch (...) {
-        NSLogDebug(@"Failed to get NSWindow for %@.", self);
-    }
-    
-    return nil;
-    
-}
-
-@end
+//@implementation UIWindow (MacCatalystExtension)
+//
+//- (nullable NSObject *)innerWindow {
+//    
+//    id delegate = [[NSClassFromString(@"NSApplication") sharedApplication] delegate];
+//    
+//    const SEL hostWinSEL = NSSelectorFromString([NSString stringWithFormat:@"_%@Window%@Window:", @"host", @"ForUI"]);
+//    
+//    @try {
+//        // There's also hostWindowForUIWindow 🤷‍♂️
+//        DZS_SILENCE_CALL_TO_UNKNOWN_SELECTOR(id nsWindow = [delegate performSelector:hostWinSEL withObject:self];)
+//            
+//        // macOS 11.0 changed this to return an UINSWindowProxy
+//        SEL attachedWin = NSSelectorFromString([NSString stringWithFormat:@"%@%@", @"attached", @"Window"]);
+//        
+//        if ([nsWindow respondsToSelector:attachedWin]) {
+//            nsWindow = [nsWindow valueForKey:NSStringFromSelector(attachedWin)];
+//        }
+//        
+//        return nsWindow;
+//    }
+//    @catch (...) {
+//        NSLogDebug(@"Failed to get NSWindow for %@.", self);
+//    }
+//    
+//    return nil;
+//    
+//}
+//
+//@end

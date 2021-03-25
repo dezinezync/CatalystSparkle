@@ -27,14 +27,14 @@ class SidebarDS: UICollectionViewDiffableDataSource<Int, SidebarItem> {
     case author
 }
 
-@objc class CustomFeed: NSObject {
+@objcMembers public class CustomFeed: NSObject {
     
-    @objc let title: String
-    @objc let image: UIImage?
-    @objc let color: UIColor
-    @objc let feedType: FeedType
+    let title: String
+    let image: UIImage?
+    let color: UIColor
+    let feedType: FeedType
     
-    @objc required init(title: String, image: String, color: UIColor?, type: FeedType) {
+    required init(title: String, image: String, color: UIColor?, type: FeedType) {
         
         self.title = title
         self.image = UIImage(systemName: image)
@@ -43,11 +43,11 @@ class SidebarDS: UICollectionViewDiffableDataSource<Int, SidebarItem> {
         
     }
     
-    override var hash: Int {
+    public override var hash: Int {
         return title.hash + feedType.rawValue
     }
     
-    override func isEqual(_ object: Any?) -> Bool {
+    public override func isEqual(_ object: Any?) -> Bool {
         
         guard let rhs = object as? CustomFeed else {
             return false

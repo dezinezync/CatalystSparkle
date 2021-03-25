@@ -366,6 +366,7 @@
 		F0EEC86021ECB2420046BB12 /* reader.css in Resources */ = {isa = PBXBuildFile; fileRef = F0EEC85F21ECB2420046BB12 /* reader.css */; };
 		F0EFA63A205FDC5A00815ED7 /* ArticleHelperView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EFA639205FDC5A00815ED7 /* ArticleHelperView.m */; };
 		F0EFA63C205FDC7100815ED7 /* ArticleHelperView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0EFA63B205FDC7100815ED7 /* ArticleHelperView.xib */; };
+		F0F00CE8260CACE500DB6A2B /* Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = F0F00CE7260CACE500DB6A2B /* Dynamic */; };
 		F0F049632532EB6A001CF7E1 /* NSString+CJK.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F049622532EB6A001CF7E1 /* NSString+CJK.m */; };
 		F0F049FC2532F0D4001CF7E1 /* UnreadsIntent.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = F0D98F5624EE4C8500B1F9F0 /* UnreadsIntent.intentdefinition */; };
 		F0F10A98244C8020009FC108 /* DateTools.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F0F10A88244C8020009FC108 /* DateTools.bundle */; };
@@ -2015,6 +2016,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0F00CE8260CACE500DB6A2B /* Dynamic in Frameworks */,
 				F0E0E6EE2457FF2300DFFD17 /* JLRoutes.framework in Frameworks */,
 				F0E0DBBD22AE0F47006A2D93 /* WebKit.framework in Frameworks */,
 				F08C5E62238660B00055946F /* DZThemeKit.framework in Frameworks */,
@@ -3312,6 +3314,7 @@
 				F06EA86025F9C02400A4C855 /* DBManager */,
 				F06EA86725F9C02B00A4C855 /* Networking */,
 				F0CB478A260712810098D372 /* Defaults */,
+				F0F00CE7260CACE500DB6A2B /* Dynamic */,
 			);
 			productName = Yeti;
 			productReference = F070C2D91FBABC3500912CCF /* Elytra.app */;
@@ -3483,6 +3486,7 @@
 				F02A483825265210001063E9 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				F02A4892252653C7001063E9 /* XCRemoteSwiftPackageReference "SDWebImage" */,
 				F0CB4789260712810098D372 /* XCRemoteSwiftPackageReference "Defaults" */,
+				F0F00CE6260CACE500DB6A2B /* XCRemoteSwiftPackageReference "Dynamic" */,
 			);
 			productRefGroup = F070C2DA1FBABC3500912CCF /* Products */;
 			projectDirPath = "";
@@ -5765,6 +5769,14 @@
 				minimumVersion = 4.2.1;
 			};
 		};
+		F0F00CE6260CACE500DB6A2B /* XCRemoteSwiftPackageReference "Dynamic" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/mhdhejazi/Dynamic.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -5822,6 +5834,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F02A4892252653C7001063E9 /* XCRemoteSwiftPackageReference "SDWebImage" */;
 			productName = SDWebImage;
+		};
+		F0F00CE7260CACE500DB6A2B /* Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F0F00CE6260CACE500DB6A2B /* XCRemoteSwiftPackageReference "Dynamic" */;
+			productName = Dynamic;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

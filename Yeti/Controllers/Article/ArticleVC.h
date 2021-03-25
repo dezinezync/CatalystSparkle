@@ -39,7 +39,7 @@
 
 @property (nonatomic, assign) BOOL noAuth;
 
-- (instancetype _Nonnull)initWithItem:(Article * _Nonnull)item;
+- (instancetype _Nonnull)initWithItem:(id _Nonnull)item;
 
 @property (nonatomic, strong) Article * _Nullable item;
 
