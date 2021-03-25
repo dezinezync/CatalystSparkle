@@ -15,3 +15,5 @@
 #import "BarPositioning.h"
 #import "ArticleHandler.h"
 #import "TrialVC.h"
+#import "NewFolderController.h"
+#import "ArticleVC.h"

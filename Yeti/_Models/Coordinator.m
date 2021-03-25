@@ -48,7 +48,7 @@ NSString* deviceName(void) {
     
     if (self = [super init]) {
         
-        self.childCoordinators = [NSMutableArray arrayWithCapacity:3];
+//        self.childCoordinators = [NSMutableArray arrayWithCapacity:3];
         
     }
     
@@ -909,9 +909,19 @@ static void *UIViewControllerMainCoordinatorKey;
     
 }
 
+- (id)coordinator {
+    return objc_getAssociatedObject(self, &UIViewControllerMainCoordinatorKey);
+}
+
 - (void)setMainCoordinator:(MainCoordinator *)mainCoordinator {
     
     objc_setAssociatedObject(self, &UIViewControllerMainCoordinatorKey, mainCoordinator, OBJC_ASSOCIATION_ASSIGN);
+    
+}
+
+- (void)setCoordinator:(id)coordinator {
+    
+    objc_setAssociatedObject(self, &UIViewControllerMainCoordinatorKey, coordinator, OBJC_ASSOCIATION_ASSIGN);
     
 }
 

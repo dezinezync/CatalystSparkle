@@ -17,11 +17,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Coordinator : NSObject
-
-- (void)start;
-
-@end
+//@interface Coordinator : NSObject
+//
+//- (void)start;
+//
+//@end
 
 @interface MainCoordinator : NSObject
 
@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign) NSUInteger totalBookmarks;
 
-@property (nonatomic, strong) NSMutableArray <Coordinator *> * childCoordinators;
+//@property (nonatomic, strong) NSMutableArray <Coordinator *> * childCoordinators;
 
 @property (nonatomic, weak) SplitVC *splitViewController;
 
@@ -122,6 +122,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UIViewController (Coordination)
 
 @property (nonatomic, weak) MainCoordinator *mainCoordinator;
+@property (nonatomic, weak) id coordinator;
 
 @end
 

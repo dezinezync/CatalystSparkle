@@ -89,7 +89,7 @@ enum SidebarItem: Hashable {
     case feed(Feed)
 }
 
-@objc class SidebarVC: UICollectionViewController {
+@objcMembers public class SidebarVC: UICollectionViewController {
     
     var cancellables: [AnyCancellable] = []
     
@@ -216,7 +216,7 @@ enum SidebarItem: Hashable {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         
         super.viewDidLoad()
         
@@ -244,7 +244,7 @@ enum SidebarItem: Hashable {
         
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         
         super.viewWillAppear(animated)
         
@@ -279,7 +279,7 @@ enum SidebarItem: Hashable {
         
     }
     
-    override func viewDidAppear(_ animated: Bool) {
+    public override func viewDidAppear(_ animated: Bool) {
         
         super.viewDidDisappear(true)
         
@@ -708,7 +708,7 @@ enum SidebarItem: Hashable {
         
     }()
     
-    override var toolbarItems: [UIBarButtonItem]? {
+    public override var toolbarItems: [UIBarButtonItem]? {
         
         get {
             return [UIBarButtonItem(customView: progressStackView)]
@@ -747,7 +747,7 @@ enum SidebarItem: Hashable {
     }
     
     // MARK: - Actions
-    override var canBecomeFirstResponder: Bool {
+    public override var canBecomeFirstResponder: Bool {
         return true
     }
     
@@ -1261,7 +1261,7 @@ enum SidebarItem: Hashable {
 // MARK: - UICollectionViewDelegate
 extension SidebarVC {
     
-    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    public override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         guard let item = DS.itemIdentifier(for: indexPath) else {
             collectionView.deselectItem(at: indexPath, animated: false)
@@ -1281,7 +1281,7 @@ extension SidebarVC {
         
     }
     
-    override func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+    public override func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         
         guard let object = DS.itemIdentifier(for: indexPath) else {
             return nil
@@ -1597,7 +1597,7 @@ extension SidebarVC: UITextFieldDelegate {
         
     }
     
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    public func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         
         let newText = ((textField.text ?? "") as NSString).replacingCharacters(in: range, with: string).trimmingCharacters(in: .whitespacesAndNewlines)
         

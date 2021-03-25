@@ -197,6 +197,7 @@
 		F0710D292062D3090097CCD5 /* NewVCAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = F0710D282062D3090097CCD5 /* NewVCAnimator.m */; };
 		F0710D2C2062DAB70097CCD5 /* PaddedTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = F0710D2B2062DAB70097CCD5 /* PaddedTextField.m */; };
 		F073101525FCE6FD0087658C /* CustomFeedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F073101425FCE6FD0087658C /* CustomFeedCell.swift */; };
+		F073D5CE260C9D6C009447EC /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F073D5CD260C9D6C009447EC /* Coordinator.swift */; };
 		F0783CAF248F6A5800C7A280 /* AppKitGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = F0783CAE248F6A5800C7A280 /* AppKitGlue.m */; };
 		F07889C125035E65007F3C55 /* UITableView+Sugar.m in Sources */ = {isa = PBXBuildFile; fileRef = F07889C025035E65007F3C55 /* UITableView+Sugar.m */; };
 		F078B638206637B40048DBEA /* EmptyVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F078B636206637B40048DBEA /* EmptyVC.m */; };
@@ -1731,6 +1732,7 @@
 		F0710D2A2062DAB70097CCD5 /* PaddedTextField.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaddedTextField.h; sourceTree = "<group>"; };
 		F0710D2B2062DAB70097CCD5 /* PaddedTextField.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PaddedTextField.m; sourceTree = "<group>"; };
 		F073101425FCE6FD0087658C /* CustomFeedCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomFeedCell.swift; sourceTree = "<group>"; };
+		F073D5CD260C9D6C009447EC /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 		F0783C88248F685C00C7A280 /* elytramac.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = elytramac.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0783C8A248F685C00C7A280 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F0783CAD248F6A5800C7A280 /* AppKitGlue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppKitGlue.h; sourceTree = "<group>"; };
@@ -2608,6 +2610,7 @@
 		F070C3111FBABC8A00912CCF /* _Models */ = {
 			isa = PBXGroup;
 			children = (
+				F073D5CD260C9D6C009447EC /* Coordinator.swift */,
 				F0EE6CD724CABEE000E987FC /* Coordinator.h */,
 				F0EE6CD824CABEE000E987FC /* Coordinator.m */,
 				F032A75C244D7D8C0024AC63 /* YetiTheme.h */,
@@ -4738,6 +4741,7 @@
 				F0D071FB205E88AC00A042CD /* ImageLoadingVC.m in Sources */,
 				F088CF6E248E72020010EBC0 /* AppDelegate+Catalyst.m in Sources */,
 				F0FA473220CBAD7D0035B1F5 /* AccountFooterView.m in Sources */,
+				F073D5CE260C9D6C009447EC /* Coordinator.swift in Sources */,
 				F032A750244D5F9A0024AC63 /* PrefsManager.m in Sources */,
 				F018A2CF205D0F0B001E682B /* SettingsVC.m in Sources */,
 				F0710D2C2062DAB70097CCD5 /* PaddedTextField.m in Sources */,

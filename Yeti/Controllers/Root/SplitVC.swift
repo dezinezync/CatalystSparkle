@@ -11,7 +11,7 @@ import UIKit
 import Networking
 import DBManager
 
-@objc class SplitVC: UISplitViewController {
+@objcMembers public class SplitVC: UISplitViewController {
     
     convenience init() {
         
@@ -21,7 +21,7 @@ import DBManager
         
     }
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         
         super.viewDidLoad()
         
@@ -60,7 +60,7 @@ import DBManager
         
     }
     
-    override func viewDidAppear(_ animated: Bool) {
+    public override func viewDidAppear(_ animated: Bool) {
         
         super.viewDidAppear(animated)
         
@@ -79,7 +79,7 @@ import DBManager
     // MARK: - Size Changes
     #if !targetEnvironment(macCatalyst)
     
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+    public override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         
         super.viewWillTransition(to: size, with: coordinator)
         
@@ -132,7 +132,7 @@ import DBManager
 
 extension SplitVC: UISplitViewControllerDelegate {
     
-    func splitViewController(_ svc: UISplitViewController, topColumnForCollapsingToProposedTopColumn proposedTopColumn: UISplitViewController.Column) -> UISplitViewController.Column {
+    public func splitViewController(_ svc: UISplitViewController, topColumnForCollapsingToProposedTopColumn proposedTopColumn: UISplitViewController.Column) -> UISplitViewController.Column {
         
         if let _ = mainCoordinator?.articleVC {
             return .secondary
@@ -151,7 +151,7 @@ extension SplitVC: UISplitViewControllerDelegate {
 // MARK: - Forwarding
 extension SplitVC {
     
-    override func forwardingTarget(for aSelector: Selector!) -> Any? {
+    public override func forwardingTarget(for aSelector: Selector!) -> Any? {
         
         let str = NSStringFromSelector(aSelector)
         

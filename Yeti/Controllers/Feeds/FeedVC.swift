@@ -74,7 +74,7 @@ enum MarkDirection {
     case older
 }
 
-@objc class FeedVC: UITableViewController {
+@objcMembers public class FeedVC: UITableViewController {
     
     var type: FeedType = .natural
     @objc var feed: Feed? = nil
@@ -151,7 +151,7 @@ enum MarkDirection {
         
     }()
 
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         
         super.viewDidLoad()
 
@@ -165,7 +165,7 @@ enum MarkDirection {
     
     fileprivate var _hasSetup: Bool = false
     
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         if _hasSetup == false {
@@ -482,6 +482,10 @@ enum MarkDirection {
         
     }
     
+    public func updateTitleView() {
+        
+    }
+    
     func setupState() {
         
         // if the state is empty and there are no articles,
@@ -716,15 +720,15 @@ enum MarkDirection {
 
 extension FeedVC: ScrollLoading {
     
-    func isLoading() -> Bool {
+    public func isLoading() -> Bool {
         return state.isLoading
     }
     
-    func canLoadNext() -> Bool {
+    public func canLoadNext() -> Bool {
         return total == -1 || articles.count < total
     }
     
-    func loadNextPage() {
+    public func loadNextPage() {
         
         guard dbFilteredView != nil else {
             return
@@ -831,7 +835,7 @@ extension FeedVC: ScrollLoading {
 // MARK: - Actions
 extension FeedVC {
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    public override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         guard let item = DS.itemIdentifier(for: indexPath) else {
             return
@@ -1275,7 +1279,7 @@ extension FeedVC {
 
 extension FeedVC: BarPositioning {
     
-    func rightBarButtonItems() -> [UIBarButtonItem]? {
+    public func rightBarButtonItems() -> [UIBarButtonItem]? {
         
         var sortingActions: [UIAction] = [
             
@@ -1320,7 +1324,7 @@ extension FeedVC: BarPositioning {
         
     }
     
-    var toolbarBarItems: [UIBarButtonItem]? {
+    @nonobjc var toolbarBarItems: [UIBarButtonItem]? {
         
         guard SharedPrefs.useToolbar == true else {
             return nil
@@ -1408,7 +1412,7 @@ extension FeedVC: ArticleHandler, ArticleProvider {
         
     }
     
-    func setupArticle(_ article: Any) {
+    public func setupArticle(_ article: Any) {
         
         guard let a = article as? Article else {
             return
@@ -1418,7 +1422,7 @@ extension FeedVC: ArticleHandler, ArticleProvider {
         
     }
     
-    func currentArticle() -> Any? {
+    public func currentArticle() -> Any? {
         
         guard let selected = tableView.indexPathForSelectedRow else {
             return nil
@@ -1428,7 +1432,7 @@ extension FeedVC: ArticleHandler, ArticleProvider {
         
     }
     
-    @objc func userMarkedArticle(_ article: Any, read: Bool) {
+    @objc public func userMarkedArticle(_ article: Any, read: Bool) {
         
         guard let article = article as? Article else {
             return
@@ -1478,7 +1482,7 @@ extension FeedVC: ArticleHandler, ArticleProvider {
         
     }
     
-    @objc func userMarkedArticle(_ article: Any, bookmarked: Bool) {
+    @objc public func userMarkedArticle(_ article: Any, bookmarked: Bool) {
         
         guard let article = article as? Article else {
             return
@@ -1519,7 +1523,7 @@ extension FeedVC: ArticleHandler, ArticleProvider {
         
     }
     
-    func hasPreviousArticle(forArticle item: Any) -> Bool {
+    public func hasPreviousArticle(forArticle item: Any) -> Bool {
         
         guard let item = item as? Article else {
             return false
@@ -1533,7 +1537,7 @@ extension FeedVC: ArticleHandler, ArticleProvider {
         
     }
     
-    func hasNextArticle(forArticle item: Any) -> Bool {
+    public func hasNextArticle(forArticle item: Any) -> Bool {
         
         guard let item = item as? Article else {
             return false
@@ -1553,7 +1557,7 @@ extension FeedVC: ArticleHandler, ArticleProvider {
         
     }
     
-    func previousArticle(for item: Any) -> Any? {
+    public func previousArticle(for item: Any) -> Any? {
         
         guard let item = item as? Article else {
             return nil
@@ -1577,7 +1581,7 @@ extension FeedVC: ArticleHandler, ArticleProvider {
         
     }
     
-    func nextArticle(for item: Any) -> Any? {
+    public func nextArticle(for item: Any) -> Any? {
         
         guard let item = item as? Article else {
             return nil
@@ -1612,7 +1616,7 @@ extension FeedVC: ArticleHandler, ArticleProvider {
         
     }
     
-    func didChange(toArticle item: Any) {
+    public func didChange(toArticle item: Any) {
         
         guard let item = item as? Article else {
             return
@@ -1663,7 +1667,7 @@ extension FeedVC: ArticleHandler, ArticleProvider {
 // MARK: - Context Menus
 extension FeedVC {
     
-    override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+    public override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         
         guard let item = DS.itemIdentifier(for: indexPath) else {
             return nil
@@ -1798,7 +1802,7 @@ extension FeedVC {
         
     }
     
-    override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    public override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
         guard let item = DS.itemIdentifier(for: indexPath) else {
             return nil
@@ -1841,7 +1845,7 @@ extension FeedVC {
         
     }
     
-    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    public override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
         guard let item = DS.itemIdentifier(for: indexPath) else {
             return nil
@@ -1968,7 +1972,7 @@ extension FeedVC {
 
 extension FeedVC: UIAdaptivePresentationControllerDelegate {
     
-    func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
+    public func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
         
         if traitCollection.horizontalSizeClass == .regular {
             return .popover

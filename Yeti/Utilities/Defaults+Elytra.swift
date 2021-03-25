@@ -33,4 +33,8 @@ extension Defaults.Keys {
     static let feedSorting = Key<FeedSorting.RawValue>("feedSorting", default: FeedSorting.descending.rawValue)
     //            ^            ^                        ^                      ^
     //           Key          Type                      UserDefaults name      Default value
+    
+    
+    static let pushRequest = Key<Bool>("pushRequest", default: false)
+    
 }
