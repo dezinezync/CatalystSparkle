@@ -475,7 +475,7 @@ public class SyncCoordinator: NSObject {
             
         }
         
-        DBManager.shared.add(articles: articles, strip: false)
+        DBManager.shared.add(articles: articles, strip: true)
         
     }
     

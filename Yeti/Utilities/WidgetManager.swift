@@ -110,22 +110,57 @@ import DBManager
     static public func getArticle(_ id: String, feedID: UInt, completion: ((_ error: Error?, _ article: Article?) -> Void)?) {
         
         if let article = DBManager.shared.article(for: id, feedID: feedID) {
-            completion?(nil, article)
-            return
+            
+            if article.content.count == 0 {
+                
+                // check if full text is loaded
+                if let fulltext = DBManager.shared.fullText(for: article.identifier) {
+                    article.content = fulltext
+                    article.fulltext = true
+                }
+                else if let content = DBManager.shared.content(for: article.identifier) {
+                    article.content = content
+                    article.fulltext = false
+                }
+                
+            }
+            
+            if article.content.count > 0 {
+                completion?(nil, article)
+                return
+            }
+            
         }
         
         FeedsManager.shared.getArticle(id) { result in
-            
+
             switch result {
             case .failure(let error):
                 completion?(error, nil)
                 
             case .success(let article):
+                DBManager.shared.add(article: article, strip: false)
                 completion?(nil, article)
             }
             
         }
         
+    }
+    
+    static public func purgeForFullResync (completion: (() -> Void)?) {
+        
+        DBManager.shared.purgeDataForResync(completion: completion)
+        
+    }
+    
+    static public func purgeForFeedResync (completion: (() -> Void)?) {
+        
+        DBManager.shared.purgeFeedsForResync(completion: completion)
+        
+    }
+    
+    static public var user: User? {
+        return DBManager.shared.user
     }
     
 }

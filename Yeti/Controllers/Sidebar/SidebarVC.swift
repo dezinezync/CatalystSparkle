@@ -907,6 +907,16 @@ enum SidebarItem: Hashable {
     
     fileprivate var isRefreshing: Bool = false
     
+    // called when a force resync of feeds or all data is done.
+    @objc public func resetSync() {
+        
+        initialSyncCompleted = false
+        needsUpdateOfStructs = true
+        
+        beginRefreshingAll(refreshControl)
+        
+    }
+    
     @objc func sync() {
         
         guard FeedsManager.shared.user != nil else {

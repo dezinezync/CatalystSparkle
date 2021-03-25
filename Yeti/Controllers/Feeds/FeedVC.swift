@@ -176,7 +176,9 @@ enum MarkDirection {
     }
     
     deinit {
-        DBManager.shared.database.unregisterExtension(withName: dbFilteredViewName)
+        if self.type == .unread {
+            DBManager.shared.database.unregisterExtension(withName: dbFilteredViewName)
+        }
     }
     
     // MARK: - Setups

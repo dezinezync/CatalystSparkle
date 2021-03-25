@@ -826,7 +826,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             return;
         }
         
-        [self _setupArticle:responseObject start:start isChangingArticle:isChangingArticle];
+        // since we're only fetching content and fulltext from here, update those
+        self.item.content = responseObject.content;
+        self.item.fulltext = responseObject.fulltext;
+        
+        [self _setupArticle:self.item start:start isChangingArticle:isChangingArticle];
         
     }];
     
@@ -2607,17 +2611,17 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     // @TODO
     
-//    Feed *feed = [MyFeedsManager feedForID:self.item.feedID];
-//
-//    if (feed == nil) {
-//
-//        [(UILabel *)sender.view setTextColor:UIColor.secondaryLabelColor];
-//        [sender.view removeGestureRecognizer:sender];
-//
-//        return;
-//    }
-//
-//    [self.mainCoordinator showFeedVC:feed];
+    Feed *feed = [MyFeedsManager feedFor:self.item.feedID];
+
+    if (feed == nil) {
+
+        [(UILabel *)sender.view setTextColor:UIColor.secondaryLabelColor];
+        [sender.view removeGestureRecognizer:sender];
+
+        return;
+    }
+
+    [self.mainCoordinator showFeedVC:feed];
     
 }
 

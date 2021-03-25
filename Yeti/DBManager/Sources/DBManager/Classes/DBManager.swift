@@ -825,7 +825,12 @@ public let notificationsKey = "notifications"
                         
                     }
                     
-                    t.setObject(a.content, forKey: a.identifier!, inCollection: .articlesContent)
+                    if a.fulltext == true {
+                        t.setObject(a.content, forKey: a.identifier!, inCollection: .articlesFulltext)
+                    }
+                    else {
+                        t.setObject(a.content, forKey: a.identifier!, inCollection: .articlesContent)
+                    }
                     
                     if strip == true {
                         a.content = []
@@ -944,23 +949,31 @@ public let notificationsKey = "notifications"
 // MARK: - Bulk Operations
 extension DBManager {
     
-    public func purgeDataForResync () {
+    public func purgeDataForResync (completion: (() -> Void)?) {
      
-        purgeFeedsForResync()
-        
-        bgConnection.asyncReadWrite { (transaction) in
+        purgeFeedsForResync { [weak self] in
             
-            transaction.removeAllObjects(inCollection: .articlesContent)
-            transaction.removeAllObjects(inCollection: .articlesFulltext)
-            
-            transaction.removeAllObjects(inCollection: .articles)
-            transaction.removeAllObjects(inCollection: .sync)
+            self?.bgConnection.asyncReadWrite { (transaction) in
+                
+                transaction.removeAllObjects(inCollection: .articlesContent)
+                transaction.removeAllObjects(inCollection: .articlesFulltext)
+                
+                transaction.removeAllObjects(inCollection: .articles)
+                transaction.removeAllObjects(inCollection: .sync)
+                
+                DispatchQueue.main.async {
+                    
+                    completion?()
+                    
+                }
+                
+            }
             
         }
         
     }
     
-    public func purgeFeedsForResync () {
+    public func purgeFeedsForResync (completion: (() -> Void)?) {
         
         // @TODO: Persist Feed metadata
         var preSyncMetadata: [UInt: FeedMeta] = [:]
@@ -986,6 +999,10 @@ extension DBManager {
         }
         
         _preSyncFeedMetadata = preSyncMetadata
+        
+        DispatchQueue.main.async {
+            completion?()
+        }
         
     }
     

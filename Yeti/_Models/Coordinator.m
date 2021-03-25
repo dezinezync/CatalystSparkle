@@ -159,7 +159,7 @@ NSString* deviceName(void) {
     if (feed == nil) {
         return;
     }
-    // @TODO
+    
     FeedVC *vc = [[FeedVC alloc] initWithStyle:UITableViewStylePlain];
     vc.feed = feed;
     vc.mainCoordinator = self;
@@ -449,29 +449,29 @@ NSString* deviceName(void) {
 - (void)showContactInterface {
     
 //    NSURL *url = [NSURL URLWithString:@"mailto:support@elytra.app?subject=Elytra%20Support"];
-    // @TODO:
-//    DZMessagingAttachment *attachment = [[DZMessagingAttachment alloc] init];
-//    attachment.fileName = @"debugInfo.txt";
-//    attachment.mimeType = @"text/plain";
-//    
-//    UIDevice *device = [UIDevice currentDevice];
-//    NSString *model = deviceName();
-//    NSString *iOSVersion = formattedString(@"%@ %@", device.systemName, device.systemVersion);
-//    NSString *deviceUUID = MyFeedsManager.deviceID;
-//    
-//    NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
-//    NSString *appVersion = [infoDict objectForKey:@"CFBundleShortVersionString"];
-//    NSString *buildNumber = [infoDict objectForKey:@"CFBundleVersion"];
-//    
-//    NSString *formatted = formattedString(@"Model: %@ %@\nDevice UUID: %@\nAccount ID: %@\nApp: %@ (%@)", model, iOSVersion, deviceUUID, MyFeedsManager.user.uuid, appVersion, buildNumber);
-//    
-//    attachment.data = [formatted dataUsingEncoding:NSUTF8StringEncoding];
-//    
-//    [DZMessagingController presentEmailWithBody:@""
-//                                        subject:@"Elytra Support"
-//                                     recipients:@[@"support@elytra.app"]
-//                                    attachments:@[attachment]
-//                                 fromController:self.splitViewController];
+
+    DZMessagingAttachment *attachment = [[DZMessagingAttachment alloc] init];
+    attachment.fileName = @"debugInfo.txt";
+    attachment.mimeType = @"text/plain";
+    
+    UIDevice *device = [UIDevice currentDevice];
+    NSString *model = deviceName();
+    NSString *iOSVersion = formattedString(@"%@ %@", device.systemName, device.systemVersion);
+    NSString *deviceUUID = @"deviceID"; // @TODO MyFeedsManager.deviceID;
+    
+    NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
+    NSString *appVersion = [infoDict objectForKey:@"CFBundleShortVersionString"];
+    NSString *buildNumber = [infoDict objectForKey:@"CFBundleVersion"];
+    
+    NSString *formatted = formattedString(@"Model: %@ %@\nDevice UUID: %@\nAccount ID: %@\nApp: %@ (%@)", model, iOSVersion, deviceUUID, MyFeedsManager.user.uuid, appVersion, buildNumber);
+    
+    attachment.data = [formatted dataUsingEncoding:NSUTF8StringEncoding];
+    
+    [DZMessagingController presentEmailWithBody:@""
+                                        subject:@"Elytra Support"
+                                     recipients:@[@"support@elytra.app"]
+                                    attachments:@[attachment]
+                                 fromController:self.splitViewController];
     
 }
 
@@ -494,15 +494,11 @@ NSString* deviceName(void) {
     
     if (instance != nil) {
         
-        // @TODO: [DBManager.sharedInstance purgeDataForResync];
-        
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.625 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [MyFeedsManager purgeForFullResyncWithCompletion:^{
             
-//                [instance performSelector:NSSelectorFromString(@"") withObject:instance.refreshControl];
+            [instance resetSync];
             
-            // @TODO: [instance beginRefreshingAll:instance.refreshControl];
-            
-        });
+        }];
         
     }
     
@@ -514,15 +510,11 @@ NSString* deviceName(void) {
     
     if (instance != nil) {
         
-        // @TODO: [DBManager.sharedInstance purgeFeedsForResync];
-        
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [MyFeedsManager purgeForFeedResyncWithCompletion:^{
             
-//                [instance performSelector:NSSelectorFromString(@"") withObject:instance.refreshControl];
+            [instance resetSync];
             
-            // @TODO: [instance beginRefreshingAll:instance.refreshControl];
-            
-        });
+        }];
         
     }
     
