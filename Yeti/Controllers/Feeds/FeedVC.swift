@@ -855,7 +855,7 @@ extension FeedVC {
         
         DBManager.shared.bgConnection.asyncReadWrite { [weak self] (t) in
             
-            guard let sself = self, let txn = t.ext(dbFilteredViewName) as? YapDatabaseFilteredViewTransaction else {
+            guard let txn = t.ext(dbFilteredViewName) as? YapDatabaseFilteredViewTransaction else {
                 return
             }
             
