@@ -108,9 +108,9 @@ public enum FeedsManagerError : Error {
         s.baseURL = URL(string: "https://staging.api.elytra.app")
 //        s.baseURL = URL(string: "https://api.elytra.app")
         
-        #if !DEBUG
-        s.baseURL = URL(string: "https://api.elytra.app")
-        #endif
+//        #if !DEBUG
+//        s.baseURL = URL(string: "https://api.elytra.app")
+//        #endif
         
         s.useOMGUserAgent = true
         s.responseParser = nil
@@ -184,9 +184,9 @@ public enum FeedsManagerError : Error {
         s.baseURL = URL(string: "https://staging.api.elytra.app")
 //        s.baseURL = URL(string: "https://api.elytra.app")
         
-        #if !DEBUG
-        s.baseURL = URL(string: "https://api.elytra.app")
-        #endif
+//        #if !DEBUG
+//        s.baseURL = URL(string: "https://api.elytra.app")
+//        #endif
         
         s.useOMGUserAgent = true
         s.responseParser = nil
