@@ -163,10 +163,17 @@ enum MarkDirection {
         
     }
     
+    fileprivate var _hasSetup: Bool = false
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupState()
-        updateFeedSorting()
+        
+        if _hasSetup == false {
+            _hasSetup = true
+            setupState()
+            updateFeedSorting()
+        }
+        
     }
     
     // MARK: - Setups
