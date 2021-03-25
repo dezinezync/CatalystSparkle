@@ -307,8 +307,11 @@ enum MarkDirection {
         
         let filtering = YapDatabaseViewFiltering.withMetadataBlock { [weak self] (t, g, c, k, m) -> Bool in
             
-            guard let sself = self,
-                  let metadata = m as? ArticleMeta else {
+            guard let sself = self else {
+                return false
+            }
+            
+            guard let metadata = m as? ArticleMeta else {
                 return false
             }
             
@@ -701,7 +704,7 @@ extension FeedVC: ScrollLoading {
                         
                         sself._loadNextRetries += 1
                         
-                        DispatchQueue.main.async {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                             sself.loadNextPage()
                         }
                         
@@ -737,6 +740,18 @@ extension FeedVC: ScrollLoading {
                 
                 guard let article = o as? Article else {
                     return
+                }
+                
+                if article.title == nil || (article.title != nil && article.title!.isEmpty == true) {
+                    // get the content, possibly micro.blog post
+                    if let ft = DBManager.shared.fullText(for: article.identifier) {
+                        article.content = ft
+                        article.fulltext = true
+                    }
+                    else if let c = DBManager.shared.content(for: article.identifier) {
+                        article.content = c
+                        article.fulltext = false
+                    }
                 }
                 
                 sself.articles.add(article)
@@ -805,8 +820,7 @@ extension FeedVC {
         
         DBManager.shared.bgConnection.asyncReadWrite { [weak self] (t) in
             
-            guard let txn = t.ext(dbFilteredViewName) as? YapDatabaseFilteredViewTransaction,
-                  let feed = self?.feed else {
+            guard let txn = t.ext(dbFilteredViewName) as? YapDatabaseFilteredViewTransaction else {
                 return
             }
             
@@ -817,7 +831,7 @@ extension FeedVC {
             
             guard count > 0 else {
                 
-                if feed.unread > 0 {
+                if  self?.type == .natural, let feed = self?.feed, feed.unread > 0 {
                     feed.unread = 0
                 }
                 
