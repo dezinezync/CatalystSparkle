@@ -25,6 +25,12 @@
 
 - (void)userMarkedArticle:(id _Nonnull)article bookmarked:(BOOL)bookmarked;
 
+@optional
+
+- (void)userMarkedArticle:(id _Nonnull)article read:(BOOL)read completion:(void(^ _Nullable)(BOOL completed))completion;
+
+- (void)userMarkedArticle:(id _Nonnull)article bookmarked:(BOOL)bookmarked completion:(void (^ _Nullable)(BOOL completed))completion;
+
 @end
 
 #endif /* ArticleProvider_h */

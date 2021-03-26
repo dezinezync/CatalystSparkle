@@ -207,18 +207,17 @@
     
     [self.mainCoordinator showEmptyVC];
     
-    // @TODO
-//    FeedVC *top = self.mainCoordinator.feedVC;
-//
-//    if (top != nil && ([top isKindOfClass:FeedVC.class] || [top.class isSubclassOfClass:FeedVC.class])) {
-//        NSArray <NSIndexPath *> *selectedItems = [top.tableView indexPathsForSelectedRows];
-//
-//        NSIndexPath *selected = selectedItems.count ? [selectedItems firstObject] : nil;
-//
-//        if (selected != nil) {
-//            [top.tableView deselectRowAtIndexPath:selected animated:YES];
-//        }
-//    }
+    FeedVC *top = self.mainCoordinator.feedVC;
+
+    if (top != nil && ([top isKindOfClass:FeedVC.class] || [top.class isSubclassOfClass:FeedVC.class])) {
+        NSArray <NSIndexPath *> *selectedItems = [top.tableView indexPathsForSelectedRows];
+
+        NSIndexPath *selected = selectedItems.count ? [selectedItems firstObject] : nil;
+
+        if (selected != nil) {
+            [top.tableView deselectRowAtIndexPath:selected animated:YES];
+        }
+    }
 }
 
 - (void)didTapShare:(UIBarButtonItem *)sender {
@@ -264,75 +263,35 @@
         
     }
     
-//    weakify(self);
+    weakify(self);
     
-    // @TODO
-//    [MyFeedsManager article:self.item markAsBookmarked:(!self.item.isBookmarked) success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//        strongify(self);
-//
-//        void (^bookmarkCallback)(BOOL success) = ^void(BOOL success) {
-//
-//            if (success == YES) {
-//
-//                if (isButton) {
-//
-//                    dispatch_async(dispatch_get_main_queue(), ^{
-//
-//                        UIImage *image = self.item.isBookmarked ? [UIImage systemImageNamed:@"bookmark.fill"] : [UIImage systemImageNamed:@"bookmark"];
-//
-//                        [button setImage:image];
-//                    });
-//
-//                }
-//
-//               }
-//               else {
-//                   self.item.bookmarked = !self.item.bookmarked;
-//               }
-//
-//               if (self.providerDelegate && [self.providerDelegate respondsToSelector:@selector(userMarkedArticle:bookmarked:)]) {
-//                   [self.providerDelegate userMarkedArticle:self.item bookmarked:self.item.bookmarked];
-//               }
-//
-//            if (isButton) {
-//
-//                   weakify(self);
-//
-//                   dispatch_async(dispatch_get_main_queue(), ^{
-//
-//                       strongify(self);
-//
-//                       button.enabled = YES;
-//
-//                       [[self notificationGenerator] notificationOccurred:UINotificationFeedbackTypeSuccess];
-//                       [[self notificationGenerator] prepare];
-//
-//                   });
-//
-//            }
-//        };
-//
-//        bookmarkCallback(YES);
-//
-//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//        [AlertManager showGenericAlertWithTitle:@"Service Error" message:error.localizedDescription];
-//
-//        if (isButton) {
-//            button.enabled = YES;
-//        }
-//
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//
-//            strongify(self);
-//
-//            [[self notificationGenerator] notificationOccurred:UINotificationFeedbackTypeError];
-//            [[self notificationGenerator] prepare];
-//
-//        });
-//
-//    }];
+    [self.providerDelegate userMarkedArticle:self.item bookmarked:!(self.item.bookmarked) completion:^(BOOL completed) {
+        
+        if (isButton) {
+            
+            if (completed) {
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+
+                    UIImage *image = self.item.bookmarked ? [UIImage systemImageNamed:@"bookmark.fill"] : [UIImage systemImageNamed:@"bookmark"];
+                    
+                    [button setImage:image];
+                    
+                    strongify(self);
+                    
+                    [[self notificationGenerator] notificationOccurred:UINotificationFeedbackTypeSuccess];
+                    [[self notificationGenerator] prepare];
+                    
+                });
+                
+            }
+            
+            button.enabled = YES;
+            
+        }
+        
+    }];
+    
 }
 
 - (void)didTapRead:(UIBarButtonItem *)button {
@@ -343,37 +302,34 @@
         button.enabled = NO;
     }
     
-    // @TODO
-//    [MyFeedsManager article:self.item markAsRead:(button == nil ? YES : !self.item.isRead)];
-    
-    self.item.read = !self.item.read;
-    
-    if (isButton) {
-        
-        button.image = self.item.read ? [UIImage systemImageNamed:@"smallcircle.fill.circle"] : [UIImage systemImageNamed:@"largecircle.fill.circle"];
-        
-    }
-    
-    if (self.providerDelegate && [self.providerDelegate respondsToSelector:@selector(userMarkedArticle:read:)]) {
-        
-        [self.providerDelegate userMarkedArticle:self.item read:self.item.read];
-        
-    }
-    
-    if (isButton) {
-        button.enabled = YES;
-    }
-    
     weakify(self);
     
-    dispatch_async(dispatch_get_main_queue(), ^{
+    BOOL read = !self.item.read;
+    
+    [self.providerDelegate userMarkedArticle:self.item read:read completion:^(BOOL completed) {
         
-        strongify(self);
+        if (isButton) {
+            
+            if (completed) {
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    button.image = self.item.read ? [UIImage systemImageNamed:@"smallcircle.fill.circle"] : [UIImage systemImageNamed:@"largecircle.fill.circle"];
+                    
+                    strongify(self);
+                    
+                    [[self notificationGenerator] notificationOccurred:UINotificationFeedbackTypeSuccess];
+                    [[self notificationGenerator] prepare];
+                    
+                });
+                
+            }
+            
+            button.enabled = YES;
+            
+        }
         
-        [[self notificationGenerator] notificationOccurred:UINotificationFeedbackTypeSuccess];
-        [[self notificationGenerator] prepare];
-        
-    });
+    }];
     
 }
 
@@ -395,15 +351,20 @@
         
     }
 #else
-    // @TODO
-//    Feed *feed = [ArticlesManager.shared feedForID:self.currentArticle.feedID];
-//    NSDictionary *metadata = [MyDBManager metadataForFeed:feed];
-//
-//    if (metadata && [(metadata[kFeedSafariReaderMode] ?: @(NO)) boolValue] == YES) {
-//
-//        URL = formattedURL(@"%@&ytreader=1", URL.absoluteString);
-//
-//    }
+    
+    Feed *feed = [MyFeedsManager feedFor:self.item.feedID];
+    
+    if (feed != nil) {
+        
+        FeedMeta *meta = [MyFeedsManager metadataForFeed:feed];
+        
+        if (meta) {
+            
+            URL = formattedURL(@"%@&ytreader=1", URL.absoluteString);
+            
+        }
+        
+    }
     
 #endif
     [[UIApplication sharedApplication] openURL:URL options:@{} completionHandler:nil];

@@ -69,9 +69,9 @@ enum FeedSorting: Int {
     
 }
 
-enum MarkDirection {
-    case newer
-    case older
+enum MarkDirection: Int {
+    case newer = 1
+    case older = 2
 }
 
 @objcMembers public class FeedVC: UITableViewController {
@@ -706,7 +706,7 @@ enum MarkDirection {
             
             let animation = sself.DS.defaultRowAnimation
             
-            sself.DS.defaultRowAnimation = .none
+            sself.DS.defaultRowAnimation = .fade
             
             sself.DS.apply(snapshot, animatingDifferences: sself.tableView.window != nil, completion: nil)
             
@@ -768,6 +768,11 @@ extension FeedVC: ScrollLoading {
             
             if sself.total == -1 {
                 sself.total = Int(txn.numberOfItems(inGroup: group))
+            }
+            
+            guard sself.total > 0 else {
+                sself.state = .loaded
+                return
             }
             
             let page = sself.currentPage + 1
@@ -1033,13 +1038,13 @@ extension FeedVC {
     
     @objc func markAllNewerRead(_ indexPath: IndexPath) {
         
-        markDirectional(.newer, indexPath: indexPath)
+        markDirectional(.older, indexPath: indexPath)
         
     }
     
     @objc func markAllOlderRead(_ indexPath: IndexPath) {
         
-        markDirectional(.older, indexPath: indexPath)
+        markDirectional(.newer, indexPath: indexPath)
         
     }
     
@@ -1051,10 +1056,6 @@ extension FeedVC {
         if type == .unread { feed = "unread" }
         else if type == .today { feed = "today" }
         else if type == .natural { feed = "\(self.feed!.feedID!)" }
-        
-        guard feed != nil else {
-            return
-        }
         
         guard let item = DS.itemIdentifier(for: indexPath) else {
             return
@@ -1074,6 +1075,10 @@ extension FeedVC {
             DBManager.shared.uiConnection.asyncRead { (t) in
                 
                 guard let txn = t.ext(dbFilteredViewName) as? YapDatabaseFilteredViewTransaction else {
+                    return
+                }
+                
+                guard let sself = self else {
                     return
                 }
                 
@@ -1155,17 +1160,55 @@ extension FeedVC {
                     return
                 }
                 
-                #if DEBUG
-                print("IDs: ", unreads.map { $0.key })
-                #endif
+                let unreadKeys = unreads.map { $0.key };
                 
-                guard let sself = self else {
-                    return
-                }
+                #if DEBUG
+                print("IDs: ", unreadKeys)
+                #endif
                 
                 sself.markRead(unreads, inToday: inToday, feedsMapping: feedsMapping, each: nil) {
                     
-                    sself.reloadCells(from: indexPath, down: (options == .reverse))
+                    switch sself.type {
+                    case .natural, .author:
+                        if let f = sself.feed {
+                            let current = f.unread ?? 1
+                            f.unread = max(current - UInt(unreadKeys.count), 0)
+                        }
+                    case .unread:
+                        if let mc = sself.mainCoordinator {
+                            let current = mc.totalUnread
+                            mc.totalUnread = max(current - UInt(unreadKeys.count), 0)
+                        }
+                    case .today:
+                        if let mc = sself.mainCoordinator {
+                            let current = mc.totalToday
+                            mc.totalToday = max(current - UInt(unreadKeys.count), 0)
+                        }
+                    default:
+                        print("Unhandled case for \(sself.type)")
+                    }
+                    
+                    var toUpdate: [Article] = []
+                    
+                    for key in unreadKeys {
+                        
+                        if let a: Article = sself.articles.objectEnumerator().allObjects.first(where: { ($0 as! Article).identifier == key }) as? Article {
+                            
+                            a.read = true
+                            
+                            toUpdate.append(a)
+                            
+                        }
+                        
+                    }
+                    
+                    DBManager.shared.add(articles: toUpdate, strip: false)
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        
+                        sself.reloadCells(identifiers: toUpdate)
+                        
+                    }
                     
                 }
                 
@@ -1175,50 +1218,27 @@ extension FeedVC {
         
     }
     
-    func reloadCells(from indexPath: IndexPath, down:Bool) {
+    func reloadCells(identifiers: [Article]) {
+        
+        guard identifiers.count > 0 else {
+            return
+        }
         
         var snapshot = self.DS.snapshot()
-        
-        var identifiers: [Article] = []
-        
-        if down == true {
-            
-            // all current cells till the end of the dataset
-            for index in (indexPath.row..<snapshot.numberOfItems) {
-                
-                let ip = IndexPath(row: index, section: indexPath.section)
-                
-                if let item = DS.itemIdentifier(for: ip) {
-                    
-                    identifiers.append(item)
-                    
-                }
-                
-            }
-            
-        }
-        else {
-            
-            // current upto the 0th index
-            for index in (0...indexPath.row) {
-                
-                let ip = IndexPath(row: index, section: indexPath.section)
-                
-                if let item = DS.itemIdentifier(for: ip) {
-                    
-                    identifiers.append(item)
-                    
-                }
-                
-            }
-            
-        }
         
         snapshot.reloadItems(identifiers)
         
         dispatchMainAsync { [weak self] in
             
-            self?.DS.apply(snapshot, animatingDifferences: self?.view.window != nil, completion: nil)
+            guard let sself = self else { return }
+            
+            let animation = sself.DS.defaultRowAnimation
+            
+            sself.DS.defaultRowAnimation = .fade
+            
+            sself.DS.apply(snapshot, animatingDifferences: self?.view.window != nil, completion: nil)
+            
+            sself.DS.defaultRowAnimation = animation
             
         }
         
@@ -1265,7 +1285,7 @@ extension FeedVC {
             
             let animation = sself.DS.defaultRowAnimation
             
-            sself.DS.defaultRowAnimation = .none
+            sself.DS.defaultRowAnimation = .fade
             
             sself.DS.apply(snapshot, animatingDifferences: self?.view.window != nil, completion: nil)
             
@@ -1432,17 +1452,22 @@ extension FeedVC: ArticleHandler, ArticleProvider {
         
     }
     
-    @objc public func userMarkedArticle(_ article: Any, read: Bool) {
+    @objc func userMarkedArticle(_ article: Any, read: Bool) {
+        userMarkedArticle(article, read: read, completion: nil)
+    }
+        
+    @objc func userMarkedArticle(_ article: Any, read: Bool, completion: ((_ completed: Bool) -> Void)?) {
         
         guard let article = article as? Article else {
             return
         }
         
-        FeedsManager.shared.markRead(true, items: [article]) { [weak self] (result) in
+        FeedsManager.shared.markRead(read, items: [article]) { [weak self] (result) in
             
             switch result {
             case .failure(let error):
                 AlertManager.showGenericAlert(withTitle: "Error Marking \(read ? "Read" : "Unread")", message: error.localizedDescription)
+                completion?(false)
                 
             case .success(_):
                 
@@ -1476,13 +1501,19 @@ extension FeedVC: ArticleHandler, ArticleProvider {
                     
                 }
                 
+                completion?(true)
+                
             }
             
         }
         
     }
     
-    @objc public func userMarkedArticle(_ article: Any, bookmarked: Bool) {
+    @objc func userMarkedArticle(_ article: Any, bookmarked: Bool) {
+        userMarkedArticle(article, bookmarked: bookmarked, completion: nil)
+    }
+    
+    @objc func userMarkedArticle(_ article: Any, bookmarked: Bool, completion: ((_ completed: Bool) -> Void)?) {
         
         guard let article = article as? Article else {
             return
@@ -1494,12 +1525,15 @@ extension FeedVC: ArticleHandler, ArticleProvider {
             
             case .failure(let error):
                 AlertManager.showGenericAlert(withTitle: "Error \(bookmarked ? "Bookmark" : "Unbookmark")ing", message: error.localizedDescription)
+                completion?(false)
             
             case .success(let result):
                 
                 guard result.status == true else {
                     
                     AlertManager.showGenericAlert(withTitle: "Error \(bookmarked ? "Bookmark" : "Unbookmark")ing", message: "An unknown error occurred when performing this action.")
+                    
+                    completion?(false)
                     
                     return
                     
@@ -1516,6 +1550,8 @@ extension FeedVC: ArticleHandler, ArticleProvider {
                 }
                 
                 self?.reloadVisibleCells()
+                
+                completion?(true)
             
             }
             
@@ -1733,17 +1769,6 @@ extension FeedVC {
             let share = UIAction(title: "Share Article", image: UIImage(systemName: "square.and.arrow.up"), identifier: nil) { (_) in
                 
                 self?.wantsToShare(item, indexPath: indexPath)
-                
-            }
-            
-            if sself.type == .author || sself.type == .bookmarks || sself.type == .folder {
-                
-                return UIMenu(title: "Article Actions", children: [
-                    read,
-                    bookmark,
-                    browser,
-                    share
-                ])
                 
             }
             

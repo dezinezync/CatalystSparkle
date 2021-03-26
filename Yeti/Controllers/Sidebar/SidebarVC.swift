@@ -98,6 +98,8 @@ enum SidebarItem: Hashable {
     weak var alertTextField: UITextField?
     weak var alertFeed: Feed?
     
+    let coalescingQueue: CoalescingQueue = CoalescingQueue(name: "SidebarCoalescingQueue", interval: 0.25, maxInterval: 1)
+    
     lazy var layout: UICollectionViewCompositionalLayout = {
        
         var l = UICollectionViewCompositionalLayout { (section, environment) -> NSCollectionLayoutSection? in
@@ -1021,11 +1023,37 @@ enum SidebarItem: Hashable {
             
             if progress == 1 {
                 
-                DBManager.shared.syncCoordinator = nil
+                if sself.refreshControl?.isRefreshing == true {
+                    DispatchQueue.main.async {
+                        sself.refreshControl?.endRefreshing()
+                    }
+                }
                 
-                sself.updateCounters()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    
+                    sself.navigationController?.setToolbarHidden(true, animated: animated)
+                    
+                }
+                
+                // @TODO: Update Bookmarks from server
+                
+                // @TODO: BG task to cleanup DB
+                
+                sself.coalescingQueue.add(sself, #selector(SidebarVC.updateCounters))
+                
+//                sself.updateCounters()
                 sself.updateSharedUnreadsData()
-
+                
+                if let mc = sself.mainCoordinator,
+                   let f = mc.feedVC,
+                   f is UnreadVC || f is TodayVC {
+                    
+                    f._didSetSortingOption()
+                    
+                }
+                
+                DBManager.shared.syncCoordinator = nil
+            
             }
             
             if progress == 0 {
@@ -1038,36 +1066,9 @@ enum SidebarItem: Hashable {
                 sself.progressLabel?.text = "Syncing Complete"
                 sself.progressLabel?.sizeToFit()
                 
-                sself.navigationController?.setToolbarHidden(true, animated: animated)
-                
                 if sself.isRefreshing == true {
                     
                     sself.isRefreshing = false
-                    
-                    // @TODO: Update Bookmarks from server
-                    
-                    // @TODO: BG task to cleanup DB
-                    
-                    // @TODO: Unread, TodayvC reloading
-//                    if let mc = sself.mainCoordinator,
-//                       let f = mc.feedVC,
-//                       f.isKind(of: NSClassFromString("UnreadVC")) || f.isKind(of: NSClassFromString("TodayVC")) {
-//
-//
-//
-//                    }
-                    
-                }
-                
-                if sself.refreshControl?.isRefreshing == true {
-                    DispatchQueue.main.async {
-                        sself.refreshControl?.endRefreshing()
-                    }
-                }
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                    
-                    sself.navigationController?.setToolbarHidden(true, animated: animated)
                     
                 }
                 
@@ -1392,7 +1393,7 @@ extension SidebarVC {
 extension SidebarVC {
     
     // @TODO: Move to Swift Coordinator
-    func updateCounters() {
+    @objc func updateCounters() {
         
         DBManager.shared.countsConnection.asyncRead { [weak self] (t) in
             

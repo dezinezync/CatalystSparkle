@@ -69,6 +69,12 @@ import DBManager
         
     }
     
+    static public func metadataFor(feed:Feed) -> FeedMeta? {
+        
+        return DBManager.shared.metadataForFeed(feed)
+        
+    }
+    
     static public func getContentFromDB(_ article: String) -> [Content]? {
         
         return DBManager.shared.content(for: article)

@@ -314,6 +314,11 @@ class ArticleCell: UITableViewCell {
             return
         }
         
+        guard url.absoluteString.contains("core/emoji") == false else {
+            coverImage.isHidden = true
+            return
+        }
+        
         coverImage.isHidden = false
         
         var proxyURL = url
@@ -389,7 +394,7 @@ class ArticleCell: UITableViewCell {
         
         if let author = article?.author, author.isEmpty == false {
             
-            authorLabel.text = author
+            authorLabel.text = author.stripHTML()
             
         }
         else {
