@@ -823,7 +823,9 @@ public let notificationsKey = "notifications"
                     
                 }
                 
-                t.setObject(a.content, forKey: a.identifier!, inCollection: .articlesContent)
+                if a.content.count > 0 {
+                    t.setObject(a.content, forKey: a.identifier!, inCollection: .articlesContent)
+                }
                 
                 if strip == true {
                     a.content = []

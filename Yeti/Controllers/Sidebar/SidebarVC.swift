@@ -1021,6 +1021,18 @@ enum SidebarItem: Hashable {
             
             if progress == 1 {
                 
+                if sself.refreshControl?.isRefreshing == true {
+                    DispatchQueue.main.async {
+                        sself.refreshControl?.endRefreshing()
+                    }
+                }
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    
+                    sself.navigationController?.setToolbarHidden(true, animated: animated)
+                    
+                }
+                
                 DBManager.shared.syncCoordinator = nil
             
             }
@@ -1056,18 +1068,6 @@ enum SidebarItem: Hashable {
                         f._didSetSortingOption()
                         
                     }
-                    
-                }
-                
-                if sself.refreshControl?.isRefreshing == true {
-                    DispatchQueue.main.async {
-                        sself.refreshControl?.endRefreshing()
-                    }
-                }
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                    
-                    sself.navigationController?.setToolbarHidden(true, animated: animated)
                     
                 }
                 

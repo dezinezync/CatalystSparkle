@@ -69,9 +69,9 @@ enum FeedSorting: Int {
     
 }
 
-enum MarkDirection {
-    case newer
-    case older
+enum MarkDirection: Int {
+    case newer = 1
+    case older = 2
 }
 
 @objc class FeedVC: UITableViewController {
@@ -702,7 +702,7 @@ enum MarkDirection {
             
             let animation = sself.DS.defaultRowAnimation
             
-            sself.DS.defaultRowAnimation = .none
+            sself.DS.defaultRowAnimation = .fade
             
             sself.DS.apply(snapshot, animatingDifferences: sself.tableView.window != nil, completion: nil)
             
@@ -1034,13 +1034,13 @@ extension FeedVC {
     
     @objc func markAllNewerRead(_ indexPath: IndexPath) {
         
-        markDirectional(.newer, indexPath: indexPath)
+        markDirectional(.older, indexPath: indexPath)
         
     }
     
     @objc func markAllOlderRead(_ indexPath: IndexPath) {
         
-        markDirectional(.older, indexPath: indexPath)
+        markDirectional(.newer, indexPath: indexPath)
         
     }
     
@@ -1156,13 +1156,55 @@ extension FeedVC {
                     return
                 }
                 
+                let unreadKeys = unreads.map { $0.key };
+                
                 #if DEBUG
-                print("IDs: ", unreads.map { $0.key })
+                print("IDs: ", unreadKeys)
                 #endif
                 
                 sself.markRead(unreads, inToday: inToday, feedsMapping: feedsMapping, each: nil) {
                     
-                    sself.reloadCells(from: indexPath, down: (options == .reverse))
+                    switch sself.type {
+                    case .natural, .author:
+                        if let f = sself.feed {
+                            let current = f.unread ?? 1
+                            f.unread = max(current - UInt(unreadKeys.count), 0)
+                        }
+                    case .unread:
+                        if let mc = sself.mainCoordinator {
+                            let current = mc.totalUnread
+                            mc.totalUnread = max(current - UInt(unreadKeys.count), 0)
+                        }
+                    case .today:
+                        if let mc = sself.mainCoordinator {
+                            let current = mc.totalToday
+                            mc.totalToday = max(current - UInt(unreadKeys.count), 0)
+                        }
+                    default:
+                        print("Unhandled case for \(sself.type)")
+                    }
+                    
+                    var toUpdate: [Article] = []
+                    
+                    for key in unreadKeys {
+                        
+                        if let a: Article = sself.articles.objectEnumerator().allObjects.first(where: { ($0 as! Article).identifier == key }) as? Article {
+                            
+                            a.read = true
+                            
+                            toUpdate.append(a)
+                            
+                        }
+                        
+                    }
+                    
+                    DBManager.shared.add(articles: toUpdate, strip: false)
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        
+                        sself.reloadCells(identifiers: toUpdate)
+                        
+                    }
                     
                 }
                 
@@ -1172,44 +1214,13 @@ extension FeedVC {
         
     }
     
-    func reloadCells(from indexPath: IndexPath, down:Bool) {
+    func reloadCells(identifiers: [Article]) {
+        
+        guard identifiers.count > 0 else {
+            return
+        }
         
         var snapshot = self.DS.snapshot()
-        
-        var identifiers: [Article] = []
-        
-        if down == true {
-            
-            // all current cells till the end of the dataset
-            for index in (indexPath.row..<snapshot.numberOfItems) {
-                
-                let ip = IndexPath(row: index, section: indexPath.section)
-                
-                if let item = DS.itemIdentifier(for: ip) {
-                    
-                    identifiers.append(item)
-                    
-                }
-                
-            }
-            
-        }
-        else {
-            
-            // current upto the 0th index
-            for index in (0...indexPath.row) {
-                
-                let ip = IndexPath(row: index, section: indexPath.section)
-                
-                if let item = DS.itemIdentifier(for: ip) {
-                    
-                    identifiers.append(item)
-                    
-                }
-                
-            }
-            
-        }
         
         snapshot.reloadItems(identifiers)
         
@@ -1219,7 +1230,7 @@ extension FeedVC {
             
             let animation = sself.DS.defaultRowAnimation
             
-            sself.DS.defaultRowAnimation = .none
+            sself.DS.defaultRowAnimation = .fade
             
             sself.DS.apply(snapshot, animatingDifferences: self?.view.window != nil, completion: nil)
             
@@ -1270,7 +1281,7 @@ extension FeedVC {
             
             let animation = sself.DS.defaultRowAnimation
             
-            sself.DS.defaultRowAnimation = .none
+            sself.DS.defaultRowAnimation = .fade
             
             sself.DS.apply(snapshot, animatingDifferences: self?.view.window != nil, completion: nil)
             
