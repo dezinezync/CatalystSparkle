@@ -766,6 +766,11 @@ extension FeedVC: ScrollLoading {
                 sself.total = Int(txn.numberOfItems(inGroup: group))
             }
             
+            guard sself.total > 0 else {
+                sself.state = .loaded
+                return
+            }
+            
             let page = sself.currentPage + 1
             
             var range = NSMakeRange(((Int(page) - 1) * 20) - 1, 20)
@@ -1048,10 +1053,6 @@ extension FeedVC {
         else if type == .today { feed = "today" }
         else if type == .natural { feed = "\(self.feed!.feedID!)" }
         
-        guard feed != nil else {
-            return
-        }
-        
         guard let item = DS.itemIdentifier(for: indexPath) else {
             return
         }
@@ -1070,6 +1071,10 @@ extension FeedVC {
             DBManager.shared.uiConnection.asyncRead { (t) in
                 
                 guard let txn = t.ext(dbFilteredViewName) as? YapDatabaseFilteredViewTransaction else {
+                    return
+                }
+                
+                guard let sself = self else {
                     return
                 }
                 
@@ -1155,10 +1160,6 @@ extension FeedVC {
                 print("IDs: ", unreads.map { $0.key })
                 #endif
                 
-                guard let sself = self else {
-                    return
-                }
-                
                 sself.markRead(unreads, inToday: inToday, feedsMapping: feedsMapping, each: nil) {
                     
                     sself.reloadCells(from: indexPath, down: (options == .reverse))
@@ -1214,7 +1215,15 @@ extension FeedVC {
         
         dispatchMainAsync { [weak self] in
             
-            self?.DS.apply(snapshot, animatingDifferences: self?.view.window != nil, completion: nil)
+            guard let sself = self else { return }
+            
+            let animation = sself.DS.defaultRowAnimation
+            
+            sself.DS.defaultRowAnimation = .none
+            
+            sself.DS.apply(snapshot, animatingDifferences: self?.view.window != nil, completion: nil)
+            
+            sself.DS.defaultRowAnimation = animation
             
         }
         
@@ -1729,17 +1738,6 @@ extension FeedVC {
             let share = UIAction(title: "Share Article", image: UIImage(systemName: "square.and.arrow.up"), identifier: nil) { (_) in
                 
                 self?.wantsToShare(item, indexPath: indexPath)
-                
-            }
-            
-            if sself.type == .author || sself.type == .bookmarks || sself.type == .folder {
-                
-                return UIMenu(title: "Article Actions", children: [
-                    read,
-                    bookmark,
-                    browser,
-                    share
-                ])
                 
             }
             

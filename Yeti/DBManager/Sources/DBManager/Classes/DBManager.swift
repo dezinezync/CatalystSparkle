@@ -33,10 +33,10 @@ public extension Notification.Name {
     static let userUpdated = Notification.Name(rawValue: "com.yeti.note.userDidUpdate")
 }
 
-private let DB_VERSION_TAG = "2021-03-16 20:11PM IST"
+private let DB_VERSION_TAG = "2021-03-26 08:00AM IST"
 
 extension NSNotification.Name {
-    static let YapDatabaseModifiedNotification = NSNotification.Name("YapDatabaseModifiedNotification")
+//    static let YapDatabaseModifiedNotification = NSNotification.Name("YapDatabaseModifiedNotification")
     static let DBManagerDidUpdate = Notification.Name("DBManagerDidUpdate")
 }
 
@@ -123,9 +123,9 @@ public let notificationsKey = "notifications"
             
             let fm = FileManager.default
             #if DEBUG
-            let dbName = "elytra-v2.3.0g-debug.sqlite"
+            let dbName = "elytra-v2.3.0i-debug.sqlite"
             #else
-            let dbName = "elytra-v2.3.0.sqlite"
+            let dbName = "elytra-v2.3.0a.sqlite"
             #endif
             
             guard let baseURL = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
@@ -823,12 +823,7 @@ public let notificationsKey = "notifications"
                     
                 }
                 
-                if a.fulltext == true {
-                    t.setObject(a.content, forKey: a.identifier!, inCollection: .articlesFulltext)
-                }
-                else {
-                    t.setObject(a.content, forKey: a.identifier!, inCollection: .articlesContent)
-                }
+                t.setObject(a.content, forKey: a.identifier!, inCollection: .articlesContent)
                 
                 if strip == true {
                     a.content = []
@@ -1061,8 +1056,8 @@ extension DBManager {
 //        db.registerCodableSerialization(String.self, forCollection: .sync)
 //        db.registerCodableSerialization(String.self, forCollection: .localNames)
     
-        db.registerCodableSerialization(Content.self, forCollection: .articlesContent)
-        db.registerCodableSerialization(Content.self, forCollection: .articlesFulltext)
+        db.registerCodableSerialization([Content].self, forCollection: .articlesContent)
+        db.registerCodableSerialization([Content].self, forCollection: .articlesFulltext)
         
     }
     

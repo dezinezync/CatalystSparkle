@@ -1022,10 +1022,7 @@ enum SidebarItem: Hashable {
             if progress == 1 {
                 
                 DBManager.shared.syncCoordinator = nil
-                
-                sself.updateCounters()
-                sself.updateSharedUnreadsData()
-
+            
             }
             
             if progress == 0 {
@@ -1040,6 +1037,9 @@ enum SidebarItem: Hashable {
                 
                 sself.navigationController?.setToolbarHidden(true, animated: animated)
                 
+                sself.updateCounters()
+                sself.updateSharedUnreadsData()
+                
                 if sself.isRefreshing == true {
                     
                     sself.isRefreshing = false
@@ -1049,13 +1049,13 @@ enum SidebarItem: Hashable {
                     // @TODO: BG task to cleanup DB
                     
                     // @TODO: Unread, TodayvC reloading
-//                    if let mc = sself.mainCoordinator,
-//                       let f = mc.feedVC,
-//                       f.isKind(of: NSClassFromString("UnreadVC")) || f.isKind(of: NSClassFromString("TodayVC")) {
-//
-//
-//
-//                    }
+                    if let mc = sself.mainCoordinator,
+                       let f = mc.feedVC,
+                       f is UnreadVC || f is TodayVC {
+                        
+                        f._didSetSortingOption()
+                        
+                    }
                     
                 }
                 
