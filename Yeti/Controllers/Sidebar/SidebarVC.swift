@@ -98,6 +98,8 @@ enum SidebarItem: Hashable {
     weak var alertTextField: UITextField?
     weak var alertFeed: Feed?
     
+    let coalescingQueue: CoalescingQueue = CoalescingQueue(name: "SidebarCoalescingQueue", interval: 0.25, maxInterval: 1)
+    
     lazy var layout: UICollectionViewCompositionalLayout = {
        
         var l = UICollectionViewCompositionalLayout { (section, environment) -> NSCollectionLayoutSection? in
@@ -1033,6 +1035,23 @@ enum SidebarItem: Hashable {
                     
                 }
                 
+                // @TODO: Update Bookmarks from server
+                
+                // @TODO: BG task to cleanup DB
+                
+                sself.coalescingQueue.add(sself, #selector(SidebarVC.updateCounters))
+                
+//                sself.updateCounters()
+                sself.updateSharedUnreadsData()
+                
+                if let mc = sself.mainCoordinator,
+                   let f = mc.feedVC,
+                   f is UnreadVC || f is TodayVC {
+                    
+                    f._didSetSortingOption()
+                    
+                }
+                
                 DBManager.shared.syncCoordinator = nil
             
             }
@@ -1047,25 +1066,9 @@ enum SidebarItem: Hashable {
                 sself.progressLabel?.text = "Syncing Complete"
                 sself.progressLabel?.sizeToFit()
                 
-                sself.updateCounters()
-                sself.updateSharedUnreadsData()
-                
                 if sself.isRefreshing == true {
                     
                     sself.isRefreshing = false
-                    
-                    // @TODO: Update Bookmarks from server
-                    
-                    // @TODO: BG task to cleanup DB
-                    
-                    // @TODO: Unread, TodayvC reloading
-                    if let mc = sself.mainCoordinator,
-                       let f = mc.feedVC,
-                       f is UnreadVC || f is TodayVC {
-                        
-                        f._didSetSortingOption()
-                        
-                    }
                     
                 }
                 
@@ -1390,7 +1393,7 @@ extension SidebarVC {
 extension SidebarVC {
     
     // @TODO: Move to Swift Coordinator
-    func updateCounters() {
+    @objc func updateCounters() {
         
         DBManager.shared.countsConnection.asyncRead { [weak self] (t) in
             

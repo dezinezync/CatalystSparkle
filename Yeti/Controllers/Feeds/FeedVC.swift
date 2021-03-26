@@ -1449,16 +1449,21 @@ extension FeedVC: ArticleHandler, ArticleProvider {
     }
     
     @objc func userMarkedArticle(_ article: Any, read: Bool) {
+        userMarkedArticle(article, read: read, completion: nil)
+    }
+        
+    @objc func userMarkedArticle(_ article: Any, read: Bool, completion: ((_ completed: Bool) -> Void)?) {
         
         guard let article = article as? Article else {
             return
         }
         
-        FeedsManager.shared.markRead(true, items: [article]) { [weak self] (result) in
+        FeedsManager.shared.markRead(read, items: [article]) { [weak self] (result) in
             
             switch result {
             case .failure(let error):
                 AlertManager.showGenericAlert(withTitle: "Error Marking \(read ? "Read" : "Unread")", message: error.localizedDescription)
+                completion?(false)
                 
             case .success(_):
                 
@@ -1492,6 +1497,8 @@ extension FeedVC: ArticleHandler, ArticleProvider {
                     
                 }
                 
+                completion?(true)
+                
             }
             
         }
@@ -1499,6 +1506,10 @@ extension FeedVC: ArticleHandler, ArticleProvider {
     }
     
     @objc func userMarkedArticle(_ article: Any, bookmarked: Bool) {
+        userMarkedArticle(article, bookmarked: bookmarked, completion: nil)
+    }
+    
+    @objc func userMarkedArticle(_ article: Any, bookmarked: Bool, completion: ((_ completed: Bool) -> Void)?) {
         
         guard let article = article as? Article else {
             return
@@ -1510,12 +1521,15 @@ extension FeedVC: ArticleHandler, ArticleProvider {
             
             case .failure(let error):
                 AlertManager.showGenericAlert(withTitle: "Error \(bookmarked ? "Bookmark" : "Unbookmark")ing", message: error.localizedDescription)
+                completion?(false)
             
             case .success(let result):
                 
                 guard result.status == true else {
                     
                     AlertManager.showGenericAlert(withTitle: "Error \(bookmarked ? "Bookmark" : "Unbookmark")ing", message: "An unknown error occurred when performing this action.")
+                    
+                    completion?(false)
                     
                     return
                     
@@ -1532,6 +1546,8 @@ extension FeedVC: ArticleHandler, ArticleProvider {
                 }
                 
                 self?.reloadVisibleCells()
+                
+                completion?(true)
             
             }
             

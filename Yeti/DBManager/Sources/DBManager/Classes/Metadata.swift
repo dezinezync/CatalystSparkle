@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct FeedMeta: Codable {
+@objcMembers public class FeedMeta: NSObject, Codable {
     
     public var id: UInt
     public var url: URL
