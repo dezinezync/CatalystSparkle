@@ -1047,8 +1047,6 @@ enum SidebarItem: Hashable {
                 sself.progressLabel?.text = "Syncing Complete"
                 sself.progressLabel?.sizeToFit()
                 
-                sself.navigationController?.setToolbarHidden(true, animated: animated)
-                
                 sself.updateCounters()
                 sself.updateSharedUnreadsData()
                 
