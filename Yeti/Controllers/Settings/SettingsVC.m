@@ -472,7 +472,7 @@ typedef NS_ENUM(NSUInteger, SectionOneRows) {
                 {
                     OPMLVC *vc1 = [[OPMLVC alloc] initWithNibName:NSStringFromClass(OPMLVC.class) bundle:nil];
                     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc1];
-                    nav.modalTransitionStyle = UIModalPresentationAutomatic;
+                    nav.modalPresentationStyle = UIModalPresentationAutomatic;
                     
                     vc = nav;
                 }

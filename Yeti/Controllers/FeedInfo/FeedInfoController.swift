@@ -172,7 +172,7 @@ import Models
                     
                     if let m = metadata {
                         
-                        let val = (m.localNotifications ?? false)
+                        let val = m.localNotifications
                         
                         cell.toggle.setOn(val, animated: false)
                     }
@@ -367,7 +367,7 @@ import Models
             
             // supports local
             
-            if var m = metadata {
+            if let m = metadata {
                 
                 let val = m.localNotifications
                 
@@ -402,7 +402,7 @@ import Models
             return
         }
         
-        if var m = metadata {
+        if let m = metadata {
             
             let val = m.readerMode
             

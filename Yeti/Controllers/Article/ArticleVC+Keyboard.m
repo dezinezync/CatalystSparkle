@@ -206,7 +206,7 @@
         return;
     }
     
-    FeedItem *article = [self.providerDelegate previousArticleFor:[self currentArticle]];
+    Article *article = [self.providerDelegate previousArticleFor:[self currentArticle]];
     
     if (article) {
         [self setupArticle:article];
@@ -244,7 +244,7 @@
         return;
     }
     
-    FeedItem *article = [self.providerDelegate nextArticleFor:[self currentArticle]];
+    Article *article = [self.providerDelegate nextArticleFor:[self currentArticle]];
     
     if (article) {
         [self setupArticle:article];

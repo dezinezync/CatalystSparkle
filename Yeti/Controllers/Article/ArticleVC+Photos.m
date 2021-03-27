@@ -116,7 +116,7 @@
             
             for (Content *img in [(Gallery *)image images]) {
                 
-                IDMPhoto *photo = [IDMPhoto photoWithURL:[NSURL URLWithString:img.url]];
+                IDMPhoto *photo = [IDMPhoto photoWithURL:[NSURL URLWithString:img.url.absoluteString]];
                 
 //                photo.referenceView = image;
                 

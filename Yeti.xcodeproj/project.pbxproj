@@ -18,10 +18,7 @@
 		F00B0C1D23F4390B002BCF41 /* CustomizeCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F00B0C1B23F4390B002BCF41 /* CustomizeCell.xib */; };
 		F00B0FA020F487090012EB03 /* EmptyCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F00B0F9E20F487090012EB03 /* EmptyCell.m */; };
 		F00B0FA220F487090012EB03 /* EmptyCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F00B0F9F20F487090012EB03 /* EmptyCell.xib */; };
-		F00F643A24EC1BC700E5727C /* FeedItem.m in Sources */ = {isa = PBXBuildFile; fileRef = F00F642424EC1BC600E5727C /* FeedItem.m */; };
-		F00F643C24EC1BC700E5727C /* Subscription.m in Sources */ = {isa = PBXBuildFile; fileRef = F00F642724EC1BC600E5727C /* Subscription.m */; };
 		F00F643F24EC1BC700E5727C /* VideoInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = F00F642D24EC1BC600E5727C /* VideoInfo.m */; };
-		F00F644524EC1BC900E5727C /* Subscription.m in Sources */ = {isa = PBXBuildFile; fileRef = F00F642724EC1BC600E5727C /* Subscription.m */; };
 		F00F644B24EC1D5200E5727C /* YetiConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = F00F644A24EC1D5200E5727C /* YetiConstants.m */; };
 		F00F646A24EC1DE700E5727C /* Heading.m in Sources */ = {isa = PBXBuildFile; fileRef = F00F644D24EC1DE600E5727C /* Heading.m */; };
 		F00F646B24EC1DE700E5727C /* GalleryCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F00F644E24EC1DE600E5727C /* GalleryCell.xib */; };
@@ -172,7 +169,6 @@
 		F064A53F21576F5600A385AD /* TrialVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F064A53D21576F5600A385AD /* TrialVC.m */; };
 		F064A54021576F5600A385AD /* TrialVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F064A53E21576F5600A385AD /* TrialVC.xib */; };
 		F0650657236036A90015F2C4 /* PushVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0650656236036A90015F2C4 /* PushVC.m */; };
-		F065D65B24EC199800007467 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = F093318824EC14A90066FA41 /* User.m */; };
 		F0673B0120C6A1EB00C42062 /* OPMLVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0673AFF20C6A1EB00C42062 /* OPMLVC.m */; };
 		F0673B0320C6A1EB00C42062 /* OPMLVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0673B0020C6A1EB00C42062 /* OPMLVC.xib */; };
 		F067D35D23F43B350034B968 /* Customization.m in Sources */ = {isa = PBXBuildFile; fileRef = F067D35C23F43B350034B968 /* Customization.m */; };
@@ -230,7 +226,6 @@
 		F08C5E002386567F0055946F /* DZAppdelegate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DFC238656620055946F /* DZAppdelegate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F08C5E62238660B00055946F /* DZThemeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5E5D238660A90055946F /* DZThemeKit.framework */; };
 		F08C5E63238660B00055946F /* DZThemeKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5E5D238660A90055946F /* DZThemeKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F093319924EC14A90066FA41 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = F093318824EC14A90066FA41 /* User.m */; };
 		F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F099465F20AD86BE00E5520F /* StoreKit.framework */; };
 		F099466520AD8A8B00E5520F /* AppDelegate+Store.m in Sources */ = {isa = PBXBuildFile; fileRef = F099466420AD8A8B00E5520F /* AppDelegate+Store.m */; };
 		F09B3B351FBCB348001D4B09 /* UIViewController+ScrollLoad.m in Sources */ = {isa = PBXBuildFile; fileRef = F09B3B341FBCB348001D4B09 /* UIViewController+ScrollLoad.m */; };
@@ -1467,12 +1462,8 @@
 		F00B0F9D20F487090012EB03 /* EmptyCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EmptyCell.h; sourceTree = "<group>"; };
 		F00B0F9E20F487090012EB03 /* EmptyCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EmptyCell.m; sourceTree = "<group>"; };
 		F00B0F9F20F487090012EB03 /* EmptyCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EmptyCell.xib; sourceTree = "<group>"; };
-		F00F642424EC1BC600E5727C /* FeedItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeedItem.m; sourceTree = "<group>"; };
-		F00F642724EC1BC600E5727C /* Subscription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Subscription.m; sourceTree = "<group>"; };
 		F00F642D24EC1BC600E5727C /* VideoInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoInfo.m; sourceTree = "<group>"; };
 		F00F642F24EC1BC600E5727C /* VideoInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoInfo.h; sourceTree = "<group>"; };
-		F00F643224EC1BC600E5727C /* FeedItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeedItem.h; sourceTree = "<group>"; };
-		F00F643724EC1BC600E5727C /* Subscription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Subscription.h; sourceTree = "<group>"; };
 		F00F644924EC1D5200E5727C /* YetiConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YetiConstants.h; sourceTree = "<group>"; };
 		F00F644A24EC1D5200E5727C /* YetiConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YetiConstants.m; sourceTree = "<group>"; };
 		F00F644D24EC1DE600E5727C /* Heading.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Heading.m; sourceTree = "<group>"; };
@@ -1780,8 +1771,6 @@
 		F08C5DF0238656620055946F /* DZAppDelegate.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZAppDelegate.xcodeproj; path = Vendors/DZAppDelegate/DZAppDelegate.xcodeproj; sourceTree = "<group>"; };
 		F08C5E56238660A90055946F /* DZThemeKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZThemeKit.xcodeproj; path = Vendors/DZThemeKit/DZThemeKit.xcodeproj; sourceTree = "<group>"; };
 		F0919F641FD7C1A70098F48A /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
-		F093318524EC14A80066FA41 /* User.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
-		F093318824EC14A90066FA41 /* User.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		F093318B24EC14A90066FA41 /* UnreadCountObservor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnreadCountObservor.h; sourceTree = "<group>"; };
 		F0953BAA25F36D9E005DE6C7 /* DBManager */ = {isa = PBXFileReference; lastKnownFileType = folder; name = DBManager; path = Yeti/DBManager; sourceTree = "<group>"; };
 		F099465F20AD86BE00E5520F /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
@@ -2618,12 +2607,6 @@
 				F032A75C244D7D8C0024AC63 /* YetiTheme.h */,
 				F032A75B244D7D8C0024AC63 /* YetiTheme.m */,
 				F093318B24EC14A90066FA41 /* UnreadCountObservor.h */,
-				F093318524EC14A80066FA41 /* User.h */,
-				F093318824EC14A90066FA41 /* User.m */,
-				F00F643224EC1BC600E5727C /* FeedItem.h */,
-				F00F642424EC1BC600E5727C /* FeedItem.m */,
-				F00F643724EC1BC600E5727C /* Subscription.h */,
-				F00F642724EC1BC600E5727C /* Subscription.m */,
 				F00F642F24EC1BC600E5727C /* VideoInfo.h */,
 				F00F642D24EC1BC600E5727C /* VideoInfo.m */,
 			);
@@ -4719,8 +4702,6 @@
 			files = (
 				F0AD76D720E2217C0003787B /* Reachability.m in Sources */,
 				F0B0EA3724EC1FBB00D675B4 /* Keychain.m in Sources */,
-				F00F644524EC1BC900E5727C /* Subscription.m in Sources */,
-				F065D65B24EC199800007467 /* User.m in Sources */,
 				F0F8DBBD21516EE80076156D /* NSPointerArray+AbstractionHelpers.m in Sources */,
 				F05934FE25E8D16B00D0A442 /* NewFeedResultCell.swift in Sources */,
 				F05934E925E8C52B00D0A442 /* ActionViewController.swift in Sources */,
@@ -4844,7 +4825,6 @@
 				F031A69225FDC68B0046467A /* FolderCell.swift in Sources */,
 				F0A0500D21F0728A00A46524 /* NewFeedDeckController.m in Sources */,
 				F042ACF425244A0500AA440A /* NSObject+SimpleSwizzle.m in Sources */,
-				F00F643A24EC1BC700E5727C /* FeedItem.m in Sources */,
 				F064A5322157638500A385AD /* LaunchVC.m in Sources */,
 				F00F647824EC1DE700E5727C /* Tweet.m in Sources */,
 				F0E86491234793870089F9EF /* ArticleVC+Photos.m in Sources */,
@@ -4863,7 +4843,6 @@
 				F099466520AD8A8B00E5520F /* AppDelegate+Store.m in Sources */,
 				F00F646E24EC1DE700E5727C /* List.m in Sources */,
 				F0D07201205E960900A042CD /* ExternalAppsVC.m in Sources */,
-				F093319924EC14A90066FA41 /* User.m in Sources */,
 				F02B705024EA7E5C00DD607F /* IDMPhoto.m in Sources */,
 				F0B69C9F21B920A10032FD5A /* YTPlayer.m in Sources */,
 				F00B0C1C23F4390B002BCF41 /* CustomizeCell.m in Sources */,
@@ -4896,7 +4875,6 @@
 				F0123C4C224D216300EDFF92 /* ArticleAuthorView.m in Sources */,
 				F0B0EA3F24EC20D800D675B4 /* NSString+HTML.m in Sources */,
 				F00F647624EC1DE700E5727C /* Paragraph.m in Sources */,
-				F00F643C24EC1BC700E5727C /* Subscription.m in Sources */,
 				F00F643F24EC1BC700E5727C /* VideoInfo.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

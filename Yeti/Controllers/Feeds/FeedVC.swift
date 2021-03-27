@@ -929,7 +929,7 @@ extension FeedVC {
 
             print("Marking \(items.count) items as read")
             
-            sself.markRead(items, inToday: inToday, feedsMapping: feedsMapping) { [weak self] (count, feed) in
+            sself.markRead(items, inToday: inToday, feedsMapping: feedsMapping) { (count, feed) in
                 
                 let unread = feed.unread ?? count
                 feed.unread = max(unread - count, 0)
@@ -1051,11 +1051,6 @@ extension FeedVC {
     func markDirectional(_ direction: MarkDirection, indexPath: IndexPath) {
         
         let sorting = self.sorting
-        var feed: String?
-        
-        if type == .unread { feed = "unread" }
-        else if type == .today { feed = "today" }
-        else if type == .natural { feed = "\(self.feed!.feedID!)" }
         
         guard let item = DS.itemIdentifier(for: indexPath) else {
             return

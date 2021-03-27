@@ -10,7 +10,6 @@
 #import "ArticleProvider.h"
 #import "ArticleHandler.h"
 #import "ArticleHelperView.h"
-#import "FeedItem.h"
 
 #import "BarPositioning.h"
 
