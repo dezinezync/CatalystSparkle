@@ -67,7 +67,7 @@ NSString* deviceName(void) {
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:sidebar];
     sidebar.navigationController.navigationBar.prefersLargeTitles = YES;
-    sidebar.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
+    sidebar.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
     
     if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
         [self.splitViewController setViewController:nav forColumn:UISplitViewControllerColumnCompact];

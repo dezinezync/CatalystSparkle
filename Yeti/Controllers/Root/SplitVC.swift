@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import Networking
 import DBManager
+import Defaults
 
 @objcMembers public class SplitVC: UISplitViewController {
     
@@ -70,8 +71,10 @@ import DBManager
         }
         
         #if !DEBUG
-        // @TODO: Check and show intro based on hasShownIntro
-        showOnboarding()
+        // this prevents skipping the onboarding and trial setup.
+        if Defaults[.hasShownIntro] == false {
+            showOnboarding()
+        }
         #endif
         
     }
