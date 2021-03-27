@@ -948,7 +948,7 @@ extension FeedVC {
     
     func markRead(_ inItems: [String: Article], inToday: UInt?, feedsMapping: [UInt: UInt]?, each:(( _ count: UInt, _ feed: Feed) -> Void)?, completion:(() -> Void)?) {
         
-        var items = inItems
+        let items = inItems
         
         FeedsManager.shared.markRead(true, items: items.values.map { $0 }) { [weak self] (result) in
             
@@ -974,29 +974,28 @@ extension FeedVC {
                     .filter { $0.status == true }
                     .map { String($0.articleID) }
                 
-                items = items.filter({ (elem) -> Bool in
+                let successItems = items.filter({ (elem) -> Bool in
                     
                     return succeeded.contains(elem.key)
                     
                 })
                 
-                for i in items { i.value.read = true }
+                // if the items count is 0, then the articles were already marked as read.
+                // we don't have that record on disk. This silently fails on the server and
+                // returns a succees response. We must do the same here as well.
+                if successItems.count > 0 {
+                    for i in successItems { i.value.read = true }
+                    DBManager.shared.add(articles: Array(successItems.values), strip: false)
+                }
+                else {
+                    for i in items { i.value.read = true }
+                    DBManager.shared.add(articles: Array(items.values), strip: false)
+                }
                 
-                var unread = coordinator.totalUnread
-                if unread == 0 { unread = items.count }
-                
-                unread -= UInt(items.count)
-                
-                coordinator.totalUnread -= unread
+                coordinator.totalUnread -= max(UInt(items.count), coordinator.totalUnread)
                 
                 if inToday != nil {
-                    
-                    var today = coordinator.totalToday ?? inToday ?? 0
-                    if today == 0 { today = inToday }
-                    
-                    today -= inToday
-                    
-                    coordinator.totalToday = today
+                    coordinator.totalToday -= max(inToday!, coordinator.totalToday)
                 }
                 
                 DBManager.shared.add(articles: items.values.map { $0 }, strip: false)

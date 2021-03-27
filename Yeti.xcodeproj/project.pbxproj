@@ -224,6 +224,7 @@
 		F088CF6E248E72020010EBC0 /* AppDelegate+Catalyst.m in Sources */ = {isa = PBXBuildFile; fileRef = F088CF6D248E72020010EBC0 /* AppDelegate+Catalyst.m */; platformFilter = maccatalyst; };
 		F08C5DFF2386567F0055946F /* DZAppdelegate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DFC238656620055946F /* DZAppdelegate.framework */; };
 		F08C5E002386567F0055946F /* DZAppdelegate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DFC238656620055946F /* DZAppdelegate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F092368F260F488A00AE0B89 /* DZThemeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0923688260F485F00AE0B89 /* DZThemeKit.framework */; };
 		F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F099465F20AD86BE00E5520F /* StoreKit.framework */; };
 		F099466520AD8A8B00E5520F /* AppDelegate+Store.m in Sources */ = {isa = PBXBuildFile; fileRef = F099466420AD8A8B00E5520F /* AppDelegate+Store.m */; };
 		F09B3B351FBCB348001D4B09 /* UIViewController+ScrollLoad.m in Sources */ = {isa = PBXBuildFile; fileRef = F09B3B341FBCB348001D4B09 /* UIViewController+ScrollLoad.m */; };
@@ -461,6 +462,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = F06A6FB21FB07FCF00D3A819;
 			remoteInfo = ThemeKitTestApp;
+		};
+		F092368D260F488300AE0B89 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0923681260F485F00AE0B89 /* DZThemeKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F06A6F851FB0698900D3A819;
+			remoteInfo = DZThemeKit;
 		};
 		F09B939925ABF417004440E3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1995,6 +2003,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F092368F260F488A00AE0B89 /* DZThemeKit.framework in Frameworks */,
 				F0F00CE8260CACE500DB6A2B /* Dynamic in Frameworks */,
 				F0E0E6EE2457FF2300DFFD17 /* JLRoutes.framework in Frameworks */,
 				F0E0DBBD22AE0F47006A2D93 /* WebKit.framework in Frameworks */,
@@ -3271,6 +3280,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				F092368E260F488300AE0B89 /* PBXTargetDependency */,
 				F0E0E6F12457FF2A00DFFD17 /* PBXTargetDependency */,
 				F08C5E2F2386579C0055946F /* PBXTargetDependency */,
 				F035A21F20617EC3005A88EE /* PBXTargetDependency */,
@@ -4962,6 +4972,11 @@
 			isa = PBXTargetDependency;
 			name = DZAppdelegate;
 			targetProxy = F08C5E2E2386579C0055946F /* PBXContainerItemProxy */;
+		};
+		F092368E260F488300AE0B89 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DZThemeKit;
+			targetProxy = F092368D260F488300AE0B89 /* PBXContainerItemProxy */;
 		};
 		F0B7C850240B7272008D8F4F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
