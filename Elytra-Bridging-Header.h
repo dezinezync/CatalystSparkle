@@ -17,3 +17,4 @@
 #import "TrialVC.h"
 #import "NewFolderController.h"
 #import "ArticleVC.h"
+#import "OPMLVC.h"

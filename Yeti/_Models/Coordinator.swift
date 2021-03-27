@@ -13,6 +13,7 @@ import Networking
 import Dynamic
 import Models
 import DBManager
+import DZKit
 
 public var deviceName: String {
     var systemInfo = utsname()
@@ -207,14 +208,18 @@ public var deviceName: String {
     
     public func showSubscriptionsInterface() {
         
+        #if targetEnvironment(macCatalyst)
+        openScene(name: "subscriptionInterface")
+        #else
         // @TODO
+        #endif
         
     }
     
     public func showNewFeedVC() {
         
         #if targetEnvironment(macCatalyst)
-        // @TODO
+        openScene(name: "newFeedScene")
         #else
         
         let vc = NewFeedVC(collectionViewLayout: NewFeedVC.gridLayout)
@@ -252,13 +257,45 @@ public var deviceName: String {
     
     public func showOPMLInterface(from sender: Any, type: ShowOPMLType) {
         
-        // @TODO
+        let vc = OPMLVC(nibName: "OPMLVC", bundle: Bundle.main)
+        let nav = UINavigationController(rootViewController: vc)
+        nav.modalPresentationStyle = .automatic
+        
+        let presenter: UIViewController = sender as? UIViewController ?? self.splitVC!
+        
+        presenter.present(nav, animated: true) {
+            
+            if type == .Export {
+                vc.didTapExport(nil)
+            }
+            else if type == .Import {
+                vc.didTapImport(nil)
+            }
+            
+        }
         
     }
     
     public func showContactInterface() {
         
+        let attachment = DZMessagingAttachment()
+        attachment.fileName = "debugInfo.txt"
+        attachment.mimeType = "text/plain"
         
+        let device = UIDevice.current.name
+        let iOSVersion = "\(UIDevice.current.systemName) \(UIDevice.current.systemVersion)"
+        let deviceID = FeedsManager.shared.deviceID ?? "0"
+        
+        let appVersion = FeedsManager.shared.fullVersion
+        let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] ?? "0"
+        
+        let formatted = "Model: \(device) \(iOSVersion)\nDevice UUID: \(deviceID)\nAccount ID: \(DBManager.shared.user!.uuid ?? "0")\nApp: \(appVersion) (\(buildNumber))"
+        
+        attachment.data = formatted.data(using: .utf8) ?? Data()
+        
+        DZMessagingController.shared().delegate = self
+        
+        DZMessagingController.presentEmail(withBody: "", subject: "Elytra Support", recipients: ["support@elytra.app"], from: self.splitVC!)
         
     }
     
@@ -278,7 +315,7 @@ public var deviceName: String {
     
     public func showAttributions() {
         
-        // @TODO
+        openScene(name: "attributionsScene")
         
     }
     
@@ -524,6 +561,89 @@ public var deviceName: String {
         
     }
     
+    var registerNotificationsTimer :Timer?
+    
+    public func registerForNotifications(completion: ((_ error: Error?, _ completed: Bool) -> Void)?) {
+        
+        let isImmediate: Bool = Thread.callStackSymbols.description.contains("PushRequestVC")
+        
+        runOnMainQueueWithoutDeadlocking { [weak self] in
+            
+            guard let sself = self else {
+                return
+            }
+            
+            guard UIApplication.shared.applicationState == .active else {
+                
+                completion?(nil, false)
+                
+                return
+            }
+            
+            guard UIApplication.shared.isRegisteredForRemoteNotifications == false else {
+                completion?(nil, true)
+                return
+            }
+            
+            UNUserNotificationCenter.current().getNotificationSettings { settings in
+                
+                switch settings.authorizationStatus {
+                case .denied:
+                    completion?(nil, false)
+                case .authorized:
+                    completion?(nil, true)
+                case .notDetermined:
+                    
+                    if sself.registerNotificationsTimer != nil {
+                        sself.registerNotificationsTimer?.invalidate()
+                        sself.registerNotificationsTimer = nil
+                    }
+                    
+                    let interval: TimeInterval = isImmediate ? 0 : 2
+                    
+                    runOnMainQueueWithoutDeadlocking {
+                        
+                        sself.registerNotificationsTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: false, block: { _ in
+                            
+                            UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .alert, .sound]) { (granted, error) in
+                                
+                                if error != nil {
+                                    completion?(error, false)
+                                    return
+                                }
+                                
+                                if granted {
+                                    
+                                    Keychain.add(kIsSubscribingToPushNotifications, boolean: true)
+                                    
+                                    DispatchQueue.main.async {
+                                        
+                                        UIApplication.shared.registerForRemoteNotifications()
+                                        
+                                    }
+                                    
+                                }
+                                
+                                DispatchQueue.main.async {
+                                    completion?(nil, granted)
+                                }
+                                
+                            }
+                            
+                        })
+                        
+                    }
+                    
+                default:
+                    print("Unhandled notification settings state \(settings.authorizationStatus)")
+                }
+                
+            }
+            
+        }
+        
+    }
+    
     // MARK: - Shared Containers
     var sharedContainerURL: URL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.elytra")!
     
@@ -556,16 +676,6 @@ public var deviceName: String {
         
     }
 
-    var registerNotificationsTimer :Timer?
-    
-    public func registerForNotifications(completion: ((_ error: Error?, _ completed: Bool) -> Void)?) {
-        
-        // @TODO
-        
-    }
-    
-    
-    
 }
 
 extension UIWindow {
@@ -576,4 +686,26 @@ extension UIWindow {
         }
         return nsWindow.asObject
     }
+}
+
+extension Coordinator: DZMessagingDelegate {
+    
+    public func emailWasCancelledOrFailed(toSend error: Error?) {
+        
+        DZMessagingController.shared().delegate = nil
+        
+        guard error != nil else {
+            return
+        }
+        
+        
+        
+    }
+    
+    public func userDidSendEmail() {
+        
+        DZMessagingController.shared().delegate = nil
+        
+    }
+    
 }

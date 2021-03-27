@@ -41,8 +41,8 @@ public enum FeedsManagerError : Error {
     
     public var additionalFeedsToSync: [Feed] = []
     
-    var fullVersion: String = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String
-    var majorVersion: String {
+    public var fullVersion: String = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String
+    public var majorVersion: String {
         return fullVersion.components(separatedBy: ".").first!
     }
     

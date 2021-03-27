@@ -618,6 +618,8 @@ enum SidebarItem: Hashable {
             
         }
         
+        coalescingQueue.add(self, #selector(SidebarVC.updateCounters))
+        
     }
     
     lazy var leftBarButtonItem: UIBarButtonItem = {
@@ -999,7 +1001,7 @@ enum SidebarItem: Hashable {
         }
         
         if refreshControl?.isRefreshing == false {
-            DispatchQueue.main.async { [weak self] in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
                 self?.refreshControl?.beginRefreshing()
             }
         }
@@ -1395,77 +1397,81 @@ extension SidebarVC {
     // @TODO: Move to Swift Coordinator
     @objc func updateCounters() {
         
-        DBManager.shared.countsConnection.asyncRead { [weak self] (t) in
+        DBManager.shared.readQueue.async { [weak self] in 
             
-            guard let txn = t.ext(DBManagerViews.unreadsView.rawValue) as? YapDatabaseFilteredViewTransaction else {
-                return
-            }
-            
-            let group = GroupNames.articles.rawValue
-            
-            let total = Int(txn.numberOfItems(inGroup: group))
-            
-            guard total > 0 else {
-                // set all feeds to 0
-                return
-            }
-            
-            let folders = DBManager.shared.folders
-            
-            for folder in folders {
-                folder.updatingCounters = true
-            }
-            
-            // feedID : Unread Count
-            var feedsMapping: [UInt: UInt] = [:]
-            var totalToday: UInt = 0
-            
-            let calendar = NSCalendar.current
-            
-            txn.enumerateKeysAndMetadata(inGroup: group, with: [], range: NSMakeRange(0, total)) { (c, k) -> Bool in
-                return true
-            } using: { (c, k, metadata, index, stop) in
+            DBManager.shared.countsConnection.asyncRead { (t) in
                 
-                guard let metadata = metadata as? ArticleMeta,
-                      metadata.read == false else {
+                guard let txn = t.ext(DBManagerViews.unreadsView.rawValue) as? YapDatabaseFilteredViewTransaction else {
                     return
                 }
                 
-                let feedID = metadata.feedID
+                let group = GroupNames.articles.rawValue
                 
-                if feedsMapping[feedID] == nil {
-                    feedsMapping[feedID] = 0
+                let total = Int(txn.numberOfItems(inGroup: group))
+                
+                guard total > 0 else {
+                    // set all feeds to 0
+                    return
                 }
                 
-                if calendar.isDateInToday(Date(timeIntervalSince1970: metadata.timestamp)) {
-                    totalToday += 1
+                let folders = DBManager.shared.folders
+                
+                for folder in folders {
+                    folder.updatingCounters = true
                 }
                 
-                feedsMapping[feedID]! += 1
+                // feedID : Unread Count
+                var feedsMapping: [UInt: UInt] = [:]
+                var totalToday: UInt = 0
                 
-            }
-            
-            let unread = feedsMapping.values.reduce(0) { (result, c) -> UInt in
-                return result + c
-            }
-            
-            self?.mainCoordinator?.totalUnread = unread
-            self?.mainCoordinator?.totalToday = totalToday
-            
-            print(feedsMapping)
-            
-            for feedID in feedsMapping.keys {
+                let calendar = NSCalendar.current
                 
-                guard let feed = DBManager.shared.feedForID(feedID) else {
-                    continue
+                txn.enumerateKeysAndMetadata(inGroup: group, with: [], range: NSMakeRange(0, total)) { (c, k) -> Bool in
+                    return true
+                } using: { (c, k, metadata, index, stop) in
+                    
+                    guard let metadata = metadata as? ArticleMeta,
+                          metadata.read == false else {
+                        return
+                    }
+                    
+                    let feedID = metadata.feedID
+                    
+                    if feedsMapping[feedID] == nil {
+                        feedsMapping[feedID] = 0
+                    }
+                    
+                    if calendar.isDateInToday(Date(timeIntervalSince1970: metadata.timestamp)) {
+                        totalToday += 1
+                    }
+                    
+                    feedsMapping[feedID]! += 1
+                    
                 }
                 
-                feed.unread = feedsMapping[feedID]
+                let unread = feedsMapping.values.reduce(0) { (result, c) -> UInt in
+                    return result + c
+                }
                 
-            }
-            
-            for folder in folders {
-                folder.updatingCounters = false
+                self?.mainCoordinator?.totalUnread = unread
+                self?.mainCoordinator?.totalToday = totalToday
+                
+                print(feedsMapping)
+                
+                for feedID in feedsMapping.keys {
+                    
+                    guard let feed = DBManager.shared.feedForID(feedID) else {
+                        continue
+                    }
+                    
+                    feed.unread = feedsMapping[feedID]
+                    
+                }
+                
+                for folder in folders {
+                    folder.updatingCounters = false
+                }
+                
             }
             
         }

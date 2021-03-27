@@ -934,7 +934,7 @@ extension FeedVC {
                 let unread = feed.unread ?? count
                 feed.unread = max(unread - count, 0)
                 
-                (self?.articles.objectEnumerator().allObjects as! [Article]).forEach { $0.read = true }
+                (sself.articles.objectEnumerator().allObjects as! [Article]).forEach { $0.read = true }
                 
             } completion: { [weak self] in
                 
@@ -1452,11 +1452,11 @@ extension FeedVC: ArticleHandler, ArticleProvider {
         
     }
     
-    @objc func userMarkedArticle(_ article: Any, read: Bool) {
+    @objc public func userMarkedArticle(_ article: Any, read: Bool) {
         userMarkedArticle(article, read: read, completion: nil)
     }
         
-    @objc func userMarkedArticle(_ article: Any, read: Bool, completion: ((_ completed: Bool) -> Void)?) {
+    @objc public func userMarkedArticle(_ article: Any, read: Bool, completion: ((_ completed: Bool) -> Void)?) {
         
         guard let article = article as? Article else {
             return
@@ -1487,7 +1487,10 @@ extension FeedVC: ArticleHandler, ArticleProvider {
                     
                     if inToday { self?.mainCoordinator?.totalToday -= 1 }
                     
-                    let unread = feed?.unread ?? 1
+                    var unread = feed?.unread ?? 1
+                    
+                    if unread == 0 { unread = 1 }
+                    
                     feed?.unread = max(unread - 1, 0)
                     
                 }
@@ -1509,11 +1512,11 @@ extension FeedVC: ArticleHandler, ArticleProvider {
         
     }
     
-    @objc func userMarkedArticle(_ article: Any, bookmarked: Bool) {
+    @objc public func userMarkedArticle(_ article: Any, bookmarked: Bool) {
         userMarkedArticle(article, bookmarked: bookmarked, completion: nil)
     }
     
-    @objc func userMarkedArticle(_ article: Any, bookmarked: Bool, completion: ((_ completed: Bool) -> Void)?) {
+    @objc public func userMarkedArticle(_ article: Any, bookmarked: Bool, completion: ((_ completed: Bool) -> Void)?) {
         
         guard let article = article as? Article else {
             return

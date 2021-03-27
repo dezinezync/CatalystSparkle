@@ -556,18 +556,53 @@ public let notificationsKey = "notifications"
             
             folder.feedIDs = Set(Array(folder.feedIDs).filter { $0 != folderID })
             folder.feeds = folder.feeds.filter { $0 != feed }
-            
+            // save the folder struct back to the DB.
             add(folder: folder)
             
         }
         
         feeds = feeds.filter { $0 != feed }
         
-        uiConnection.readWrite { (t) in
+        let feedID = feed.feedID
+        
+        bgConnection.readWrite { [weak self] (t) in
             
             t.removeObject(forKey: "\(feed.feedID!)", inCollection: .feeds)
             
+            // Delete all articles for this feed
+            guard let txn = t.ext(.articlesView) as? YapDatabaseFilteredViewTransaction else {
+                return
+            }
+            
+            var articlesToDelete: [String] = []
+            
+            txn.enumerateKeysAndMetadata(inGroup: GroupNames.articles.rawValue, with: [], range: NSMakeRange(0, Int(txn.numberOfItems(inGroup: GroupNames.articles.rawValue)))) { _, _ in
+                return true
+            } using: { c, k, m, index, stop in
+                
+                guard let meta = m as? ArticleMeta else {
+                    return
+                }
+                
+                if meta.feedID == feedID {
+                    
+                    articlesToDelete.append(k)
+                    
+                }
+                
+            }
+            
+            guard articlesToDelete.count > 0 else {
+                // nothing to delete.
+                return
+            }
+            
+            for key in articlesToDelete {
+                self?._delete(articleID: key, transaction: t)
+            }
+            
         }
+        
         
     }
     
@@ -901,25 +936,25 @@ public let notificationsKey = "notifications"
         
     }
     
-    public func delete(allArticlesFor feed: Feed) {
-        
-        let col = "\(CollectionNames.articles.rawValue):\(feed.feedID!)"
-        
-        bgConnection.asyncReadWrite({ (t) in
-            
-            let keys = t.allKeys(inCollection: col)
-            
-            t.removeAllObjects(inCollection: col)
-            
-            t.removeObjects(forKeys: keys, inCollection: .articlesContent)
-            
-            t.removeObjects(forKeys: keys, inCollection: .articlesFulltext)
-            
-            t.removeObject(forKey: "\(feed.feedID!)", inCollection: .feeds)
-            
-        })
-        
-    }
+//    public func delete(allArticlesFor feed: Feed) {
+//
+//        let col = "\(CollectionNames.articles.rawValue):\(feed.feedID!)"
+//
+//        bgConnection.asyncReadWrite({ (t) in
+//
+//            let keys = t.allKeys(inCollection: col)
+//
+//            t.removeAllObjects(inCollection: col)
+//
+//            t.removeObjects(forKeys: keys, inCollection: .articlesContent)
+//
+//            t.removeObjects(forKeys: keys, inCollection: .articlesFulltext)
+//
+//            t.removeObject(forKey: "\(feed.feedID!)", inCollection: .feeds)
+//
+//        })
+//
+//    }
     
 }
 
