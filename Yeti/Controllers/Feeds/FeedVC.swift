@@ -952,7 +952,8 @@ extension FeedVC {
         
         FeedsManager.shared.markRead(true, items: items.values.map { $0 }) { [weak self] (result) in
             
-            guard let sself = self else {
+            guard let sself = self,
+                  let coordinator = sself.mainCoordinator else {
                 return
             }
             
@@ -981,10 +982,21 @@ extension FeedVC {
                 
                 for i in items { i.value.read = true }
                 
-                sself.mainCoordinator?.totalUnread -= UInt(items.count)
+                var unread = coordinator.totalUnread
+                if unread == 0 { unread = items.count }
+                
+                unread -= UInt(items.count)
+                
+                coordinator.totalUnread -= unread
                 
                 if inToday != nil {
-                    sself.mainCoordinator?.totalToday -= inToday!
+                    
+                    var today = coordinator.totalToday ?? inToday ?? 0
+                    if today == 0 { today = inToday }
+                    
+                    today -= inToday
+                    
+                    coordinator.totalToday = today
                 }
                 
                 DBManager.shared.add(articles: items.values.map { $0 }, strip: false)
