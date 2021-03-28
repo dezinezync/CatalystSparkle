@@ -224,7 +224,6 @@
 		F088CF6E248E72020010EBC0 /* AppDelegate+Catalyst.m in Sources */ = {isa = PBXBuildFile; fileRef = F088CF6D248E72020010EBC0 /* AppDelegate+Catalyst.m */; platformFilter = maccatalyst; };
 		F08C5DFF2386567F0055946F /* DZAppdelegate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DFC238656620055946F /* DZAppdelegate.framework */; };
 		F08C5E002386567F0055946F /* DZAppdelegate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DFC238656620055946F /* DZAppdelegate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F092368F260F488A00AE0B89 /* DZThemeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0923688260F485F00AE0B89 /* DZThemeKit.framework */; };
 		F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F099465F20AD86BE00E5520F /* StoreKit.framework */; };
 		F099466520AD8A8B00E5520F /* AppDelegate+Store.m in Sources */ = {isa = PBXBuildFile; fileRef = F099466420AD8A8B00E5520F /* AppDelegate+Store.m */; };
 		F09B3B351FBCB348001D4B09 /* UIViewController+ScrollLoad.m in Sources */ = {isa = PBXBuildFile; fileRef = F09B3B341FBCB348001D4B09 /* UIViewController+ScrollLoad.m */; };
@@ -441,34 +440,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = F0634F9D1B6B4C950025C347;
 			remoteInfo = DZAppdelegate;
-		};
-		F0923687260F485F00AE0B89 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0923681260F485F00AE0B89 /* DZThemeKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F06A6F861FB0698900D3A819;
-			remoteInfo = DZThemeKit;
-		};
-		F0923689260F485F00AE0B89 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0923681260F485F00AE0B89 /* DZThemeKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F06A6F8F1FB0698900D3A819;
-			remoteInfo = DZThemeKitTests;
-		};
-		F092368B260F485F00AE0B89 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0923681260F485F00AE0B89 /* DZThemeKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F06A6FB21FB07FCF00D3A819;
-			remoteInfo = ThemeKitTestApp;
-		};
-		F092368D260F488300AE0B89 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0923681260F485F00AE0B89 /* DZThemeKit.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = F06A6F851FB0698900D3A819;
-			remoteInfo = DZThemeKit;
 		};
 		F09B939925ABF417004440E3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1768,7 +1739,6 @@
 		F08993C1210883E200A9978E /* FolderDrop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FolderDrop.h; sourceTree = "<group>"; };
 		F08C5DF0238656620055946F /* DZAppDelegate.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZAppDelegate.xcodeproj; path = Vendors/DZAppDelegate/DZAppDelegate.xcodeproj; sourceTree = "<group>"; };
 		F0919F641FD7C1A70098F48A /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
-		F0923681260F485F00AE0B89 /* DZThemeKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZThemeKit.xcodeproj; path = Vendors/DZThemeKit/DZThemeKit.xcodeproj; sourceTree = "<group>"; };
 		F093318B24EC14A90066FA41 /* UnreadCountObservor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnreadCountObservor.h; sourceTree = "<group>"; };
 		F0953BAA25F36D9E005DE6C7 /* DBManager */ = {isa = PBXFileReference; lastKnownFileType = folder; name = DBManager; path = Yeti/DBManager; sourceTree = "<group>"; };
 		F099465F20AD86BE00E5520F /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
@@ -2003,7 +1973,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F092368F260F488A00AE0B89 /* DZThemeKit.framework in Frameworks */,
 				F0F00CE8260CACE500DB6A2B /* Dynamic in Frameworks */,
 				F0E0E6EE2457FF2300DFFD17 /* JLRoutes.framework in Frameworks */,
 				F0E0DBBD22AE0F47006A2D93 /* WebKit.framework in Frameworks */,
@@ -2836,16 +2805,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		F0923682260F485F00AE0B89 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				F0923688260F485F00AE0B89 /* DZThemeKit.framework */,
-				F092368A260F485F00AE0B89 /* DZThemeKitTests.xctest */,
-				F092368C260F485F00AE0B89 /* ThemeKitTestApp.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		F09B932525ABF417004440E3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -3148,7 +3107,6 @@
 		F0D3002D1FE263330040D10D /* Vendors */ = {
 			isa = PBXGroup;
 			children = (
-				F0923681260F485F00AE0B89 /* DZThemeKit.xcodeproj */,
 				F09B932425ABF417004440E3 /* AWSiOSSDKv2.xcodeproj */,
 				F02B701D24EA7E5C00DD607F /* IDMPhotoBrowser */,
 				F0E0E6E22457FF1D00DFFD17 /* JLRoutes.xcodeproj */,
@@ -3280,7 +3238,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				F092368E260F488300AE0B89 /* PBXTargetDependency */,
 				F0E0E6F12457FF2A00DFFD17 /* PBXTargetDependency */,
 				F08C5E2F2386579C0055946F /* PBXTargetDependency */,
 				F035A21F20617EC3005A88EE /* PBXTargetDependency */,
@@ -3489,10 +3446,6 @@
 					ProjectRef = F0C4F8C4234C69B900D57C18 /* DZNetworking.xcodeproj */;
 				},
 				{
-					ProductGroup = F0923682260F485F00AE0B89 /* Products */;
-					ProjectRef = F0923681260F485F00AE0B89 /* DZThemeKit.xcodeproj */;
-				},
-				{
 					ProductGroup = F0E0E6E32457FF1D00DFFD17 /* Products */;
 					ProjectRef = F0E0E6E22457FF1D00DFFD17 /* JLRoutes.xcodeproj */;
 				},
@@ -3541,27 +3494,6 @@
 			fileType = wrapper.cfbundle;
 			path = DZAppdelegateTests.xctest;
 			remoteRef = F08C5DFD238656620055946F /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F0923688260F485F00AE0B89 /* DZThemeKit.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = DZThemeKit.framework;
-			remoteRef = F0923687260F485F00AE0B89 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F092368A260F485F00AE0B89 /* DZThemeKitTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = DZThemeKitTests.xctest;
-			remoteRef = F0923689260F485F00AE0B89 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F092368C260F485F00AE0B89 /* ThemeKitTestApp.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = ThemeKitTestApp.app;
-			remoteRef = F092368B260F485F00AE0B89 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		F09B939A25ABF417004440E3 /* AWSAllTestsHost.app */ = {
@@ -4972,11 +4904,6 @@
 			isa = PBXTargetDependency;
 			name = DZAppdelegate;
 			targetProxy = F08C5E2E2386579C0055946F /* PBXContainerItemProxy */;
-		};
-		F092368E260F488300AE0B89 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = DZThemeKit;
-			targetProxy = F092368D260F488300AE0B89 /* PBXContainerItemProxy */;
 		};
 		F0B7C850240B7272008D8F4F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
