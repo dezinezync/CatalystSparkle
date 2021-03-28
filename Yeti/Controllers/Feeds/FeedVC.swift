@@ -869,69 +869,81 @@ extension FeedVC {
     
     func markAllRead( _ sender: UIBarButtonItem?) {
         
-        DBManager.shared.bgConnection.asyncReadWrite { [weak self] (t) in
+        DBManager.shared.readQueue.async { [weak self] in
             
-            guard let txn = t.ext(dbFilteredViewName) as? YapDatabaseFilteredViewTransaction else {
+            guard let sself = self else {
                 return
             }
             
             var items: [String: Article] = [:]
             var feedsMapping: [UInt: UInt] = [:]
             
-            let count = txn.numberOfItems(inGroup: GroupNames.articles.rawValue)
-            
-            guard count > 0 else {
-                
-                if  self?.type == .natural, let feed = self?.feed, feed.unread > 0 {
-                    feed.unread = 0
-                }
-                
-                return
-            }
-            
             let calendar = Calendar.current
             var inToday: UInt = 0
             
-            // get all unread items from this view
-            txn.enumerateKeysAndMetadata(inGroup: GroupNames.articles.rawValue, with: [], range: NSMakeRange(0, Int(count))) { (_, _) -> Bool in
-                return true
-            } using: { (c, k, m, index, stop) in
+            DBManager.shared.bgConnection.readWrite { [weak self] (t) in
                 
-                guard let metadata = m as? ArticleMeta else {
+                guard let txn = t.ext(dbFilteredViewName) as? YapDatabaseFilteredViewTransaction else {
                     return
                 }
                 
-                guard metadata.read == false else {
+                let count = txn.numberOfItems(inGroup: GroupNames.articles.rawValue)
+                
+                guard count > 0 else {
+                    
+                    if  self?.type == .natural, let feed = self?.feed, feed.unread > 0 {
+                        feed.unread = 0
+                    }
+                    
                     return
                 }
                 
-                guard let o = t.object(forKey: k, inCollection: c) as? Article else {
-                    return
-                }
-                
-                items[k] = o
-                
-                if feedsMapping[metadata.feedID] == nil {
-                    feedsMapping[metadata.feedID] = 0
-                }
-                
-                feedsMapping[metadata.feedID]! += 1
-                
-                if calendar.isDateInToday(Date(timeIntervalSince1970: metadata.timestamp)) == true {
-                    inToday += 1
+                // get all unread items from this view
+                txn.enumerateKeysAndMetadata(inGroup: GroupNames.articles.rawValue, with: [], range: NSMakeRange(0, Int(count))) { (_, _) -> Bool in
+                    return true
+                } using: { (c, k, m, index, stop) in
+                    
+                    guard let metadata = m as? ArticleMeta else {
+                        return
+                    }
+                    
+                    guard metadata.read == false else {
+                        return
+                    }
+                    
+                    guard let o = t.object(forKey: k, inCollection: c) as? Article else {
+                        return
+                    }
+                    
+                    items[k] = o
+                    
+                    if feedsMapping[metadata.feedID] == nil {
+                        feedsMapping[metadata.feedID] = 0
+                    }
+                    
+                    feedsMapping[metadata.feedID]! += 1
+                    
+                    if calendar.isDateInToday(Date(timeIntervalSince1970: metadata.timestamp)) == true {
+                        inToday += 1
+                    }
+                    
                 }
                 
             }
             
-            guard let sself = self else {
+            guard items.count > 0 else {
+                print("No items to be marked read. Exiting.")
                 return
             }
-
+            
             print("Marking \(items.count) items as read")
             
             sself.markRead(items, inToday: inToday, feedsMapping: feedsMapping) { (count, feed) in
                 
-                let unread = feed.unread ?? count
+                var unread = feed.unread ?? count
+                
+                if count > unread { unread = count }
+                
                 feed.unread = max(unread - count, 0)
                 
                 (sself.articles.objectEnumerator().allObjects as! [Article]).forEach { $0.read = true }
@@ -992,10 +1004,25 @@ extension FeedVC {
                     DBManager.shared.add(articles: Array(items.values), strip: false)
                 }
                 
-                coordinator.totalUnread -= max(UInt(items.count), coordinator.totalUnread)
+                var counter = UInt(items.count)
+                var totalUnread = coordinator.totalUnread
+                
+                if counter > totalUnread { counter = totalUnread }
+                
+                totalUnread -= counter
+                
+                coordinator.totalUnread = max(totalUnread, 0)
                 
                 if inToday != nil {
-                    coordinator.totalToday -= max(inToday!, coordinator.totalToday)
+                    
+                    counter = inToday ?? 0
+                    var totalToday = coordinator.totalToday
+                    
+                    if counter > totalToday { counter = totalToday }
+                    
+                    totalToday -= counter
+                    
+                    coordinator.totalToday -= max(0, totalToday)
                 }
                 
                 DBManager.shared.add(articles: items.values.map { $0 }, strip: false)

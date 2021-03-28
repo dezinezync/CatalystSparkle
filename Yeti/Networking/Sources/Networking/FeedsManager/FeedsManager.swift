@@ -105,8 +105,8 @@ public enum FeedsManagerError : Error {
         
         var s = DZURLSession(sessionConfiguration: sessionConfiguration)
         
-        s.baseURL = URL(string: "https://staging.api.elytra.app")
-//        s.baseURL = URL(string: "https://api.elytra.app")
+//        s.baseURL = URL(string: "https://staging.api.elytra.app")
+        s.baseURL = URL(string: "https://api.elytra.app")
         
 //        #if !DEBUG
 //        s.baseURL = URL(string: "https://api.elytra.app")
@@ -181,8 +181,8 @@ public enum FeedsManagerError : Error {
         
         var s = DZURLSession(sessionConfiguration: sessionConfiguration)
         
-        s.baseURL = URL(string: "https://staging.api.elytra.app")
-//        s.baseURL = URL(string: "https://api.elytra.app")
+//        s.baseURL = URL(string: "https://staging.api.elytra.app")
+        s.baseURL = URL(string: "https://api.elytra.app")
         
 //        #if !DEBUG
 //        s.baseURL = URL(string: "https://api.elytra.app")
