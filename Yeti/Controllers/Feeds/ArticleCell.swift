@@ -343,7 +343,7 @@ class ArticleCell: UITableViewCell {
                 
                 if let err = error,
                     proxyURL == url
-                        && (err as NSError).userInfo[SDWebImageErrorDownloadStatusCodeKey] as! Int == 404 {
+                        && ((err as? NSError)?.userInfo[SDWebImageErrorDownloadStatusCodeKey] as? Int) ?? 0 == 404 {
                     
                     #if DEBUG
                     print("Failed to download cover image with URL:", proxyURL)

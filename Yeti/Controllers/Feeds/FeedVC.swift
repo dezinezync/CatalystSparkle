@@ -1470,6 +1470,11 @@ extension FeedVC: ArticleHandler, ArticleProvider {
         
         FeedsManager.shared.markRead(read, items: [article]) { [weak self] (result) in
             
+            guard let sself = self,
+                  let coordinator = sself.mainCoordinator else {
+                return
+            }
+            
             switch result {
             case .failure(let error):
                 AlertManager.showGenericAlert(withTitle: "Error Marking \(read ? "Read" : "Unread")", message: error.localizedDescription)
@@ -1481,7 +1486,7 @@ extension FeedVC: ArticleHandler, ArticleProvider {
                 
                 DBManager.shared.add(article: article, strip: false)
                 
-                self?.reloadVisibleCells()
+                sself.reloadVisibleCells()
                 
                 let inToday = Calendar.current.isDateInToday(article.timestamp)
                 
@@ -1489,9 +1494,21 @@ extension FeedVC: ArticleHandler, ArticleProvider {
                 
                 if read == true {
                     
-                    self?.mainCoordinator?.totalUnread -= 1
+                    var read = coordinator.totalUnread
                     
-                    if inToday { self?.mainCoordinator?.totalToday -= 1 }
+                    if read == 0 { read = 1 }
+                    
+                    coordinator.totalUnread = max(read - 1, 0)
+                    
+                    if inToday {
+                        
+                        var today = coordinator.totalToday
+                        
+                        if today == 0 { today = 1 }
+                        
+                        coordinator.totalToday = max(today - 1, 0)
+                        
+                    }
                     
                     var unread = feed?.unread ?? 1
                     
