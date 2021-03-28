@@ -41,34 +41,34 @@ static void * DefaultsAppleHighlightColorContext = &DefaultsAppleHighlightColorC
 }
 
 - (void)updateAppearances {
-    
-    if (![NSThread isMainThread]) {
-        [self performSelectorOnMainThread:@selector(updateAppearances) withObject:nil waitUntilDone:NO];
-        return;
-    }
-    
+    // @TODO
+//    if (![NSThread isMainThread]) {
+//        [self performSelectorOnMainThread:@selector(updateAppearances) withObject:nil waitUntilDone:NO];
+//        return;
+//    }
+//
 #if TARGET_OS_MACCATALYST
     [self ct_updateSemanticAppKitColors];
 #endif
-    
-    [super updateAppearances];
-    
-#ifndef SHARE_EXTENSION
-    
-    for (UIWindow *window in [UIApplication.sharedApplication windows]) {
-        if (window.rootViewController && ![NSStringFromClass(window.class) hasPrefix:@"UIText"]) {
-//            window.rootViewController.view.backgroundColor = self.backgroundColor;
-            window.tintColor = self.tintColor;
-        }
-
-    };
-
-#endif
-    
-    UINavigationBar *navBar = [UINavigationBar appearance];
-    
-    [navBar setLargeTitleTextAttributes:@{NSForegroundColorAttributeName: self.titleColor}];
-    [navBar setTitleTextAttributes:@{NSForegroundColorAttributeName: self.titleColor}];
+//
+////    [super updateAppearances];
+//
+//#ifndef SHARE_EXTENSION
+//
+//    for (UIWindow *window in [UIApplication.sharedApplication windows]) {
+//        if (window.rootViewController && ![NSStringFromClass(window.class) hasPrefix:@"UIText"]) {
+////            window.rootViewController.view.backgroundColor = self.backgroundColor;
+//            window.tintColor = self.tintColor;
+//        }
+//
+//    };
+//
+//#endif
+//
+//    UINavigationBar *navBar = [UINavigationBar appearance];
+//
+//    [navBar setLargeTitleTextAttributes:@{NSForegroundColorAttributeName: self.titleColor}];
+//    [navBar setTitleTextAttributes:@{NSForegroundColorAttributeName: self.titleColor}];
     
 }
 

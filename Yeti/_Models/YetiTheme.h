@@ -6,9 +6,9 @@
 //  Copyright © 2018 Dezine Zync Studios. All rights reserved.
 //
 
-#import <DZThemeKit/DZThemeKit.h>
+#import <Foundation/Foundation.h>
 
-@interface YetiTheme : Theme
+@interface YetiTheme : NSObject
 
 @property (nonatomic, copy) UIColor *cellColor;
 

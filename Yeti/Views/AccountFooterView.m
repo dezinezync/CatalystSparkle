@@ -7,19 +7,18 @@
 //
 
 #import "AccountFooterView.h"
-#import "YetiThemeKit.h"
+#import "PrefsManager.h"
 
 @implementation AccountFooterView
 
 - (void)awakeFromNib {
     [super awakeFromNib];
-    
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    self.backgroundColor = theme.tableColor;
-    
+
+    self.backgroundColor = UIColor.systemGroupedBackgroundColor;
+
     for (UIButton *button in @[self.learnButton, self.restoreButton]) {
         button.layer.cornerRadius = 4.f;
-        button.backgroundColor = [[theme tintColor] colorWithAlphaComponent:0.25f];
+        button.backgroundColor = [SharedPrefs.tintColor colorWithAlphaComponent:0.25f];
     }
 }
 
