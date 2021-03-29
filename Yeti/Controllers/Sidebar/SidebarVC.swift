@@ -252,6 +252,8 @@ enum SidebarItem: Hashable {
         
         #if !targetEnvironment(macCatalyst)
         
+        navigationController?.navigationBar.sizeToFit()
+        
         if SharedPrefs.useToolbar == true {
 
             if DBManager.shared.syncCoordinator != nil {
@@ -275,7 +277,7 @@ enum SidebarItem: Hashable {
         
         didSet {
             if requiresUpdatingUnreadsSharedData == true {
-                updateSharedUnreadsData()
+                coalescingQueue.add(self, #selector(SidebarVC.updateSharedUnreadsData))
             }
         }
         
@@ -378,11 +380,19 @@ enum SidebarItem: Hashable {
     
     func setupNotifications() {
         
-//        DBManager.shared.feeds.publisher.sink { [weak self] (_) in
-//
-//            self?.setupData()
-//
-//        }.store(in: &cancellables)
+        if let mc = mainCoordinator {
+            
+            mc.publisher(for: \.totalUnread)
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] _ in
+                    guard let sself = self else { return }
+                    if sself.requiresUpdatingUnreadsSharedData == false {
+                        sself.requiresUpdatingUnreadsSharedData = true
+                    }
+                }
+                .store(in: &cancellables)
+            
+        }
         
         DBManager.shared.folders.publisher
             .receive(on: DispatchQueue.main)
@@ -1041,10 +1051,8 @@ enum SidebarItem: Hashable {
                 
                 // @TODO: BG task to cleanup DB
                 
+                // Updating the counters will also trigger the unreads widget data to be updated.
                 sself.coalescingQueue.add(sself, #selector(SidebarVC.updateCounters))
-                
-//                sself.updateCounters()
-                sself.updateSharedUnreadsData()
                 
                 if let mc = sself.mainCoordinator,
                    let f = mc.feedVC,
@@ -1094,28 +1102,28 @@ enum SidebarItem: Hashable {
         
     }
     
-    fileprivate var unreadWidgetsTimer: Timer?
+//    fileprivate var unreadWidgetsTimer: Timer?
     
     @objc func updateSharedUnreadsData() {
         
-        guard Thread.isMainThread == true else {
-            
-            performSelector(onMainThread: #selector(updateSharedUnreadsData), with: nil, waitUntilDone: false)
-            
-            return
-        }
-        
-        var interval: Double = 0
-        
-        if unreadWidgetsTimer != nil {
-            
-            interval = 2
-            
-            unreadWidgetsTimer?.invalidate()
-            unreadWidgetsTimer = nil
-        }
-        
-        unreadWidgetsTimer = Timer(timeInterval: interval, repeats: false, block: { (_) in
+//        guard Thread.isMainThread == true else {
+//
+//            performSelector(onMainThread: #selector(updateSharedUnreadsData), with: nil, waitUntilDone: false)
+//
+//            return
+//        }
+//
+//        var interval: Double = 0
+//
+//        if unreadWidgetsTimer != nil {
+//
+//            interval = 2
+//
+//            unreadWidgetsTimer?.invalidate()
+//            unreadWidgetsTimer = nil
+//        }
+//
+//        unreadWidgetsTimer = Timer(timeInterval: interval, repeats: false, block: { (_) in
             
             DBManager.shared.countsConnection.asyncRead { [weak self] (t) in
                 
@@ -1141,42 +1149,81 @@ enum SidebarItem: Hashable {
 
                 DBManager.shared.writeQueue.async {
                     
-                    var usableItems: [Article] = []
+                    let usableItems: [Article] = items
                     
-                    let coverItems = items.filter { $0.coverImage != nil }
+//                    let coverItems = items.filter { $0.coverImage != nil }
+//
+//                    if coverItems.count >= 4 {
+//                        usableItems = coverItems
+//                    }
+//                    else {
+//
+//                        /*
+//                         * A: Say we have 1 item with a cover. So we take the other 3 non-cover items
+//                         *    and concat it here.
+//                         *
+//                         * B: Say we have 3 items with covers. We take the first non-cover item
+//                         *    and use it here.
+//                         */
+//
+//                        let coverItemsCount = coverItems.count
+//                        var additionalRequired = max(0, 4 - coverItemsCount)
+//
+//                        let nonCoverItems = items.filter { $0.coverImage == nil }
+//
+//                        if nonCoverItems.count > 0 {
+//
+//                            additionalRequired = min(additionalRequired, nonCoverItems.count)
+//
+//                            usableItems = coverItems
+//
+//                            nonCoverItems.suffix(additionalRequired).forEach { usableItems.append($0) }
+//
+//                        }
+//
+//                    }
                     
-                    if coverItems.count >= 4 {
-                        usableItems = coverItems
-                    }
-                    else {
+                    // Actually stores WidgetArticle before writing to disk.
+                    var list: [Article] = []
+                    
+                    if usableItems.count > 0 {
                         
-                        /*
-                         * A: Say we have 1 item with a cover. So we take the other 3 non-cover items
-                         *    and concat it here.
-                         *
-                         * B: Say we have 3 items with covers. We take the first non-cover item
-                         *    and use it here.
-                         */
+                        let upperBound = max(0, min(4, usableItems.count))
                         
-                        let coverItemsCount = coverItems.count
-                        var additionalRequired = max(0, 4 - coverItemsCount)
+                        list = Array(usableItems[0..<upperBound])
                         
-                        let nonCoverItems = items.filter { $0.coverImage == nil }
+                        let widgetList: [WidgetArticle] = list.map { WidgetArticle.init(copyFrom: $0) }
                         
-                        if nonCoverItems.count > 0 {
+                        // get the feeds for these articles
+                        for article in widgetList {
                             
-                            additionalRequired = min(additionalRequired, nonCoverItems.count)
+                            if let feed = DBManager.shared.feed(for: article.feedID) {
+                                article.blog = feed.displayTitle
+                                article.favicon = feed.faviconProxyURI(size: 32)
+                            }
                             
-                            usableItems = coverItems
-                            
-                            nonCoverItems.suffix(additionalRequired).forEach { usableItems.append($0) }
+                            if article.title == nil || (article.title != nil && article.title!.isEmpty) {
+                                // micro.blog post.
+                                
+                                if article.summary == nil || article.summary?.isEmpty == true {
+                                    
+                                    if let content = t.object(forKey: article.identifier, inCollection: CollectionNames.articlesContent.rawValue) as? [Content] {
+                                        
+                                        article.content = content
+                                        article.summary = article.textFromContent
+                                        
+                                        article.content = []
+                                        
+                                    }
+                                    
+                                }
+                                
+                            }
                             
                         }
                         
-                    }
-                    
-                    let list = usableItems.sorted { (a, b) -> Bool in
-                        return a.timestamp > b.timestamp
+                        list = widgetList
+                        
                     }
                     
                     let encoder = JSONEncoder()
@@ -1187,13 +1234,15 @@ enum SidebarItem: Hashable {
                         
                     }
                     
+                    sself.requiresUpdatingUnreadsSharedData = false
+                    
                 }
                 
             }
             
-        })
-        
-        RunLoop.main.add(unreadWidgetsTimer!, forMode: .common)
+//        })
+//
+//        RunLoop.main.add(unreadWidgetsTimer!, forMode: .common)
         
     }
     
@@ -1410,7 +1459,9 @@ extension SidebarVC {
                 let total = Int(txn.numberOfItems(inGroup: group))
                 
                 guard total > 0 else {
-                    // set all feeds to 0
+                    
+                    DBManager.shared.feeds.forEach { $0.unread = 0 }
+                    
                     return
                 }
                 

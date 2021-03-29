@@ -27,6 +27,18 @@ extension Text {
         
     }
     
+    func platformBodyFont () -> Text {
+        
+        #if canImport(AppKit) || targetEnvironment(macCatalyst)
+        return self.font(.system(size: 14)).fontWeight(.regular)
+        #elseif canImport(UIKit)
+        return self.font(.system(size: 15)).fontWeight(.regular)
+        #else
+        return self;
+        #endif
+        
+    }
+    
     func platformCaptionFont () -> Text {
         
         #if canImport(AppKit) || targetEnvironment(macCatalyst)
@@ -205,28 +217,6 @@ struct UnreadsProvider: IntentTimelineProvider {
     
 }
 
-//struct SimpleEntry: TimelineEntry, Hashable, Identifiable, Decodable {
-//
-//    public let date: Date
-//    public let title: String
-//    public let author: String
-//    public let blog: String
-//    public var imageURL: String?
-//    public var image: String?
-//    public let identifier: Int
-//    public let blogID: Int
-//    public var favicon: String?
-//
-//    func hash(into hasher: inout Hasher) {
-//        hasher.combine(identifier)
-//    }
-//
-//    var id : Int {
-//        return hashValue
-//    }
-//
-//}
-
 struct SimpleEntries: TimelineEntry, Decodable {
     public let date: Date
     public var entries: [WidgetArticle]
@@ -251,7 +241,7 @@ struct WidgetArticleView : View {
     
     var body: some View {
         
-        Link(destination:URL(string: "elytra://feed/\(entry.blogID ?? 0)/article/\(entry.identifier!)")!) {
+        Link(destination:URL(string: "elytra://feed/\(entry.feedID)/article/\(entry.identifier!)")!) {
             
             let maxDim : CGFloat = widgetFamily == .systemLarge ? 64 : 46;
             
@@ -274,11 +264,24 @@ struct WidgetArticleView : View {
                     
                     VStack(alignment: .leading, spacing: 2) {
                         
-                        Text(entry.title ?? "Untitled")
-                            .platformTitleFont()
-                            .foregroundColor(.primary)
-                            .alignmentGuide(HorizontalAlignment.leading) { _ in 0 }
-                            .lineLimit(2)
+                        if let title = entry.title, title.isEmpty == false {
+                            
+                            Text(title)
+                                .platformTitleFont()
+                                .foregroundColor(.primary)
+                                .alignmentGuide(HorizontalAlignment.leading) { _ in 0 }
+                                .lineLimit(2)
+                            
+                        }
+                        else if let content = entry.summary, content.isEmpty == false {
+                            
+                            Text(content)
+                                .platformBodyFont()
+                                .foregroundColor(.primary)
+                                .alignmentGuide(HorizontalAlignment.leading) { _ in 0 }
+                                .lineLimit(2)
+                            
+                        }
                         
                         if (entry.author == entry.blog) {
                             
