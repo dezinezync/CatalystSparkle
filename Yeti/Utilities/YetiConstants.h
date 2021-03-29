@@ -28,7 +28,7 @@ extern FMNotification _Nonnull const BookmarksDidUpdate;
 extern FMNotification _Nonnull const SubscribedToFeed;
 
 YETI_EXPORT NSString * _Nonnull const kResetAccountSettingsPref;
-YETI_EXPORT NSString * _Nonnull const kHasShownOnboarding;
+//YETI_EXPORT NSString * _Nonnull const kHasShownOnboarding; // moved to Defaults 
 YETI_EXPORT NSString * _Nonnull const kIsSubscribingToPushNotifications;
 
 YETI_EXPORT NSString * _Nonnull const kDefaultsBackgroundRefresh;

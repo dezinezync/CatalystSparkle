@@ -168,7 +168,7 @@ import Defaults
         
         guard user.subscription == nil else {
             
-            Keychain.add(kHasShownOnboarding, boolean: true)
+            Defaults[.hasShownIntro] = true
             
             navigationController?.dismiss(animated: true, completion: nil)
             return

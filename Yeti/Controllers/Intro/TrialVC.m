@@ -131,7 +131,8 @@
     
     dispatch_async(dispatch_get_main_queue(), ^{
         
-        [Keychain add:kHasShownOnboarding boolean:YES];
+        [NSUserDefaults.standardUserDefaults setBool:YES forKey:@"hasShownIntro"];
+        [NSUserDefaults.standardUserDefaults synchronize];
         
         [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
         

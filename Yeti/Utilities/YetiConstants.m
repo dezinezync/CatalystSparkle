@@ -21,7 +21,7 @@ FMNotification _Nonnull const BookmarksDidUpdate = @"com.yeti.note.bookmarksDidU
 FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFeed";
 
 NSString * const kResetAccountSettingsPref = @"reset_account_preference";
-NSString * const kHasShownOnboarding = @"com.yeti.onboarding.main";
+//NSString * const kHasShownOnboarding = @"com.yeti.onboarding.main"; // moved to Defaults
 NSString * const kIsSubscribingToPushNotifications = @"com.yeti.internal.isSubscribingToPushNotifications";
 
 #pragma mark - NSUserDefaults Keys

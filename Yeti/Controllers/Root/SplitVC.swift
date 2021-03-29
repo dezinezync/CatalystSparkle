@@ -70,12 +70,12 @@ import Defaults
             return
         }
         
-        #if !DEBUG
+//        #if !DEBUG
         // this prevents skipping the onboarding and trial setup.
-        if Keychain.bool(for: kHasShownOnboarding) == false {
+        if Defaults[.hasShownIntro] == false {
             showOnboarding()
         }
-        #endif
+//        #endif
         
     }
     
