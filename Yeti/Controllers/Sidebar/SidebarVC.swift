@@ -580,7 +580,12 @@ enum SidebarItem: Hashable {
 
             }
 
-            DS.apply(foldersSnapshot, to: SidebarSection.folders.rawValue)
+            do {
+                try? DS.apply(foldersSnapshot, to: SidebarSection.folders.rawValue)
+            }
+            catch {
+                print(error)
+            }
             
             let feedsWithoutFolders = DBManager.shared.feeds.filter { $0.folderID == nil || $0.folderID == 0 }
             
