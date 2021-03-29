@@ -33,7 +33,7 @@ public extension Notification.Name {
     static let userUpdated = Notification.Name(rawValue: "com.yeti.note.userDidUpdate")
 }
 
-private let DB_VERSION_TAG = "2021-03-29 09:23AM IST"
+private let DB_VERSION_TAG = "2021-03-29 09:30AM IST"
 
 extension NSNotification.Name {
 //    static let YapDatabaseModifiedNotification = NSNotification.Name("YapDatabaseModifiedNotification")
@@ -1184,7 +1184,9 @@ extension DBManager {
                     return .orderedSame
                 }
                 
-                return md1.timestamp.compare(other: md2.timestamp)
+                // we reverse compare since we need the default sorting
+                // to be latest first.
+                return md2.timestamp.compare(other: md1.timestamp)
                 
             }
             
