@@ -25,9 +25,9 @@ public enum FeedsManagerError : Error {
         return String(describing: self).replacingOccurrences(of: "general(message: \"", with: "").replacingOccurrences(of: "\")", with: "")
     }
     
-    static public func from(description: String, statusCode: Int) -> FeedsManagerError {
+    static public func from(description: String, statusCode: Int) -> NSError {
         
-        return NSError(domain: "Elytra", code: statusCode, userInfo: [NSLocalizedDescriptionKey: description]) as! FeedsManagerError
+        return NSError(domain: "Elytra", code: statusCode, userInfo: [NSLocalizedDescriptionKey: description])
         
     }
     
@@ -448,14 +448,14 @@ extension FeedsManager {
                 print(error)
             }
             
-            return .failure(FeedsManagerError.general(message: "An unknown error occurred when fetching feeds."))
+            return .failure(FeedsManagerError.from(description: "An unknown error occurred when fetching feeds.", statusCode: 500))
             
         } completion: { (result) in
             
             switch result {
             case .success((_, let result)):
                 guard let result = result else {
-                    completion?(.failure(FeedsManagerError.general(message: "No response received when fetching feeds")))
+                    completion?(.failure(FeedsManagerError.from(description: "No response received when fetching feeds", statusCode: 500)))
                     return
                 }
 
@@ -489,14 +489,14 @@ extension FeedsManager {
             case .success(let (response, feed)): do {
                 
                 guard let response = response else {
-                    completion?(.failure(FeedsManagerError.general(message: "No response recevied when trying to add the feed.")))
+                    completion?(.failure(FeedsManagerError.from(description: "No response recevied when trying to add the feed.", statusCode: 500)))
                     return
                 }
                 
                 if response.statusCode == 300 {
                     
                     // multiple options
-                    completion?(.failure(FeedsManagerError.general(message: "Not a supported URL.")))
+                    completion?(.failure(FeedsManagerError.from(description: "Not a supported URL.", statusCode: 400)))
                     return
                     
                 }
@@ -563,18 +563,18 @@ extension FeedsManager {
             case .success(let (response, feed)): do {
                 
                 guard let response = response else {
-                    completion?(.failure(FeedsManagerError.general(message: "No response recevied when trying to add the feed.")))
+                    completion?(.failure(FeedsManagerError.from(description: "No response recevied when trying to add the feed.", statusCode: 500)))
                     return
                 }
                 
                if response.statusCode == 304 {
                     // feed already exists in the user's list.
-                    completion?(.failure(FeedsManagerError.general(message: "Feed already exists in your list.")))
+                    completion?(.failure(FeedsManagerError.from(description: "Feed already exists in your list.", statusCode: 400)))
                     return
                 }
                 
                 guard let feed = feed else {
-                    completion?(.failure(FeedsManagerError.general(message: "An unknown error occurred when adding this feed to your account")))
+                    completion?(.failure(FeedsManagerError.from(description: "An unknown error occurred when adding this feed to your account", statusCode: 500)))
                     return
                 }
                 
@@ -870,7 +870,7 @@ extension FeedsManager {
             case .success(let (response, changeSet)):
                 
                 guard let response = response else {
-                    completion?(.failure(FeedsManagerError.general(message: "No response was received when trying to fetch sync data.")))
+                    completion?(.failure(FeedsManagerError.from(description: "No response was received when trying to fetch sync data.", statusCode: 500)))
                     return
                 }
                 
@@ -881,6 +881,119 @@ extension FeedsManager {
                 }
                 
                 completion?(.success(changeSet!))
+                
+            case .failure(let error):
+                completion?(.failure(error))
+            }
+            
+        }
+        
+    }
+    
+}
+
+// MARK: - Filters
+extension FeedsManager {
+    
+    public func getFilters(completion:((Result<[String], Error>) -> Void)?) {
+        
+        guard let _ = self.user else {
+            completion?(.failure(FeedsManagerError.from(description: "An invalid or no session exists.", statusCode: 401)))
+            return
+        }
+        
+        session.GET(path: "/user/filters", query: nil, resultType: [String: [String]].self) { result in
+            
+            switch result {
+            case .success(let (response, result)):
+                
+                guard let _ = response else {
+                    completion?(.failure(FeedsManagerError.from(description: "No response was received when trying to add the filter.", statusCode: 500)))
+                    return
+                }
+                
+                guard let result = result else {
+                    completion?(.failure(FeedsManagerError.from(description: "No response was received when trying to add the filter.", statusCode: 500)))
+                    return
+                }
+                
+                completion?(.success(result["filters"] ?? []))
+                
+            case .failure(let error):
+                completion?(.failure(error))
+            }
+            
+        }
+        
+    }
+    
+    public func addFilter(_ text: String, completion:((Result<Bool, Error>) -> Void)?) {
+        
+        guard text.isEmpty == false else {
+            completion?(.failure(FeedsManagerError.from(description: "An invalid or no text was provided for the filter.", statusCode: 400)))
+            return
+        }
+        
+        session.PUT(path: "/user/filters", query: nil, body: ["word": text], resultType: [String: Bool].self) { result in
+            
+            switch result {
+            case .success(let (response, result)):
+                
+                guard let response = response else {
+                    completion?(.failure(FeedsManagerError.from(description: "No response was received when trying to add the filter.", statusCode: 500)))
+                    return
+                }
+                
+                guard response.statusCode != 304 else {
+                    // already deleted.
+                    completion?(.success(true))
+                    return
+                }
+                
+                guard let result = result else {
+                    completion?(.failure(FeedsManagerError.from(description: "No response was received when trying to add the filter.", statusCode: 500)))
+                    return
+                }
+                
+                completion?(.success(result["status"] ?? false))
+                
+            case .failure(let error):
+                completion?(.failure(error))
+            }
+            
+        }
+        
+    }
+    
+    public func deleteFilter(_ text: String, completion:((Result<Bool, Error>) -> Void)?) {
+        
+        guard text.isEmpty == false else {
+            completion?(.failure(FeedsManagerError.from(description: "An invalid or no text was provided for the filter.", statusCode: 400)))
+            return
+        }
+        
+        session.DELETE(path: "/user/filters", query: ["word": text], resultType: [String: Bool].self) { result in
+            
+            switch result {
+            case .success(let (response, result)):
+                
+                guard let response = response else {
+                    completion?(.failure(FeedsManagerError.from(description: "No response was received when trying to delete the filter.", statusCode: 500)))
+                    return
+                }
+                
+                guard response.statusCode != 304 else {
+                    // already deleted.
+                    completion?(.success(true))
+                    return
+                }
+                
+                guard let result = result else {
+                    completion?(.failure(FeedsManagerError.from(description: "No response was received when trying to delete the filter.", statusCode: 500)))
+                    return
+                }
+                
+                completion?(.success(result["status"] ?? false))
                 
             case .failure(let error):
                 completion?(.failure(error))
@@ -981,12 +1094,12 @@ extension FeedsManager {
             }
             
             guard let data = data else {
-                completion?(.failure(FeedsManagerError.general(message: "No response was received from Youtube.")))
+                completion?(.failure(FeedsManagerError.from(description: "No response was received when trying to fetch sync data.", statusCode: 500)))
                 return
             }
             
             guard let html = String(data: data, encoding: .utf8) else {
-                completion?(.failure(FeedsManagerError.general(message: "No response was received from Youtube.")))
+                completion?(.failure(FeedsManagerError.from(description: "No response was received when trying to fetch sync data.", statusCode: 500)))
                 return
             }
             
@@ -1011,7 +1124,7 @@ extension FeedsManager {
             guard let c = cannonical,
                   let url = URL(string: c) else {
                 
-                completion?(.failure(FeedsManagerError.general(message: "No response was received from Youtube.")))
+                completion?(.failure(FeedsManagerError.from(description: "No response was received from Youtube", statusCode: 500)))
                 return
                 
             }

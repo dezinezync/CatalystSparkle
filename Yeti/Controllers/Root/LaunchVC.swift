@@ -91,7 +91,7 @@ import Defaults
             return
         }
         
-        #if DEBUG
+        #if targetEnvironment(simulator)
         process(uuid: "000768.e759fc828ab249ad98ceefc5f80279b3.1145")
         return
         #endif

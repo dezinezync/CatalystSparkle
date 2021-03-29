@@ -165,8 +165,63 @@ import DBManager
         
     }
     
+    // MARK: - User
+    
     static public var user: User? {
-        return DBManager.shared.user
+        get {
+            return DBManager.shared.user
+        }
+        set {
+            DBManager.shared.user = newValue
+        }
+    }
+    
+    static public func getFilters(completion: ((_ error: Error?, _ filters: [String]?) -> Void)?) {
+     
+        FeedsManager.shared.getFilters { result in
+            
+            switch result {
+            case .failure(let error):
+                completion?(error, nil)
+                
+            case .success(let filters):
+                completion?(nil, filters)
+            }
+            
+        }
+        
+    }
+    
+    static public func addFilter(text: String, completion: ((_ error: Error?, _ status: Bool) -> Void)?) {
+        
+        FeedsManager.shared.addFilter(text) { result in
+            
+            switch result {
+            case .failure(let error):
+                completion?(error, false)
+            
+            case .success(let status):
+                completion?(nil, status)
+            }
+            
+        }
+        
+    }
+    
+    static public func deleteFilter(text: String, completion: ((_ error: Error?, _ status: Bool) -> Void)?) {
+        
+        FeedsManager.shared.deleteFilter(text) { result in
+            
+            switch result {
+            case .failure(let error):
+                completion?(error, false)
+            
+            case .success(let status):
+                completion?(nil, status)
+            }
+            
+        }
+        
     }
     
 }
