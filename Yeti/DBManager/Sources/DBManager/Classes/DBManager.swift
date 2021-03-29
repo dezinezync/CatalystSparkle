@@ -33,7 +33,7 @@ public extension Notification.Name {
     static let userUpdated = Notification.Name(rawValue: "com.yeti.note.userDidUpdate")
 }
 
-private let DB_VERSION_TAG = "2021-03-26 08:00AM IST"
+private let DB_VERSION_TAG = "2021-03-29 09:23AM IST"
 
 extension NSNotification.Name {
 //    static let YapDatabaseModifiedNotification = NSNotification.Name("YapDatabaseModifiedNotification")
@@ -1065,7 +1065,6 @@ extension DBManager {
 }
 
 // MARK: - DB Registrations
-private let versionTag = "2021-03-15 10:53 IST"
 
 public enum DBManagerViews: String {
     
@@ -1151,7 +1150,7 @@ extension DBManager {
 
             }
             
-            let view = YapDatabaseAutoView(grouping: group, sorting: sort, versionTag: versionTag)
+            let view = YapDatabaseAutoView(grouping: group, sorting: sort, versionTag: DB_VERSION_TAG)
             db.register(view, withName: .rootView)
             
         }
@@ -1189,7 +1188,7 @@ extension DBManager {
                 
             }
             
-            let view = YapDatabaseAutoView(grouping: grouping, sorting: sorting, versionTag: versionTag)
+            let view = YapDatabaseAutoView(grouping: grouping, sorting: sorting, versionTag: DB_VERSION_TAG)
             
             db.register(view, withName: .feedView)
             
@@ -1222,11 +1221,11 @@ extension DBManager {
                 let set1 = Set(wordCloud)
                 let set2 = Set(user.filters)
                 
-                return set1.intersection(set2).count > 0
+                return set1.intersection(set2).count == 0
                 
             }
             
-            let articlesView = YapDatabaseFilteredView(parentViewName: DBManagerViews.feedView.rawValue, filtering: filter, versionTag: versionTag)
+            let articlesView = YapDatabaseFilteredView(parentViewName: DBManagerViews.feedView.rawValue, filtering: filter, versionTag: DB_VERSION_TAG)
             
             db.register(articlesView, withName: .articlesView)
             
@@ -1264,7 +1263,7 @@ extension DBManager {
                 
             }
             
-            let unreadsView = YapDatabaseFilteredView(parentViewName: DBManagerViews.articlesView.rawValue, filtering: filter, versionTag: versionTag)
+            let unreadsView = YapDatabaseFilteredView(parentViewName: DBManagerViews.articlesView.rawValue, filtering: filter, versionTag: DB_VERSION_TAG)
             
             db.register(unreadsView, withName: .unreadsView)
             
@@ -1287,7 +1286,7 @@ extension DBManager {
                 
             }
             
-            let bookmarksView = YapDatabaseFilteredView(parentViewName: DBManagerViews.articlesView.rawValue, filtering: filtering, versionTag: versionTag)
+            let bookmarksView = YapDatabaseFilteredView(parentViewName: DBManagerViews.articlesView.rawValue, filtering: filtering, versionTag: DB_VERSION_TAG)
             
             db.register(bookmarksView, withName: .bookmarksView)
             
