@@ -11,6 +11,7 @@ import AuthenticationServices
 import Networking
 import DBManager
 import Models
+import Defaults
 
 @objc class LaunchVC: UIViewController {
     
@@ -166,6 +167,9 @@ import Models
         DBManager.shared.user = user
         
         guard user.subscription == nil else {
+            
+            Keychain.add(kHasShownOnboarding, boolean: true)
+            
             navigationController?.dismiss(animated: true, completion: nil)
             return
         }

@@ -133,9 +133,6 @@
         
         [Keychain add:kHasShownOnboarding boolean:YES];
         
-        // @TODO
-//        [MyAppDelegate.coordinator.sidebarVC beginRefreshingAll:nil];
-        
         [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
         
         [self.navigationController dismissViewControllerAnimated:YES completion:nil];

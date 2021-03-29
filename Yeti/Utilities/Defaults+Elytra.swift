@@ -37,6 +37,4 @@ extension Defaults.Keys {
     
     static let pushRequest = Key<Bool>("pushRequest", default: false)
     
-    static let hasShownIntro = Key<Bool>("hasShownIntro", default: false)
-    
 }
