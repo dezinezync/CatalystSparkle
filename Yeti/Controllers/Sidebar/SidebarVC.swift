@@ -210,6 +210,18 @@ enum SidebarItem: Hashable {
         
     }()
     
+    fileprivate var initialSyncCompleted = false
+    
+    public var requiresUpdatingUnreadsSharedData = false {
+        
+        didSet {
+            if requiresUpdatingUnreadsSharedData == true {
+                coalescingQueue.add(self, #selector(SidebarVC.updateSharedUnreadsData))
+            }
+        }
+        
+    }
+    
     init() {
         super.init(collectionViewLayout: UICollectionViewLayout())
     }
@@ -274,18 +286,6 @@ enum SidebarItem: Hashable {
         
     }
     
-    fileprivate var initialSyncCompleted = false
-    
-    public var requiresUpdatingUnreadsSharedData = false {
-        
-        didSet {
-            if requiresUpdatingUnreadsSharedData == true {
-                coalescingQueue.add(self, #selector(SidebarVC.updateSharedUnreadsData))
-            }
-        }
-        
-    }
-    
     public override func viewDidAppear(_ animated: Bool) {
         
         super.viewDidDisappear(true)
@@ -295,6 +295,8 @@ enum SidebarItem: Hashable {
             sync()
             
         }
+    
+        navigationController?.navigationBar.sizeToFit()
         
         // @TODO: Should Request Review
         
@@ -404,6 +406,17 @@ enum SidebarItem: Hashable {
             self?.setupData()
             
         }.store(in: &cancellables)
+        
+        DBManager.shared.publisher(for: \.lastUpdated)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] date in
+                
+                guard let sself = self else { return }
+                
+                CoalescingQueue.standard.add(sself, #selector(SidebarVC.updateLastUpdatedText))
+                
+            }
+            .store(in: &cancellables)
         
         NotificationCenter.default.publisher(for: .DBManagerDidUpdate)
             .receive(on: DBManager.shared.writeQueue)
@@ -787,6 +800,12 @@ enum SidebarItem: Hashable {
         
     }
     
+    func updateLastUpdatedText() {
+        
+        refreshControl?.attributedTitle = lastUpdateAttributedString()
+        
+    }
+    
     // MARK: - Actions
     public override var canBecomeFirstResponder: Bool {
         return true
@@ -1066,6 +1085,7 @@ enum SidebarItem: Hashable {
                     DispatchQueue.main.async {
                         sself.additionalSafeAreaInsets = .zero
                         sself.refreshControl?.endRefreshing()
+                        DBManager.shared.lastUpdated = Date()
                     }
                 }
                 

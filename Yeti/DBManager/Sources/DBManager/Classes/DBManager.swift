@@ -44,7 +44,7 @@ public let titleWordCloudKey = "titleWordCloud"
 
 public let notificationsKey = "notifications"
 
-@objcMembers public final class DBManager {
+@objcMembers public final class DBManager: NSObject {
     
     public static let shared = DBManager()
     
@@ -74,13 +74,19 @@ public let notificationsKey = "notifications"
             
             let date = Subscription.dateFormatter.date(from: ds)
             
+            _lastUpdated = date
+            
             return date
             
         }
         
         set {
             
+            willChangeValue(for: \.lastUpdated)
+            
             _lastUpdated = newValue
+            
+            didChangeValue(for: \.lastUpdated)
             
             bgConnection.readWrite { (t) in
                 
@@ -101,7 +107,9 @@ public let notificationsKey = "notifications"
         
     }
     
-    public init() {
+    public override init() {
+        
+        super.init()
         
         setupDatabase(self.database)
         setupViews(self.database)
