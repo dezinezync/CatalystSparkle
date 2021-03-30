@@ -254,6 +254,9 @@ enum SidebarItem: Hashable {
         
         navigationController?.navigationBar.sizeToFit()
         
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .always;
+        
         if SharedPrefs.useToolbar == true {
 
             if DBManager.shared.syncCoordinator != nil {
@@ -401,6 +404,27 @@ enum SidebarItem: Hashable {
             self?.setupData()
             
         }.store(in: &cancellables)
+        
+        NotificationCenter.default.publisher(for: .DBManagerDidUpdate)
+            .receive(on: DBManager.shared.writeQueue)
+            .sink { [weak self] note in
+                
+                guard let sself = self,
+                      let notifications = note.userInfo?[notificationsKey] as? [Notification],
+                      notifications.count > 0 else {
+                    return
+                }
+                
+                // check if any of the notifications has a change for
+                // the unreads view. If we do, update the counters.
+                let hasChanges: Bool = DBManager.shared.uiConnection.hasMetadataChange(forCollection: CollectionNames.articles.rawValue, in: notifications)
+                
+                guard hasChanges == true else { return }
+                
+                sself.coalescingQueue.add(sself, #selector(SidebarVC.updateCounters))
+                
+            }
+            .store(in: &cancellables)
         
         SharedPrefs.publisher(for: \.hideBookmarks)
             .receive(on: DispatchQueue.main)
@@ -632,8 +656,6 @@ enum SidebarItem: Hashable {
             }
             
         }
-        
-        coalescingQueue.add(self, #selector(SidebarVC.updateCounters))
         
     }
     
@@ -1042,6 +1064,7 @@ enum SidebarItem: Hashable {
                 
                 if sself.refreshControl?.isRefreshing == true {
                     DispatchQueue.main.async {
+                        sself.additionalSafeAreaInsets = .zero
                         sself.refreshControl?.endRefreshing()
                     }
                 }
@@ -1055,9 +1078,6 @@ enum SidebarItem: Hashable {
                 // @TODO: Update Bookmarks from server
                 
                 // @TODO: BG task to cleanup DB
-                
-                // Updating the counters will also trigger the unreads widget data to be updated.
-                sself.coalescingQueue.add(sself, #selector(SidebarVC.updateCounters))
                 
                 if let mc = sself.mainCoordinator,
                    let f = mc.feedVC,
@@ -1075,6 +1095,7 @@ enum SidebarItem: Hashable {
                 sself.navigationController?.setToolbarHidden(false, animated: animated)
                 sself.progressLabel?.text = "Syncing..."
                 sself.progressLabel?.sizeToFit()
+                sself.additionalSafeAreaInsets = UIEdgeInsets(top: 0, left: 0, bottom: sself.navigationController?.toolbar?.bounds.size.height ?? 44, right: 0)
             }
             else if progress >= 0.99 {
              

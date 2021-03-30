@@ -65,15 +65,15 @@ NSString* deviceName(void) {
     SidebarVC *sidebar = [[SidebarVC alloc] init];
     sidebar.mainCoordinator = self;
     
-    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:sidebar];
-    sidebar.navigationController.navigationBar.prefersLargeTitles = YES;
-    sidebar.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
-    
     if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:sidebar];
+        sidebar.navigationController.navigationBar.prefersLargeTitles = YES;
+        sidebar.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
+        
         [self.splitViewController setViewController:nav forColumn:UISplitViewControllerColumnCompact];
     }
 
-    [self.splitViewController setViewController:nav forColumn:UISplitViewControllerColumnPrimary];
+    [self.splitViewController setViewController:sidebar forColumn:UISplitViewControllerColumnPrimary];
     
     self.sidebarVC = sidebar;
     

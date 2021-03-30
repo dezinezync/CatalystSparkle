@@ -936,15 +936,15 @@ extension FeedVC {
                     
                     items[k] = o
                     
-                    if feedsMapping[metadata.feedID] == nil {
-                        feedsMapping[metadata.feedID] = 0
-                    }
-                    
-                    feedsMapping[metadata.feedID]! += 1
-                    
-                    if calendar.isDateInToday(Date(timeIntervalSince1970: metadata.timestamp)) == true {
-                        inToday += 1
-                    }
+//                    if feedsMapping[metadata.feedID] == nil {
+//                        feedsMapping[metadata.feedID] = 0
+//                    }
+//
+//                    feedsMapping[metadata.feedID]! += 1
+//
+//                    if calendar.isDateInToday(Date(timeIntervalSince1970: metadata.timestamp)) == true {
+//                        inToday += 1
+//                    }
                     
                 }
                 
@@ -959,11 +959,11 @@ extension FeedVC {
             
             sself.markRead(items, inToday: inToday, feedsMapping: feedsMapping) { (count, feed) in
                 
-                var unread = feed.unread ?? count
-                
-                if count > unread { unread = count }
-                
-                feed.unread = max(unread - count, 0)
+//                var unread = feed.unread ?? count
+//
+//                if count > unread { unread = count }
+//
+//                feed.unread = max(unread - count, 0)
                 
                 (sself.articles.objectEnumerator().allObjects as! [Article]).forEach { $0.read = true }
                 
@@ -1023,26 +1023,26 @@ extension FeedVC {
                     DBManager.shared.add(articles: Array(items.values), strip: false)
                 }
                 
-                var counter = UInt(items.count)
-                var totalUnread = coordinator.totalUnread
-                
-                if counter > totalUnread { counter = totalUnread }
-                
-                totalUnread -= counter
-                
-                coordinator.totalUnread = max(totalUnread, 0)
-                
-                if inToday != nil {
-                    
-                    counter = inToday ?? 0
-                    var totalToday = coordinator.totalToday
-                    
-                    if counter > totalToday { counter = totalToday }
-                    
-                    totalToday -= counter
-                    
-                    coordinator.totalToday -= max(0, totalToday)
-                }
+//                var counter = UInt(items.count)
+//                var totalUnread = coordinator.totalUnread
+//
+//                if counter > totalUnread { counter = totalUnread }
+//
+//                totalUnread -= counter
+//
+//                coordinator.totalUnread = max(totalUnread, 0)
+//
+//                if inToday != nil {
+//
+//                    counter = inToday ?? 0
+//                    var totalToday = coordinator.totalToday
+//
+//                    if counter > totalToday { counter = totalToday }
+//
+//                    totalToday -= counter
+//
+//                    coordinator.totalToday -= max(0, totalToday)
+//                }
                 
                 DBManager.shared.add(articles: items.values.map { $0 }, strip: false)
                 
@@ -1190,15 +1190,15 @@ extension FeedVC {
                         
                         unreads[k] = item
                         
-                        if feedsMapping[metadata.feedID] == nil {
-                            feedsMapping[metadata.feedID] = 0
-                        }
-                        
-                        feedsMapping[metadata.feedID]! += 1
-                        
-                        if Calendar.current.isDateInToday(item.timestamp) {
-                            inToday += 1
-                        }
+//                        if feedsMapping[metadata.feedID] == nil {
+//                            feedsMapping[metadata.feedID] = 0
+//                        }
+//
+//                        feedsMapping[metadata.feedID]! += 1
+//
+//                        if Calendar.current.isDateInToday(item.timestamp) {
+//                            inToday += 1
+//                        }
                         
                     }
                     
@@ -1220,25 +1220,25 @@ extension FeedVC {
                 
                 sself.markRead(unreads, inToday: inToday, feedsMapping: feedsMapping, each: nil) {
                     
-                    switch sself.type {
-                    case .natural, .author:
-                        if let f = sself.feed {
-                            let current = f.unread ?? 1
-                            f.unread = max(current - UInt(unreadKeys.count), 0)
-                        }
-                    case .unread:
-                        if let mc = sself.mainCoordinator {
-                            let current = mc.totalUnread
-                            mc.totalUnread = max(current - UInt(unreadKeys.count), 0)
-                        }
-                    case .today:
-                        if let mc = sself.mainCoordinator {
-                            let current = mc.totalToday
-                            mc.totalToday = max(current - UInt(unreadKeys.count), 0)
-                        }
-                    default:
-                        print("Unhandled case for \(sself.type)")
-                    }
+//                    switch sself.type {
+//                    case .natural, .author:
+//                        if let f = sself.feed {
+//                            let current = f.unread ?? 1
+//                            f.unread = max(current - UInt(unreadKeys.count), 0)
+//                        }
+//                    case .unread:
+//                        if let mc = sself.mainCoordinator {
+//                            let current = mc.totalUnread
+//                            mc.totalUnread = max(current - UInt(unreadKeys.count), 0)
+//                        }
+//                    case .today:
+//                        if let mc = sself.mainCoordinator {
+//                            let current = mc.totalToday
+//                            mc.totalToday = max(current - UInt(unreadKeys.count), 0)
+//                        }
+//                    default:
+//                        print("Unhandled case for \(sself.type)")
+//                    }
                     
                     var toUpdate: [Article] = []
                     

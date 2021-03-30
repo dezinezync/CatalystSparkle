@@ -37,7 +37,7 @@ private let DB_VERSION_TAG = "2021-03-29 09:30AM IST"
 
 extension NSNotification.Name {
 //    static let YapDatabaseModifiedNotification = NSNotification.Name("YapDatabaseModifiedNotification")
-    static let DBManagerDidUpdate = Notification.Name("DBManagerDidUpdate")
+    public static let DBManagerDidUpdate = Notification.Name("DBManagerDidUpdate")
 }
 
 public let titleWordCloudKey = "titleWordCloud"
@@ -215,13 +215,13 @@ public let notificationsKey = "notifications"
                 }
                 
                 // Move connections to the latest commit
-                let notes = sself.uiConnection.beginLongLivedReadTransaction()
-                let notes2 = sself.countsConnection.beginLongLivedReadTransaction()
+                let notes: [Notification] = sself.uiConnection.beginLongLivedReadTransaction()
+                let notes2: [Notification] = sself.countsConnection.beginLongLivedReadTransaction()
                 
-                var uniqueNotes = Set(notes)
+                var uniqueNotes: Set<Notification> = Set(notes)
                 uniqueNotes = uniqueNotes.union(Set(notes2))
                 
-                let notifications = uniqueNotes.map { $0 }
+                let notifications: [Notification] = Array(uniqueNotes)
                 
                 if notifications.count == 0 {
                     // nothing changed.
