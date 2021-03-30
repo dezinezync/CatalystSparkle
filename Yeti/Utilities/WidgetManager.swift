@@ -253,4 +253,10 @@ import BackgroundTasks
         
     }
     
+    static public func resetAccount(completion: (() -> Void)?) {
+        
+        DBManager.shared.resetAccount(completion: completion)
+        
+    }
+    
 }

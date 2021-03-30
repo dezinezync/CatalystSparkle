@@ -969,6 +969,27 @@ public let notificationsKey = "notifications"
 // MARK: - Bulk Operations
 extension DBManager {
     
+    public func resetAccount(completion: (() -> Void)?) {
+        
+        bgConnection.asyncReadWrite { t in
+            
+            t.removeAllObjectsInAllCollections()
+            
+        } completionBlock: { [weak self] in
+            
+            DispatchQueue.main.async {
+                self?.user = nil
+                self?.feeds = []
+                self?.folders = []
+                
+                completion?()
+            }
+            
+        }
+
+        
+    }
+    
     public func purgeDataForResync (completion: (() -> Void)?) {
      
         purgeFeedsForResync { [weak self] in

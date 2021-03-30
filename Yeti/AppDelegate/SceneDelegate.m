@@ -371,14 +371,18 @@
 //#endif
     
     if (reset) {
-        // @TODO
-//        [MyFeedsManager resetAccount];
-//
-//        SplitVC *v = self.coordinator.splitViewController;
-//        [v userNotFound];
-//
-//        [defaults setBool:NO forKey:kResetAccountSettingsPref];
-//        [defaults synchronize];
+        
+        [MyFeedsManager resetAccountWithCompletion:^{
+        
+            SplitVC *v = self.coordinator.splitViewController;
+            
+            [v.mainCoordinator showLaunchVC];
+            
+            [defaults setBool:NO forKey:kResetAccountSettingsPref];
+            [defaults synchronize];
+            
+        }];
+
     }
     
 }
