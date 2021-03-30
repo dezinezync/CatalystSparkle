@@ -895,10 +895,6 @@ extension FeedVC {
             }
             
             var items: [String: Article] = [:]
-            var feedsMapping: [UInt: UInt] = [:]
-            
-            let calendar = Calendar.current
-            var inToday: UInt = 0
             
             DBManager.shared.bgConnection.readWrite { [weak self] (t) in
                 
@@ -936,16 +932,6 @@ extension FeedVC {
                     
                     items[k] = o
                     
-//                    if feedsMapping[metadata.feedID] == nil {
-//                        feedsMapping[metadata.feedID] = 0
-//                    }
-//
-//                    feedsMapping[metadata.feedID]! += 1
-//
-//                    if calendar.isDateInToday(Date(timeIntervalSince1970: metadata.timestamp)) == true {
-//                        inToday += 1
-//                    }
-                    
                 }
                 
             }
@@ -957,17 +943,9 @@ extension FeedVC {
             
             print("Marking \(items.count) items as read")
             
-            sself.markRead(items, inToday: inToday, feedsMapping: feedsMapping) { (count, feed) in
+            sself.markRead(items) { [weak self] in
                 
-//                var unread = feed.unread ?? count
-//
-//                if count > unread { unread = count }
-//
-//                feed.unread = max(unread - count, 0)
-                
-                (sself.articles.objectEnumerator().allObjects as! [Article]).forEach { $0.read = true }
-                
-            } completion: { [weak self] in
+                (self?.articles.objectEnumerator().allObjects as? [Article])?.forEach { $0.read = true }
                 
                 self?.updateVisibleCells()
                 
@@ -977,16 +955,11 @@ extension FeedVC {
         
     }
     
-    func markRead(_ inItems: [String: Article], inToday: UInt?, feedsMapping: [UInt: UInt]?, each:(( _ count: UInt, _ feed: Feed) -> Void)?, completion:(() -> Void)?) {
+    func markRead(_ inItems: [String: Article], completion:(() -> Void)?) {
         
         let items = inItems
         
-        FeedsManager.shared.markRead(true, items: items.values.map { $0 }) { [weak self] (result) in
-            
-            guard let sself = self,
-                  let coordinator = sself.mainCoordinator else {
-                return
-            }
+        FeedsManager.shared.markRead(true, items: items.values.map { $0 }) { (result) in
             
             switch result {
             
@@ -1023,45 +996,7 @@ extension FeedVC {
                     DBManager.shared.add(articles: Array(items.values), strip: false)
                 }
                 
-//                var counter = UInt(items.count)
-//                var totalUnread = coordinator.totalUnread
-//
-//                if counter > totalUnread { counter = totalUnread }
-//
-//                totalUnread -= counter
-//
-//                coordinator.totalUnread = max(totalUnread, 0)
-//
-//                if inToday != nil {
-//
-//                    counter = inToday ?? 0
-//                    var totalToday = coordinator.totalToday
-//
-//                    if counter > totalToday { counter = totalToday }
-//
-//                    totalToday -= counter
-//
-//                    coordinator.totalToday -= max(0, totalToday)
-//                }
-                
                 DBManager.shared.add(articles: items.values.map { $0 }, strip: false)
-                
-                if feedsMapping != nil {
-                    for (key, count) in feedsMapping! {
-                        
-                        guard let feed = DBManager.shared.feedForID(key) else {
-                            print("Feed not found for ID:", key)
-                            continue
-                        }
-                        
-                        DispatchQueue.main.async {
-                            
-                            each?(count, feed)
-                            
-                        }
-                        
-                    }
-                }
                 
                 DispatchQueue.main.async {
                     
@@ -1142,8 +1077,6 @@ extension FeedVC {
                 let total = Int(txn.numberOfItems(inGroup: GroupNames.articles.rawValue))
             
                 var unreads: [String: Article] = [:]
-                var feedsMapping: [UInt: UInt] = [:]
-                var inToday: UInt = 0
                 
                 txn.enumerateKeysAndMetadata(inGroup: GroupNames.articles.rawValue, with: options, range: NSMakeRange(0, total)) { (_, _) -> Bool in
                     return true
@@ -1218,27 +1151,7 @@ extension FeedVC {
                 print("IDs: ", unreadKeys)
                 #endif
                 
-                sself.markRead(unreads, inToday: inToday, feedsMapping: feedsMapping, each: nil) {
-                    
-//                    switch sself.type {
-//                    case .natural, .author:
-//                        if let f = sself.feed {
-//                            let current = f.unread ?? 1
-//                            f.unread = max(current - UInt(unreadKeys.count), 0)
-//                        }
-//                    case .unread:
-//                        if let mc = sself.mainCoordinator {
-//                            let current = mc.totalUnread
-//                            mc.totalUnread = max(current - UInt(unreadKeys.count), 0)
-//                        }
-//                    case .today:
-//                        if let mc = sself.mainCoordinator {
-//                            let current = mc.totalToday
-//                            mc.totalToday = max(current - UInt(unreadKeys.count), 0)
-//                        }
-//                    default:
-//                        print("Unhandled case for \(sself.type)")
-//                    }
+                sself.markRead(unreads) {
                     
                     var toUpdate: [Article] = []
                     

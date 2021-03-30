@@ -1488,6 +1488,9 @@ extension SidebarVC {
                     
                     DBManager.shared.feeds.forEach { $0.unread = 0 }
                     
+                    self?.mainCoordinator?.totalUnread = 0
+                    self?.mainCoordinator?.totalToday = 0
+                    
                     return
                 }
                 
@@ -1499,6 +1502,10 @@ extension SidebarVC {
                 
                 // feedID : Unread Count
                 var feedsMapping: [UInt: UInt] = [:]
+                
+                // Ensure 0 reads are also updated.
+                DBManager.shared.feeds.forEach { feedsMapping[$0.feedID] = 0 }
+                
                 var totalToday: UInt = 0
                 
                 let calendar = NSCalendar.current
