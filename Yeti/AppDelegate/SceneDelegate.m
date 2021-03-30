@@ -178,7 +178,7 @@
         [self scheduleBackgroundRefresh];
         
 //        if (cancelling == YES) {
-//            
+//
 //#ifdef DEBUG
 //#pragma clang diagnostic push
 //#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
@@ -189,7 +189,7 @@
 //
 //#pragma clang diagnostic pop
 //#endif
-//            
+//
 //        }
         
     }];
@@ -332,6 +332,8 @@
         }
         
         [MyFeedsManager setupBGSyncCoordinatorWithTask:task completion:^(BOOL completed) {
+            
+            [MyFeedsManager completedBGSync];
             
             if (completed == NO) {
                 return;

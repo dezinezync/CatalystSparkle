@@ -247,4 +247,10 @@ import BackgroundTasks
         
     }
     
+    static public func completedBGSync() {
+        
+        DBManager.shared.syncCoordinator = nil
+        
+    }
+    
 }
