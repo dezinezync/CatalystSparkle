@@ -542,7 +542,7 @@ enum SidebarItem: Hashable {
         
         var sectionSnapshot: NSDiffableDataSourceSectionSnapshot<SidebarItem>? = nil
 
-        let s = self.DS.snapshot()
+        let s: NSDiffableDataSourceSnapshot = self.DS.snapshot()
 
         if s.numberOfSections > 1 {
 
@@ -552,9 +552,9 @@ enum SidebarItem: Hashable {
 
         }
 
-        var customSnapshot = NSDiffableDataSourceSectionSnapshot<SidebarItem>()
+        var customSnapshot: NSDiffableDataSourceSectionSnapshot<SidebarItem> = NSDiffableDataSourceSectionSnapshot<SidebarItem>()
 
-        var customFeeds = [
+        var customFeeds: [CustomFeed] = [
             CustomFeed(title: "Unread", image: "largecircle.fill.circle", color: .systemBlue, type: .unread),
             CustomFeed(title: "Today", image: "calendar", color: .systemRed, type: .today)
         ]
@@ -573,7 +573,7 @@ enum SidebarItem: Hashable {
 
             if DBManager.shared.folders.count > 0 {
 
-                let uniqueFolders = DBManager.shared.folders
+                let uniqueFolders: [SidebarItem] = DBManager.shared.folders
                     .sorted(by: { (lhs, rhs) -> Bool in
                         return lhs.title.localizedCompare(rhs.title) == .orderedAscending
                     })
@@ -585,11 +585,11 @@ enum SidebarItem: Hashable {
 
                     if case .folder(let folder) = folderItem {
 
-                        let feeds = folder.feeds.map { $0 }
+                        let feeds: [Feed] = folder.feeds.map { $0 }
 
                         if feeds.count > 0 {
 
-                            let uniqueFeeds = Array(Set(feeds))
+                            let uniqueFeeds: [SidebarItem] = Array(Set(feeds))
                                 .sorted(by: { (lhs, rhs) -> Bool in
                                     
                                     return lhs.displayTitle.localizedCompare(rhs.displayTitle) == .orderedAscending
@@ -624,9 +624,9 @@ enum SidebarItem: Hashable {
                 print(error)
             }
             
-            let feedsWithoutFolders = DBManager.shared.feeds.filter { $0.folderID == nil || $0.folderID == 0 }
+            let feedsWithoutFolders: [Feed] = DBManager.shared.feeds.filter { $0.folderID == nil || $0.folderID == 0 }
             
-            var feedsSnapshot = NSDiffableDataSourceSectionSnapshot<SidebarItem>()
+            var feedsSnapshot: NSDiffableDataSourceSectionSnapshot<SidebarItem> = NSDiffableDataSourceSectionSnapshot<SidebarItem>()
             
             if feedsWithoutFolders.count > 0 {
                 
@@ -662,7 +662,7 @@ enum SidebarItem: Hashable {
         
         if let s = selected {
             
-            DispatchQueue.main.async { [weak self] in
+            runOnMainQueueWithoutDeadlocking { [weak self] in
                 
                 self?.collectionView.selectItem(at: s, animated: false, scrollPosition: .init())
                 
