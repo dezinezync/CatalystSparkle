@@ -74,7 +74,7 @@ public enum FeedsManagerError : Error {
         }
     }
     
-    lazy var mainSession: DZURLSession = {
+    public lazy var mainSession: DZURLSession = {
         
         let sessionConfiguration = URLSessionConfiguration.default
         
@@ -155,7 +155,7 @@ public enum FeedsManagerError : Error {
         return s
     }()
     
-    lazy var backgroundSession: DZURLSession = {
+    public lazy var backgroundSession: DZURLSession = {
         
         let sessionConfiguration = URLSessionConfiguration.background(withIdentifier: "elytra.background")
         sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData

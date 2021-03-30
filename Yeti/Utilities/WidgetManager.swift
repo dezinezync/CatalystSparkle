@@ -11,6 +11,7 @@ import WidgetKit
 import Models
 import Networking
 import DBManager
+import BackgroundTasks
 
 @objcMembers public class WidgetManager: NSObject {
     
@@ -221,6 +222,28 @@ import DBManager
             }
             
         }
+        
+    }
+    
+    static public func setBackgroundCompletionBlock(completion: (() -> Void)?) {
+        
+        FeedsManager.shared.backgroundSession.backgroundCompletionHandler = completion
+        
+    }
+    
+    static public func setupBGSyncCoordinator(task: BGAppRefreshTask, completion: ((Bool) -> Void)?) {
+        
+        guard DBManager.shared.syncCoordinator == nil else {
+            task.setTaskCompleted(success: false)
+            completion?(false)
+            return
+        }
+        
+        let syncCoordinator: SyncCoordinator = SyncCoordinator()
+        
+        DBManager.shared.syncCoordinator = syncCoordinator
+        
+        syncCoordinator.setupSync(with: task, completion: completion)
         
     }
     

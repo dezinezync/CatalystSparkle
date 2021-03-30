@@ -30,8 +30,8 @@
 - (void)application:(UIApplication *)application handleEventsForBackgroundURLSession:(nonnull NSString *)identifier completionHandler:(nonnull void (^)(void))completionHandler {
     
     NSLogDebug(@"Got a fresh background completion handler");
-    // @TODO
-//    MyFeedsManager.backgroundSession.backgroundCompletionHandler = completionHandler;
+    
+    [MyFeedsManager setBackgroundCompletionBlockWithCompletion:completionHandler];
     
 }
 

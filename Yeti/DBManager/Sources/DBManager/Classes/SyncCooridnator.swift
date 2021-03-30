@@ -23,12 +23,12 @@ private let SYNC_TOKEN = "syncToken-2.3.0"
 /// The last sync token we stored or the one sent by the server.
 private let SYNC_TOKEN_ID = "syncTokenID-2.3.0"
 
-public class SyncCoordinator: NSObject {
+@objcMembers public final class SyncCoordinator: NSObject {
     
     public var totalProgress: Double = 1
     public var currentProgress: Double = 1
     
-    fileprivate var backgroundCompletionHandler: (() -> Void)?
+    public var backgroundCompletionHandler: (() -> Void)?
     #if os(iOS)
     public var backgroundFetchHandler: ((_ result: UIBackgroundFetchResult) -> Void)?
     #endif
@@ -55,13 +55,15 @@ public class SyncCoordinator: NSObject {
                 return
             }
             
-            // TODO: Set FeedsManager unreadLastUpdate timestamp
+            guard progress == 1 else {
+                return
+            }
             
-            let completed = sself.syncQueue != nil && cancelled == false
+            let completed = cancelled == false
             
             print("Background sync completed. Success: \(completed)")
             
-            self?.backgroundCompletionHandler?()
+            sself.backgroundCompletionHandler?()
             
             completion?(completed)
             
@@ -151,9 +153,13 @@ public class SyncCoordinator: NSObject {
                 tokenID = "0".base64Encoded()
             }
             
-            self?.syncSetup = true
+            guard let sself = self else {
+                return
+            }
             
-            self?.syncNow(with: token!, tokenID: tokenID!, page: 1)
+            sself.syncSetup = true
+            
+            sself.syncNow(with: token!, tokenID: tokenID!, page: 1)
             
         }
         

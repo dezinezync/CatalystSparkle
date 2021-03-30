@@ -177,8 +177,8 @@
         
         [self scheduleBackgroundRefresh];
         
-        if (cancelling == YES) {
-            
+//        if (cancelling == YES) {
+//            
 //#ifdef DEBUG
 //#pragma clang diagnostic push
 //#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
@@ -189,8 +189,8 @@
 //
 //#pragma clang diagnostic pop
 //#endif
-            
-        }
+//            
+//        }
         
     }];
     
@@ -326,33 +326,28 @@
         
         // schedule next refresh
         [self scheduleBackgroundRefresh];
-       
-        // @TODO
-//        [MyDBManager setupSync:task completionHandler:^(BOOL completed) {
-//
-//            if (completed == NO) {
-//                return;
-//            }
-//
-//            SceneDelegate * scene = (id)[[UIApplication.sharedApplication.connectedScenes.allObjects firstObject] delegate];
-//
-//            SidebarVC *vc = scene.coordinator.sidebarVC;
-//
-//            if (vc == nil) {
-//                return;
-//            }
-//
-//            [vc.refreshControl setAttributedTitle:[vc lastUpdateAttributedString]];
-//
-////            [MyFeedsManager getCountersWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-////
-////                [vc setupData];
-////
-////                [vc.refreshControl setAttributedTitle:[vc lastUpdateAttributedString]];
-////
-////            } error:nil];
-//
-//        }];
+        
+        if (MyFeedsManager.user == nil) {
+            return;
+        }
+        
+        [MyFeedsManager setupBGSyncCoordinatorWithTask:task completion:^(BOOL completed) {
+            
+            if (completed == NO) {
+                return;
+            }
+
+            SceneDelegate * scene = (id)[[UIApplication.sharedApplication.connectedScenes.allObjects firstObject] delegate];
+
+            SidebarVC *vc = scene.coordinator.sidebarVC;
+
+            if (vc == nil) {
+                return;
+            }
+
+            [vc updateLastUpdatedText];
+
+        }];
 
         
     }];
