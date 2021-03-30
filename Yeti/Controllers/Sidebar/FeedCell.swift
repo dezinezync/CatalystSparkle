@@ -196,6 +196,15 @@ class FeedCell: UICollectionViewListCell {
         }
         
         guard feed.faviconImage == nil else {
+            
+            guard var content = contentConfiguration as? UIListContentConfiguration else {
+                return
+            }
+            
+            content.image = feed.faviconImage
+            
+            contentConfiguration = content
+            
             return
         }
         
@@ -216,18 +225,23 @@ class FeedCell: UICollectionViewListCell {
                 return
             }
             
-            guard sself.feed == sfeed else {
+            guard sself.feed.feedID == sfeed.feedID else {
                 return
             }
             
             sfeed.faviconImage = image
             
-            guard sself.feed != nil || sself.feed.faviconImage == nil || image != nil else {
+            guard sself.feed != nil else {
                 sself.setupDefaultIcon()
                 return
             }
             
-            guard var content = self?.contentConfiguration as? UIListContentConfiguration else {
+            guard image != nil else {
+                sself.setupDefaultIcon()
+                return
+            }
+            
+            guard var content = sself.contentConfiguration as? UIListContentConfiguration else {
                 return
             }
             
