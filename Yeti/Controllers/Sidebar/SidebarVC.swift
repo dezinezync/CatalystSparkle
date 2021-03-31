@@ -987,6 +987,7 @@ enum SidebarItem: Hashable {
         }
         
         if initialSyncCompleted == false {
+            updateCounters()
             initialSyncCompleted = true
         }
         
@@ -1495,6 +1496,8 @@ extension SidebarVC {
     
     // @TODO: Move to Swift Coordinator
     @objc func updateCounters() {
+        
+        print("Updating counters")
         
         DBManager.shared.readQueue.async { [weak self] in 
             
