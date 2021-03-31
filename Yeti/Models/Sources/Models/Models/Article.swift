@@ -8,6 +8,10 @@
 import Foundation
 import BetterCodable
 
+@objc public enum ArticleState: Int {
+    case Read, Unread, Bookmarked
+}
+
 @objcMembers open class Article: NSObject, Codable, ObservableObject {
     
     public var identifier: String!
@@ -21,9 +25,34 @@ import BetterCodable
     public var enclosures: [Enclosure]?
     public var feedID: UInt = 0
     @LossyOptional public var summary: String?
-    @LosslessValue<Bool> public var bookmarked: Bool = false
-    @LosslessValue<Bool> public var read: Bool = false
+    
+    @LosslessValue<Bool> public var bookmarked: Bool = false {
+        didSet {
+            state = intState
+        }
+    }
+    
+    @LosslessValue<Bool> public var read: Bool = false {
+        didSet {
+            state = intState
+        }
+    }
+    
     @LosslessValue<Bool> public var fulltext: Bool = false
+    
+    @Published public var state: ArticleState = .Unread
+    
+    fileprivate var intState: ArticleState {
+        get {
+            if bookmarked == true {
+                return .Bookmarked
+            }
+            else if read == true {
+                return .Read
+            }
+            return .Unread
+        }
+    }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case identifier = "id"

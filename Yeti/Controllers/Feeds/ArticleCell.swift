@@ -10,6 +10,7 @@ import UIKit
 import Models
 import SDWebImage
 import DBManager
+import Combine
 
 class ArticleCell: UITableViewCell {
     
@@ -22,6 +23,8 @@ class ArticleCell: UITableViewCell {
     @IBOutlet var timeLabel: UILabel!
     @IBOutlet var titleLabel: UILabel!
     @IBOutlet var titleLabelWidthConstraint: NSLayoutConstraint!
+    
+    var cancellables: [AnyCancellable] = []
     
     weak var article: Article?
     var feedType: FeedType!
@@ -78,6 +81,13 @@ class ArticleCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         resetUI()
+        
+        for o in cancellables {
+            o.cancel()
+        }
+        
+        cancellables = []
+        
     }
     
     func resetUI() {
@@ -221,8 +231,6 @@ class ArticleCell: UITableViewCell {
             
         }
         
-        updateMarkerView()
-        
         let width = bounds.size.width - 48
         
         titleLabel.preferredMaxLayoutWidth = width - (isShowingCover ? 92 : 4) // 80 + 12
@@ -239,6 +247,15 @@ class ArticleCell: UITableViewCell {
         
         timeLabel.text = timestamp
         timeLabel.accessibilityLabel = timestamp
+        
+        updateMarkerView()
+        
+        article.$state
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                self?.updateMarkerView()
+            }
+            .store(in: &cancellables)
         
     }
     
@@ -343,7 +360,7 @@ class ArticleCell: UITableViewCell {
                 
                 if let err = error,
                     proxyURL == url
-                        && ((err as? NSError)?.userInfo[SDWebImageErrorDownloadStatusCodeKey] as? Int) ?? 0 == 404 {
+                        && ((err as NSError).userInfo[SDWebImageErrorDownloadStatusCodeKey] as? Int) ?? 0 == 404 {
                     
                     #if DEBUG
                     print("Failed to download cover image with URL:", proxyURL)
@@ -426,13 +443,13 @@ class ArticleCell: UITableViewCell {
             return
         }
         
-        if a.bookmarked == true && feedType != .bookmarks {
+        if a.state == .Bookmarked && feedType != .bookmarks {
             
             markerView.tintColor = .systemOrange
             markerView.image = UIImage(systemName: "bookmark.fill")
             
         }
-        else if a.read == false {
+        else if a.state == .Unread {
             
             markerView.tintColor = SharedPrefs.tintColor
             markerView.image = UIImage(systemName: "largecircle.fill.circle")

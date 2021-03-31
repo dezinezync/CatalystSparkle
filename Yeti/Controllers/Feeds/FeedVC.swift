@@ -128,7 +128,7 @@ enum MarkDirection: Int {
         }
     }
     
-    var articles = NSMutableOrderedSet()
+    var articles: [Article] = []
     
     static var filteringTag: UInt = 0
     var sortingTag: UInt = 0
@@ -570,7 +570,7 @@ enum MarkDirection: Int {
     
     func _didSetSortingOption() {
         
-        articles = NSMutableOrderedSet()
+        articles = []
         state = .empty
         
         total = -1
@@ -698,6 +698,8 @@ enum MarkDirection: Int {
     
     func updateVisibleCells () {
         
+        return
+        
         dispatchMainAsync { [weak self] in
             
             guard let sself = self else {
@@ -824,7 +826,7 @@ extension FeedVC: ScrollLoading {
                     }
                 }
                 
-                sself.articles.add(article)
+                sself.articles.append(article)
                 context += 1
                 
             }
@@ -945,9 +947,9 @@ extension FeedVC {
             
             sself.markRead(items) { [weak self] in
                 
-                (self?.articles.objectEnumerator().allObjects as? [Article])?.forEach { $0.read = true }
+                self?.articles.forEach { $0.read = true }
                 
-                self?.updateVisibleCells()
+//                self?.updateVisibleCells()
                 
             }
             
@@ -1157,7 +1159,7 @@ extension FeedVC {
                     
                     for key in unreadKeys {
                         
-                        if let a: Article = sself.articles.objectEnumerator().allObjects.first(where: { ($0 as! Article).identifier == key }) as? Article {
+                        if let a: Article = sself.articles.first(where: { $0.identifier == key }) {
                             
                             a.read = true
                             
@@ -1185,6 +1187,8 @@ extension FeedVC {
     
     func reloadCells(identifiers: [Article]) {
         
+        return
+        
         guard identifiers.count > 0 else {
             return
         }
@@ -1210,6 +1214,8 @@ extension FeedVC {
     }
     
     func reloadVisibleCells () {
+        
+        return
         
         guard Thread.isMainThread == true else {
             

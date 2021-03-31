@@ -53,12 +53,12 @@
 
 static void *KVO_PlayerRate = &KVO_PlayerRate;
 
-typedef NS_ENUM(NSInteger, ArticleState) {
-    ArticleStateUnknown,
-    ArticleStateLoading,
-    ArticleStateLoaded,
-    ArticleStateError,
-    ArticleStateEmpty
+typedef NS_ENUM(NSInteger, ArticleVCState) {
+    ArticleVCStateUnknown,
+    ArticleVCStateLoading,
+    ArticleVCStateLoaded,
+    ArticleVCStateError,
+    ArticleVCStateEmpty
 };
 
 @interface ArticleVC () <UIScrollViewDelegate, UITextViewDelegate, UIViewControllerRestoration, AVPlayerViewControllerDelegate, ArticleAuthorViewDelegate, UIPointerInteractionDelegate, TextSharing> {
@@ -84,7 +84,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 @property (nonatomic, weak) UIView *hairlineView;
 
-@property (nonatomic, assign) ArticleState state;
+@property (nonatomic, assign) ArticleVCState state;
 
 @property (nonatomic, strong) NSError *articleLoadingError;
 @property (weak, nonatomic) IBOutlet UILabel *errorTitleLabel;
@@ -126,7 +126,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     self.navigationItem.leftItemsSupplementBackButton = YES;
     
-    self.state = ArticleStateLoading;
+    self.state = ArticleVCStateLoading;
     
 #if TARGET_OS_MACCATALYST
     
@@ -214,7 +214,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [center addObserver:self selector:@selector(keyboardFrameChanged:) name:UIKeyboardDidHideNotification object:nil];
     [center addObserver:self selector:@selector(didChangePreferredContentSize) name:UserUpdatedPreferredFontMetrics object:nil];
     
-    self.state = (self.item.content && self.item.content.count) ? ArticleStateLoaded : ArticleStateLoading;
+    self.state = (self.item.content && self.item.content.count) ? ArticleVCStateLoaded : ArticleVCStateLoading;
     
     self.ytExtractor = [[YTExtractor alloc] init];
     
@@ -437,7 +437,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 - (void)didChangePreferredContentSize {
     
-    if (self.state == ArticleStateLoading) {
+    if (self.state == ArticleVCStateLoading) {
         return;
     }
     
@@ -633,13 +633,13 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 #pragma mark - <ArticleHandler>
 
-- (void)setState:(ArticleState)state {
+- (void)setState:(ArticleVCState)state {
     
     [self setState:state isChangingArticle:YES];
     
 }
 
-- (void)setState:(ArticleState)state isChangingArticle:(BOOL)isChangingArticle {
+- (void)setState:(ArticleVCState)state isChangingArticle:(BOOL)isChangingArticle {
     
     if (_state == state) {
         return;
@@ -657,7 +657,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     _state = state;
     
     switch (state) {
-        case ArticleStateLoading:
+        case ArticleVCStateLoading:
         {
             self.errorStackView.hidden = YES;
             self.stackView.hidden = YES;
@@ -687,7 +687,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             self.videos = [NSPointerArray strongObjectsPointerArray];
         }
             break;
-        case ArticleStateLoaded:
+        case ArticleVCStateLoaded:
         {
             self.errorStackView.hidden = YES;
             
@@ -727,7 +727,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             
         }
             break;
-        case ArticleStateError:
+        case ArticleVCStateError:
         {
             if (!self.articleLoadingError) {
                 break;
@@ -798,7 +798,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     if (self.item.content && self.item.content.count) {
         
-        [self setState:ArticleStateLoading isChangingArticle:isChangingArticle];
+        [self setState:ArticleVCStateLoading isChangingArticle:isChangingArticle];
         
         [self _setupArticle:self.item start:start isChangingArticle:isChangingArticle];
         return;
@@ -808,11 +808,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 //    if (MyFeedsManager.reachability.currentReachabilityStatus == NotReachable) {
 //        NSError *error = [NSError errorWithDomain:@"ArticleInterface" code:500 userInfo:@{NSLocalizedDescriptionKey: @"Elytra cannot connect to the internet at the moment. Please check your connection and try again."}];
 //        self.articleLoadingError = error;
-//        self.state = ArticleStateError;
+//        self.state = ArticleVCStateError;
 //        return;
 //    }
     
-    self.state = ArticleStateLoading;
+    self.state = ArticleVCStateLoading;
     
     weakify(self);
     
@@ -822,7 +822,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
         if (error != nil) {
             self.articleLoadingError = error;
-            self.state = ArticleStateError;
+            self.state = ArticleVCStateError;
             return;
         }
         
@@ -1177,7 +1177,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         NSLogDebug(@"ScrollView contentsize: %@", NSStringFromCGSize(contentSize));
         
-        [self setState:ArticleStateLoaded isChangingArticle:isChangingArticle];
+        [self setState:ArticleVCStateLoaded isChangingArticle:isChangingArticle];
         
     });
     
