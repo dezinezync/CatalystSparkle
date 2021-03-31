@@ -695,47 +695,6 @@ enum MarkDirection: Int {
         activityIndicator.startAnimating()
         
     }
-    
-    func updateVisibleCells () {
-        
-        return
-        
-        dispatchMainAsync { [weak self] in
-            
-            guard let sself = self else {
-                return
-            }
-            
-            var snapshot = sself.DS.snapshot()
-            
-            guard let visible = sself.tableView.indexPathsForVisibleRows,
-                  visible.count > 0 else {
-                return
-            }
-            
-            var items: [Article] = []
-            
-            visible.forEach {
-                
-                if let item = sself.DS.itemIdentifier(for: $0) {
-                    items.append(item)
-                }
-                
-            }
-            
-            snapshot.reloadItems(items)
-            
-            let animation = sself.DS.defaultRowAnimation
-            
-            sself.DS.defaultRowAnimation = .fade
-            
-            sself.DS.apply(snapshot, animatingDifferences: sself.tableView.window != nil, completion: nil)
-            
-            sself.DS.defaultRowAnimation = animation
-            
-        }
-        
-    }
 
 }
 
@@ -949,8 +908,6 @@ extension FeedVC {
                 
                 self?.articles.forEach { $0.read = true }
                 
-//                self?.updateVisibleCells()
-                
             }
             
         }
@@ -1125,16 +1082,6 @@ extension FeedVC {
                         
                         unreads[k] = item
                         
-//                        if feedsMapping[metadata.feedID] == nil {
-//                            feedsMapping[metadata.feedID] = 0
-//                        }
-//
-//                        feedsMapping[metadata.feedID]! += 1
-//
-//                        if Calendar.current.isDateInToday(item.timestamp) {
-//                            inToday += 1
-//                        }
-                        
                     }
                     
                     if grandTotal == unreads.count {
@@ -1171,96 +1118,9 @@ extension FeedVC {
                     
                     DBManager.shared.add(articles: toUpdate, strip: false)
                     
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        
-                        sself.reloadCells(identifiers: toUpdate)
-                        
-                    }
-                    
                 }
                 
             }
-            
-        }
-        
-    }
-    
-    func reloadCells(identifiers: [Article]) {
-        
-        return
-        
-        guard identifiers.count > 0 else {
-            return
-        }
-        
-        var snapshot = self.DS.snapshot()
-        
-        snapshot.reloadItems(identifiers)
-        
-        dispatchMainAsync { [weak self] in
-            
-            guard let sself = self else { return }
-            
-            let animation = sself.DS.defaultRowAnimation
-            
-            sself.DS.defaultRowAnimation = .fade
-            
-            sself.DS.apply(snapshot, animatingDifferences: self?.view.window != nil, completion: nil)
-            
-            sself.DS.defaultRowAnimation = animation
-            
-        }
-        
-    }
-    
-    func reloadVisibleCells () {
-        
-        return
-        
-        guard Thread.isMainThread == true else {
-            
-            DispatchQueue.main.async { [weak self] in
-                self?.reloadVisibleCells()
-            }
-            
-            return
-            
-        }
-        
-        var snapshot = DS.snapshot()
-        
-        var visible: [Article] = []
-        
-        if let indices = tableView.indexPathsForVisibleRows,
-           indices.count > 0 {
-            
-            for indexPath in indices {
-                
-                if let item = DS.itemIdentifier(for: indexPath) {
-                    
-                    visible.append(item)
-                    
-                }
-                
-            }
-            
-        }
-        
-        snapshot.reloadItems(visible)
-        
-        dispatchMainAsync { [weak self] in
-            
-            guard let sself = self else {
-                return
-            }
-            
-            let animation = sself.DS.defaultRowAnimation
-            
-            sself.DS.defaultRowAnimation = .fade
-            
-            sself.DS.apply(snapshot, animatingDifferences: self?.view.window != nil, completion: nil)
-            
-            sself.DS.defaultRowAnimation = animation
             
         }
         
@@ -1451,8 +1311,6 @@ extension FeedVC: ArticleHandler, ArticleProvider {
                 
                 DBManager.shared.add(article: article, strip: false)
                 
-                sself.reloadVisibleCells()
-                
                 let inToday = Calendar.current.isDateInToday(article.timestamp)
                 
                 let feed = DBManager.shared.feedForID(article.feedID)
@@ -1539,8 +1397,6 @@ extension FeedVC: ArticleHandler, ArticleProvider {
                 else {
                     self?.mainCoordinator?.totalBookmarks -= 1
                 }
-                
-                self?.reloadVisibleCells()
                 
                 completion?(true)
             
