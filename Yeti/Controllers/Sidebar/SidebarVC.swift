@@ -938,12 +938,15 @@ enum SidebarItem: Hashable {
                r.isRefreshing == true {
                 
                 r.endRefreshing()
+                navigationController?.navigationBar.sizeToFit()
                 
             }
             
             return
             
         }
+        
+        navigationController?.navigationBar.sizeToFit()
         
         fetchingCounters = false
         
@@ -1085,6 +1088,7 @@ enum SidebarItem: Hashable {
                     DispatchQueue.main.async {
                         sself.additionalSafeAreaInsets = .zero
                         sself.refreshControl?.endRefreshing()
+                        sself.navigationController?.navigationBar.sizeToFit()
                         DBManager.shared.lastUpdated = Date()
                     }
                 }
