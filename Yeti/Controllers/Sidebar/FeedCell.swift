@@ -10,6 +10,7 @@ import UIKit
 import Combine
 import Models
 import SDWebImage
+import DBManager
 
 class FeedCell: UICollectionViewListCell {
     

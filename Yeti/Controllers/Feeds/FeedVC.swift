@@ -286,6 +286,8 @@ enum MarkDirection: Int {
         navigationItem.titleView = titleView
         self.titleView = titleView
         
+        titleView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapTitleView)))
+        
     }
     
     func setupNavBar() {

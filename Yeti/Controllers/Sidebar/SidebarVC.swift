@@ -302,6 +302,14 @@ enum SidebarItem: Hashable {
         
     }
     
+    public override func viewWillDisappear(_ animated: Bool) {
+        
+        super.viewWillDisappear(animated)
+        
+        navigationItem.largeTitleDisplayMode = .automatic;
+        
+    }
+    
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
