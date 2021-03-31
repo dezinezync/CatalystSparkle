@@ -52,10 +52,11 @@ private let imageExtensions = ["png", "jpg", "jpeg", "svg", "bmp", "ico", "webp"
     @Published public var unread: UInt! = 0
     
     weak var folder: Folder?
+    
     #if os(macOS)
-    public var faviconImage: NSImage?
+    @Published public var faviconImage: NSImage?
     #else
-    public var faviconImage: UIImage?
+    @Published public var faviconImage: UIImage?
     #endif
     
     public var canShowExtraLevel: Bool {

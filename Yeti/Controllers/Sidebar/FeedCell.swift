@@ -21,6 +21,8 @@ class FeedCell: UICollectionViewListCell {
     var isExploring: Bool = false
     var isAdding: Bool = false
     
+    weak var faviconOp: SDWebImageCombinedOperation?
+    
     func configure(item: SidebarItem, indexPath: IndexPath) {
         
         #if targetEnvironment(macCatalyst)
@@ -104,7 +106,33 @@ class FeedCell: UICollectionViewListCell {
             
             content.image = feed.faviconImage ?? UIImage(systemName: "square.dashed")
             
-            setupFavicon()
+            feed.$faviconImage
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] _ in
+                    
+                    guard let sself = self else {
+                        return
+                    }
+                    
+                    if (sself.feed.faviconImage == nil) {
+                        sself.setupDefaultIcon()
+                    }
+                    else {
+                        
+                        guard var content = sself.contentConfiguration as? UIListContentConfiguration else {
+                            return
+                        }
+                        
+                        content.image = sself.feed.faviconImage
+                        
+                        sself.contentConfiguration = content
+                        
+                    }
+                    
+                }
+                .store(in: &cancellables)
+            
+            if feed.faviconImage == nil { setupFavicon() }
             
         }
         
@@ -132,6 +160,10 @@ class FeedCell: UICollectionViewListCell {
             cancellables.removeAll()
             
         }
+        
+        feed = nil
+        
+        faviconOp?.cancel()
         
         super.prepareForReuse()
         
@@ -178,7 +210,15 @@ class FeedCell: UICollectionViewListCell {
         DispatchQueue.main.async { [weak self] in
             
             if self?.feed.faviconImage == nil {
-                self?.feed.faviconImage = UIImage(systemName: "square.dashed")
+                
+                guard var content = self?.contentConfiguration as? UIListContentConfiguration else {
+                    return
+                }
+                
+                content.image = UIImage(systemName: "square.dashed")
+                
+                self?.contentConfiguration = content
+                
             }
             
         }
@@ -196,16 +236,11 @@ class FeedCell: UICollectionViewListCell {
         }
         
         guard feed.faviconImage == nil else {
-            
-            guard var content = contentConfiguration as? UIListContentConfiguration else {
-                return
-            }
-            
-            content.image = feed.faviconImage
-            
-            contentConfiguration = content
-            
             return
+        }
+        
+        if faviconOp != nil {
+            faviconOp!.cancel()
         }
         
         let maxWidth = 48 * UIScreen.main.scale
@@ -218,36 +253,14 @@ class FeedCell: UICollectionViewListCell {
 //        print("Downloading favicon for feed \(feed.displayTitle) with url \(url)")
         #endif
         
-        let _ = SDWebImageManager.shared.loadImage(with: url, options: [.scaleDownLargeImages], progress: nil) { [weak self, weak feed] (image, data, error, cacheType, finished, imageURL) in
+        faviconOp = SDWebImageManager.shared.loadImage(with: url, options: [.scaleDownLargeImages], progress: nil) { [weak self] (image, data, error, cacheType, finished, imageURL) in
             
             guard let sself = self,
-                  let sfeed = feed else {
-                return
-            }
-            
-            guard sself.feed.feedID == sfeed.feedID else {
+                  let sfeed = sself.feed else {
                 return
             }
             
             sfeed.faviconImage = image
-            
-            guard sself.feed != nil else {
-                sself.setupDefaultIcon()
-                return
-            }
-            
-            guard image != nil else {
-                sself.setupDefaultIcon()
-                return
-            }
-            
-            guard var content = sself.contentConfiguration as? UIListContentConfiguration else {
-                return
-            }
-            
-            content.image = image
-            
-            sself.contentConfiguration = content
             
         }
         
