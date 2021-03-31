@@ -261,6 +261,14 @@ struct WidgetArticleView : View {
                             .alignmentGuide(VerticalAlignment.top) { _ in -4 }
                         
                     }
+                    else {
+                        
+                        Image(systemName: "square.dashed")
+                            .frame(maxWidth: 24, maxHeight: 24, alignment: .center)
+                            .background(Color(.systemBackground))
+                            .alignmentGuide(VerticalAlignment.top) { _ in -4 }
+                        
+                    }
                     
                     VStack(alignment: .leading, spacing: 2) {
                         
