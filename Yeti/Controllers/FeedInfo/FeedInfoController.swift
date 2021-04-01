@@ -10,6 +10,7 @@ import UIKit
 import SDWebImage
 import DBManager
 import Models
+import Networking
 
 @objc final class FeedInfoController: UITableViewController {
     
@@ -25,7 +26,7 @@ import Models
         }
     }
     
-    var metadata: FeedMeta?
+    var metadata: FeedMeta!
     
     weak var faviconView: UIImageView?
     
@@ -321,44 +322,50 @@ import Models
             // supports push
             if (feed.subscribed == true && toggle.isOn == false) {
                 
-                // unsubscribe
-                // @TODO: Unsubscribe from notifications
-//                MyFeedsManager.unsubscribe(feed) { (_, _, _) in
-//
-//                    feed.isSubscribed = false
-//
-//                    MyDBManager.update(feed)
-//
-//                } error: { (error: Error?, _, _) in
-//
-//                    guard let err = error else {
-//                        return
-//                    }
-//
-//                    AlertManager.showGenericAlert(withTitle: "Unsubscribe Failed", message: err.localizedDescription)
-//
-//                }
+                FeedsManager.shared.unsubscribe(feed) { [weak self] result in
+                    
+                    guard let sself = self else { return }
+                    
+                    switch result {
+                    case .failure(let error):
+                        AlertManager.showGenericAlert(withTitle: "Unsubscribe Failed", message: error.localizedDescription)
+                        toggle.setOn(true, animated: true)
+                    case .success(let status):
+                        if status == true {
+                            feed.subscribed = false
+                            DBManager.shared.update(feed: feed, metadata: sself.metadata)
+                        }
+                        else {
+                            toggle.setOn(true, animated: true)
+                            AlertManager.showGenericAlert(withTitle: "Unsubscribe Failed", message: "An unknown error occurred when unsubscribing.")
+                        }
+                    }
+                    
+                }
                 
             }
             else if (feed.subscribed == false && toggle.isOn == true) {
-             
-                // subscribe
-                // @TODO: Subscribe from notifications
-//                MyFeedsManager.subscribe(feed) { (_, _, _) in
-//
-//                    feed.isSubscribed = true
-//
-//                    MyDBManager.update(feed)
-//
-//                } error: { (error: Error?, _, _) in
-//
-//                    guard let err = error else {
-//                        return
-//                    }
-//
-//                    AlertManager.showGenericAlert(withTitle: "Unsubscribe Failed", message: err.localizedDescription)
-//
-//                }
+                
+                FeedsManager.shared.subscribe(feed) { [weak self] result in
+                    
+                    guard let sself = self else { return }
+                    
+                    switch result {
+                    case .failure(let error):
+                        AlertManager.showGenericAlert(withTitle: "Subscribe Failed", message: error.localizedDescription)
+                        toggle.setOn(false, animated: true)
+                    case .success(let status):
+                        if status == true {
+                            feed.subscribed = true
+                            DBManager.shared.update(feed: feed, metadata: sself.metadata)
+                        }
+                        else {
+                            toggle.setOn(false, animated: true)
+                            AlertManager.showGenericAlert(withTitle: "Subscribe Failed", message: "An unknown error occurred when unsubscribing.")
+                        }
+                    }
+                    
+                }
 
             }
             
