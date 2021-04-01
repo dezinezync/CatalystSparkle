@@ -847,6 +847,71 @@ extension FeedsManager {
     
 }
 
+// MARK: - Push
+extension FeedsManager {
+    
+    public func addPushToken(token: String, completion:((Result<Bool, Error>) -> Void)?) {
+        
+        session.PUT(path: "/user/token", query: nil, body: ["token": token], resultType: [String: Int].self) { result in
+            
+            switch result {
+            case .failure(let error):
+                completion?(.failure(error))
+            case .success(_):
+                completion?(.success(true))
+            }
+            
+        }
+        
+    }
+    
+    public func getAllWebSub(token: String, completion:((Result<[Feed], Error>) -> Void)?) {
+        
+        session.GET(path: "/user/subscriptions", query: nil, resultType: [Feed].self) { result in
+            
+            switch result {
+            case .failure(let error):
+                completion?(.failure(error))
+            case .success(let (_, feeds)):
+                completion?(.success(feeds ?? []))
+            }
+            
+        }
+        
+    }
+    
+    public func subscribe(_ feed: Feed, completion:((Result<Bool, Error>) -> Void)?) {
+        
+        session.PUT(path: "/user/subscriptions", query: ["feedID": "\(feed.feedID!)"], body: [:], resultType: [String: Bool].self) { result in
+            
+            switch result {
+            case .failure(let error):
+                completion?(.failure(error))
+            case .success(let (_, result)):
+                completion?(.success(result?["status"] ?? false))
+            }
+            
+        }
+        
+    }
+    
+    public func unsubscribe(_ feed: Feed, completion:((Result<Bool, Error>) -> Void)?) {
+        
+        session.DELETE(path: "/user/subscriptions", query: ["feedID": "\(feed.feedID!)"], resultType: [String: Bool].self) { result in
+            
+            switch result {
+            case .failure(let error):
+                completion?(.failure(error))
+            case .success(let (_, result)):
+                completion?(.success(result?["status"] ?? false))
+            }
+            
+        }
+        
+    }
+    
+}
+
 // MARK: - Sync
 extension FeedsManager {
     
