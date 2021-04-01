@@ -205,9 +205,9 @@
         return;
     }
     
-    [self.mainCoordinator showEmptyVC];
+    [self.coordinator showEmptyVC];
     
-    FeedVC *top = self.mainCoordinator.feedVC;
+    FeedVC *top = self.coordinator.feedVC;
 
     if (top != nil && ([top isKindOfClass:FeedVC.class] || [top.class isSubclassOfClass:FeedVC.class])) {
         NSArray <NSIndexPath *> *selectedItems = [top.tableView indexPathsForSelectedRows];

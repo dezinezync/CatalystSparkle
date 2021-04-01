@@ -7,7 +7,6 @@
 //
 
 #import "NewFolderVC.h"
-#import "Coordinator.h"
 
 #import <DZKit/NSString+Extras.h>
 #import <DZKit/AlertManager.h>
@@ -106,7 +105,7 @@
     
     self->_isUpdating = YES;
     
-    SidebarVC *sidebarVC = self.mainCoordinator.sidebarVC;
+    SidebarVC *sidebarVC = self.coordinator.sidebarVC;
     
     if (self.folder) {
         // @TODO: editing the title
@@ -117,7 +116,7 @@
 //
 //                self->_isUpdating = NO;
 //
-//                [self.mainCoordinator.sidebarVC setupData];
+//                [self.coordinator.sidebarVC setupData];
 //
 ////                self.cancelButton.enabled = YES;
 //

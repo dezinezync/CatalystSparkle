@@ -65,7 +65,7 @@
     // @TODO
 //    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
 //
-//    MainCoordinator *coordinator = sceneDelegate.coordinator;
+//    coordinator *coordinator = sceneDelegate.coordinator;
 //
 //    UIKeyCommand *preferences = [UIKeyCommand commandWithTitle:@"Preferences" image:nil action:@selector(openSettings:) input:@"," modifierFlags:UIKeyModifierCommand propertyList:nil];
 //

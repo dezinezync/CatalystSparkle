@@ -9,7 +9,6 @@
 #import "ArticleAuthorView.h"
 #import "TypeFactory.h"
 #import "YetiConstants.h"
-#import "Coordinator.h"
 #import "Elytra-Swift.h"
 
 @interface ArticleAuthorView () <UIContextMenuInteractionDelegate> {

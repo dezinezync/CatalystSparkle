@@ -2625,7 +2625,7 @@ typedef NS_ENUM(NSInteger, ArticleVCState) {
         return;
     }
 
-    [self.mainCoordinator showFeedVC:feed];
+    [self.coordinator showFeedVC:feed];
     
 }
 

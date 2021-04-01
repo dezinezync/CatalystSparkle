@@ -125,7 +125,7 @@ import Defaults
         
         NotificationCenter.default.removeObserver(self)
         
-        mainCoordinator?.showLaunchVC()
+        coordinator?.showLaunchVC()
         
     }
     
@@ -137,10 +137,10 @@ extension SplitVC: UISplitViewControllerDelegate {
     
     public func splitViewController(_ svc: UISplitViewController, topColumnForCollapsingToProposedTopColumn proposedTopColumn: UISplitViewController.Column) -> UISplitViewController.Column {
         
-        if let _ = mainCoordinator?.articleVC {
+        if let _ = coordinator?.articleVC {
             return .secondary
         }
-        else if let _ = mainCoordinator?.feedVC {
+        else if let _ = coordinator?.feedVC {
             return .supplementary
         }
         else {
@@ -160,7 +160,7 @@ extension SplitVC {
         
         if str == "didBeginRefreshing:" || str == "didLongPressOnAllRead:" {
            
-            if let f = mainCoordinator?.feedVC {
+            if let f = coordinator?.feedVC {
             
                 return f.responds(to: aSelector)  ? f : nil
                 
@@ -171,7 +171,7 @@ extension SplitVC {
         }
         else if str == "didTapSearch" {
             
-            if let a = mainCoordinator?.articleVC {
+            if let a = coordinator?.articleVC {
                 
                 return a.responds(to: aSelector) ? a : nil
                 
@@ -182,7 +182,7 @@ extension SplitVC {
         }
         else if str == "showSubscriptionsInterface" {
             
-            return mainCoordinator
+            return coordinator
             
         }
         
@@ -196,7 +196,7 @@ extension SplitVC {
 //        
 //        if str == "didBeginRefreshing:" || str == "didLongPressOnAllRead:" {
 //           
-//            if let f = mainCoordinator?.feedVC as? UIViewController {
+//            if let f = coordinator?.feedVC as? UIViewController {
 //            
 //                return f.responds(to: aSelector)
 //                
@@ -207,7 +207,7 @@ extension SplitVC {
 //        }
 //        else if str == "didTapSearch" {
 //            
-//            if let a = mainCoordinator?.articleVC as? UIViewController {
+//            if let a = coordinator?.articleVC as? UIViewController {
 //                
 //                return a.responds(to: aSelector)
 //                
@@ -232,7 +232,7 @@ extension SplitVC {
 //
 //        if str == "didBeginRefreshing:" || str == "didLongPressOnAllRead:" {
 //
-//            if let f = mainCoordinator?.feedVC as? UIViewController {
+//            if let f = coordinator?.feedVC as? UIViewController {
 //
 //                return f.method(for: aSelector)
 //
@@ -243,7 +243,7 @@ extension SplitVC {
 //        }
 //        else if str == "didTapSearch" {
 //
-//            if let a = mainCoordinator?.articleVC as? UIViewController {
+//            if let a = coordinator?.articleVC as? UIViewController {
 //
 //                return a.method(for: aSelector)
 //
@@ -254,7 +254,7 @@ extension SplitVC {
 //        }
 //        else if str == "showSubscriptionsInterface" {
 //
-//            return mainCoordinator?.method(for: aSelector)
+//            return coordinator?.method(for: aSelector)
 //
 //        }
 //

@@ -96,9 +96,13 @@
      };
 #endif
     
-    [self setupRootViewController];
+    SplitVC *splitVC = [[SplitVC alloc] init];
     
-    [self.coordinator start];
+    self.window.rootViewController = splitVC;
+    
+    [self.coordinator start:splitVC];
+    
+    [splitVC loadViewIfNeeded];
     
     // @TODO
 //    if (activity != nil && [activity.activityType isEqualToString:@"restoration"]) {
@@ -254,20 +258,6 @@
 
 #pragma mark -
 
-- (void)setupRootViewController {
-    
-    SplitVC *splitVC = [[SplitVC alloc] init];
-    
-    splitVC.mainCoordinator = self.coordinator;
-    
-    self.window.rootViewController = splitVC;
-    
-    self.coordinator.splitViewController = (SplitVC *)[self.window rootViewController];
-    
-    [splitVC loadViewIfNeeded];
-    
-}
-
 #pragma mark - Background Refresh
 
 - (void)scheduleBackgroundRefresh {
@@ -374,9 +364,9 @@
         
         [MyFeedsManager resetAccountWithCompletion:^{
         
-            SplitVC *v = self.coordinator.splitViewController;
+            SplitVC *v = self.coordinator.splitVC;
             
-            [v.mainCoordinator showLaunchVC];
+            [v.coordinator showLaunchVC];
             
             [defaults setBool:NO forKey:kResetAccountSettingsPref];
             [defaults synchronize];
@@ -491,7 +481,7 @@
 //        windowScene.title = @"New Feed";
 //
 //        NewFeedVC *vc = [[NewFeedVC alloc] initWithCollectionViewLayout:NewFeedVC.gridLayout];
-//        vc.mainCoordinator = self.coordinator;
+//        vc.coordinator = self.coordinator;
 //        vc.moveFoldersDelegate = self.coordinator.sidebarVC;
 //
 //        window.rootViewController = [[UINavigationController alloc] initWithRootViewController:vc];

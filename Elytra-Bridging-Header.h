@@ -5,7 +5,7 @@
 #import "NSString+ImageProxy.h"
 #import <DZKit/DZKit.h>
 #import "Keychain.h"
-#import "Coordinator.h"
+#import "UIViewController+Coordinator.h"
 #import "YetiConstants.h"
 #import "UIViewController+ScrollLoad.h"
 #import "UIImage+Proxy.h"
@@ -18,3 +18,5 @@
 #import "NewFolderController.h"
 #import "ArticleVC.h"
 #import "OPMLVC.h"
+#import "SettingsVC.h"
+#import "EmptyVC.h"

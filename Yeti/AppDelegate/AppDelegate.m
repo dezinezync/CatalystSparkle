@@ -21,6 +21,7 @@
 #import "Keychain.h"
 
 #import "PhotosController.h"
+#import "Elytra-Swift.h"
 
 AppDelegate *MyAppDelegate = nil;
 
@@ -91,7 +92,7 @@ AppDelegate *MyAppDelegate = nil;
         
 //        [MyFeedsManager resetAccount];
         
-        self.coordinator = [MainCoordinator new];
+        self.coordinator = [Coordinator new];
         
 //        weakify(self);
         
@@ -215,7 +216,7 @@ AppDelegate *MyAppDelegate = nil;
     
     SceneDelegate * scene = (id)[[UIApplication.sharedApplication.connectedScenes.allObjects firstObject] delegate];
     
-    return scene.coordinator.splitViewController;
+    return scene.coordinator.splitVC;
     
 }
 

@@ -14,7 +14,7 @@ import SDWebImage
 class CustomFeedCell: UICollectionViewListCell {
     
     weak var feed: CustomFeed!
-    weak var coordinator: MainCoordinator?
+    weak var coordinator: Coordinator?
     var cancellables: [AnyCancellable] = []
     
     func configure(item: SidebarItem, indexPath: IndexPath) {

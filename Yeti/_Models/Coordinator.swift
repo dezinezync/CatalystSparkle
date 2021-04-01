@@ -40,8 +40,8 @@ public var deviceName: String {
     var totalToday: UInt = 0
     var totalBookmarks: UInt = 0
     
-    weak public var splitVC: SplitVC?
-    weak public var sidebarVC: SidebarVC?
+    weak public var splitVC: SplitVC!
+    weak public var sidebarVC: SidebarVC!
     weak public var feedVC: FeedVC?
     weak public var articleVC: ArticleVC?
     weak public var emptyVC: EmptyVC?
@@ -55,11 +55,17 @@ public var deviceName: String {
         let sidebar = SidebarVC()
         sidebar.coordinator = self
         
-        let nav = UINavigationController(rootViewController: sidebar)
-        sidebar.navigationController?.navigationBar.prefersLargeTitles = true
-        sidebar.navigationItem.largeTitleDisplayMode = .automatic
+//        if splitVC?.traitCollection.userInterfaceIdiom == .phone {
+//
+//            let nav = UINavigationController(rootViewController: sidebar)
+//            sidebar.navigationController?.navigationBar.prefersLargeTitles = true
+//            sidebar.navigationItem.largeTitleDisplayMode = .automatic
+//
+//            splitVC?.setViewController(nav, for: .compact)
+//
+//        }
         
-        splitVC?.setViewController(nav, for: .primary)
+        splitVC.setViewController(sidebar, for: .primary)
         
         self.sidebarVC = sidebar
         
@@ -86,7 +92,10 @@ public var deviceName: String {
             guard let sself = self else { return }
             
             if showUnread {
-                // @TODO
+                
+                let f = CustomFeed(title: "Unread", image: "largecircle.fill.circle", color: .systemBlue, type: .unread)
+                
+                sself.showCustomVC(f)
             }
             
             if showEmpty {
@@ -101,7 +110,7 @@ public var deviceName: String {
     
     func setupDeviceID() {
         
-        var deviceID: String? = try? Keychain.string(for: "deviceID")
+        let deviceID: String? = try? Keychain.string(for: "deviceID")
         
         if deviceID == nil {
             
@@ -311,15 +320,21 @@ public var deviceName: String {
         
     }
     
-    public func showRenameFolderVC() {
+    public func showRenameFolderVC(_ folder: Folder) {
         
         // @TODO
         
     }
     
+    // Not used for macOS. macOS uses the native Preferences style window instead.
     public func showSettingsVC () {
         
-        // @TODO
+        let vc = SettingsVC(nibName: "SettingsVC", bundle: nil)
+        vc.coordinator = self
+        
+        let nav = UINavigationController(rootViewController: vc)
+        
+        splitVC.present(nav, animated: true, completion: nil)
         
     }
     

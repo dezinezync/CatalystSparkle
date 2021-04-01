@@ -10,7 +10,6 @@
 #import <DZAppdelegate/DZAppdelegate.h>
 
 #import "RMStore.h"
-#import "Coordinator.h"
 #import "SceneDelegate.h"
 
 @class AppKitGlue;
@@ -39,7 +38,7 @@ extern AppDelegate * MyAppDelegate;
 
 @property (nonatomic, strong) dispatch_queue_t bgTaskDispatchQueue;
 
-@property (nonatomic, strong) MainCoordinator *coordinator;
+@property (nonatomic, strong) Coordinator *coordinator;
 
 @property (nonatomic, assign) BOOL bgTaskHandlerRegistered;
 

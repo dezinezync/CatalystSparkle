@@ -10,7 +10,8 @@
 #import "SettingsCell.h"
 #import "YetiConstants.h"
 #import "UIColor+HEX.h"
-#import "Coordinator.h"
+
+#import "Elytra-Swift.h"
 
 #import "AccountVC.h"
 #import "ImageLoadingVC.h"
@@ -398,7 +399,7 @@ typedef NS_ENUM(NSUInteger, SectionOneRows) {
         
         [tableView deselectRowAtIndexPath:indexPath animated:NO];
         
-        [self.mainCoordinator prepareDataForFullResync];
+        [self.coordinator prepareForFullResync];
         
         [self.navigationController dismissViewControllerAnimated:YES completion:nil];
         
@@ -553,7 +554,7 @@ typedef NS_ENUM(NSUInteger, SectionOneRows) {
                 
                 strongify(self);
                 
-                [self.mainCoordinator prepareDataForFullResync];
+                [self.coordinator prepareForFullResync];
                 
                 [self.navigationController dismissViewControllerAnimated:YES completion:nil];
                 
@@ -563,7 +564,7 @@ typedef NS_ENUM(NSUInteger, SectionOneRows) {
                 
                 strongify(self);
                 
-                [self.mainCoordinator prepareFeedsForFullResync];
+                [self.coordinator prepareForFeedsResync];
                 
                 [self.navigationController dismissViewControllerAnimated:YES completion:nil];
                 
@@ -593,7 +594,7 @@ typedef NS_ENUM(NSUInteger, SectionOneRows) {
 
 - (void)showContactInterface {
     
-    [self.mainCoordinator showContactInterface];
+    [self.coordinator showContactInterface];
     
 }
 

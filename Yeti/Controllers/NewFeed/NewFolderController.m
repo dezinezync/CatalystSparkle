@@ -24,7 +24,7 @@
 
 @implementation NewFolderController
 
-- (instancetype)initWithFolder:(Folder *)exisitingFolder coordinator:(MainCoordinator *)coordinator completion:(folderControllerCompletion)completionBlock {
+- (instancetype)initWithFolder:(Folder *)exisitingFolder coordinator:(Coordinator *)coordinator completion:(folderControllerCompletion)completionBlock {
     
     if (self = [super init]) {
         
@@ -94,7 +94,7 @@
     
     [alertController addAction:cancelAction];
     
-    [self.coordinator.splitViewController presentViewController:alertController animated:YES completion:^{
+    [self.coordinator.splitVC presentViewController:alertController animated:YES completion:^{
         
         [self.textField becomeFirstResponder];
         

@@ -369,7 +369,7 @@
     
     NSTimeInterval delay = 0;
     
-    UISplitViewController *splitVC = self.coordinator.splitViewController;
+    UISplitViewController *splitVC = self.coordinator.splitVC;
     
     if ([splitVC presentedViewController] != nil) {
         [[splitVC presentedViewController] dismissViewControllerAnimated:YES completion:nil];

@@ -240,7 +240,7 @@ enum MarkDirection: Int {
             titleView.titleLabel.text = self.title;
             titleView.faviconView.isHidden = true
             
-            if let coordinator = mainCoordinator {
+            if let coordinator = coordinator {
                 
                 coordinator.publisher(for: \.totalUnread)
                     .receive(on: DispatchQueue.main)
@@ -262,7 +262,7 @@ enum MarkDirection: Int {
             titleView.titleLabel.text = self.title;
             titleView.faviconView.isHidden = true
             
-            if let coordinator = mainCoordinator {
+            if let coordinator = coordinator {
                 
                 coordinator.publisher(for: \.totalToday)
                     .receive(on: DispatchQueue.main)
@@ -981,11 +981,11 @@ extension FeedVC {
         
         guard type == .natural,
               let feed = self.feed,
-              let coordinator = mainCoordinator else {
+              let coordinator = coordinator else {
             return
         }
         
-        coordinator.showFeedInfo(feed, from: self)
+        coordinator.showFeedInfo(feed: feed, from: self)
         
     }
     
@@ -1016,7 +1016,7 @@ extension FeedVC {
         
         // our unreads array count can't exceed this so we
         // can use this as a control to stop enumerating.
-        let grandTotal = mainCoordinator?.totalUnread ?? 0
+        let grandTotal = coordinator?.totalUnread ?? 0
         
         DBManager.shared.readQueue.async { [weak self] in
             
@@ -1271,7 +1271,7 @@ extension FeedVC: ArticleHandler, ArticleProvider {
             return
         }
         
-        mainCoordinator?.showArticle(a)
+        coordinator?.showArticle(a)
         
     }
     
@@ -1298,7 +1298,7 @@ extension FeedVC: ArticleHandler, ArticleProvider {
         FeedsManager.shared.markRead(read, items: [article]) { [weak self] (result) in
             
             guard let sself = self,
-                  let coordinator = sself.mainCoordinator else {
+                  let coordinator = sself.coordinator else {
                 return
             }
             
@@ -1344,9 +1344,9 @@ extension FeedVC: ArticleHandler, ArticleProvider {
                 }
                 else {
                     
-                    self?.mainCoordinator?.totalUnread += 1
+                    self?.coordinator?.totalUnread += 1
                     
-                    if inToday { self?.mainCoordinator?.totalToday += 1 }
+                    if inToday { self?.coordinator?.totalToday += 1 }
                     
                     feed?.unread += 1
                     
@@ -1394,10 +1394,10 @@ extension FeedVC: ArticleHandler, ArticleProvider {
                 DBManager.shared.add(article: article, strip: false)
                 
                 if bookmarked == true {
-                    self?.mainCoordinator?.totalBookmarks += 1
+                    self?.coordinator?.totalBookmarks += 1
                 }
                 else {
-                    self?.mainCoordinator?.totalBookmarks -= 1
+                    self?.coordinator?.totalBookmarks -= 1
                 }
                 
                 completion?(true)

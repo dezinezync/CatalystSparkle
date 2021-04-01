@@ -360,7 +360,7 @@ enum SidebarItem: Hashable {
             
             if case .custom(_) = item {
                 
-                cell.coordinator = self?.mainCoordinator
+                cell.coordinator = self?.coordinator
                 cell.configure(item: item, indexPath: indexPath)
                 
             }
@@ -393,7 +393,7 @@ enum SidebarItem: Hashable {
     
     func setupNotifications() {
         
-        if let mc = mainCoordinator {
+        if let mc = coordinator {
             
             mc.publisher(for: \.totalUnread)
                 .receive(on: DispatchQueue.main)
@@ -472,7 +472,7 @@ enum SidebarItem: Hashable {
             
             self?.navigationItem.rightBarButtonItem?.isEnabled = false
             
-            self?.mainCoordinator?.showSubscriptionsInterface()
+            self?.coordinator?.showSubscriptionsInterface()
             
         }.store(in: &cancellables)
         
@@ -682,10 +682,10 @@ enum SidebarItem: Hashable {
     
     lazy var leftBarButtonItem: UIBarButtonItem = {
         
-        let coordinator = self.mainCoordinator!
+        let coordinator = self.coordinator!
        
         var image = UIImage(systemName: "gear")
-        var b = UIBarButtonItem(image: image, style: .plain, target: coordinator, action: #selector(MainCoordinator.showSettingsVC))
+        var b = UIBarButtonItem(image: image, style: .plain, target: coordinator, action: #selector(coordinator.showSettingsVC))
         
         return b
         
@@ -696,7 +696,7 @@ enum SidebarItem: Hashable {
         let newFolderImage = UIImage(systemName: "folder.badge.plus"),
             newFeedImage = UIImage(systemName: "plus")
         
-        let coordinator = self.mainCoordinator!
+        let coordinator = self.coordinator!
         
         let addItem = UIAction(title: "New Feed", image: newFeedImage, identifier: nil, discoverabilityTitle: nil, attributes: [], state: .off) { (a) in
             
@@ -896,13 +896,13 @@ enum SidebarItem: Hashable {
     
     @objc func showInfo(feed: Feed, indexPath: IndexPath) {
         
-        mainCoordinator?.showFeedInfo(feed, from: self)
+        coordinator?.showFeedInfo(feed: feed, from: self)
         
     }
     
     @objc func rename(folder: Folder, indexPath: IndexPath) {
         
-        mainCoordinator?.showRenameFolderVC(folder)
+        coordinator?.showRenameFolderVC(folder)
         
     }
     
@@ -1112,7 +1112,7 @@ enum SidebarItem: Hashable {
                 
                 // @TODO: BG task to cleanup DB
                 
-                if let mc = sself.mainCoordinator,
+                if let mc = sself.coordinator,
                    let f = mc.feedVC,
                    f is UnreadVC || f is TodayVC {
                     
@@ -1288,7 +1288,7 @@ enum SidebarItem: Hashable {
                     let encoder = JSONEncoder()
                     if let data = try? encoder.encode(list) {
                         
-                        sself.mainCoordinator?.write(toSharedFile: "articles.json", data: data)
+                        sself.coordinator?.writeTo(sharedFile: "articles.json", data: data)
                         WidgetManager.reloadTimeline(name: "UnreadsWidget")
                         
                     }
@@ -1381,11 +1381,11 @@ extension SidebarVC {
         
         switch item {
         case .custom(let c):
-            mainCoordinator?.showCustomVC(c)
+            coordinator?.showCustomVC(c)
         case .feed(let f):
-            mainCoordinator?.showFeedVC(f)
+            coordinator?.showFeedVC(f)
         case .folder(let f):
-            mainCoordinator?.showFolderFeed(f)
+            coordinator?.showFolderVC(f)
         }
         
         // @TODO: Restoration activity
@@ -1523,8 +1523,8 @@ extension SidebarVC {
                     
                     DBManager.shared.feeds.forEach { $0.unread = 0 }
                     
-                    self?.mainCoordinator?.totalUnread = 0
-                    self?.mainCoordinator?.totalToday = 0
+                    self?.coordinator?.totalUnread = 0
+                    self?.coordinator?.totalToday = 0
                     
                     return
                 }
@@ -1572,8 +1572,8 @@ extension SidebarVC {
                     return result + c
                 }
                 
-                self?.mainCoordinator?.totalUnread = unread
-                self?.mainCoordinator?.totalToday = totalToday
+                self?.coordinator?.totalUnread = unread
+                self?.coordinator?.totalToday = totalToday
                 
                 print(feedsMapping)
                 
