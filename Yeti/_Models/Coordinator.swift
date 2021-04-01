@@ -14,6 +14,7 @@ import Dynamic
 import Models
 import DBManager
 import DZKit
+import DeviceCheck
 
 public var deviceName: String {
     var systemInfo = utsname()
@@ -46,6 +47,8 @@ public var deviceName: String {
     weak public var emptyVC: EmptyVC?
     
     public func start(_ splitViewController: SplitVC) {
+        
+        setupDeviceID()
         
         self.splitVC = splitViewController
         
@@ -93,6 +96,71 @@ public var deviceName: String {
             sself.checkForPushNotifications()
             
         }
+        
+    }
+    
+    func setupDeviceID() {
+        
+        var deviceID: String? = try? Keychain.string(for: "deviceID")
+        
+        if deviceID == nil {
+            
+            FeedsManager.shared.deviceID = deviceID
+            
+            return
+            
+        }
+        
+        let device = DCDevice.current
+        
+        if device.isSupported {
+            
+            device.generateToken { [weak self] token, error in
+                
+                guard error == nil else {
+                    self?._setupDeviceIDUsingUUID()
+                    return
+                }
+                
+                guard let token = token else {
+                    self?._setupDeviceIDUsingUUID()
+                    return
+                }
+                
+                let encoded: Data = token.base64EncodedData()
+                
+                guard let tokenString = String(data: encoded, encoding: .utf8) else {
+                    
+                    self?._setupDeviceIDUsingUUID()
+                    return
+                    
+                }
+                
+                let tokenMD5: String = (tokenString as NSString).md5()
+                
+                FeedsManager.shared.deviceID = tokenMD5
+                
+                Keychain.add("deviceID", string: tokenMD5)
+                Keychain.add("rawDeviceID", data: token)
+                
+            }
+            
+        }
+        else {
+            
+            _setupDeviceIDUsingUUID()
+            
+        }
+        
+    }
+    
+    public func _setupDeviceIDUsingUUID() {
+        
+        let deviceID: String = UUID().uuidString
+        
+        FeedsManager.shared.deviceID = deviceID
+        
+        Keychain.add("deviceID", string: deviceID)
         
     }
     
