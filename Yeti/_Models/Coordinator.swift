@@ -36,9 +36,9 @@ public var deviceName: String {
 
 @objcMembers public class Coordinator: NSObject {
     
-    var totalUnread: UInt = 0
-    var totalToday: UInt = 0
-    var totalBookmarks: UInt = 0
+    @Published var totalUnread: UInt = 0
+    @Published var totalToday: UInt = 0
+    @Published var totalBookmarks: UInt = 0
     
     weak public var splitVC: SplitVC!
     weak public var sidebarVC: SidebarVC!

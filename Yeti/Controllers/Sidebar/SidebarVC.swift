@@ -1511,7 +1511,8 @@ extension SidebarVC {
             
             DBManager.shared.countsConnection.asyncRead { (t) in
                 
-                guard let txn = t.ext(DBManagerViews.unreadsView.rawValue) as? YapDatabaseFilteredViewTransaction else {
+                guard let sself = self,
+                      let txn = t.ext(DBManagerViews.unreadsView.rawValue) as? YapDatabaseFilteredViewTransaction else {
                     return
                 }
                 
@@ -1523,8 +1524,8 @@ extension SidebarVC {
                     
                     DBManager.shared.feeds.forEach { $0.unread = 0 }
                     
-                    self?.coordinator?.totalUnread = 0
-                    self?.coordinator?.totalToday = 0
+                    sself.coordinator?.totalUnread = 0
+                    sself.coordinator?.totalToday = 0
                     
                     return
                 }
@@ -1572,8 +1573,8 @@ extension SidebarVC {
                     return result + c
                 }
                 
-                self?.coordinator?.totalUnread = unread
-                self?.coordinator?.totalToday = totalToday
+                sself.coordinator?.totalUnread = unread
+                sself.coordinator?.totalToday = totalToday
                 
                 print(feedsMapping)
                 

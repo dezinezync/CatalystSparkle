@@ -23,7 +23,8 @@ class CustomFeedCell: UICollectionViewListCell {
         indentationWidth = 36
         #endif
         
-        guard case .custom(let feed) = item else {
+        guard case .custom(let feed) = item,
+              let coordinator = self.coordinator else {
             return
         }
         
@@ -37,7 +38,7 @@ class CustomFeedCell: UICollectionViewListCell {
             
             switch feed.feedType {
             case .unread:
-                coordinator?.publisher(for: \.totalUnread)
+                coordinator.$totalUnread
                     .receive(on: DispatchQueue.main)
                     .sink(receiveValue: { [weak self] (unread) in
                         self?.updateUnreadCount(unread)
@@ -45,14 +46,14 @@ class CustomFeedCell: UICollectionViewListCell {
                     .store(in: &cancellables)
                 
             case .today:
-                coordinator?.publisher(for: \.totalToday)
+                coordinator.$totalToday
                     .receive(on: DispatchQueue.main)
                     .sink(receiveValue: { [weak self] (unread) in
                         self?.updateUnreadCount(unread)
                     })
                     .store(in: &cancellables)
             default:
-                coordinator?.publisher(for: \.totalBookmarks)
+                coordinator.$totalBookmarks
                     .receive(on: DispatchQueue.main)
                     .sink(receiveValue: { [weak self] (bookmarks) in
                         self?.updateUnreadCount(bookmarks)
