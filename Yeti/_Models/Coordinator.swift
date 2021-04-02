@@ -176,7 +176,7 @@ public var deviceName: String {
     // MARK: - Feeds
     public func showCustomVC(_ feed: CustomFeed) {
         
-        if feed.feedType == .unread && (self.feedVC != nil && self.feedVC!.type != .unread) {
+        if feed.feedType == .unread && (self.feedVC == nil || (self.feedVC != nil && self.feedVC!.type != .unread)) {
             
             self.feedVC = nil
             
