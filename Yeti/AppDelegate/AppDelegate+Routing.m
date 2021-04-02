@@ -394,7 +394,7 @@
 - (BOOL)addFeed:(NSURL *)url {
     // check if we already have this feed
     // @TODO Maybe?
-//    Feed * have = nil;
+    Feed * have = nil;
 //
 //    @try {
 ////        if (ArticlesManager.shared != nil && ArticlesManager.shared.feeds != nil) {

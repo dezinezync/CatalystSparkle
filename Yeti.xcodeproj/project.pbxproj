@@ -70,6 +70,8 @@
 		F01E6E2524AC6C2500D1BD6E /* red-dark.png in Resources */ = {isa = PBXBuildFile; fileRef = F01E6E0D24AC6C2500D1BD6E /* red-dark.png */; };
 		F01E6E2624AC6C2500D1BD6E /* red-dark@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F01E6E0E24AC6C2500D1BD6E /* red-dark@2x.png */; };
 		F01E6E2724AC6C2500D1BD6E /* red-dark@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = F01E6E0F24AC6C2500D1BD6E /* red-dark@3x.png */; };
+		F01F41AF2616CC6A00F51813 /* AppDelegate+Routing.swift in Sources */ = {isa = PBXBuildFile; fileRef = F01F41AE2616CC6A00F51813 /* AppDelegate+Routing.swift */; };
+		F01F41B12616F27200F51813 /* Haptic.swift in Sources */ = {isa = PBXBuildFile; fileRef = F01F41B02616F27200F51813 /* Haptic.swift */; };
 		F01F87582521AA1600518CF1 /* MiscPreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F01F873D2521AA1600518CF1 /* MiscPreferenceViewController.xib */; };
 		F01F87592521AA1600518CF1 /* MiscPreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F01F87572521AA1600518CF1 /* MiscPreferenceViewController.swift */; };
 		F0213E7B2085E525000DDD4A /* AppDelegate+Push.m in Sources */ = {isa = PBXBuildFile; fileRef = F0213E7A2085E525000DDD4A /* AppDelegate+Push.m */; };
@@ -287,7 +289,6 @@
 		F0B21BBC208C7F4F007E5A3B /* NewFolderVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0B21BBA208C7F4F007E5A3B /* NewFolderVC.xib */; };
 		F0B4827D2455F65000EE5AA2 /* DZKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0B482792455F64900EE5AA2 /* DZKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F0B573C824FCB61F00364BC3 /* RMStore.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B573C624FCB57A00364BC3 /* RMStore.m */; };
-		F0B5BFA62060D57F0092DA31 /* AppDelegate+Routing.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B5BFA52060D57F0092DA31 /* AppDelegate+Routing.m */; };
 		F0B69C9F21B920A10032FD5A /* YTPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B69C9E21B920A10032FD5A /* YTPlayer.m */; };
 		F0B7C844240B7272008D8F4F /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0B7C843240B7272008D8F4F /* UserNotifications.framework */; };
 		F0B7C846240B7272008D8F4F /* UserNotificationsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0B7C845240B7272008D8F4F /* UserNotificationsUI.framework */; };
@@ -1507,6 +1508,8 @@
 		F01E6E0D24AC6C2500D1BD6E /* red-dark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "red-dark.png"; sourceTree = "<group>"; };
 		F01E6E0E24AC6C2500D1BD6E /* red-dark@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "red-dark@2x.png"; sourceTree = "<group>"; };
 		F01E6E0F24AC6C2500D1BD6E /* red-dark@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "red-dark@3x.png"; sourceTree = "<group>"; };
+		F01F41AE2616CC6A00F51813 /* AppDelegate+Routing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Routing.swift"; sourceTree = "<group>"; };
+		F01F41B02616F27200F51813 /* Haptic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptic.swift; sourceTree = "<group>"; };
 		F01F873D2521AA1600518CF1 /* MiscPreferenceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MiscPreferenceViewController.xib; sourceTree = "<group>"; };
 		F01F87572521AA1600518CF1 /* MiscPreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MiscPreferenceViewController.swift; sourceTree = "<group>"; };
 		F0213E792085E525000DDD4A /* AppDelegate+Push.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+Push.h"; sourceTree = "<group>"; };
@@ -1826,8 +1829,6 @@
 		F0B573AC24FCB43B00364BC3 /* Configuration.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = Configuration.storekit; path = Yeti/SupportingFiles/Configuration.storekit; sourceTree = SOURCE_ROOT; };
 		F0B573C624FCB57A00364BC3 /* RMStore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = RMStore.m; path = Yeti/Vendors/RMStore/RMStore/RMStore.m; sourceTree = SOURCE_ROOT; };
 		F0B573C724FCB57A00364BC3 /* RMStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RMStore.h; path = Yeti/Vendors/RMStore/RMStore/RMStore.h; sourceTree = SOURCE_ROOT; };
-		F0B5BFA42060D57F0092DA31 /* AppDelegate+Routing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+Routing.h"; sourceTree = "<group>"; };
-		F0B5BFA52060D57F0092DA31 /* AppDelegate+Routing.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+Routing.m"; sourceTree = "<group>"; };
 		F0B69C9D21B920A10032FD5A /* YTPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YTPlayer.h; sourceTree = "<group>"; };
 		F0B69C9E21B920A10032FD5A /* YTPlayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YTPlayer.m; sourceTree = "<group>"; };
 		F0B7C842240B7272008D8F4F /* notificationContext.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = notificationContext.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2506,6 +2507,7 @@
 				F0DFBBF32570A36400246D8A /* CoalescingQueue.swift */,
 				F047CB6E2579F98E00395DC2 /* UIControlSubscription.swift */,
 				F0CF4F3525DF68BB00E12411 /* MoveFoldersDelegate.h */,
+				F01F41B02616F27200F51813 /* Haptic.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -2650,8 +2652,7 @@
 			children = (
 				F070C2DC1FBABC3500912CCF /* AppDelegate.h */,
 				F070C2DD1FBABC3600912CCF /* AppDelegate.m */,
-				F0B5BFA42060D57F0092DA31 /* AppDelegate+Routing.h */,
-				F0B5BFA52060D57F0092DA31 /* AppDelegate+Routing.m */,
+				F01F41AE2616CC6A00F51813 /* AppDelegate+Routing.swift */,
 				F0213E792085E525000DDD4A /* AppDelegate+Push.h */,
 				F0213E7A2085E525000DDD4A /* AppDelegate+Push.m */,
 				F099466320AD8A8A00E5520F /* AppDelegate+Store.h */,
@@ -4649,7 +4650,6 @@
 				F055AC1D1FD2AEF4004B9C29 /* ArticleVC+Toolbar.m in Sources */,
 				F00F646D24EC1DE700E5727C /* Blockquote.m in Sources */,
 				F07DCA4420C51B550068ED51 /* ArticleVC+Keyboard.m in Sources */,
-				F0B5BFA62060D57F0092DA31 /* AppDelegate+Routing.m in Sources */,
 				F00F647024EC1DE700E5727C /* GalleryCell.m in Sources */,
 				F0DB58F923F575250008D871 /* CustomizationHeader.m in Sources */,
 				F0CB4815260712960098D372 /* Defaults+Elytra.swift in Sources */,
@@ -4773,6 +4773,7 @@
 				F0D071EF205E75D700A042CD /* AccountVC.m in Sources */,
 				F099466520AD8A8B00E5520F /* AppDelegate+Store.m in Sources */,
 				F00F646E24EC1DE700E5727C /* List.m in Sources */,
+				F01F41B12616F27200F51813 /* Haptic.swift in Sources */,
 				F0D07201205E960900A042CD /* ExternalAppsVC.m in Sources */,
 				F02B705024EA7E5C00DD607F /* IDMPhoto.m in Sources */,
 				F0B69C9F21B920A10032FD5A /* YTPlayer.m in Sources */,
@@ -4794,6 +4795,7 @@
 				F050E0B22154C16600225C6A /* StoreFooter.m in Sources */,
 				F032A75D244D7D8C0024AC63 /* YetiTheme.m in Sources */,
 				F00F646A24EC1DE700E5727C /* Heading.m in Sources */,
+				F01F41AF2616CC6A00F51813 /* AppDelegate+Routing.swift in Sources */,
 				F0EDADB825DE9B2A0074ED1E /* PreviewFolderCell.swift in Sources */,
 				F07DCA3B20C517D20068ED51 /* UITableViewController+KeyboardScroll.m in Sources */,
 				F05C7A9F20D8E1F3007D6B5C /* TableHeader.m in Sources */,

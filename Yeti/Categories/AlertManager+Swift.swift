@@ -76,5 +76,67 @@ extension AlertManager {
         
     }
 
+    @discardableResult static public func showActivity(title: String?) -> UIAlertController? {
+        
+        #if targetEnvironment(macCatalyst)
+        return
+        #endif
+        
+        guard let delegate: AppDelegate = UIApplication.shared.delegate as? AppDelegate,
+              let coordinator: Coordinator = delegate.coordinator else {
+            
+            return nil
+            
+        }
+        
+        if coordinator.activityDialog != nil {
+            
+            coordinator.activityDialog?.dismiss(animated: false, completion: {
+                
+                AlertManager.showActivity(title: title)
+                
+            })
+            
+            return nil
+            
+        }
+        
+        let avc = UIAlertController(title: title, message: nil, preferredStyle: .alert)
+        
+        avc.dz_configureContentView { contentView in
+            
+            guard let cv = contentView else {
+                return
+            }
+            
+            let activity = UIActivityIndicatorView(style: .large)
+            activity.sizeToFit()
+            activity.translatesAutoresizingMaskIntoConstraints = false
+            activity.hidesWhenStopped = true
+            
+            cv.addSubview(activity)
+            
+            NSLayoutConstraint.activate([
+                activity.widthAnchor.constraint(equalToConstant: activity.bounds.size.width),
+                activity.heightAnchor.constraint(equalToConstant: activity.bounds.size.height),
+                activity.centerXAnchor.constraint(equalTo: cv.centerXAnchor),
+                activity.topAnchor.constraint(equalTo: cv.topAnchor, constant: 12)
+            ])
+            
+            activity.startAnimating()
+            
+        }
+        
+        var from: UIViewController = coordinator.splitVC
+        
+        while (from.presentedViewController != nil) {
+            from = from.presentedViewController!
+        }
+        
+        from.present(avc, animated: true, completion: nil)
+        
+        return avc
+        
+    }
     
 }

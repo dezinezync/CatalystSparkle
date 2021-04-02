@@ -46,6 +46,8 @@ public var deviceName: String {
     weak public var articleVC: ArticleVC?
     weak public var emptyVC: EmptyVC?
     
+    weak public var activityDialog: UIAlertController?
+    
     public func start(_ splitViewController: SplitVC) {
         
         setupDeviceID()
@@ -759,6 +761,128 @@ public var deviceName: String {
         
     }
 
+}
+
+// Briding DBManager and FeedsManager
+extension Coordinator {
+    
+    func addFeed(url: URL) {
+     
+        addFeed(url: url, completion: nil)
+        
+    }
+    
+    func addFeed(url: URL, completion: ((Result<Feed, Error>) -> Void)?) {
+        
+        let have: Feed? = DBManager.shared.feeds.first(where: { $0.url == url })
+        
+        guard have == nil else {
+            
+            AlertManager.showGenericAlert(withTitle: "Feed Exists", message: "This feed already exists in your list.")
+            return
+            
+        }
+        
+        if url.absoluteString.contains("youtube.com") == true,
+           url.absoluteString.contains("videos.xml") == false {
+            
+            FeedsManager.shared.checkYoutube(url: url) { [weak self] result in
+                
+                switch result {
+                case .failure(let error):
+                    AlertManager.showGenericAlert(withTitle: "Error Processing", message: "An error occurred when trying to process the Youtube URL: \(error.localizedDescription)")
+                    
+                case .success(let finalURL):
+                    self?.addFeed(url: finalURL)
+                }
+                
+            }
+            
+            return
+            
+        }
+        
+        FeedsManager.shared.add(feed: url) { result in
+            
+            switch result {
+            case .failure(let error):
+                
+                Haptics.shared.generate(feedbackType: .notificationError)
+                
+                AlertManager.showGenericAlert(withTitle: "Error Processing", message: "An error occurred when trying to process the Youtube URL: \(error.localizedDescription)")
+                
+                completion?(.failure(error))
+                
+            case .success(let feed):
+                
+                completion?(.success(feed))
+                
+                // check if we have the feed
+                let first: Feed? = DBManager.shared.feeds.first(where: { $0.feedID == feed.feedID })
+                
+                guard first == nil else {
+                    
+                    Haptics.shared.generate(feedbackType: .notificationSuccess)
+                    
+                    DBManager.shared.feeds.append(feed)
+                    
+                    return
+                }
+                
+                Haptics.shared.generate(feedbackType: .notificaitonWarning)
+                
+                AlertManager.showGenericAlert(withTitle: "Feed Exists", message: "This feed already exists in your list.")
+            
+            }
+            
+        }
+        
+    }
+    
+    func addFeed(id: UInt) {
+        
+        let have: Feed? = DBManager.shared.feeds.first(where: { $0.feedID == id })
+        
+        guard have == nil else {
+            
+            AlertManager.showGenericAlert(withTitle: "Feed Exists", message: "This feed already exists in your list.")
+            return
+            
+        }
+        
+        FeedsManager.shared.add(feed: id) { result in
+            
+            switch result {
+            case .failure(let error):
+                
+                Haptics.shared.generate(feedbackType: .notificationError)
+                
+                AlertManager.showGenericAlert(withTitle: "Error Processing", message: "An error occurred when trying to process the Youtube URL: \(error.localizedDescription)")
+                
+            case .success(let feed):
+                
+                // check if we have the feed
+                let first: Feed? = DBManager.shared.feeds.first(where: { $0.feedID == feed.feedID })
+                
+                guard first == nil else {
+                    
+                    Haptics.shared.generate(feedbackType: .notificationSuccess)
+                    
+                    DBManager.shared.feeds.append(feed)
+                    
+                    return
+                }
+                
+                Haptics.shared.generate(feedbackType: .notificaitonWarning)
+                
+                AlertManager.showGenericAlert(withTitle: "Feed Exists", message: "This feed already exists in your list.")
+            
+            }
+            
+        }
+        
+    }
+    
 }
 
 extension UIWindow {

@@ -2,17 +2,25 @@
 //  Use this file to import your target's public headers that you would like to expose to Swift.
 //
 
-#import "NSString+ImageProxy.h"
+#import "AppDelegate+Catalyst.h"
+
 #import <DZKit/DZKit.h>
+
 #import "Keychain.h"
-#import "UIViewController+Coordinator.h"
-#import "YetiConstants.h"
-#import "UIViewController+ScrollLoad.h"
-#import "UIImage+Proxy.h"
-#import "CheckWifi.h"
+
 #import "NSString+ImageProxy.h"
+#import "UIViewController+Coordinator.h"
+#import "UIViewController+ScrollLoad.h"
+#import "NSString+ImageProxy.h"
+#import "UIImage+Proxy.h"
+
+#import "YetiConstants.h"
+#import "CheckWifi.h"
+
 #import "Paragraph.h"
+
 #import "BarPositioning.h"
+
 #import "ArticleHandler.h"
 #import "TrialVC.h"
 #import "NewFolderController.h"

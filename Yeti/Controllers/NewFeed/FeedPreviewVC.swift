@@ -188,88 +188,18 @@ class FeedPreviewVC: UICollectionViewController {
             return
         }
         
-        FeedsManager.shared.add(feed: url) { [weak self] (result) in
+        coordinator?.addFeed(url: url, completion: { [weak self] result in
             
-            guard let sself = self else {
-                return
-            }
+            guard let sself = self else { return }
             
             switch result {
             case .failure(let error):
-                sender?.isEnabled = true
-                
-                if let error = error as? FeedsManagerError {
-                    AlertManager.showGenericAlert(withTitle: "Error Adding Feed", message: error.message ?? "An unknown error has occurred", fromVC: sself)
-                }
-                else {
-                    AlertManager.showGenericAlert(withTitle: "Error Adding Feed", message: error.localizedDescription, fromVC: sself)
-                }
-                
-            case .success(let feed):
-                
-                if let selected = sself.selectedFolder {
-                    
-                    // @TODO: Add to folder
-                    
-                }
-                
+                print(error)
+            case .success(_):
                 sself.dismissSelf()
-                
             }
             
-        }
-        
-//        MyFeedsManager.addFeed(url) { [weak self] (responseObject: Any, _, _) in
-//
-//
-//
-//            guard let feed = responseObject as? Feed else {
-//                sself.dismissSelf()
-//                return
-//            }
-//
-//            if let selected = sself.selectedFolder {
-//
-//                MyFeedsManager.update(selected, add: [feed.feedID], remove: nil) { (_, _, _) in
-//
-//                    if let delegate = sself.moveFoldersDelegate {
-//
-//                        if delegate.responds(to: #selector(MoveFoldersDelegate.feed(_:didMoveFrom:to:))) {
-//                            delegate.feed(feed, didMoveFrom: nil, to: selected)
-//                        }
-//
-//                    }
-//
-//                    sself.dismissSelf()
-//
-//                } error: { (error, _, _) in
-//
-//                    let presenting = sself.presentingViewController
-//
-//                    sself.navigationController?.dismiss(animated: true, completion: {
-//
-//                        if let presenting = presenting {
-//                            AlertManager.showGenericAlert(withTitle: "Error Adding to Folder", message: error?.localizedDescription ?? "An unknown error occurred", fromVC: presenting)
-//                        }
-//
-//                    });
-//
-//                }
-//
-//            }
-//            else {
-//                sself.dismissSelf()
-//            }
-//
-//
-//        } error: { (error, _, _) in
-//
-//            sender?.isEnabled = true
-//
-//            AlertManager.showGenericAlert(withTitle: "Error Adding Feed", message: error?.localizedDescription ?? "An unknown error occurred.", fromVC: self)
-//
-//        }
-
+        })
         
     }
     

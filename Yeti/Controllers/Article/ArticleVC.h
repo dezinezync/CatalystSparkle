@@ -40,7 +40,7 @@
 
 - (instancetype _Nonnull)initWithItem:(id _Nonnull)item;
 
-@property (nonatomic, strong) Article * _Nullable item;
+@property (nonatomic, strong) id _Nullable item;
 
 @property (weak, nonatomic) IBOutlet UIStackView * _Nullable stackView;
 

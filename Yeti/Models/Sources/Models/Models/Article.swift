@@ -32,7 +32,7 @@ import BetterCodable
         }
     }
     
-    @LosslessValue<Bool> public var read: Bool = false {
+    @LosslessValue<Bool> public var read: Bool = true {
         didSet {
             state = intState
         }

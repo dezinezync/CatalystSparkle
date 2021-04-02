@@ -29,11 +29,11 @@
     openInBrowser.discoverabilityTitle = openInBrowser.title;
     
     UIKeyCommand *bookmark = [UIKeyCommand keyCommandWithInput:@"b" modifierFlags:UIKeyModifierCommand action:@selector(didTapBookmark:)];
-    bookmark.title = self.item.bookmarked ? @"Unbookmark" : @"Bookmark";
+    bookmark.title = ((Article *)(self.item)).bookmarked ? @"Unbookmark" : @"Bookmark";
     bookmark.discoverabilityTitle = bookmark.title;
     
     UIKeyCommand *read = [UIKeyCommand keyCommandWithInput:@"r" modifierFlags:UIKeyModifierCommand action:@selector(didTapRead:)];
-    read.title = self.item.read ? @"Mark Unread" : @"Mark Read";
+    read.title = ((Article *)(self.item)).read ? @"Mark Unread" : @"Mark Read";
     read.discoverabilityTitle = read.title;
     
     UIKeyCommand *search = [UIKeyCommand keyCommandWithInput:@"f" modifierFlags:UIKeyModifierCommand action:@selector(didTapSearch)];

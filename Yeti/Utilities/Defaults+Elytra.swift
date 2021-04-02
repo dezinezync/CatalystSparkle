@@ -39,4 +39,12 @@ extension Defaults.Keys {
     
     static let hasShownIntro = Key<Bool>("hasShownIntro", default: false)
     
+    static let browserOpenInBackground = Key<Bool>("macKeyOpensBrowserInBackground", default: false)
+    
+    static let externalTwitterApp = Key<String>("externalapp.twitter", default: "Twitter")
+    
+    static let externalRedditApp = Key<String>("externalapp.reddit", default: "Reddit")
+    
+    static let externalBrowserApp = Key<String>("externalapp.browser", default: "Safari")
+    
 }
