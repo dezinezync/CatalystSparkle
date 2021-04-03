@@ -264,10 +264,8 @@ enum SidebarItem: Hashable {
         
         #if !targetEnvironment(macCatalyst)
         
-        navigationController?.navigationBar.sizeToFit()
-        
-        navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.largeTitleDisplayMode = .always;
+//        navigationController?.navigationBar.prefersLargeTitles = true
+//        navigationItem.largeTitleDisplayMode = .always;
         
         if SharedPrefs.useToolbar == true {
 
@@ -296,17 +294,7 @@ enum SidebarItem: Hashable {
             
         }
     
-        navigationController?.navigationBar.sizeToFit()
-        
         // @TODO: Should Request Review
-        
-    }
-    
-    public override func viewWillDisappear(_ animated: Bool) {
-        
-        super.viewWillDisappear(animated)
-        
-        navigationItem.largeTitleDisplayMode = .automatic;
         
     }
     
@@ -946,15 +934,12 @@ enum SidebarItem: Hashable {
                r.isRefreshing == true {
                 
                 r.endRefreshing()
-                navigationController?.navigationBar.sizeToFit()
                 
             }
             
             return
             
         }
-        
-        navigationController?.navigationBar.sizeToFit()
         
         fetchingCounters = false
         
@@ -1097,7 +1082,6 @@ enum SidebarItem: Hashable {
                     DispatchQueue.main.async {
                         sself.additionalSafeAreaInsets = .zero
                         sself.refreshControl?.endRefreshing()
-                        sself.navigationController?.navigationBar.sizeToFit()
                         DBManager.shared.lastUpdated = Date()
                     }
                 }
