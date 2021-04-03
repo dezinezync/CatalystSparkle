@@ -63,6 +63,8 @@
 - (instancetype)initWithNib {
     if (self = [super initWithNib]) {
         
+        self->_unbounded = YES;
+        
         self.backgroundColor = UIColor.systemBackgroundColor;
         self.imageRefs = [NSPointerArray weakObjectsPointerArray];
         
@@ -199,10 +201,7 @@
 
 - (void)setupHeight {
     
-    if (_unbounded) {
-        _unbounded = NO;
-    }
-    else {
+    if (_unbounded == NO) {
         return;
     }
     
@@ -219,6 +218,8 @@
     
     UICollectionViewFlowLayout *layout = (UICollectionViewFlowLayout *)[self.collectionView collectionViewLayout];
     layout.itemSize = CGSizeMake(width, self.maxHeight);
+    
+    _unbounded = NO;
 }
 
 #pragma mark - Events
