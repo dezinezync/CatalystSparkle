@@ -243,7 +243,15 @@ import BackgroundTasks
         
         DBManager.shared.syncCoordinator = syncCoordinator
         
-        syncCoordinator.setupSync(with: task, completion: completion)
+        syncCoordinator.setupSync(with: task) { completed in
+            
+            if (completed) {
+                DBManager.shared.lastUpdated = Date()
+            }
+            
+            completion?(completed)
+            
+        }
         
     }
     
