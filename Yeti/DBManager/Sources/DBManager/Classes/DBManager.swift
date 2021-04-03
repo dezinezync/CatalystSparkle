@@ -31,6 +31,8 @@ public enum GroupNames: String, CaseIterable {
 
 public extension Notification.Name {
     static let userUpdated = Notification.Name(rawValue: "com.yeti.note.userDidUpdate")
+    static let feedsUpdated = Notification.Name(rawValue: "feedsUpdated")
+    static let foldersUpdated = Notification.Name(rawValue: "foldersUpdated")
 }
 
 private let DB_VERSION_TAG = "2021-03-29 09:30AM IST"
@@ -131,7 +133,7 @@ public let notificationsKey = "notifications"
             
             let fm = FileManager.default
             #if DEBUG
-            let dbName = "elytra-v2.3.0j-debug.sqlite"
+            let dbName = "elytra-v2.3.0k-debug.sqlite"
             #else
             let dbName = "elytra-v2.3.0b.sqlite"
             #endif
@@ -357,6 +359,8 @@ public let notificationsKey = "notifications"
             
             _feeds = newValue
             
+            NotificationCenter.default.post(name: .feedsUpdated, object: self)
+            
             writeQueue.sync { [weak self] in
                 
                 guard let sself = self else {
@@ -391,6 +395,14 @@ public let notificationsKey = "notifications"
         
     }
     
+    public func add(feed: Feed) {
+        
+        update(feed: feed)
+        
+        feeds.append(feed)
+        
+    }
+    
     fileprivate var _preSyncFeedMetadata: [UInt: FeedMeta] = [:]
     
     fileprivate func _metadataForFeed(_ feed: Feed) -> FeedMeta {
@@ -407,7 +419,7 @@ public let notificationsKey = "notifications"
             
             if feed.feedID != nil && feed.url != nil {
                 
-                var m = FeedMeta(id: feed.feedID, url: feed.url, title: feed.title)
+                let m = FeedMeta(id: feed.feedID, url: feed.url, title: feed.title)
                 
                 if feed.folderID != nil {
                     m.folderID = feed.folderID
@@ -451,17 +463,13 @@ public let notificationsKey = "notifications"
     
     public func update(feed: Feed, metadata: FeedMeta) {
         
-        writeQueue.async { [weak self] in
+        let key = "\(feed.feedID!)"
+        
+        bgConnection.readWrite({ (t) in
             
-            let key = "\(feed.feedID!)"
+            t.setObject(feed, forKey: key, inCollection: .feeds, withMetadata: metadata)
             
-            self?.bgConnection.asyncReadWrite({ (t) in
-                
-                t.setObject(feed, forKey: key, inCollection: .feeds, withMetadata: metadata)
-                
-            })
-            
-        }
+        })
         
     }
     
@@ -670,6 +678,8 @@ public let notificationsKey = "notifications"
         set {
             
             _folders = newValue
+            
+            NotificationCenter.default.post(name: .foldersUpdated, object: self)
             
             guard newValue.count > 0 else {
                 return

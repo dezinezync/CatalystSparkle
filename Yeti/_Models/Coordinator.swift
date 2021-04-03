@@ -779,7 +779,7 @@ extension Coordinator {
         
         guard have == nil else {
             
-            AlertManager.showGenericAlert(withTitle: "Feed Exists", message: "This feed already exists in your list.")
+            completion?(.failure(FeedsManagerError.from(description: "This feed already exists in your list.", statusCode: 304)))
             return
             
         }
@@ -791,7 +791,7 @@ extension Coordinator {
                 
                 switch result {
                 case .failure(let error):
-                    AlertManager.showGenericAlert(withTitle: "Error Processing", message: "An error occurred when trying to process the Youtube URL: \(error.localizedDescription)")
+                    completion?(.failure(FeedsManagerError.from(description:  "An error occurred when trying to process the Youtube URL: \(error.localizedDescription)", statusCode: 500)))
                     
                 case .success(let finalURL):
                     self?.addFeed(url: finalURL)
@@ -803,7 +803,11 @@ extension Coordinator {
             
         }
         
-        FeedsManager.shared.add(feed: url) { result in
+        FeedsManager.shared.add(feed: url) { [weak self] result in
+            
+            guard let sself = self else {
+                return
+            }
             
             switch result {
             case .failure(let error):
@@ -816,7 +820,25 @@ extension Coordinator {
                 
             case .success(let feed):
                 
-                completion?(.success(feed))
+                let first: Feed? = DBManager.shared.feeds.first(where: { $0.feedID == feed.feedID })
+                
+                if first == nil {
+                    
+                    Haptics.shared.generate(feedbackType: .notificationSuccess)
+                    
+                    DBManager.shared.feeds.append(feed)
+                    
+                    // Trigger update
+                    if (folderID == nil) {
+                        CoalescingQueue.standard.add(sself.sidebarVC, #selector(SidebarVC.setupData))
+                    }
+                    
+                }
+                else {
+                    Haptics.shared.generate(feedbackType: .notificaitonWarning)
+                    
+                    AlertManager.showGenericAlert(withTitle: "Feed Exists", message: "This feed already exists in your list.")
+                }
                 
                 if let folderID = folderID {
                     
@@ -829,14 +851,22 @@ extension Coordinator {
                             // update the folder struct
                             FeedsManager.shared.update(folder: folderID, title: nil, add: [feed.feedID], delete: nil) { result in
                                 
+                                completion?(.success(feed))
+                                
+                                CoalescingQueue.standard.add(sself.sidebarVC, #selector(SidebarVC.setupData))
+                                
                                 if case .success(let status) = result,
                                    status == true {
                                     
                                     folder.feedIDs.insert(feed.feedID)
+                                    // trigger Update
+                                    DBManager.shared.folders = DBManager.shared.folders
                                     
                                 }
                                 
                             }
+                            
+                            return
                             
                         }
                         
@@ -844,21 +874,7 @@ extension Coordinator {
                     
                 }
                 
-                // check if we have the feed
-                let first: Feed? = DBManager.shared.feeds.first(where: { $0.feedID == feed.feedID })
-                
-                guard first == nil else {
-                    
-                    Haptics.shared.generate(feedbackType: .notificationSuccess)
-                    
-                    DBManager.shared.feeds.append(feed)
-                    
-                    return
-                }
-                
-                Haptics.shared.generate(feedbackType: .notificaitonWarning)
-                
-                AlertManager.showGenericAlert(withTitle: "Feed Exists", message: "This feed already exists in your list.")
+                completion?(.success(feed))
             
             }
             

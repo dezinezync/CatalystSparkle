@@ -194,7 +194,7 @@ class FeedPreviewVC: UICollectionViewController {
             
             switch result {
             case .failure(let error):
-                print(error)
+                AlertManager.showGenericAlert(withTitle: "An Error Occurred", message: error.localizedDescription, fromVC: sself)
             case .success(_):
                 sself.dismissSelf()
             }

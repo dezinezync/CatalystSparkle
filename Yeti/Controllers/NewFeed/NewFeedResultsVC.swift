@@ -147,6 +147,7 @@ class NewFeedResultsVC: UITableViewController {
         
         let instance = FeedPreviewVC(collectionViewLayout: FeedPreviewVC.layout)
         instance.item = item
+        instance.coordinator = self.coordinator
         instance.moveFoldersDelegate = self.moveFoldersDelegate
         
         let nav = UINavigationController(rootViewController: instance)

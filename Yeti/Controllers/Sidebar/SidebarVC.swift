@@ -67,7 +67,7 @@ enum SidebarSection: Int, CaseIterable {
     
 }
 
-enum SidebarItem: Hashable {
+enum SidebarItem: Hashable, Identifiable {
     
     static func == (lhs: SidebarItem, rhs: SidebarItem) -> Bool {
         
@@ -87,6 +87,33 @@ enum SidebarItem: Hashable {
     case custom(CustomFeed)
     case folder(Folder)
     case feed(Feed)
+    
+    func hash(into hasher: inout Hasher) {
+        
+        switch self {
+        case .custom(let f):
+            hasher.combine(f.feedType)
+        case .feed(let f):
+            hasher.combine(f.feedID)
+        case .folder(let f):
+            hasher.combine(f.folderID)
+        }
+        
+    }
+    
+    var id: Int {
+        get {
+            switch self {
+            case .custom(let f):
+                return f.feedType.rawValue
+            case .feed(let f):
+                return Int(f.feedID)
+            case .folder(let f):
+                return Int(f.folderID)
+            }
+        }
+    }
+    
 }
 
 @objcMembers public class SidebarVC: UICollectionViewController {
@@ -394,14 +421,6 @@ enum SidebarItem: Hashable {
                 .store(in: &cancellables)
             
         }
-        
-        DBManager.shared.folders.publisher
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] (_) in
-            
-            self?.setupData()
-            
-        }.store(in: &cancellables)
         
         DBManager.shared.publisher(for: \.lastUpdated)
             .receive(on: DispatchQueue.main)
@@ -858,27 +877,47 @@ enum SidebarItem: Hashable {
                 return
             }
             
-            FeedsManager.shared.delete(feed: feed.feedID) { (result) in
+            if feed.folderID != nil,
+               let folder = DBManager.shared.folder(for: feed.folderID!) {
                 
-                switch result {
-                case .failure(let error):
-                    completion?(false)
-                    AlertManager.showGenericAlert(withTitle: "Error Deleting Feed", message: error.localizedDescription)
+                FeedsManager.shared.update(folder: folder.folderID, title: nil, add: nil, delete: [feed.feedID]) { [weak self] result in
                     
-                case .success(_):
-                    completion?(true)
-                    
-                    DBManager.shared.delete(feed: feed)
-                    
-                    DispatchQueue.main.async {
-                        sself.setupData()
+                    if case .success(let res) = result,
+                       res == true {
+                        folder.feedIDs.remove(feed.feedID)
                     }
-                
+                    
+                    self?._deleteFeed(feed: feed, completion: completion)
+                    
                 }
                 
             }
+            else {
+                sself._deleteFeed(feed: feed, completion: completion)
+            }
+            
             
         }, cancel: "Cancel", cancelHandler: nil, from: self)
+        
+    }
+    
+    func _deleteFeed(feed: Feed, completion: ((_ completed: Bool) -> Void)?) {
+        
+        FeedsManager.shared.delete(feed: feed.feedID) { [weak self] (result) in
+            
+            switch result {
+            case .failure(let error):
+                completion?(false)
+                AlertManager.showGenericAlert(withTitle: "Error Deleting Feed", message: error.localizedDescription)
+                
+            case .success(_):
+                completion?(true)
+                
+                DBManager.shared.delete(feed: feed)
+            
+            }
+            
+        }
         
     }
     
@@ -982,6 +1021,29 @@ enum SidebarItem: Hashable {
         if initialSyncCompleted == false {
             updateCounters()
             initialSyncCompleted = true
+            
+            NotificationCenter.default.publisher(for: .feedsUpdated)
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] (_) in
+                
+                    guard let sself = self else { return }
+                    
+                    sself.coalescingQueue.add(sself, #selector(SidebarVC.setupData))
+                
+            }.store(in: &cancellables)
+            
+            NotificationCenter.default.publisher(for: .foldersUpdated)
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] (_) in
+                
+                    guard let sself = self else { return }
+                    
+                    sself.coalescingQueue.add(sself, #selector(SidebarVC.setupData))
+                
+            }.store(in: &cancellables)
+            
+            
+            
         }
         
         if (needsUpdateOfStructs == true)

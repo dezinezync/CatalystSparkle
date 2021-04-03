@@ -69,6 +69,7 @@ private let recommendationTopics = [
         sc.delegate = self
         
         (sc.searchResultsController as! NewFeedResultsVC).moveFoldersDelegate = self.moveFoldersDelegate
+        (sc.searchResultsController as! NewFeedResultsVC).coordinator = self.coordinator
         
         return sc
         
@@ -399,6 +400,7 @@ extension NewFeedVC: UISearchResultsUpdating, UISearchBarDelegate, UITextFieldDe
         let instance = FeedPreviewVC(collectionViewLayout: FeedPreviewVC.layout)
         instance.item = item
         instance.moveFoldersDelegate = self.moveFoldersDelegate
+        instance.coordinator = self.coordinator
         
         let nav = UINavigationController(rootViewController: instance)
         self.present(nav, animated: true, completion: nil)

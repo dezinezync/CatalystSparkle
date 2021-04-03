@@ -673,11 +673,11 @@ extension FeedsManager {
         }
         
         if add != nil, add!.count > 0 {
-            body["add"] = add
+            body["add"] = add.map { "\($0)" }
         }
         
         if delete != nil, delete!.count > 0 {
-            body["del"] = delete
+            body["del"] = delete.map { "\($0)" }
         }
         
         session.POST(path: "/folder", query: nil, body: body, resultType: [String: Bool].self) { result in
