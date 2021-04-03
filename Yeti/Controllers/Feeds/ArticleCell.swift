@@ -340,11 +340,27 @@ class ArticleCell: UITableViewCell {
         
         var proxyURL = url
         
-        if SharedPrefs.imageProxy == true {
+        if proxyURL.absoluteString.contains(".gif") {
+            
+            // only load covers for GIFs. Loading the full gif can
+            // cause a lot of memory to be used for unpacking the
+            // gif data and eventually crashing the app.
+            
+            let proxyPath = url.absoluteString.path(forImageProxy: false, maxWidth: coverImage.bounds.size.width, quality: 0.9, firstFrameForGIF: true, useImageProxy: true, sizePreference:  SharedPrefs.imageBandwidth, forWidget: false)
+            
+            if let aURL = URL(string: proxyPath) {
+                proxyURL = aURL
+            }
+            
+        }
+        
+        else if SharedPrefs.imageProxy == true {
             
             let proxyPath = url.absoluteString.path(forImageProxy: false, maxWidth: coverImage.bounds.size.width, quality: 0.9, firstFrameForGIF: false, useImageProxy: true, sizePreference:  SharedPrefs.imageBandwidth, forWidget: false)
             
-            proxyURL = URL(string: proxyPath) ?? url
+            if let aURL = URL(string: proxyPath) {
+                proxyURL = aURL
+            }
              
         }
         
@@ -352,7 +368,7 @@ class ArticleCell: UITableViewCell {
         
         DispatchQueue.global(qos: .userInteractive).async { [weak self, weak coverImage] in
             
-            self?.coverTask = SDWebImageManager.shared.loadImage(with: url, options: [.scaleDownLargeImages, .retryFailed], context: nil, progress: nil, completed: { (image, data, error, cacheType, finished, imageURL) in
+            self?.coverTask = SDWebImageManager.shared.loadImage(with: proxyURL, options: [.scaleDownLargeImages, .retryFailed], context: nil, progress: nil, completed: { (image, data, error, cacheType, finished, imageURL) in
                 
                 guard finished == true else {
                     return
