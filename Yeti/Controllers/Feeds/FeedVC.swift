@@ -759,7 +759,16 @@ extension FeedVC: ScrollLoading {
             
             let page = sself.currentPage + 1
             
-            var range = NSMakeRange(((Int(page) - 1) * 20) - 1, 20)
+            var rangeLength: Int = 20
+            
+            if (rangeLength > total) {
+                rangeLength = total
+            }
+            else if ((rangeLength * Int(page)) > total) {
+                rangeLength = total - articles.count
+            }
+            
+            var range = NSMakeRange(((Int(page) - 1) * 20) - 1, rangeLength)
             
             if page == 1 {
                 range.location = 0
@@ -771,9 +780,14 @@ extension FeedVC: ScrollLoading {
                 return true
             } using: { (c, k, o, m, index, stop) in
                 
-                guard let article = o as? Article else {
+                guard let article = o as? Article,
+                      let metadata = m as? ArticleMeta else {
                     return
                 }
+                
+                article.read = metadata.read
+                article.bookmarked = metadata.bookmarked
+                article.fulltext = metadata.fulltext
                 
                 if article.title == nil || (article.title != nil && article.title!.isEmpty == true) {
                     // get the content, possibly micro.blog post
