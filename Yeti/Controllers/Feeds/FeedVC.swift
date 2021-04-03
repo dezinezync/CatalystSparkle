@@ -1432,7 +1432,7 @@ extension FeedVC: ArticleHandler, ArticleProvider {
             return false
         }
         
-        return indexPath.row > 0 && DS.snapshot().numberOfItems > 2
+        return indexPath.row > 0 && DS.snapshot().numberOfItems >= 2
         
     }
     
@@ -1452,7 +1452,7 @@ extension FeedVC: ArticleHandler, ArticleProvider {
             return false
         }
         
-        return lastIndex > 1
+        return lastIndex >= 1
         
     }
     
