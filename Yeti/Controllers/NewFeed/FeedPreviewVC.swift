@@ -188,7 +188,7 @@ class FeedPreviewVC: UICollectionViewController {
             return
         }
         
-        coordinator?.addFeed(url: url, completion: { [weak self] result in
+        coordinator?.addFeed(url: url, folderID: self.selectedFolder?.folderID, completion: { [weak self] result in
             
             guard let sself = self else { return }
             

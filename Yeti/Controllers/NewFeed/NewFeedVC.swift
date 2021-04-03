@@ -265,7 +265,7 @@ extension NewFeedVC: UISearchResultsUpdating, UISearchBarDelegate, UITextFieldDe
             
             resultsInstance.results = nil
             
-            guard text.isValidURL == true, let url = URL(string: text) else {
+            guard let url = URL(string: text) else {
                 return
             }
             

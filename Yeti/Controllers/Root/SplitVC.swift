@@ -119,10 +119,6 @@ import Defaults
     
     func showOnboarding () {
         
-        guard presentedViewController == nil else {
-            return
-        }
-        
         NotificationCenter.default.removeObserver(self)
         
         coordinator?.showLaunchVC()

@@ -629,13 +629,80 @@ extension FeedsManager {
     
 }
 
-// MARK: - Folders {
+// MARK: - Folders
 extension FeedsManager {
+    
+    public func add(folder title: String, completion:((Result<Folder, Error>) -> Void)?) {
+        
+        guard let _ = user else {
+            completion?(.failure(FeedsManagerError.from(description: "User is not logged in", statusCode: 401)))
+            return
+        }
+        
+        session.PUT(path: "/folder", query: nil, body: ["title": title], resultType: Folder.self) { result in
+            
+            switch result {
+            case .failure(let error):
+                completion?(.failure(error))
+            case .success(let (_, folder)):
+                guard let folder = folder else {
+                    completion?(.failure(FeedsManagerError.from(description: "An invalid or no response was received", statusCode: 500)))
+                    return
+                }
+                
+                completion?(.success(folder))
+            }
+            
+        }
+        
+    }
+    
+    public func update(folder id: UInt, title: String?, add: [UInt]?, delete: [UInt]?, completion:((Result<Bool, Error>) -> Void)?) {
+        
+        guard let _ = user else {
+            completion?(.failure(FeedsManagerError.from(description: "User is not logged in", statusCode: 401)))
+            return
+        }
+        
+        var body: [String: AnyHashable] = [
+            "folderID": id
+        ]
+        
+        if title != nil {
+            body["title"] = title!
+        }
+        
+        if add != nil, add!.count > 0 {
+            body["add"] = add
+        }
+        
+        if delete != nil, delete!.count > 0 {
+            body["del"] = delete
+        }
+        
+        session.POST(path: "/folder", query: nil, body: body, resultType: [String: Bool].self) { result in
+            
+            switch result {
+            case .failure(let error):
+                completion?(.failure(error))
+                
+            case .success(let (_, result)):
+                guard let result = result else {
+                    completion?(.failure(FeedsManagerError.from(description: "An invalid or no response was received", statusCode: 500)))
+                    return
+                }
+                
+                completion?(.success(result["status"] ?? false))
+            }
+            
+        }
+        
+    }
     
     public func delete(folder id: UInt, completion:((Result<Bool, Error>) -> Void)?) {
         
         guard let _ = user else {
-            completion?(.failure((NSError(domain: "Elytra", code: 401, userInfo: [NSLocalizedDescriptionKey: "User is not logged in."]) as Error)))
+            completion?(.failure(FeedsManagerError.from(description: "User is not logged in", statusCode: 401)))
             return
         }
         

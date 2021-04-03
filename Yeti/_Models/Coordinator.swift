@@ -53,6 +53,7 @@ public var deviceName: String {
         setupDeviceID()
         
         self.splitVC = splitViewController
+        splitViewController.coordinator = self
         
         let sidebar = SidebarVC()
         sidebar.coordinator = self
@@ -768,11 +769,11 @@ extension Coordinator {
     
     func addFeed(url: URL) {
      
-        addFeed(url: url, completion: nil)
+        addFeed(url: url, folderID: nil, completion: nil)
         
     }
     
-    func addFeed(url: URL, completion: ((Result<Feed, Error>) -> Void)?) {
+    func addFeed(url: URL, folderID: UInt?, completion: ((Result<Feed, Error>) -> Void)?) {
         
         let have: Feed? = DBManager.shared.feeds.first(where: { $0.url == url })
         
@@ -816,6 +817,32 @@ extension Coordinator {
             case .success(let feed):
                 
                 completion?(.success(feed))
+                
+                if let folderID = folderID {
+                    
+                    // check if the folder exists
+                    if let folder = DBManager.shared.folder(for: folderID) {
+                        
+                        // check if the folder already contains this feed
+                        if folder.feedIDs.contains(feed.feedID) == false {
+                            
+                            // update the folder struct
+                            FeedsManager.shared.update(folder: folderID, title: nil, add: [feed.feedID], delete: nil) { result in
+                                
+                                if case .success(let status) = result,
+                                   status == true {
+                                    
+                                    folder.feedIDs.insert(feed.feedID)
+                                    
+                                }
+                                
+                            }
+                            
+                        }
+                        
+                    }
+                    
+                }
                 
                 // check if we have the feed
                 let first: Feed? = DBManager.shared.feeds.first(where: { $0.feedID == feed.feedID })

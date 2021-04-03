@@ -569,13 +569,13 @@ enum SidebarItem: Hashable {
 
             if DBManager.shared.folders.count > 0 {
 
-                let uniqueFolders: [SidebarItem] = DBManager.shared.folders
+                let uniqueFolders: [SidebarItem] = Array(Set(DBManager.shared.folders))
                     .sorted(by: { (lhs, rhs) -> Bool in
                         return lhs.title.localizedCompare(rhs.title) == .orderedAscending
                     })
                     .map { SidebarItem.folder($0) }
 
-                foldersSnapshot.append(uniqueFolders)
+                foldersSnapshot.append(Array(Set(uniqueFolders)))
 
                 for folderItem in uniqueFolders {
 

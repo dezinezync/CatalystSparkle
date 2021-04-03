@@ -131,9 +131,9 @@ public let notificationsKey = "notifications"
             
             let fm = FileManager.default
             #if DEBUG
-            let dbName = "elytra-v2.3.0i-debug.sqlite"
+            let dbName = "elytra-v2.3.0j-debug.sqlite"
             #else
-            let dbName = "elytra-v2.3.0a.sqlite"
+            let dbName = "elytra-v2.3.0b.sqlite"
             #endif
             
             guard let baseURL = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {

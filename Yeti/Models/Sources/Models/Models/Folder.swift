@@ -12,14 +12,12 @@ import Combine
     
     public var title: String!
     public var folderID: UInt!
-    public var expanded: Bool = false
     public var feedIDs = Set<UInt>()
     
     public enum CodingKeys: String, CodingKey {
         case title
-        case folderID
+        case folderID = "id"
         case feedIDs
-        case expanded
     }
     
     public var updatingCounters: Bool = false {
@@ -117,8 +115,6 @@ extension Folder {
         if let title = title {
             dict["title"] = title
         }
-        
-        dict["expanded"] = expanded
         
         return dict
         
