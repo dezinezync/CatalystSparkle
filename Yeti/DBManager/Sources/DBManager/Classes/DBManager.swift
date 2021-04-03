@@ -353,13 +353,13 @@ public let notificationsKey = "notifications"
         
         set {
             
-            if newValue.count == 0 {
-                return
-            }
-            
             _feeds = newValue
             
             NotificationCenter.default.post(name: .feedsUpdated, object: self)
+            
+            if newValue.count == 0 {
+                return
+            }
             
             writeQueue.sync { [weak self] in
                 
@@ -1026,7 +1026,6 @@ extension DBManager {
     
     public func purgeFeedsForResync (completion: (() -> Void)?) {
         
-        // @TODO: Persist Feed metadata
         var preSyncMetadata: [UInt: FeedMeta] = [:]
         
         for feed in feeds {
@@ -1039,9 +1038,6 @@ extension DBManager {
             
         }
         
-        _feeds = []
-        _folders = []
-        
         bgConnection.readWrite { (transaction) in
             
             transaction.removeAllObjects(inCollection: .feeds)
@@ -1049,7 +1045,10 @@ extension DBManager {
             
         }
         
-        _preSyncFeedMetadata = preSyncMetadata
+        feeds = []
+        folders = []
+        
+       _preSyncFeedMetadata = preSyncMetadata
         
         DispatchQueue.main.async {
             completion?()
