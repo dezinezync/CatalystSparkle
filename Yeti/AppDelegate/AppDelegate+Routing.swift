@@ -297,20 +297,6 @@ extension AppDelegate {
         
     }
     
-    func showAddingFeedDialog() {
-        
-        if let avc = AlertManager.showActivity(title: "Adding Feed") {
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                
-                avc.dismiss(animated: true, completion: nil)
-                
-            }
-            
-        }
-        
-    }
-    
     func openFeed(id: UInt) {
         openFeed(id: id, article: nil)
     }

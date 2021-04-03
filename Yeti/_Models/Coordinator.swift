@@ -767,6 +767,20 @@ public var deviceName: String {
 // Briding DBManager and FeedsManager
 extension Coordinator {
     
+    func showAddingFeedDialog() {
+        
+        if let avc = AlertManager.showActivity(title: "Adding Feed") {
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                
+                avc.dismiss(animated: true, completion: nil)
+                
+            }
+            
+        }
+        
+    }
+    
     func addFeed(url: URL) {
      
         addFeed(url: url, folderID: nil, completion: nil)
@@ -783,6 +797,8 @@ extension Coordinator {
             return
             
         }
+        
+        showAddingFeedDialog()
         
         if url.absoluteString.contains("youtube.com") == true,
            url.absoluteString.contains("videos.xml") == false {
