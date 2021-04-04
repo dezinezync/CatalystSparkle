@@ -318,13 +318,13 @@ PrefsManager * SharedPrefs = nil;
     [defaults addObserver:self forKeyPath:kDefaultsImageBandwidth options:NSKeyValueObservingOptionNew context:NULL];
     
     [defaults addObserver:self forKeyPath:MacKeyOpensBrowserInBackground options:NSKeyValueObservingOptionNew context:NULL];
-    [defaults addObserver:self forKeyPath:MacKeyRefreshFeeds options:NSKeyValueObservingOptionNew context:NULL];
+//    [defaults addObserver:self forKeyPath:MacKeyRefreshFeeds options:NSKeyValueObservingOptionNew context:NULL];
     
     [defaults addObserver:self forKeyPath:@"paraTitleFontReadable" options:NSKeyValueObservingOptionNew context:NULL];
     [defaults addObserver:self forKeyPath:@"articleFontReadable" options:NSKeyValueObservingOptionNew context:NULL];
     
     [defaults addObserver:self forKeyPath:@"MacHideBookmarksTab" options:NSKeyValueObservingOptionNew context:NULL];
-    [defaults addObserver:self forKeyPath:@"MacShowUnreadCounters" options:NSKeyValueObservingOptionNew context:NULL];
+//    [defaults addObserver:self forKeyPath:@"MacShowUnreadCounters" options:NSKeyValueObservingOptionNew context:NULL];
     
     [defaults addObserver:self forKeyPath:@"MacSummaryPreviewLines" options:NSKeyValueObservingOptionNew context:NULL];
     
@@ -344,7 +344,7 @@ PrefsManager * SharedPrefs = nil;
     
 #endif
     
-    [defaults addObserver:self forKeyPath:badgeAppIconPreference options:NSKeyValueObservingOptionNew context:NULL];
+//    [defaults addObserver:self forKeyPath:badgeAppIconPreference options:NSKeyValueObservingOptionNew context:NULL];
     
 }
 
@@ -372,13 +372,13 @@ PrefsManager * SharedPrefs = nil;
             [self setValue:value forKey:propSel(browserOpenInBackground)];
             
         }
-        else if ([keyPath isEqualToString:MacKeyRefreshFeeds]) {
-            
-            [self setValue:value forKey:propSel(refreshFeedsInterval)];
-            
-            [NSNotificationCenter.defaultCenter postNotificationName:MacRefreshFeedsIntervalUpdated object:nil];
-            
-        }
+//        else if ([keyPath isEqualToString:MacKeyRefreshFeeds]) {
+//
+//            [self setValue:value forKey:propSel(refreshFeedsInterval)];
+//
+//            [NSNotificationCenter.defaultCenter postNotificationName:MacRefreshFeedsIntervalUpdated object:nil];
+//
+//        }
 #endif
         else if ([keyPath isEqualToString:kDefaultsImageBandwidth]) {
             
@@ -394,13 +394,13 @@ PrefsManager * SharedPrefs = nil;
             [NSNotificationCenter.defaultCenter postNotificationName:ShowBookmarksTabPreferenceChanged object:nil];
             
         }
-        else if ([keyPath isEqualToString:@"MacShowUnreadCounters"]) {
-            
-            [self setValue:value forKey:keypath(showUnreadCounts)];
-            
-            [NSNotificationCenter.defaultCenter postNotificationName:ShowUnreadCountsPreferenceChanged object:nil];
-            
-        }
+//        else if ([keyPath isEqualToString:@"MacShowUnreadCounters"]) {
+//
+//            [self setValue:value forKey:keypath(showUnreadCounts)];
+//
+//            [NSNotificationCenter.defaultCenter postNotificationName:ShowUnreadCountsPreferenceChanged object:nil];
+//
+//        }
         else if ([keyPath isEqualToString:@"MacSummaryPreviewLines"]) {
             
             [self setValue:value forKey:keypath(previewLines)];
@@ -408,13 +408,13 @@ PrefsManager * SharedPrefs = nil;
             [NSNotificationCenter.defaultCenter postNotificationName:PreviewLinesPreferenceUpdated object:nil];
             
         }
-        else if ([keyPath isEqualToString:badgeAppIconPreference]) {
-            
-            [self setValue:value forKey:keypath(badgeAppIcon)];
-            
-            [NSNotificationCenter.defaultCenter postNotificationName:BadgeAppIconPreferenceUpdated object:nil];
-            
-        }
+//        else if ([keyPath isEqualToString:badgeAppIconPreference]) {
+//            
+//            [self setValue:value forKey:keypath(badgeAppIcon)];
+//            
+//            [NSNotificationCenter.defaultCenter postNotificationName:BadgeAppIconPreferenceUpdated object:nil];
+//            
+//        }
         else if ([keyPath isEqualToString:kShowMarkReadPrompt]) {
             
             [self setValue:value forKey:keypath(showMarkReadPrompts)];

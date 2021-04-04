@@ -214,12 +214,11 @@
             
             NSString *feedID = [uniqueIdentifier stringByReplacingOccurrencesOfString:@"feed:" withString:@""];
             
-            // @TODO
-//            NSURL *url = [NSURL URLWithFormat:@"elytra://feed/%@", feedID];
+            NSURL *url = [NSURL URLWithFormat:@"elytra://feed/%@", feedID];
             
-//            runOnMainQueueWithoutDeadlocking(^{
-//                [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
-//            });
+            runOnMainQueueWithoutDeadlocking(^{
+                [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
+            });
             
         }
         

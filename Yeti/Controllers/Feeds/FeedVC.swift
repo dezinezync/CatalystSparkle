@@ -219,7 +219,7 @@ enum MarkDirection: Int {
                         return
                     }
                     
-                    let count = unread ?? 0
+                    let count = unread
                     
                     sself.titleView?.countLabel.text = "\(count) Unread\(count == 1 ? "" : "s")"
                     

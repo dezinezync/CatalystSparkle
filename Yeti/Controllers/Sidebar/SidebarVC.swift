@@ -13,6 +13,7 @@ import Models
 import Combine
 import Networking
 import YapDatabase
+import Defaults
 
 class SidebarDS: UICollectionViewDiffableDataSource<Int, SidebarItem> {
        
@@ -410,13 +411,23 @@ enum SidebarItem: Hashable, Identifiable {
         
         if let mc = coordinator {
             
-            mc.publisher(for: \.totalUnread)
+            mc.$totalUnread
                 .receive(on: DispatchQueue.main)
                 .sink { [weak self] _ in
+                    
                     guard let sself = self else { return }
+                    
                     if sself.requiresUpdatingUnreadsSharedData == false {
                         sself.requiresUpdatingUnreadsSharedData = true
                     }
+                    
+                    if Defaults[.badgeAppIcon] == true {
+                        UIApplication.shared.applicationIconBadgeNumber = Int(mc.totalUnread)
+                    }
+                    else {
+                        UIApplication.shared.applicationIconBadgeNumber = 0
+                    }
+                    
                 }
                 .store(in: &cancellables)
             
@@ -536,13 +547,37 @@ enum SidebarItem: Hashable, Identifiable {
         
         NotificationCenter.default.addObserver(self, selector: #selector(setupData), name: NSNotification.Name.ShowBookmarksTabPreferenceChanged, object: nil)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(setupData), name: NSNotification.Name.ShowUnreadCountsPreferenceChanged, object: nil)
+        Defaults.publisher(.showUnreadCounts)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                guard let sself = self else { return }
+                sself.coalescingQueue.add(sself, #selector(sself.setupData))
+            }
+            .store(in: &cancellables)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(badgePreferenceChanged), name: NSNotification.Name.BadgeAppIconPreferenceUpdated, object: nil)
+        Defaults.publisher(.badgeAppIcon)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] change in
+                
+                if change.newValue == true {
+                    UIApplication.shared.applicationIconBadgeNumber = Int(self?.coordinator?.totalUnread ?? 0)
+                }
+                else {
+                    UIApplication.shared.applicationIconBadgeNumber = 0
+                }
+                
+            }
+            .store(in: &cancellables)
         
         #if targetEnvironment(macCatalyst)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(didChangeTimerPreference), name: NSNotification.Name.MacRefreshFeedsIntervalUpdated, object: nil)
+        Defaults.publisher(.refreshFeedsInterval)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                guard let sself = self else { return }
+                CoalescingQueue.standard.add(sself, #selector(sself.didChangeTimerPreference))
+            }
+            .store(in: &cancellables)
         
         #endif
         
@@ -1392,15 +1427,17 @@ enum SidebarItem: Hashable, Identifiable {
             return
         }
         
-        guard SharedPrefs.refreshFeedsInterval != "-1" else {
+        guard var interval = RefreshIntervalKeys(rawValue: Defaults[.refreshFeedsInterval])?.interval,
+              interval > 0 else {
             return
         }
         
-        let interval = (SharedPrefs.refreshFeedsInterval as NSString).doubleValue
-        
-        guard interval > 0 else {
-            return
-        }
+        #if DEBUG
+        // half hour = 2.5min, full hour = 5min
+        interval *= 5
+        #else
+        interval *= 60
+        #endif
         
         let timer = Timer(timeInterval: interval, repeats: false) { [weak self] (t) in
             

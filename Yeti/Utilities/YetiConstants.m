@@ -160,7 +160,7 @@ NSString * _Nonnull const MacKeyOpensBrowserInBackground = @"macKeyOpensBrowserI
 
 #endif
 
-NSNotificationName _Nonnull const BadgeAppIconPreferenceUpdated = @"badgeAppIconPreferenceUpdated";
+//NSNotificationName _Nonnull const BadgeAppIconPreferenceUpdated = @"badgeAppIconPreferenceUpdated";
 NSString * _Nonnull const badgeAppIconPreference = @"badgeAppIconPreference";
 
 NSString * _Nonnull const AutoloadGIF = @"autoloadGIF";
