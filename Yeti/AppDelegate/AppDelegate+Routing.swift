@@ -170,8 +170,6 @@ extension AppDelegate {
                  */
                 var openInBackground = Defaults[.browserOpenInBackground]
                 
-                var shiftClicked = false
-                
                 if let shiftClickedVal = params["shift"] as? Bool,
                    shiftClickedVal == true {
                     
@@ -185,7 +183,7 @@ extension AppDelegate {
                 
                 if let url = URL(string: path) {
                     // @TODO
-//                    self?.sharedGlue.open(url: url, inBackground: openInBackground)
+                    self?.sharedGlue.open(url, inBackground: openInBackground)
                     
                 }
                 

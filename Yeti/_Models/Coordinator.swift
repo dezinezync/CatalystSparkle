@@ -779,7 +779,55 @@ public var deviceName: String {
 
 }
 
-// Briding DBManager and FeedsManager
+// MARK: - Background Push
+
+extension Coordinator {
+    
+    func updateSubscription(_ completion: ((_ result: UIBackgroundFetchResult) -> Void)?) {
+        
+        FeedsManager.shared.getSubscription { result in
+            
+            switch result {
+            
+            case .failure(let error):
+                print("error updating subscription in background: \(error)")
+                completion?(.failed)
+                
+            case .success(let sub):
+                let user = DBManager.shared.user
+                user?.subscription = sub
+                DBManager.shared.user = user
+                
+                completion?(.newData)
+            }
+            
+        }
+        
+    }
+    
+    func getArticle(_ articleID: String, completion: ((_ result: UIBackgroundFetchResult) -> Void)?) {
+        
+        FeedsManager.shared.getArticle(articleID) { result in
+            
+            switch result {
+            
+            case .failure(let error):
+                print("error fetching article \(articleID) in background: \(error)")
+                completion?(.failed)
+                
+            case .success(let article):
+                DBManager.shared.add(article: article, strip: true)
+                
+                completion?(.newData)
+            }
+            
+        }
+        
+    }
+    
+}
+
+// MARK: - Briding DBManager and FeedsManager
 extension Coordinator {
     
     func showAddingFeedDialog() {

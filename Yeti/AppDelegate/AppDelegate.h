@@ -11,14 +11,13 @@
 
 #import "RMStore.h"
 #import "SceneDelegate.h"
-
-@class AppKitGlue;
+#import "ElytraMacBridgingHeader.h"
 
 @class RMStoreKeychainPersistence;
 
 @class AppDelegate;
 
-extern AppDelegate * MyAppDelegate;
+extern AppDelegate * _Nonnull MyAppDelegate;
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate> {
     
@@ -26,35 +25,32 @@ extern AppDelegate * MyAppDelegate;
     
 }
 
-@property (nonatomic, weak) UIAlertController *addFeedDialog;
-@property (nonatomic, strong) UINotificationFeedbackGenerator *notificationGenerator;
-
 @property (nonatomic, assign) BOOL processingTransactions;
 
-@property (nonatomic, strong) id<RMStoreReceiptVerifier> receiptVerifier;
-@property (nonatomic, strong) id<RMStoreTransactionPersistor> persistence;
+@property (nonatomic, strong, nonnull) id<RMStoreReceiptVerifier> receiptVerifier;
+@property (nonatomic, strong, nonnull) id<RMStoreTransactionPersistor> persistence;
 
 #pragma mark - Background Tasks
 
-@property (nonatomic, strong) dispatch_queue_t bgTaskDispatchQueue;
+@property (nonatomic, strong, nonnull) dispatch_queue_t bgTaskDispatchQueue;
 
-@property (nonatomic, strong) Coordinator *coordinator;
+@property (nonatomic, strong, nonnull) Coordinator *coordinator;
 
 @property (nonatomic, assign) BOOL bgTaskHandlerRegistered;
 
 #if TARGET_OS_MACCATALYST
 
-@property (nonatomic, strong) NSBundle *appKitBundle;
+@property (nonatomic, strong, nonnull) NSBundle *appKitBundle;
 
-@property (nonatomic, weak) id <UIMenuBuilder> mainMenuBuilder;
+@property (nonatomic, weak, nullable) id <UIMenuBuilder> mainMenuBuilder;
 
-@property (nonatomic, weak) NSToolbarItem *shareArticleItem;
+@property (nonatomic, weak, nullable) NSToolbarItem *shareArticleItem;
 
-@property (nonatomic, strong) AppKitGlue *sharedGlue;
+@property (nonatomic, strong, nonnull) AppKitGlue *sharedGlue;
 
 #endif
 
-@property (nonatomic, weak) UIWindowScene *mainScene;
+@property (nonatomic, weak, nullable) UIWindowScene *mainScene;
 
 @end
 

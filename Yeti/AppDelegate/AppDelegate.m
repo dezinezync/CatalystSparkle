@@ -318,19 +318,6 @@ AppDelegate *MyAppDelegate = nil;
 
 #pragma mark -
 
-- (UINotificationFeedbackGenerator *)notificationGenerator {
-    
-    if (!_notificationGenerator) {
-        _notificationGenerator = [[UINotificationFeedbackGenerator alloc] init];
-        [_notificationGenerator prepare];
-    }
-    
-    return _notificationGenerator;
-    
-}
-
-#pragma mark -
-
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
 {
     return [JLRoutes routeURL:url];

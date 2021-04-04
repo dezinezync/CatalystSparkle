@@ -11,12 +11,6 @@
 #import "ArticleVC+Toolbar.h"
 #import "Elytra-Swift.h"
 
-@interface AppKitGlue : NSObject
-
-- (void)showPreferencesController;
-
-@end
-
 @implementation AppDelegate (CatalystActions)
 
 // @TODO 

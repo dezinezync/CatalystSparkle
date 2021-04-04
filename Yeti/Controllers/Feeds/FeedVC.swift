@@ -567,7 +567,7 @@ enum MarkDirection: Int {
             
             var snapshot = NSDiffableDataSourceSnapshot<Int, Article>()
             snapshot.appendSections([0])
-            snapshot.appendItems(sself.articles.map { $0 as! Article })
+            snapshot.appendItems(sself.articles)
             
             sself.DS.apply(snapshot, animatingDifferences: animated, completion: nil)
             

@@ -2,11 +2,12 @@
 //  Use this file to import your target's public headers that you would like to expose to Swift.
 //
 
-#import "AppDelegate+Catalyst.h"
+#import "AppDelegate+CatalystActions.h"
 
 #import <DZKit/DZKit.h>
 
 #import "Keychain.h"
+#import "ElytraMacBridgingHeader.h"
 
 #import "NSString+ImageProxy.h"
 #import "UIViewController+Coordinator.h"

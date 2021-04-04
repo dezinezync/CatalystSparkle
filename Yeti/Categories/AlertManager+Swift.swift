@@ -82,12 +82,13 @@ extension AlertManager {
         return nil
         #endif
         
-        guard let delegate: AppDelegate = UIApplication.shared.delegate as? AppDelegate,
-              let coordinator: Coordinator = delegate.coordinator else {
+        guard let delegate: AppDelegate = UIApplication.shared.delegate as? AppDelegate else {
             
             return nil
             
         }
+        
+        let coordinator: Coordinator = delegate.coordinator
         
         if coordinator.activityDialog != nil {
             

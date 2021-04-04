@@ -53,73 +53,54 @@
 - (BOOL)application:(UIApplication *)application didReceiveRemoteNotification:(nonnull NSDictionary *)userInfo fetchCompletionHandler:(nonnull void (^)(UIBackgroundFetchResult))completionHandler {
     
     NSDictionary *types = [userInfo valueForKey:@"types"];
-    // @TODO
-//    BOOL isReads = [[types valueForKey:@"reads"] boolValue];
-//
-//    if (isReads) {
-//
-//        [MyDBManager setValue:@(NO) forKey:@"syncSetup"];
-//        MyDBManager.backgroundFetchHandler = completionHandler;
-//        [MyDBManager setupSync];
-//
-//        return YES;
-//
-//    }
-//
-//    BOOL isFeeds = [[types valueForKey:@"feeds"] boolValue];
-//
-//    if (isFeeds) {
-//
-//        self.coordinator.sidebarVC.backgroundFetchHandler = completionHandler;
-//
-//        [self.coordinator prepareFeedsForFullResync];
-//
-//        return YES;
-//
-//    }
-//
-//    BOOL isSubscription = [[types valueForKey:@"subscription"] boolValue];
-//
-//    if (isSubscription) {
-//
-//        [MyFeedsManager getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//            completionHandler(response.statusCode == 304 ? UIBackgroundFetchResultNoData : UIBackgroundFetchResultNewData);
-//
-//        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//            completionHandler(UIBackgroundFetchResultFailed);
-//
-//        }];
-//
-//        return YES;
-//
-//    }
-//
-//    BOOL isArticle = [[types valueForKey:@"article"] boolValue];
-//
-//    if (isArticle) {
-//
-//        NSNumber *articleID = [userInfo valueForKey:@"articleID"];
-//        NSNumber *feedID = [userInfo valueForKey:@"feedID"];
-//
-//        if (articleID != nil && feedID != nil) {
-//
-//            [MyFeedsManager getArticle:articleID feedID:feedID noAuth:NO success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//                completionHandler(UIBackgroundFetchResultNewData);
-//
-//            } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//                completionHandler(UIBackgroundFetchResultFailed);
-//
-//            }];
-//
-//        }
-//
-//        return YES;
-//
-//    }
+    
+    BOOL isReads = [[types valueForKey:@"reads"] boolValue];
+
+    if (isReads) {
+        
+        self.coordinator.sidebarVC.backgroundFetchHandler = completionHandler;
+        
+        [self.coordinator.sidebarVC beginRefreshingAll:nil];
+
+        return YES;
+
+    }
+
+    BOOL isFeeds = [[types valueForKey:@"feeds"] boolValue];
+
+    if (isFeeds) {
+
+        self.coordinator.sidebarVC.backgroundFetchHandler = completionHandler;
+
+        [self.coordinator prepareForFeedsResync];
+
+        return YES;
+
+    }
+
+    BOOL isSubscription = [[types valueForKey:@"subscription"] boolValue];
+
+    if (isSubscription) {
+
+        [self.coordinator updateSubscription:completionHandler];
+
+        return YES;
+
+    }
+
+    BOOL isArticle = [[types valueForKey:@"article"] boolValue];
+
+    if (isArticle) {
+
+        NSString *articleID = [userInfo valueForKey:@"articleID"];
+        
+        if (articleID != nil) {
+            [self.coordinator getArticle:articleID completion:completionHandler];
+        }
+
+        return YES;
+
+    }
     
     return NO;
     

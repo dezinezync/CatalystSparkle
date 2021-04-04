@@ -1154,6 +1154,10 @@ enum SidebarItem: Hashable, Identifiable {
             
             if progress == 1 {
                 
+                if sself.backgroundFetchHandler != nil {
+                    sself.backgroundFetchHandler?(.newData)
+                }
+                
                 if sself.refreshControl?.isRefreshing == true {
                     DispatchQueue.main.async {
                         sself.additionalSafeAreaInsets = .zero
