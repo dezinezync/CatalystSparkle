@@ -49,7 +49,7 @@ private let imageExtensions = ["png", "jpg", "jpeg", "svg", "bmp", "ico", "webp"
         case podcast
     }
     
-    @Published public var unread: UInt! = 0
+    @Published public var unread: UInt = 0
     
     weak var folder: Folder?
     

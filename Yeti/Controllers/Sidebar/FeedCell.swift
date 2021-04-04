@@ -52,7 +52,7 @@ class FeedCell: UICollectionViewListCell {
             
             if SharedPrefs.showUnreadCounts == true {
                 
-                content.secondaryText = (feed.unread ?? 0) > 0 ? "\(feed.unread!)" : ""
+                content.secondaryText = feed.unread > 0 ? "\(feed.unread)" : ""
                 
                 feed.$unread
                     .receive(on: DispatchQueue.main)
@@ -62,7 +62,7 @@ class FeedCell: UICollectionViewListCell {
                             return
                         }
                         
-                        sself.updateUnreadCount(unread ?? 0)
+                        sself.updateUnreadCount(unread)
                         
                 }
                 .store(in: &cancellables)

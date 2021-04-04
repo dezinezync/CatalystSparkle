@@ -512,9 +512,52 @@ enum MarkDirection: Int {
         
     }
     
-    public func updateTitleView() {
-        // @TODO
+    #if targetEnvironment(macCatalyst)
+    public func setupTitleView() {
+        
+        guard let title: String = self.title else {
+            return
+        }
+        
+        guard let window = coordinator?.innerWindow else {
+            return
+        }
+        
+        window.performSelector(onMainThread: NSSelectorFromString("setTitle:"), with: title, waitUntilDone: true)
+        
+        var publisher: Published<UInt>.Publisher!
+        
+        switch type {
+        case .natural:
+            publisher = feed!.$unread
+        case .unread:
+            publisher = coordinator!.$totalUnread
+        case .today:
+            publisher = coordinator!.$totalToday
+        default: break
+            
+        }
+        
+        if publisher != nil {
+            
+            publisher!
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] unread in
+                    
+                    guard let sself = self,
+                          let swindow = sself.coordinator?.innerWindow else {
+                              return
+                          }
+                    
+                    swindow.performSelector(onMainThread: NSSelectorFromString("setSubtitle:"), with: "\(unread) Unread", waitUntilDone: true)
+                    
+                }
+                .store(in: &cancellables)
+            
+        }
+        
     }
+    #endif
     
     func setupState() {
         
@@ -873,6 +916,8 @@ extension FeedVC {
     }
     
     func markAllRead( _ sender: UIBarButtonItem?) {
+        
+        Haptics.shared.generate(feedbackType: .selectionChange)
         
         DBManager.shared.readQueue.async { [weak self] in
             
@@ -1517,10 +1562,7 @@ extension FeedVC: ArticleHandler, ArticleProvider {
     
     func willChangeArticle() {
         
-        dispatchMainAsync { [weak self] in
-            self?.feedbackGenerator.selectionChanged()
-            self?.feedbackGenerator.prepare()
-        }
+        Haptics.shared.generate(feedbackType: .selectionChange)
         
     }
     

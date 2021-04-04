@@ -466,7 +466,7 @@ public var deviceName: String {
                         self?.innerWindow = nsWindow
                         
                         if self?.feedVC != nil {
-                            self?.feedVC?.updateTitleView()
+                            self?.feedVC?.setupTitleView()
                         }
                         
                     }

@@ -1652,7 +1652,7 @@ extension SidebarVC {
                         continue
                     }
                     
-                    feed.unread = feedsMapping[feedID]
+                    feed.unread = feedsMapping[feedID] ?? 0
                     
                 }
                 
