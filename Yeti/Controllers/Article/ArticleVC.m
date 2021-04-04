@@ -2368,10 +2368,10 @@ typedef NS_ENUM(NSInteger, ArticleVCState) {
     if (![self showImage])
         return;
     
-    NSString *videoID = [[content url] lastPathComponent];
+    NSString *videoID = [[content url] query];
     
-    if ([videoID containsString:@"watch?v="] == YES) {
-        videoID = [videoID stringByReplacingOccurrencesOfString:@"watch?v=" withString:@""];
+    if ([videoID containsString:@"v="] == YES) {
+        videoID = [videoID stringByReplacingOccurrencesOfString:@"v=" withString:@""];
     }
     
     NSLogDebug(@"Extracting YT info for: %@", videoID);
@@ -2422,6 +2422,8 @@ typedef NS_ENUM(NSInteger, ArticleVCState) {
                 imageView.translatesAutoresizingMaskIntoConstraints = NO;
 
                 [playerController.contentOverlayView addSubview:imageView];
+                
+                imageView.layer.masksToBounds = YES;
 
                 [imageView.widthAnchor constraintEqualToAnchor:playerController.contentOverlayView.widthAnchor multiplier:1.f].active = YES;
                 [imageView.heightAnchor constraintEqualToAnchor:playerController.contentOverlayView.heightAnchor multiplier:1.f].active = YES;
@@ -2432,6 +2434,12 @@ typedef NS_ENUM(NSInteger, ArticleVCState) {
                 
                 if (thumbnail == nil || [thumbnail isBlank] == YES) {}
                 else {
+                    
+                    if (SharedPrefs.imageProxy == YES) {
+                        thumbnail = [thumbnail pathForImageProxy:NO maxWidth:playerController.view.bounds.size.width quality:0.9];
+                    }
+                    
+                    NSLog(@"Loading thumbnail for youtube video %@", videoID);
                     
                     [imageView sd_setImageWithURL:[NSURL URLWithString:thumbnail] placeholderImage:nil options:SDWebImageScaleDownLargeImages completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
                         
