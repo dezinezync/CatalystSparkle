@@ -406,6 +406,12 @@ public var deviceName: String {
         
     }
     
+    public func imageForSortingOption(_ option: FeedSorting) -> UIImage {
+        
+        return UIImage(systemName: FeedVC.imageNameForSortingOption(option: option))!
+        
+    }
+    
     #if targetEnvironment(macCatalyst)
     
     public func showAttributions() {

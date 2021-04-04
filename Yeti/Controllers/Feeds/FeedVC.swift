@@ -38,7 +38,7 @@ enum FeedVCState: Int {
     }
 }
 
-enum FeedSorting: Int {
+@objc public enum FeedSorting: Int {
     case descending
     case ascending
     case unreadDescending
@@ -54,16 +54,7 @@ enum FeedSorting: Int {
     
     var imageName: String {
         
-        switch self {
-        case .descending:
-            return "arrow.down.circle"
-        case .unreadDescending:
-            return "arrow.down.circle.fill"
-        case .ascending:
-            return "arrow.up.circle"
-        case .unreadAscending:
-            return "arrow.up.circle.fill"
-        }
+        return FeedVC.imageNameForSortingOption(option: self)
         
     }
     
@@ -81,6 +72,19 @@ enum MarkDirection: Int {
     var cancellables: [AnyCancellable] = []
     
     let feedbackGenerator = UISelectionFeedbackGenerator()
+    
+    static func imageNameForSortingOption(option: FeedSorting) -> String {
+        switch option {
+        case .descending:
+            return "arrow.down.circle"
+        case .unreadDescending:
+            return "arrow.down.circle.fill"
+        case .ascending:
+            return "arrow.up.circle"
+        case .unreadAscending:
+            return "arrow.up.circle.fill"
+        }
+    }
     
     var state: FeedVCState = .empty {
         didSet {
@@ -292,9 +296,14 @@ enum MarkDirection: Int {
     
     func setupNavBar() {
         
+        #if targetEnvironment(macCatalyst)
+        navigationController?.navigationBar.isHidden = true
+        #else
+        
         navigationItem.rightBarButtonItems = self.rightBarButtonItems()
         navigationItem.largeTitleDisplayMode = .never
         
+        #endif
         
     }
     
@@ -504,7 +513,7 @@ enum MarkDirection: Int {
     }
     
     public func updateTitleView() {
-        
+        // @TODO
     }
     
     func setupState() {
