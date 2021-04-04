@@ -1950,7 +1950,10 @@ typedef NS_ENUM(NSInteger, ArticleVCState) {
     NSString *absolute = content.url ? content.url.absoluteString : @"";
     
     // 9mac ads and some tracking scripts
-    if (content.url && (
+    if (content.url
+        && [absolute containsString:@"theoatmeal"] == NO
+        && [absolute containsString:@"amazonaws"] == NO 
+        && (
             ([absolute containsString:@"ads"] && [absolute containsString:@"assoc"])
             || ([absolute containsString:@"deal"] && [absolute containsString:@"Daily-Deals-"] == NO)
             || ([absolute containsString:@"amaz"]
