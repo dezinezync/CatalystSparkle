@@ -231,6 +231,10 @@ extension NewFeedVC: UISearchResultsUpdating, UISearchBarDelegate, UITextFieldDe
             return
         }
         
+        guard searchBar.searchTextField.isFirstResponder == false else {
+            return
+        }
+        
         guard let text = searchBar.text else {
             return
         }

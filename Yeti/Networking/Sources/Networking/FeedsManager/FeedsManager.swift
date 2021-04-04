@@ -39,8 +39,6 @@ public enum FeedsManagerError : Error {
     public var deviceID: String?
     public unowned var user: User?
     
-    public var additionalFeedsToSync: [Feed] = []
-    
     public var fullVersion: String = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String
     public var majorVersion: String {
         return fullVersion.components(separatedBy: ".").first!
@@ -525,13 +523,7 @@ extension FeedsManager {
                     return
                 }
                 
-                // @TODO Update Keychain for YTSubscriptionHasAddedFirstFeed
-                
                 feed.unread = 0
-                
-                self?.additionalFeedsToSync.append(feed)
-                
-                // @TODO: Add to DB Manager
                 
                 completion?(.success(feed))
                 
@@ -578,13 +570,7 @@ extension FeedsManager {
                     return
                 }
                 
-                // @TODO Update Keychain for YTSubscriptionHasAddedFirstFeed
-                
                 feed.unread = 0
-                
-                self?.additionalFeedsToSync.append(feed)
-                
-                // @TODO: Add to DB Manager
                 
                 completion?(.success(feed))
                 

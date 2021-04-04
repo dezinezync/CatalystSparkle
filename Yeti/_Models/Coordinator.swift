@@ -15,6 +15,7 @@ import Models
 import DBManager
 import DZKit
 import DeviceCheck
+import Combine
 
 public var deviceName: String {
     var systemInfo = utsname()
@@ -47,6 +48,8 @@ public var deviceName: String {
     weak public var emptyVC: EmptyVC?
     
     weak public var activityDialog: UIAlertController?
+    
+    var cancellables: [AnyCancellable] = []
     
     public func start(_ splitViewController: SplitVC) {
         
@@ -108,6 +111,8 @@ public var deviceName: String {
             sself.checkForPushNotifications()
             
         }
+        
+        setupNotifications()
         
     }
     
@@ -173,6 +178,10 @@ public var deviceName: String {
         FeedsManager.shared.deviceID = deviceID
         
         Keychain.add("deviceID", string: deviceID)
+        
+    }
+    
+    func setupNotifications() {
         
     }
     
@@ -844,6 +853,16 @@ extension Coordinator {
                     
                     DBManager.shared.feeds.append(feed)
                     
+                    DispatchQueue.global(qos: .default).async { [weak self] in
+                        self?.syncAdditionalFeed(feed)
+                    }
+                    
+                    let hasAddedFirst = Keychain.bool(for: YTSubscriptionHasAddedFirstFeed)
+                    
+                    if hasAddedFirst == false {
+                        Keychain.add(YTSubscriptionHasAddedFirstFeed, boolean: true)
+                    }
+                    
                     // Trigger update
                     if (folderID == nil) {
                         CoalescingQueue.standard.add(sself.sidebarVC, #selector(SidebarVC.setupData))
@@ -929,6 +948,16 @@ extension Coordinator {
                     
                     DBManager.shared.feeds.append(feed)
                     
+                    DispatchQueue.global(qos: .default).async { [weak self] in
+                        self?.syncAdditionalFeed(feed)
+                    }
+                    
+                    let hasAddedFirst = Keychain.bool(for: YTSubscriptionHasAddedFirstFeed)
+                    
+                    if hasAddedFirst == false {
+                        Keychain.add(YTSubscriptionHasAddedFirstFeed, boolean: true)
+                    }
+                    
                     return
                 }
                 
@@ -936,6 +965,42 @@ extension Coordinator {
                 
                 AlertManager.showGenericAlert(withTitle: "Feed Exists", message: "This feed already exists in your list.")
             
+            }
+            
+        }
+        
+    }
+    
+    func syncAdditionalFeed(_ feed: Feed) {
+        
+        guard let feedID = feed.feedID else {
+            print("No feedID on feed: \(feed). Exiting additional sync.")
+            return
+        }
+        
+        syncAdditionalFeed(feedID, page: 1)
+        
+    }
+    
+    func syncAdditionalFeed(_ feedID: UInt, page: UInt = 1) {
+        
+        FeedsManager.shared.getArticles(forFeed: feedID, page: page) { [weak self] result in
+            
+            switch result {
+            
+            case .failure(let error):
+                print("Error fetching articles for feed: \(feedID), page: \(page)\n\(error)")
+            
+            case .success(let articles):
+                
+                DBManager.shared.add(articles: articles, strip: true)
+                
+                // up to maximum of 5 pages (or 100 Articles)
+                if articles.count == 20 && page < 5 {
+                    // fetch the next page
+                    self?.syncAdditionalFeed(feedID, page: page + 1)
+                }
+                
             }
             
         }

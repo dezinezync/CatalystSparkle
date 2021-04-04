@@ -905,7 +905,7 @@ enum SidebarItem: Hashable, Identifiable {
     
     func _deleteFeed(feed: Feed, completion: ((_ completed: Bool) -> Void)?) {
         
-        FeedsManager.shared.delete(feed: feed.feedID) { [weak self] (result) in
+        FeedsManager.shared.delete(feed: feed.feedID) { (result) in
             
             switch result {
             case .failure(let error):
