@@ -1382,6 +1382,10 @@ enum SidebarItem: Hashable, Identifiable {
         
         let interval = (SharedPrefs.refreshFeedsInterval as NSString).doubleValue
         
+        guard interval > 0 else {
+            return
+        }
+        
         let timer = Timer(timeInterval: interval, repeats: false) { [weak self] (t) in
             
             guard let sself = self else { return }
