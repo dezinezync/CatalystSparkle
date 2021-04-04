@@ -70,12 +70,7 @@ class FolderCell: UICollectionViewListCell {
             
         }
         
-        if traitCollection.userInterfaceIdiom == .mac {
-            content.textProperties.color = .secondaryLabel
-        }
-        else {
-            content.textProperties.color = .label
-        }
+        content.textProperties.color = .label
         
         content.secondaryTextProperties.color = .secondaryLabel
         

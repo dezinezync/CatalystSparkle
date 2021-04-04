@@ -659,7 +659,11 @@ enum MarkDirection: Int {
         title.textAlignment = .center
         
         let subtitle = UILabel()
+        #if targetEnvironment(macCatalyst)
+        subtitle.font = .preferredFont(forTextStyle: .body)
+        #else
         subtitle.font = .preferredFont(forTextStyle: .subheadline)
+        #endif
         subtitle.textColor = .secondaryLabel
         subtitle.numberOfLines = 0
         subtitle.textAlignment = .center
