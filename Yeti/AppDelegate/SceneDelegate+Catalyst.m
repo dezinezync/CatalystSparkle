@@ -120,7 +120,6 @@
     
     Coordinator *coordinator = MyAppDelegate.coordinator;
     
-    // @TODO
     if ([itemIdentifier isEqualToString:kNewItemToolbarIdentifier]) {
 
         title = @"New";

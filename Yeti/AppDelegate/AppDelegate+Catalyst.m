@@ -188,16 +188,6 @@
 
     UIKeyCommand *searchArticle = [UIKeyCommand commandWithTitle:@"Find in Article" image:nil action:@selector(didTapSearch) input:@"f" modifierFlags:UIKeyModifierCommand propertyList:nil];
 
-    for (UIKeyCommand *command in @[markRead, markBookmark, openInBrowser, closeArticle, shareArticle, searchArticle]) {
-
-        if (articleVC == nil) {
-
-            command.attributes = UIMenuElementAttributesDisabled;
-
-        }
-
-    }
-
     UIMenu *articlesMenu = [UIMenu menuWithTitle:@"Article" children:@[markRead, markBookmark, openInBrowser, closeArticle, shareArticle, searchArticle]];
 
     [builder insertSiblingMenu:articlesMenu beforeMenuForIdentifier:UIMenuWindow];
@@ -242,7 +232,7 @@
 
 - (void)validateCommand:(UICommand *)command {
     
-    NSLogDebug(@"%@ - %@", command.title, NSStringFromSelector(command.action));
+    NSLogDebug(@"%@ - %@: %@", command.title, NSStringFromSelector(command.action), @([self respondsToSelector:command.action]));
     
     if (self.mainScene != nil && self.mainScene.windows.firstObject.isKeyWindow == NO) {
         
@@ -255,21 +245,19 @@
         command.attributes = self.mainScene == nil ? 0 : UIMenuElementAttributesDisabled;
         
     }
-
-//    Class aClass = NSClassFromString([NSString stringWithFormat:@"%@%@%@", @"NSE", @"ve", @"nt"]);
-//
-//    BOOL hideOptionals = ((NSUInteger)[aClass performSelector:NSSelectorFromString(@"modifierFlags")] & (1 << 19)) != (1 << 19);
-//
-//    if ([command.title isEqualToString:@"Force Re-Sync"]) {
-//
-//        command.attributes = hideOptionals ? UIMenuElementAttributesHidden : 0;
-//
-//    }
-//    else if ([command.title isEqualToString:@"Refresh"]) {
-//
-//        command.attributes = hideOptionals ? 0 : UIMenuElementAttributesHidden;
-//
-//    }
+    
+    else if ([command.title isEqualToString:@"Open in Browser"]
+             || [command.title isEqualToString:@"Close Article"]
+             || [command.title isEqualToString:@"Share Article"]
+             || [command.title isEqualToString:@"Mark Read"]
+             || [command.title isEqualToString:@"Mark Unread"]
+             || [command.title isEqualToString:@"Bookmark"]
+             || [command.title isEqualToString:@"Unbookmark"]
+             || [command.title isEqualToString:@"Find in Article"]) {
+        
+        command.attributes = self.coordinator.articleVC != nil ? 0 : UIMenuElementAttributesDisabled;
+        
+    }
 
 }
 

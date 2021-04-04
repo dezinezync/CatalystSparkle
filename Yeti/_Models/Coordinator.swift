@@ -231,6 +231,8 @@ public var deviceName: String {
         
         articleVC.coordinator = self
         
+        self.articleVC = articleVC
+        
         if let fvc = self.feedVC {
             articleVC.providerDelegate = fvc
         }

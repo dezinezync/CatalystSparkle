@@ -381,24 +381,24 @@
 - (void)handleSceneActivity:(NSUserActivity *)activity scene:(UIWindowScene *)windowScene {
     
     UIWindow *window = nil;
-    // @TODO
-//    if ([activity.activityType isEqualToString:@"viewImage"] == YES) {
-//
-//        window = [[UIWindow alloc] initWithWindowScene:windowScene];
-//        window.canResizeToFitContent = YES;
-//
-//        PhotosController *photosVC = [[PhotosController alloc] initWithUserInfo:activity.userInfo];
-//
-//        window.rootViewController = photosVC;
-//
-//        CGSize size = CGSizeFromString([activity.userInfo valueForKey:@"size"]);
-//
-//        windowScene.sizeRestrictions.minimumSize = size;
-//        windowScene.titlebar.titleVisibility = UITitlebarTitleVisibilityHidden;
-//        windowScene.titlebar.toolbar = nil;
-//
-//    }
-//
+    
+    if ([activity.activityType isEqualToString:@"viewImage"] == YES) {
+
+        window = [[UIWindow alloc] initWithWindowScene:windowScene];
+        window.canResizeToFitContent = YES;
+
+        PhotosController *photosVC = [[PhotosController alloc] initWithUserInfo:activity.userInfo];
+
+        window.rootViewController = photosVC;
+
+        CGSize size = CGSizeFromString([activity.userInfo valueForKey:@"size"]);
+
+        windowScene.sizeRestrictions.minimumSize = size;
+        windowScene.titlebar.titleVisibility = UITitlebarTitleVisibilityHidden;
+        windowScene.titlebar.toolbar = nil;
+
+    }
+// @TODO
 //    else if ([activity.activityType isEqualToString:@"openArticle"] == YES) {
 //
 //        window = [[UIWindow alloc] initWithWindowScene:windowScene];
@@ -424,80 +424,80 @@
 //        window.rootViewController = vc;
 //
 //    }
-//    else if ([activity.activityType isEqualToString:@"subscriptionInterface"]) {
-//
-//        window = [[UIWindow alloc] initWithWindowScene:windowScene];
-//        window.canResizeToFitContent = NO;
-//
-//        CGSize fixedSize = CGSizeMake(375.f, 480.f);
-//
-//        windowScene.sizeRestrictions.maximumSize = fixedSize;
-//        windowScene.sizeRestrictions.minimumSize = fixedSize;
-//
-//        windowScene.title = @"Your Subscription";
-//
-//        StoreVC *vc = [[StoreVC alloc] initWithStyle:UITableViewStyleGrouped];
-//
-//        window.rootViewController = vc;
-//
-//    }
-//    else if ([activity.activityType isEqualToString:@"attributionsScene"]) {
-//
-//        window = [[UIWindow alloc] initWithWindowScene:windowScene];
-//        window.canResizeToFitContent = NO;
-//
-//        CGSize fixedSize = CGSizeMake(375.f, 480.f);
-//
-//        windowScene.sizeRestrictions.minimumSize = fixedSize;
-//
-//        windowScene.title = @"Attributions";
-//
-//        DZWebViewController *webVC = [[DZWebViewController alloc] init];
-//        webVC.title = @"Attributions";
-//
-//        webVC.URL = [[NSBundle bundleForClass:self.class] URLForResource:@"attributions" withExtension:@"html"];
-//
-//        NSString *tint = [UIColor hexFromUIColor:SharedPrefs.tintColor];
-//        NSString *js = formattedString(@"anchorStyle(\"%@\")", tint);
-//
-//        webVC.evalJSOnLoad = js;
-//
-//        window.rootViewController = webVC;
-//
-//    }
-//    else if ([activity.activityType isEqualToString:@"newFeedScene"]) {
-//
-//        window = [[UIWindow alloc] initWithWindowScene:windowScene];
-//        window.canResizeToFitContent = NO;
-//
-//        CGSize fixedSize = CGSizeMake(480.f, 600.f);
-//
-//        windowScene.sizeRestrictions.minimumSize = fixedSize;
-//        windowScene.sizeRestrictions.maximumSize = fixedSize;
-//
-//        windowScene.titlebar.titleVisibility = UITitlebarTitleVisibilityVisible;
-//        windowScene.titlebar.toolbarStyle = UITitlebarToolbarStyleUnified;
-//        windowScene.title = @"New Feed";
-//
-//        NewFeedVC *vc = [[NewFeedVC alloc] initWithCollectionViewLayout:NewFeedVC.gridLayout];
-//        vc.coordinator = self.coordinator;
-//        vc.moveFoldersDelegate = self.coordinator.sidebarVC;
-//
-//        window.rootViewController = [[UINavigationController alloc] initWithRootViewController:vc];
-//
-//    }
-//
-//    if (window != nil && window.rootViewController != nil) {
-//
-//        self.window = window;
-//        self.window.tintColor = SharedPrefs.tintColor;
-//
-//        [window makeKeyAndVisible];
-//
-//    }
-//    else {
-//        window = nil;
-//    }
+    else if ([activity.activityType isEqualToString:@"subscriptionInterface"]) {
+
+        window = [[UIWindow alloc] initWithWindowScene:windowScene];
+        window.canResizeToFitContent = NO;
+
+        CGSize fixedSize = CGSizeMake(375.f, 480.f);
+
+        windowScene.sizeRestrictions.maximumSize = fixedSize;
+        windowScene.sizeRestrictions.minimumSize = fixedSize;
+
+        windowScene.title = @"Your Subscription";
+
+        StoreVC *vc = [[StoreVC alloc] initWithStyle:UITableViewStyleGrouped];
+
+        window.rootViewController = vc;
+
+    }
+    else if ([activity.activityType isEqualToString:@"attributionsScene"]) {
+
+        window = [[UIWindow alloc] initWithWindowScene:windowScene];
+        window.canResizeToFitContent = NO;
+
+        CGSize fixedSize = CGSizeMake(375.f, 480.f);
+
+        windowScene.sizeRestrictions.minimumSize = fixedSize;
+
+        windowScene.title = @"Attributions";
+
+        DZWebViewController *webVC = [[DZWebViewController alloc] init];
+        webVC.title = @"Attributions";
+
+        webVC.URL = [[NSBundle bundleForClass:self.class] URLForResource:@"attributions" withExtension:@"html"];
+
+        NSString *tint = [UIColor hexFromUIColor:SharedPrefs.tintColor];
+        NSString *js = formattedString(@"anchorStyle(\"%@\")", tint);
+
+        webVC.evalJSOnLoad = js;
+
+        window.rootViewController = webVC;
+
+    }
+    else if ([activity.activityType isEqualToString:@"newFeedScene"]) {
+
+        window = [[UIWindow alloc] initWithWindowScene:windowScene];
+        window.canResizeToFitContent = NO;
+
+        CGSize fixedSize = CGSizeMake(480.f, 600.f);
+
+        windowScene.sizeRestrictions.minimumSize = fixedSize;
+        windowScene.sizeRestrictions.maximumSize = fixedSize;
+
+        windowScene.titlebar.titleVisibility = UITitlebarTitleVisibilityVisible;
+        windowScene.titlebar.toolbarStyle = UITitlebarToolbarStyleUnified;
+        windowScene.title = @"New Feed";
+
+        NewFeedVC *vc = [[NewFeedVC alloc] initWithCollectionViewLayout:NewFeedVC.gridLayout];
+        vc.coordinator = self.coordinator;
+        vc.moveFoldersDelegate = self.coordinator.sidebarVC;
+
+        window.rootViewController = [[UINavigationController alloc] initWithRootViewController:vc];
+
+    }
+
+    if (window != nil && window.rootViewController != nil) {
+
+        self.window = window;
+        self.window.tintColor = SharedPrefs.tintColor;
+
+        [window makeKeyAndVisible];
+
+    }
+    else {
+        window = nil;
+    }
     
 }
 
