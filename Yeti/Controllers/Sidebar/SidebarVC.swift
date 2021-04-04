@@ -667,7 +667,7 @@ enum SidebarItem: Hashable, Identifiable {
         
         if initialSnapshotSetup == false {
             
-            if let item = snapshot.items.first {
+            if let item = customSnapshot.items.first {
                 // select Unread on launch
                 selected = DS.indexPath(for: item)
             }

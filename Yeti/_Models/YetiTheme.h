@@ -37,4 +37,12 @@
 
 @property (nonatomic, copy) UIColor *paragraphColor;
 
+#pragma mark - 2.3-macOS
+
+@property (nonatomic, copy) UIColor *backgroundColor;
+
+@property (nonatomic, copy) UIColor *borderColor;
+
+@property (nonatomic, copy) UIColor *tableColor;
+
 @end

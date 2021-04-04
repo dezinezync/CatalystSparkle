@@ -99,7 +99,7 @@ AppDelegate *MyAppDelegate = nil;
         [UNUserNotificationCenter currentNotificationCenter].delegate = (id <UNUserNotificationCenterDelegate>)self;
         
 #if TARGET_OS_MACCATALYST
-        [self.coordinator registerForNotifications:nil];
+        [self.coordinator registerForNotificationsWithCompletion:nil];
 #endif
         
         [self setupStoreManager];

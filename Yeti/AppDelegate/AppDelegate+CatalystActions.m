@@ -9,6 +9,7 @@
 #import "AppDelegate+CatalystActions.h"
 
 #import "ArticleVC+Toolbar.h"
+#import "Elytra-Swift.h"
 
 @interface AppKitGlue : NSObject
 
@@ -239,13 +240,13 @@
 
 - (void)didClickImportSubscriptions {
     
-    [self.coordinator showOPMLInterfaceFrom:nil direct:1];
+    [self.coordinator showOPMLInterfaceFrom:nil type:ShowOPMLTypeImport];
     
 }
 
 - (void)didClickExportSubscriptions {
     
-    [self.coordinator showOPMLInterfaceFrom:nil direct:2];
+    [self.coordinator showOPMLInterfaceFrom:nil type:ShowOPMLTypeExport];
     
 }
 

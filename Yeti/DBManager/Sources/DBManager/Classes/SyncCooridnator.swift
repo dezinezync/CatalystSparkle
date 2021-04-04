@@ -167,7 +167,6 @@ private let SYNC_TOKEN_ID = "syncTokenID-2.3.0"
     
     public func syncNow(with token:String, tokenID: String, page: UInt) {
         
-        // @TODO check for Nil shared Feeds Manager
         if page == 1 {
             totalProgress = 1
             currentProgress = 0

@@ -79,7 +79,7 @@ extension AlertManager {
     @discardableResult static public func showActivity(title: String?) -> UIAlertController? {
         
         #if targetEnvironment(macCatalyst)
-        return
+        return nil
         #endif
         
         guard let delegate: AppDelegate = UIApplication.shared.delegate as? AppDelegate,

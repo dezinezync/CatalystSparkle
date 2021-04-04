@@ -242,8 +242,7 @@ public let notificationsKey = "notifications"
                 DispatchQueue.main.async {
                     NotificationCenter.default.post(name: .DBManagerDidUpdate, object: self, userInfo: [notificationsKey: notifications])
                 }
-                
-                // @TODO: Update unread counters
+
             }
             .store(in: &cancellables)
         

@@ -549,7 +549,7 @@ extension FeedsManager {
             "userID": "\(user.userID!)"
         ]
         
-        session.PUT(path: "/feed", query: query, body: body, resultType: Feed.self) { [weak self] (result) in
+        session.PUT(path: "/feed", query: query, body: body, resultType: Feed.self) { (result) in
             
             switch result {
             case .success(let (response, feed)): do {

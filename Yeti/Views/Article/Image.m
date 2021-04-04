@@ -560,7 +560,7 @@
     
     SceneDelegate *delegate = (SceneDelegate *)(UIApplication.sharedApplication.connectedScenes.allObjects.firstObject.delegate);
     
-    [delegate.coordinator.splitViewController presentViewController:controller animated:YES completion:nil];
+    [delegate.coordinator.splitVC presentViewController:controller animated:YES completion:nil];
     
 }
 

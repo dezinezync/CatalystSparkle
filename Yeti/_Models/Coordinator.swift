@@ -350,7 +350,7 @@ public var deviceName: String {
         
     }
     
-    public func showOPMLInterface(from sender: Any, type: ShowOPMLType) {
+    public func showOPMLInterface(from sender: Any?, type: ShowOPMLType) {
         
         let vc = OPMLVC(nibName: "OPMLVC", bundle: Bundle.main)
         let nav = UINavigationController(rootViewController: vc)
@@ -446,14 +446,14 @@ public var deviceName: String {
         
         if innerWindow == nil {
             
-            var nsWindow = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.first?.innerWindow()
+            var nsWindow = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.first?.nsWindow
             
             if nsWindow == nil {
                 
                 // try again in 1s
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
                     
-                    nsWindow = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.first?.innerWindow()
+                    nsWindow = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.first?.nsWindow
                     
                     if nsWindow != nil {
                         
