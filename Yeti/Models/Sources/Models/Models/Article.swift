@@ -144,7 +144,7 @@ import BetterCodable
             }
             
         }
-        else if key == " timestamp" || key == "created" {
+        else if key == "timestamp" || key == "created" {
             
             if let value = value as? Date {
                 timestamp = value
@@ -317,6 +317,16 @@ extension Article {
         }
         
         return dict
+        
+    }
+    
+    public func copyFrom(article: Article) {
+        
+        for k in Article.CodingKeys.allCases {
+            let key = k.rawValue
+            let val = article.value(for: key)
+            self.setValue(val, forKey: key)
+        }
         
     }
     

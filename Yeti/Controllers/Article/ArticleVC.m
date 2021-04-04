@@ -827,8 +827,13 @@ typedef NS_ENUM(NSInteger, ArticleVCState) {
         }
         
         // since we're only fetching content and fulltext from here, update those
-        ((Article *)(self.item)).content = responseObject.content;
-        ((Article *)(self.item)).fulltext = responseObject.fulltext;
+        if (((Article *)(self.item)).title == nil && ((Article *)(self.item)).content.count == 0) {
+            [((Article *)(self.item)) copyFromArticle:responseObject];
+        }
+        else {
+            ((Article *)(self.item)).content = responseObject.content;
+            ((Article *)(self.item)).fulltext = responseObject.fulltext;
+        }
         
         [self _setupArticle:self.item start:start isChangingArticle:isChangingArticle];
         

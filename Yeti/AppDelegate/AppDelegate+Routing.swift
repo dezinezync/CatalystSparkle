@@ -118,7 +118,9 @@ extension AppDelegate {
         
         JLRoutes.global().addRoute("/feed/:feedID") { [weak self] params in
             
-            if let feedID = params["feedID"] as? Int {
+            if let fID = params["feedID"] as? String {
+                
+                let feedID = (fID as NSString).integerValue
                 
                 self?.openFeed(id: UInt(feedID))
                 
@@ -130,8 +132,10 @@ extension AppDelegate {
         
         JLRoutes.global().addRoute("/feed/:feedID/article/:articleID") { [weak self] params in
             
-            if let feedID = params["feedID"] as? Int,
+            if let fID = params["feedID"] as? String,
                let article = params["articleID"] as? String {
+                
+                let feedID = (fID as NSString).integerValue
                 
                 self?.openFeed(id: UInt(feedID), article: article)
                 
