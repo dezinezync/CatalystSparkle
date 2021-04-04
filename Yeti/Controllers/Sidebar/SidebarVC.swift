@@ -559,72 +559,80 @@ enum SidebarItem: Hashable, Identifiable {
 
         let s: NSDiffableDataSourceSnapshot = self.DS.snapshot()
 
-        if s.numberOfSections > 1 {
+        DispatchQueue.global().async { [weak self] in
+            
+            guard let sself = self else { return }
+            
+            if s.numberOfSections > 1 {
 
-            let sectionIdentifier = s.sectionIdentifiers[1]
+                let sectionIdentifier = s.sectionIdentifiers[1]
 
-            sectionSnapshot = DS.snapshot(for: sectionIdentifier)
+                sectionSnapshot = sself.DS.snapshot(for: sectionIdentifier)
 
-        }
+            }
 
-        var customSnapshot: NSDiffableDataSourceSectionSnapshot<SidebarItem> = NSDiffableDataSourceSectionSnapshot<SidebarItem>()
+            var customSnapshot: NSDiffableDataSourceSectionSnapshot<SidebarItem> = NSDiffableDataSourceSectionSnapshot<SidebarItem>()
 
-        var customFeeds: [CustomFeed] = [
-            CustomFeed(title: "Unread", image: "largecircle.fill.circle", color: .systemBlue, type: .unread),
-            CustomFeed(title: "Today", image: "calendar", color: .systemRed, type: .today)
-        ]
+            var customFeeds: [CustomFeed] = [
+                CustomFeed(title: "Unread", image: "largecircle.fill.circle", color: .systemBlue, type: .unread),
+                CustomFeed(title: "Today", image: "calendar", color: .systemRed, type: .today)
+            ]
 
-        if SharedPrefs.hideBookmarks == false {
-            customFeeds.append(CustomFeed(title: "Bookmarks", image: "bookmark.fill", color: .systemOrange, type: .bookmarks))
-        }
+            if SharedPrefs.hideBookmarks == false {
+                customFeeds.append(CustomFeed(title: "Bookmarks", image: "bookmark.fill", color: .systemOrange, type: .bookmarks))
+            }
 
-        customSnapshot.append(customFeeds.map { SidebarItem.custom($0) })
+            customSnapshot.append(customFeeds.map { SidebarItem.custom($0) })
 
-        DS.apply(customSnapshot, to: SidebarSection.custom.rawValue)
+            runOnMainQueueWithoutDeadlocking {
+                sself.DS.apply(customSnapshot, to: SidebarSection.custom.rawValue)
+            }
 
-        var foldersSnapshot = NSDiffableDataSourceSectionSnapshot<SidebarItem>()
+            var foldersSnapshot = NSDiffableDataSourceSectionSnapshot<SidebarItem>()
 
-        if DBManager.shared.feeds.count > 0 {
+            if DBManager.shared.feeds.count > 0 {
 
-            if DBManager.shared.folders.count > 0 {
-                
-                let folders: [Folder] = Array(Set(DBManager.shared.folders))
+                if DBManager.shared.folders.count > 0 {
+                    
+                    let folders: [Folder] = Array(Set(DBManager.shared.folders))
 
-                let uniqueFolders: [SidebarItem] = folders
-                    .sorted(by: { (lhs, rhs) -> Bool in
-                        return lhs.title.localizedCompare(rhs.title) == .orderedAscending
-                    })
-                    .map { SidebarItem.folder($0) }
+                    let uniqueFolders: [SidebarItem] = folders
+                        .sorted(by: { (lhs, rhs) -> Bool in
+                            return lhs.title.localizedCompare(rhs.title) == .orderedAscending
+                        })
+                        .map { SidebarItem.folder($0) }
 
-                foldersSnapshot.append(uniqueFolders)
+                    foldersSnapshot.append(uniqueFolders)
 
-                for folderItem in uniqueFolders {
+                    for folderItem in uniqueFolders {
 
-                    if case .folder(let folder) = folderItem {
+                        if case .folder(let folder) = folderItem {
 
-                        let feeds: [Feed] = folder.feeds.map { $0 }
+                            let feeds: [Feed] = folder.feeds.map { $0 }
 
-                        if feeds.count > 0 {
+                            if feeds.count > 0 {
 
-                            let uniqueFeeds: [SidebarItem] = Array(Set(feeds))
-                                .sorted(by: { (lhs, rhs) -> Bool in
-                                    
-                                    return lhs.displayTitle.localizedCompare(rhs.displayTitle) == .orderedAscending
-                                    
-                                })
-                                .map { SidebarItem.feed($0) }
+                                let uniqueFeeds: [SidebarItem] = Array(Set(feeds))
+                                    .sorted(by: { (lhs, rhs) -> Bool in
+                                        
+                                        return lhs.displayTitle.localizedCompare(rhs.displayTitle) == .orderedAscending
+                                        
+                                    })
+                                    .map { SidebarItem.feed($0) }
 
-                            foldersSnapshot.append(uniqueFeeds, to: folderItem)
+                                foldersSnapshot.append(uniqueFeeds, to: folderItem)
 
-                        }
+                            }
 
-                        // if the folder was originally in the expanded state, expand it from here too so the visual state is maintained.
-                        if let sc = sectionSnapshot,
-                           sc.items.count > 0,
-                           sc.contains(folderItem) == true,
-                           sc.isExpanded(folderItem) {
+                            // if the folder was originally in the expanded state, expand it from here too so the visual state is maintained.
+                            if let sc = sectionSnapshot,
+                               sc.items.count > 0,
+                               sc.contains(folderItem) == true,
+                               sc.isExpanded(folderItem) {
 
-                            foldersSnapshot.expand([folderItem])
+                                foldersSnapshot.expand([folderItem])
+
+                            }
 
                         }
 
@@ -632,56 +640,60 @@ enum SidebarItem: Hashable, Identifiable {
 
                 }
 
-            }
-
-            do {
-                try? DS.apply(foldersSnapshot, to: SidebarSection.folders.rawValue)
-            }
-            catch {
-                print(error)
-            }
-            
-            let feedsWithoutFolders: [Feed] = DBManager.shared.feeds.filter { $0.folderID == nil || $0.folderID == 0 }
-            
-            var feedsSnapshot: NSDiffableDataSourceSectionSnapshot<SidebarItem> = NSDiffableDataSourceSectionSnapshot<SidebarItem>()
-            
-            if feedsWithoutFolders.count > 0 {
-                
-                let alphaSorted = Array(Set(feedsWithoutFolders)).sorted { (lhs, rhs) -> Bool in
-                    return lhs.displayTitle.localizedCompare(rhs.displayTitle) == .orderedAscending
+                do {
+                    runOnMainQueueWithoutDeadlocking {
+                        try? sself.DS.apply(foldersSnapshot, to: SidebarSection.folders.rawValue)
+                    }
                 }
+                catch {
+                    print(error)
+                }
+                
+                let feedsWithoutFolders: [Feed] = DBManager.shared.feeds.filter { $0.folderID == nil || $0.folderID == 0 }
+                
+                var feedsSnapshot: NSDiffableDataSourceSectionSnapshot<SidebarItem> = NSDiffableDataSourceSectionSnapshot<SidebarItem>()
+                
+                if feedsWithoutFolders.count > 0 {
                     
-                feedsSnapshot.append(alphaSorted.map { SidebarItem.feed($0) })
+                    let alphaSorted = Array(Set(feedsWithoutFolders)).sorted { (lhs, rhs) -> Bool in
+                        return lhs.displayTitle.localizedCompare(rhs.displayTitle) == .orderedAscending
+                    }
+                        
+                    feedsSnapshot.append(alphaSorted.map { SidebarItem.feed($0) })
+                    
+                }
+                
+                runOnMainQueueWithoutDeadlocking {
+                    sself.DS.apply(feedsSnapshot, to: SidebarSection.feeds.rawValue)
+                }
                 
             }
             
-            DS.apply(feedsSnapshot, to: SidebarSection.feeds.rawValue)
-            
-        }
-        
-        if needsUpdateOfStructs == true && initialSyncCompleted == true {
-            needsUpdateOfStructs = false
-        }
-        
-        #if targetEnvironment(macCatalyst)
-        
-        if initialSnapshotSetup == false {
-            
-            if let item = customSnapshot.items.first {
-                // select Unread on launch
-                selected = DS.indexPath(for: item)
+            if sself.needsUpdateOfStructs == true && sself.initialSyncCompleted == true {
+                sself.needsUpdateOfStructs = false
             }
             
-            initialSnapshotSetup = true
-        }
-        
-        #endif
-        
-        if let s = selected {
+            #if targetEnvironment(macCatalyst)
             
-            runOnMainQueueWithoutDeadlocking { [weak self] in
+            if sself.initialSnapshotSetup == false {
                 
-                self?.collectionView.selectItem(at: s, animated: false, scrollPosition: .init())
+                if let item = customSnapshot.items.first {
+                    // select Unread on launch
+                    selected = sself.DS.indexPath(for: item)
+                }
+                
+                sself.initialSnapshotSetup = true
+            }
+            
+            #endif
+            
+            if let s = selected {
+                
+                runOnMainQueueWithoutDeadlocking {
+                    
+                    sself.collectionView.selectItem(at: s, animated: false, scrollPosition: .init())
+                    
+                }
                 
             }
             
