@@ -81,7 +81,7 @@
 
     UICommandAlternate *hardRefresh = [UICommandAlternate alternateWithTitle:@"Force Re-Sync" action:@selector(__refreshAll) modifierFlags:UIKeyModifierAlternate];
 
-    UICommandAlternate *feedsRefresh = [UICommandAlternate alternateWithTitle:@"Force Re-Sync Feeds" action:@selector(__refreshAll) modifierFlags:UIKeyModifierShift|UIKeyModifierAlternate];
+    UICommandAlternate *feedsRefresh = [UICommandAlternate alternateWithTitle:@"Force Re-Sync Feeds" action:@selector(__refreshFeeds) modifierFlags:UIKeyModifierShift|UIKeyModifierAlternate];
 
     UIKeyCommand *refresh = [UIKeyCommand commandWithTitle:@"Refresh" image:nil action:@selector(refreshAll) input:@"r" modifierFlags:UIKeyModifierCommand propertyList:nil alternates:@[hardRefresh, feedsRefresh]];
 
