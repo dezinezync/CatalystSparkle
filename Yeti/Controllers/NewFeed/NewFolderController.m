@@ -10,7 +10,9 @@
 #import <DZKit/NSString+Extras.h>
 #import "Elytra-Swift.h"
 
-@interface NewFolderController () <UITextFieldDelegate>
+@interface NewFolderController () <UITextFieldDelegate> {
+    BOOL _appeared;
+}
 
 @property (nonatomic, weak) UIAlertController *alertController;
 @property (nonatomic, weak) UIAlertAction *confirmAction;
@@ -98,6 +100,8 @@
         
         [self.textField becomeFirstResponder];
         
+        self->_appeared = YES;
+        
     }];
     
     self.alertController = alertController;
@@ -127,6 +131,10 @@
 - (void)textFieldDidEndEditing:(UITextField *)textField {
     
     if (self.confirmAction.isEnabled == NO) {
+        return;
+    }
+    
+    if (self->_appeared == NO) {
         return;
     }
     

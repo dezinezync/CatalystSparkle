@@ -470,6 +470,8 @@ public let notificationsKey = "notifications"
             
         })
         
+        NotificationCenter.default.post(name: .feedsUpdated, object: self)
+        
     }
     
     public func feedForID(_ id: UInt) -> Feed? {
@@ -753,6 +755,8 @@ public let notificationsKey = "notifications"
             t.setObject(folder, forKey: key, inCollection: .folders)
             
         })
+        
+        NotificationCenter.default.post(name: .foldersUpdated, object: self)
         
     }
     
