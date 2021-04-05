@@ -29,3 +29,4 @@
 #import "OPMLVC.h"
 #import "SettingsVC.h"
 #import "EmptyVC.h"
+#import "NewFolderController.h"

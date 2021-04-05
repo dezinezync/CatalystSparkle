@@ -329,13 +329,43 @@ public var deviceName: String {
     
     public func showNewFolderVC() {
         
-        // @TODO
+        guard newFolderController == nil else {
+            return
+        }
+        
+        self.newFolderController = NewFolderController(folder: nil, coordinator: self) { [weak self] folder, completed, error in
+            
+            if let error = error {
+                AlertManager.showGenericAlert(withTitle: "Error Adding Folder", message: error.localizedDescription)
+                return
+            }
+            
+            self?.newFolderController = nil
+            
+        }
+        
+        self.newFolderController?.start()
         
     }
     
     public func showRenameFolderVC(_ folder: Folder) {
         
-        // @TODO
+        guard newFolderController == nil else {
+            return
+        }
+        
+        self.newFolderController = NewFolderController(folder: folder, coordinator: self) { [weak self] folder, completed, error in
+            
+            if let error = error {
+                AlertManager.showGenericAlert(withTitle: "Error Updating Folder", message: error.localizedDescription)
+                return
+            }
+            
+            self?.newFolderController = nil
+            
+        }
+        
+        self.newFolderController?.start()
         
     }
     
@@ -846,7 +876,9 @@ extension Coordinator {
 // MARK: - Briding DBManager and FeedsManager
 extension Coordinator {
     
-    func showAddingFeedDialog() {
+    // MARK: - Feeds
+    
+    public func showAddingFeedDialog() {
         
         if let avc = AlertManager.showActivity(title: "Adding Feed") {
             
@@ -860,13 +892,13 @@ extension Coordinator {
         
     }
     
-    func addFeed(url: URL) {
+    public func addFeed(url: URL) {
      
         addFeed(url: url, folderID: nil, completion: nil)
         
     }
     
-    func addFeed(url: URL, folderID: UInt?, completion: ((Result<Feed, Error>) -> Void)?) {
+    public func addFeed(url: URL, folderID: UInt?, completion: ((Result<Feed, Error>) -> Void)?) {
         
         let have: Feed? = DBManager.shared.feeds.first(where: { $0.url == url })
         
@@ -987,7 +1019,7 @@ extension Coordinator {
         
     }
     
-    func addFeed(id: UInt) {
+    public func addFeed(id: UInt) {
         
         let have: Feed? = DBManager.shared.feeds.first(where: { $0.feedID == id })
         
@@ -1041,7 +1073,7 @@ extension Coordinator {
         
     }
     
-    func syncAdditionalFeed(_ feed: Feed) {
+    public func syncAdditionalFeed(_ feed: Feed) {
         
         guard let feedID = feed.feedID else {
             print("No feedID on feed: \(feed). Exiting additional sync.")
@@ -1052,7 +1084,7 @@ extension Coordinator {
         
     }
     
-    func syncAdditionalFeed(_ feedID: UInt, page: UInt = 1) {
+    public func syncAdditionalFeed(_ feedID: UInt, page: UInt = 1) {
         
         FeedsManager.shared.getArticles(forFeed: feedID, page: page) { [weak self] result in
             
@@ -1077,7 +1109,8 @@ extension Coordinator {
         
     }
     
-    func removeFromFolder(_ feed: Feed, folder: Folder, completion: ((Result<Bool, Error>) -> Void)?) {
+    // MARK: - Folders
+    public func removeFromFolder(_ feed: Feed, folder: Folder, completion: ((Result<Bool, Error>) -> Void)?) {
         
         FeedsManager.shared.update(folder: folder.folderID, title: nil, add: nil, delete: [feed.feedID]) { result in
             
@@ -1107,7 +1140,7 @@ extension Coordinator {
         
     }
     
-    func addToFolder(_ feed: Feed, folder: Folder, completion: ((Result<Bool, Error>) -> Void)?) {
+    public func addToFolder(_ feed: Feed, folder: Folder, completion: ((Result<Bool, Error>) -> Void)?) {
         
         FeedsManager.shared.update(folder: folder.folderID, title: nil, add: [feed.feedID], delete: nil) { result in
             
@@ -1131,6 +1164,73 @@ extension Coordinator {
                 
                 completion?(.success(status))
             
+            }
+            
+        }
+        
+    }
+    
+    public func renameFolder(_ folder: Folder, title: String, completion: ((_ status: Bool, _ error: Error?) -> Void)?) {
+        
+        FeedsManager.shared.update(folder: folder.folderID, title: title, add: nil, delete: nil) { result in
+            
+            switch result {
+            
+            case .failure(let error):
+                completion?(false, error)
+            
+            case .success(let status):
+                
+                if status == true {
+                    
+                    folder.title = title
+                    
+                    DBManager.shared.update(folder: folder)
+                    
+                }
+                
+                completion?(status, nil)
+            
+            }
+            
+        }
+        
+    }
+    
+    public func addFolder(title: String, completion: ((_ folder: Folder?, _ error: Error?) -> Void)?) {
+        
+        FeedsManager.shared.add(folder: title) { result in
+            
+            switch result {
+            case .failure(let error):
+                completion?(nil, error)
+                
+            case .success(let folder):
+                
+                DBManager.shared.add(folder: folder)
+                
+                completion?(folder, nil)
+            }
+            
+        }
+        
+    }
+    
+    public func delete(folder: Folder, completion: ((_ status: Bool, _ error: Error?) -> Void)?) {
+     
+        FeedsManager.shared.delete(folder: folder.folderID) { result in
+            
+            switch result {
+            case .failure(let error):
+                completion?(false, error)
+                
+            case .success(let status):
+                
+                if status == true {
+                    DBManager.shared.delete(folder: folder)
+                }
+                
+                completion?(status, nil)
             }
             
         }

@@ -54,7 +54,7 @@
         strongify(self);
         
         if (self.exisitingFolder != nil) {
-            textField.text = self.exisitingFolder.title;
+            textField.text = ((Folder *)self.exisitingFolder).title;
         }
         
         self.textField = textField;
@@ -139,7 +139,7 @@
         /**
          * If the titles match, return as true, but do nothing.
          */
-        if ([self.exisitingFolder.title isEqualToString:title]) {
+        if ([((Folder *)self.exisitingFolder).title isEqualToString:title]) {
             
             if (self.completionHandler) {
                 
@@ -168,57 +168,62 @@
 #pragma mark - Networking
 
 - (void)addFolder:(NSString *)title {
-    // @TODO
     
-//    [MyFeedsManager addFolder:title success:^(Folder * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//        self.completed = YES;
-//
-//        if (self.completionHandler) {
-//
-//            self.completionHandler(responseObject, YES, nil);
-//
-//        }
-//
-//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//        self.completed = YES;
-//
-//        if (self.completionHandler) {
-//
-//            self.completionHandler(nil, NO, error);
-//
-//        }
-//
-//    }];
+    [self.coordinator addFolderWithTitle:title completion:^(Folder * _Nullable folder, NSError * _Nullable error) {
+        
+        if (error != nil) {
+            
+            self.completed = YES;
+
+            if (self.completionHandler) {
+
+                self.completionHandler(nil, NO, error);
+
+            }
+            
+            return;
+            
+        }
+       
+        self.completed = YES;
+
+        if (self.completionHandler) {
+
+            self.completionHandler(folder, YES, nil);
+
+        }
+        
+    }];
     
 }
 
 - (void)renameFolder:(NSString *)title {
-    // @TODO
-//    [MyFeedsManager renameFolder:self.exisitingFolder to:title success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//        self.completed = YES;
-//
-//        if (self.completionHandler) {
-//
-//            self.exisitingFolder.title = title;
-//
-//            self.completionHandler(self.exisitingFolder, YES, nil);
-//
-//        }
-//
-//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//        self.completed = YES;
-//
-//        if (self.completionHandler) {
-//
-//            self.completionHandler(self.exisitingFolder, NO, error);
-//
-//        }
-//
-//    }];
+    
+    [self.coordinator renameFolder:self.exisitingFolder title:title completion:^(BOOL completed, NSError * _Nullable error) {
+       
+        if (error != nil) {
+            
+            self.completed = YES;
+
+            if (self.completionHandler) {
+
+                self.completionHandler(self.exisitingFolder, NO, error);
+
+            }
+            
+            return;
+            
+        }
+        
+        self.completed = YES;
+
+        if (self.completionHandler) {
+
+            self.completionHandler(self.exisitingFolder, YES, nil);
+
+        }
+        
+    }];
     
 }
 

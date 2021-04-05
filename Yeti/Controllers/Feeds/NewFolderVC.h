@@ -6,16 +6,14 @@
 //  Copyright © 2018 Dezine Zync Studios. All rights reserved.
 //
 
-//#import "NewFeedVC.h"
+#import <Foundation/Foundation.h>
 
 @class Folder;
 
 @interface NewFolderVC : UIViewController
 
-+ (UINavigationController * _Nonnull)instanceWithFolder:(Folder * _Nonnull)folder indexPath:(NSIndexPath * _Nonnull)indexPath;
++ (UINavigationController * _Nonnull)instanceWithFolder:(id _Nonnull)folder;
 
 @property (nonatomic, weak, readonly) Folder * _Nullable folder;
-
-@property (nonatomic, weak) NSIndexPath * _Nullable folderIndexPath;
 
 @end

@@ -781,6 +781,8 @@ public let notificationsKey = "notifications"
             
             t.removeObject(forKey: "\(folder.folderID!)", inCollection: .folders)
             
+            sself.folders = sself.folders.filter { $0.folderID != folder.folderID }
+            
         }
         
     }

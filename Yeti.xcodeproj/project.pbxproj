@@ -238,7 +238,6 @@
 		F09FD74C250915AF004BD60E /* auto.css in Resources */ = {isa = PBXBuildFile; fileRef = F09FD732250915AF004BD60E /* auto.css */; };
 		F0A031BB2520F7B900076718 /* ArticlePreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0A031A02520F7B900076718 /* ArticlePreferenceViewController.swift */; };
 		F0A031BC2520F7B900076718 /* ArticlePreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0A031BA2520F7B900076718 /* ArticlePreferenceViewController.xib */; };
-		F0A0500D21F0728A00A46524 /* NewFeedDeckController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A0500C21F0728A00A46524 /* NewFeedDeckController.m */; };
 		F0A589F5205A580300488015 /* LinguisticSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A589F4205A580300488015 /* LinguisticSearch.m */; };
 		F0A589F6205A580800488015 /* LinguisticSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A589F4205A580300488015 /* LinguisticSearch.m */; };
 		F0A5AE6420C197EF00CFA1D2 /* Merriweather-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0A5AE5C20C197EE00CFA1D2 /* Merriweather-Bold.ttf */; };
@@ -285,8 +284,6 @@
 		F0B0EA3A24EC205500D675B4 /* CheckWifi.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B0EA3824EC205500D675B4 /* CheckWifi.m */; };
 		F0B0EA3F24EC20D800D675B4 /* NSString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B0EA3C24EC20D800D675B4 /* NSString+HTML.m */; };
 		F0B0EA4024EC20D800D675B4 /* NSString+GTMNSStringHTMLAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B0EA3D24EC20D800D675B4 /* NSString+GTMNSStringHTMLAdditions.m */; };
-		F0B21BBB208C7F4F007E5A3B /* NewFolderVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B21BB9208C7F4F007E5A3B /* NewFolderVC.m */; };
-		F0B21BBC208C7F4F007E5A3B /* NewFolderVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0B21BBA208C7F4F007E5A3B /* NewFolderVC.xib */; };
 		F0B4827D2455F65000EE5AA2 /* DZKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0B482792455F64900EE5AA2 /* DZKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F0B573C824FCB61F00364BC3 /* RMStore.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B573C624FCB57A00364BC3 /* RMStore.m */; };
 		F0B69C9F21B920A10032FD5A /* YTPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B69C9E21B920A10032FD5A /* YTPlayer.m */; };
@@ -1761,8 +1758,6 @@
 		F09FD732250915AF004BD60E /* auto.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = auto.css; sourceTree = "<group>"; };
 		F0A031A02520F7B900076718 /* ArticlePreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArticlePreferenceViewController.swift; sourceTree = "<group>"; };
 		F0A031BA2520F7B900076718 /* ArticlePreferenceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ArticlePreferenceViewController.xib; sourceTree = "<group>"; };
-		F0A0500B21F0728A00A46524 /* NewFeedDeckController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewFeedDeckController.h; sourceTree = "<group>"; };
-		F0A0500C21F0728A00A46524 /* NewFeedDeckController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewFeedDeckController.m; sourceTree = "<group>"; };
 		F0A4798020639EB000A20195 /* ArticleHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticleHandler.h; sourceTree = "<group>"; };
 		F0A589EF205A4E7E00488015 /* LinguisticSearch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LinguisticSearch.m; sourceTree = "<group>"; };
 		F0A589F3205A580300488015 /* LinguisticSearch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LinguisticSearch.h; sourceTree = "<group>"; };
@@ -1820,9 +1815,6 @@
 		F0B0EA3C24EC20D800D675B4 /* NSString+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+HTML.m"; sourceTree = "<group>"; };
 		F0B0EA3D24EC20D800D675B4 /* NSString+GTMNSStringHTMLAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+GTMNSStringHTMLAdditions.m"; sourceTree = "<group>"; };
 		F0B0EA3E24EC20D800D675B4 /* NSString+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+HTML.h"; sourceTree = "<group>"; };
-		F0B21BB8208C7F4F007E5A3B /* NewFolderVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewFolderVC.h; sourceTree = "<group>"; };
-		F0B21BB9208C7F4F007E5A3B /* NewFolderVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewFolderVC.m; sourceTree = "<group>"; };
-		F0B21BBA208C7F4F007E5A3B /* NewFolderVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NewFolderVC.xib; sourceTree = "<group>"; };
 		F0B482552455F62C00EE5AA2 /* YapDatabase.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = YapDatabase.xcodeproj; path = Vendors/YapDatabase/YapDatabase.xcodeproj; sourceTree = "<group>"; };
 		F0B482732455F64900EE5AA2 /* DZKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZKit.xcodeproj; path = Vendors/DZKit/DZKit.xcodeproj; sourceTree = "<group>"; };
 		F0B573AC24FCB43B00364BC3 /* Configuration.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = Configuration.storekit; path = Yeti/SupportingFiles/Configuration.storekit; sourceTree = SOURCE_ROOT; };
@@ -2616,11 +2608,6 @@
 				F0EE7E802608BBF600931FA2 /* UnreadVC.swift */,
 				F0EE7F0A2608C56600931FA2 /* TodayVC.swift */,
 				F0EE7F0C2608C64E00931FA2 /* FolderVC.swift */,
-				F0B21BB8208C7F4F007E5A3B /* NewFolderVC.h */,
-				F0B21BB9208C7F4F007E5A3B /* NewFolderVC.m */,
-				F0B21BBA208C7F4F007E5A3B /* NewFolderVC.xib */,
-				F0A0500B21F0728A00A46524 /* NewFeedDeckController.h */,
-				F0A0500C21F0728A00A46524 /* NewFeedDeckController.m */,
 			);
 			path = Feeds;
 			sourceTree = "<group>";
@@ -4515,7 +4502,6 @@
 				F047F4F420C25FB900626968 /* Spectral-Medium.ttf in Resources */,
 				F0A5AEB420C19DA200CFA1D2 /* IBMPlexSans-LightItalic.ttf in Resources */,
 				F0A5AEBE20C19DA200CFA1D2 /* IBMPlexSans-Thin.ttf in Resources */,
-				F0B21BBC208C7F4F007E5A3B /* NewFolderVC.xib in Resources */,
 				F02B704B24EA7E5C00DD607F /* IDMPhotoBrowser.bundle in Resources */,
 				F01E6E1724AC6C2500D1BD6E /* gold-dark.png in Resources */,
 				F00F646F24EC1DE700E5727C /* Gallery.xib in Resources */,
@@ -4678,7 +4664,6 @@
 				F00F647424EC1DE700E5727C /* Code.m in Sources */,
 				F022B0DF20DC30DE00030185 /* AccentButton.m in Sources */,
 				F0F10A9A244C8020009FC108 /* NSDate+DateTools.m in Sources */,
-				F0B21BBB208C7F4F007E5A3B /* NewFolderVC.m in Sources */,
 				F045988A25FB6CD800C87B82 /* LaunchVC.swift in Sources */,
 				F0BE4F6E26019DB4001D7692 /* AlertManager+Swift.swift in Sources */,
 				F04815FC245FD88200F8091E /* AppDelegate+BackgroundRefresh.m in Sources */,
@@ -4752,7 +4737,6 @@
 				F00F647124EC1DE700E5727C /* Gallery.m in Sources */,
 				F0EE7F0B2608C56600931FA2 /* TodayVC.swift in Sources */,
 				F031A69225FDC68B0046467A /* FolderCell.swift in Sources */,
-				F0A0500D21F0728A00A46524 /* NewFeedDeckController.m in Sources */,
 				F042ACF425244A0500AA440A /* NSObject+SimpleSwizzle.m in Sources */,
 				F064A5322157638500A385AD /* LaunchVC.m in Sources */,
 				F00F647824EC1DE700E5727C /* Tweet.m in Sources */,

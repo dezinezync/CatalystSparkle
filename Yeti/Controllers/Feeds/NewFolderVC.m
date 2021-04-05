@@ -29,7 +29,7 @@
 
 + (UINavigationController *)instanceInNavController
 {
-    NewFolderVC *vc = [[NewFolderVC alloc] initWithNibName:NSStringFromClass(UIViewController.class) bundle:nil];
+    NewFolderVC *vc = [[NewFolderVC alloc] initWithNibName:NSStringFromClass(NewFolderVC.class) bundle:nil];
     
     UINavigationController * nav = [[UINavigationController alloc] initWithRootViewController:vc];
     
@@ -39,11 +39,9 @@
     return nav;
 }
 
-+ (UINavigationController *)instanceWithFolder:(Folder *)folder indexPath:(NSIndexPath *)indexPath
-{
-    NewFolderVC *vc = [[NewFolderVC alloc] initWithNibName:NSStringFromClass(UIViewController.class) bundle:nil];
++ (UINavigationController *)instanceWithFolder:(Folder *)folder {
+    NewFolderVC *vc = [[NewFolderVC alloc] initWithNibName:NSStringFromClass(NewFolderVC.class) bundle:nil];
     vc.folder = folder;
-    vc.folderIndexPath = indexPath;
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
 #if !TARGET_OS_MACCATALYST
@@ -109,81 +107,84 @@
     
     if (self.folder) {
         // @TODO: editing the title
-//        [MyFeedsManager renameFolder:self.folder to:title success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//                strongify(self);
-//
-//                self->_isUpdating = NO;
-//
-//                [self.coordinator.sidebarVC setupData];
-//
-////                self.cancelButton.enabled = YES;
-//
-//                [sidebarVC setupData];
-//
-//                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
-////                [self didTapCancel];
-//
-//            });
-//
-//
-//        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//            [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription];
-//
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//
-//                strongify(self);
-//
-//                self->_isUpdating = NO;
-//
-//                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeError];
-//                [self.notificationGenerator prepare];
-//
-//                textField.enabled = YES;
-////                self.cancelButton.enabled = YES;
-//
-//            });
-//
-//        }];
+        
+        [self.coordinator renameFolder:self.folder title:title completion:^(BOOL completed, NSError * _Nullable error) {
+           
+            if (error != nil) {
+                
+                [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription];
+
+                dispatch_async(dispatch_get_main_queue(), ^{
+
+                    strongify(self);
+
+                    self->_isUpdating = NO;
+
+                    [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeError];
+                    [self.notificationGenerator prepare];
+
+                    textField.enabled = YES;
+
+                });
+                
+                return;
+                
+            }
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                strongify(self);
+
+                self->_isUpdating = NO;
+
+                [self.coordinator.sidebarVC setupData];
+
+                [sidebarVC setupData];
+
+                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
+
+            });
+            
+        }];
+
     }
     else {
         // @TODO
-//        [MyFeedsManager addFolder:title success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//                strongify(self);
-//
-//                self->_isUpdating = NO;
-//
-////                self.cancelButton.enabled = YES;
-//
-//                [sidebarVC setupData];
-//
-//                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
-////                [self didTapCancel];
-//
-//            });
-//
-//        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//            [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription];
-//
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//                strongify(self);
-//
-//                self->_isUpdating = NO;
-//
-//                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeError];
-//                [self.notificationGenerator prepare];
-//
-//                textField.enabled = YES;
-////                self.cancelButton.enabled = YES;
-//
-//            });
-//
-//        }];
+        
+        [self.coordinator addFolderWithTitle:title completion:^(Folder * _Nullable folder, NSError * _Nullable error) {
+           
+            if (error != nil) {
+                
+                [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription];
+
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    strongify(self);
+
+                    self->_isUpdating = NO;
+
+                    [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeError];
+                    [self.notificationGenerator prepare];
+
+                    textField.enabled = YES;
+
+                });
+                
+                return;
+                
+            }
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                strongify(self);
+
+                self->_isUpdating = NO;
+
+                [sidebarVC setupData];
+
+                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
+
+            });
+            
+        }];
+        
     }
     
     return YES;

@@ -8,20 +8,19 @@
 
 #import <Foundation/Foundation.h>
 
-@class Folder;
 @class Coordinator;
 
-typedef void (^folderControllerCompletion)(Folder * _Nullable folder, BOOL completed, NSError * _Nullable error);
+typedef void (^folderControllerCompletion)(id _Nullable folder, BOOL completed, NSError * _Nullable error);
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface NewFolderController : NSObject
 
-- (instancetype)initWithFolder:(Folder * _Nullable)exisitingFolder
+- (instancetype)initWithFolder:(id _Nullable)exisitingFolder
                    coordinator:(Coordinator * _Nonnull)coordinator
                     completion:(folderControllerCompletion)completionBlock;
 
-@property (nonatomic, weak) Folder *exisitingFolder;
+@property (nonatomic, weak) id exisitingFolder;
 
 @property (nonatomic, weak) Coordinator *coordinator;
 
