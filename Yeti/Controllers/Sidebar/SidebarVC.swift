@@ -976,6 +976,12 @@ enum SidebarItem: Hashable, Identifiable {
         
     }
     
+    @objc func move(feed: Feed, indexPath: IndexPath, completion: ((_ completed: Bool) -> Void)?) {
+        
+        coordinator?.showFeedInfo(feed: feed, from: self)
+        
+    }
+    
     @objc func rename(folder: Folder, indexPath: IndexPath) {
         
         coordinator?.showRenameFolderVC(folder)
@@ -1700,27 +1706,6 @@ extension SidebarVC {
             }
             
         }
-        
-    }
-    
-}
-
-// MARK: - Move Feed
-extension SidebarVC: MoveFoldersDelegate {
-    
-    func feed(_ feed: Feed, didMove fromFolder: Folder?, toFolder: Folder?) {
-        
-        guard fromFolder != nil && toFolder != nil else {
-            return
-        }
-        
-        setupData()
-        
-    }
-    
-    @objc func move(feed: Feed, indexPath: IndexPath, completion: ((_ completed: Bool) -> Void)?) {
-        
-        // @TODO
         
     }
     

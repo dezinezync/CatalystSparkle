@@ -315,7 +315,6 @@ public var deviceName: String {
         
         let vc = NewFeedVC(collectionViewLayout: NewFeedVC.gridLayout)
         vc.coordinator = self
-        vc.moveFoldersDelegate = sidebarVC
         
         let nav = UINavigationController(rootViewController: vc)
         nav.modalPresentationStyle = .formSheet

@@ -25,8 +25,6 @@ private let recommendationTopics = [
 
 @objc class NewFeedVC: UICollectionViewController {
     
-    @objc weak var moveFoldersDelegate: (NSObject & MoveFoldersDelegate)?
-    
     @objc public static let gridLayout: UICollectionViewCompositionalLayout = {
         
         let layout = UICollectionViewCompositionalLayout { (sectionNumber, env) -> NSCollectionLayoutSection? in
@@ -68,7 +66,6 @@ private let recommendationTopics = [
         sc.searchBar.searchTextField.delegate = self
         sc.delegate = self
         
-        (sc.searchResultsController as! NewFeedResultsVC).moveFoldersDelegate = self.moveFoldersDelegate
         (sc.searchResultsController as! NewFeedResultsVC).coordinator = self.coordinator
         
         return sc
@@ -403,7 +400,6 @@ extension NewFeedVC: UISearchResultsUpdating, UISearchBarDelegate, UITextFieldDe
         
         let instance = FeedPreviewVC(collectionViewLayout: FeedPreviewVC.layout)
         instance.item = item
-        instance.moveFoldersDelegate = self.moveFoldersDelegate
         instance.coordinator = self.coordinator
         
         let nav = UINavigationController(rootViewController: instance)

@@ -24,8 +24,6 @@ class FeedPreviewDatasource : UICollectionViewDiffableDataSource<FeedPreviewSect
 
 class FeedPreviewVC: UICollectionViewController {
     
-    weak var moveFoldersDelegate: (NSObject & MoveFoldersDelegate)?
-    
     var item: FeedRecommendation!
     var headerRegistration: UICollectionView.SupplementaryRegistration<FeedPreviewHeader>!
     var folderRegistration: UICollectionView.CellRegistration<PreviewFolderCell, Folder>!

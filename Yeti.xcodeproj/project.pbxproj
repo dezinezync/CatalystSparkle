@@ -161,7 +161,6 @@
 		F059351625E8D27400D0A442 /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = F059351525E8D27400D0A442 /* SDWebImage */; };
 		F05AD5F325F9DE77003B2D69 /* SplitVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F05AD5F225F9DE77003B2D69 /* SplitVC.swift */; };
 		F05AD60425F9E7DB003B2D69 /* SidebarVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F05AD60325F9E7DB003B2D69 /* SidebarVC.swift */; };
-		F05B93322091BA50009BBDDB /* MoveFoldersVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F05B93312091BA50009BBDDB /* MoveFoldersVC.m */; };
 		F05C7A9F20D8E1F3007D6B5C /* TableHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = F05C7A9E20D8E1F3007D6B5C /* TableHeader.m */; };
 		F05C7AA320D8E203007D6B5C /* TableHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = F05C7AA220D8E203007D6B5C /* TableHeader.xib */; };
 		F061508B24F62D18007F50A5 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F061508A24F62D18007F50A5 /* WidgetKit.framework */; };
@@ -1635,8 +1634,6 @@
 		F05934E825E8C52B00D0A442 /* ActionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionViewController.swift; sourceTree = "<group>"; };
 		F05AD5F225F9DE77003B2D69 /* SplitVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitVC.swift; sourceTree = "<group>"; };
 		F05AD60325F9E7DB003B2D69 /* SidebarVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarVC.swift; sourceTree = "<group>"; };
-		F05B93302091BA50009BBDDB /* MoveFoldersVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MoveFoldersVC.h; sourceTree = "<group>"; };
-		F05B93312091BA50009BBDDB /* MoveFoldersVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MoveFoldersVC.m; sourceTree = "<group>"; };
 		F05C7A9D20D8E1F3007D6B5C /* TableHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TableHeader.h; sourceTree = "<group>"; };
 		F05C7A9E20D8E1F3007D6B5C /* TableHeader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TableHeader.m; sourceTree = "<group>"; };
 		F05C7AA220D8E203007D6B5C /* TableHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TableHeader.xib; sourceTree = "<group>"; };
@@ -2622,8 +2619,6 @@
 				F0B21BB8208C7F4F007E5A3B /* NewFolderVC.h */,
 				F0B21BB9208C7F4F007E5A3B /* NewFolderVC.m */,
 				F0B21BBA208C7F4F007E5A3B /* NewFolderVC.xib */,
-				F05B93302091BA50009BBDDB /* MoveFoldersVC.h */,
-				F05B93312091BA50009BBDDB /* MoveFoldersVC.m */,
 				F0A0500B21F0728A00A46524 /* NewFeedDeckController.h */,
 				F0A0500C21F0728A00A46524 /* NewFeedDeckController.m */,
 			);
@@ -4671,7 +4666,6 @@
 				F03C4EBD2510CE8A008561DB /* NewFolderController.m in Sources */,
 				F0EDAC7625DE0C950074ED1E /* NewFeedReccomendationCell.swift in Sources */,
 				F050F30D2521FB980032328F /* SidebarSearchView.m in Sources */,
-				F05B93322091BA50009BBDDB /* MoveFoldersVC.m in Sources */,
 				F085785521D1EAE200CC2B95 /* PreviewLinesVC.m in Sources */,
 				F0F10A9B244C8020009FC108 /* DTTimePeriodGroup.m in Sources */,
 				F03AC034205533D900FB111A /* CodeTheme.m in Sources */,

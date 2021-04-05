@@ -481,7 +481,6 @@
 
         NewFeedVC *vc = [[NewFeedVC alloc] initWithCollectionViewLayout:NewFeedVC.gridLayout];
         vc.coordinator = self.coordinator;
-        vc.moveFoldersDelegate = self.coordinator.sidebarVC;
 
         window.rootViewController = [[UINavigationController alloc] initWithRootViewController:vc];
 
