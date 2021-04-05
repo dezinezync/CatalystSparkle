@@ -1057,7 +1057,7 @@ extension FeedVC {
             return
         }
         
-        coordinator.showFeedInfo(feed: feed, from: self)
+        coordinator.showFeedInfo(feed: feed, from: self, completion: nil)
         
     }
     

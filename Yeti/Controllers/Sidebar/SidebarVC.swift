@@ -972,13 +972,17 @@ enum SidebarItem: Hashable, Identifiable {
     
     @objc func showInfo(feed: Feed, indexPath: IndexPath) {
         
-        coordinator?.showFeedInfo(feed: feed, from: self)
+        coordinator?.showFeedInfo(feed: feed, from: self, completion: nil)
         
     }
     
     @objc func move(feed: Feed, indexPath: IndexPath, completion: ((_ completed: Bool) -> Void)?) {
         
-        coordinator?.showFeedInfo(feed: feed, from: self)
+        coordinator?.showFeedInfo(feed: feed, from: self, completion: { [weak self] in
+            
+            self?.coordinator?.showFolderInfo()
+            
+        })
         
     }
     

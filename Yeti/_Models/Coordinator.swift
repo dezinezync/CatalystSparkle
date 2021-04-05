@@ -395,7 +395,7 @@ public var deviceName: String {
         
     }
     
-    public func showFeedInfo (feed: Feed, from: UIViewController) {
+    public func showFeedInfo (feed: Feed, from: UIViewController, completion: (() -> Void)?) {
         
         let vc = FeedInfoController(feed: feed)
         vc.coordinator = self
@@ -403,7 +403,22 @@ public var deviceName: String {
         let nav = UINavigationController(rootViewController: vc)
         nav.modalPresentationStyle = .formSheet
         
-        from.present(nav, animated: true, completion: nil)
+        from.present(nav, animated: true, completion: completion)
+        
+    }
+    
+    public func showFolderInfo() {
+        
+        // only works if the feed Info is already being presented
+        
+        if let feedInfo = (self.splitVC.presentedViewController as? UINavigationController)?.topViewController as? FeedInfoController {
+            
+            let indexPath = IndexPath(row: 0, section: 3)
+            feedInfo.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
+            feedInfo.tableView(feedInfo.tableView, didSelectRowAt: indexPath)
+            
+        }
+        
         
     }
     
