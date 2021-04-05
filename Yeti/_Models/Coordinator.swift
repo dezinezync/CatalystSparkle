@@ -329,10 +329,6 @@ public var deviceName: String {
     
     public func showNewFolderVC() {
         
-        guard newFolderController == nil else {
-            return
-        }
-        
         self.newFolderController = NewFolderController(folder: nil, coordinator: self) { [weak self] folder, completed, error in
             
             if let error = error {
@@ -349,10 +345,6 @@ public var deviceName: String {
     }
     
     public func showRenameFolderVC(_ folder: Folder) {
-        
-        guard newFolderController == nil else {
-            return
-        }
         
         self.newFolderController = NewFolderController(folder: folder, coordinator: self) { [weak self] folder, completed, error in
             
@@ -995,7 +987,7 @@ extension Coordinator {
                                 if case .success(let status) = result,
                                    status == true {
                                     
-                                    folder.feedIDs.insert(feed.feedID)
+                                    folder.feedIDs.append(feed.feedID)
                                     // trigger Update
                                     DBManager.shared.folders = DBManager.shared.folders
                                     
@@ -1125,7 +1117,7 @@ extension Coordinator {
                     feed.folderID = nil
                     DBManager.shared.update(feed: feed)
                     
-                    _ = folder.feedIDs.remove(feed.feedID)
+                    folder.feedIDs = folder.feedIDs.filter { $0 != feed.feedID }
                     folder.feeds = folder.feeds.filter { $0.feedID != feed.feedID }
                     
                     DBManager.shared.update(folder: folder)
@@ -1155,7 +1147,7 @@ extension Coordinator {
                     feed.folderID = folder.folderID
                     DBManager.shared.update(feed: feed)
                     
-                    folder.feedIDs.insert(feed.feedID)
+                    folder.feedIDs.append(feed.feedID)
                     folder.feeds.append(feed)
                     
                     DBManager.shared.update(folder: folder)

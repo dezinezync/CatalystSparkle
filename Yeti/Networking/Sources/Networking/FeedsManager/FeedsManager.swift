@@ -625,13 +625,13 @@ extension FeedsManager {
             return
         }
         
-        session.PUT(path: "/folder", query: nil, body: ["title": title], resultType: Folder.self) { result in
+        session.PUT(path: "/folder", query: nil, body: ["title": title], resultType: [String: Folder].self) { result in
             
             switch result {
             case .failure(let error):
                 completion?(.failure(error))
-            case .success(let (_, folder)):
-                guard let folder = folder else {
+            case .success(let (_, retval)):
+                guard let folder = retval?["folder"] else {
                     completion?(.failure(FeedsManagerError.from(description: "An invalid or no response was received", statusCode: 500)))
                     return
                 }

@@ -7,17 +7,18 @@
 
 import Foundation
 import Combine
+import BetterCodable
 
 @objcMembers public final class Folder: NSObject, Codable, ObservableObject {
     
     public var title: String!
     public var folderID: UInt!
-    public var feedIDs = Set<UInt>()
+    public var feedIDs: [UInt] = [UInt]()
     
     public enum CodingKeys: String, CodingKey {
         case title
         case folderID = "id"
-        case feedIDs
+        case feedIDs = "feedIDs"
     }
     
     public var updatingCounters: Bool = false {
@@ -79,7 +80,7 @@ import Combine
         }
         else if key == "feeds", let value = value as? [UInt] {
             
-            value.forEach { feedIDs.insert($0) }
+            value.forEach { feedIDs.append($0) }
             
         }
         else {

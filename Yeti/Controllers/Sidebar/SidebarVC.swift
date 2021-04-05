@@ -180,7 +180,7 @@ enum SidebarItem: Hashable, Identifiable {
                         
                     }
                     
-                    move.backgroundColor = UIColor(red: 0, green: 122/255, blue: 1, alpha: 1)
+                    move.backgroundColor = .systemBlue
                     
                     let share = UIContextualAction(style: .normal, title: "Share") { [weak self, weak feed] (a, sourceView, completionHandler) in
                         
@@ -192,9 +192,40 @@ enum SidebarItem: Hashable, Identifiable {
                         
                     }
                     
-                    share.backgroundColor = UIColor(red: 126/255, green: 211/255, blue: 33/255, alpha: 1)
+                    share.backgroundColor = .systemGreen
                     
                     swipeConfig = UISwipeActionsConfiguration(actions: [delete, move, share])
+                    
+                }
+                else if case SidebarItem.folder(let folder) = item {
+                 
+                    let delete = UIContextualAction(style: .destructive, title: "Delete") { [weak self, weak folder] (a, sourceView, completionHandler) in
+                        
+                        guard let sself = self, let sfolder = folder else {
+                            return
+                        }
+                        
+                        sself.delete(folder: sfolder, indexPath: indexPath, completion: completionHandler)
+                        
+                        completionHandler(true)
+                        
+                    }
+                    
+                    let rename = UIContextualAction(style: .normal, title: "Rename") { [weak self, weak folder] (a, sourceView, completionHandler) in
+
+                        guard let sself = self, let sfolder = folder else {
+                            return
+                        }
+
+                        sself.rename(folder: sfolder, indexPath: indexPath)
+                        
+                        completionHandler(true)
+
+                    }
+
+                    rename.backgroundColor = .systemBlue
+                    
+                    swipeConfig = UISwipeActionsConfiguration(actions: [delete, rename])
                     
                 }
                 
@@ -933,7 +964,7 @@ enum SidebarItem: Hashable, Identifiable {
                     
                     if case .success(let res) = result,
                        res == true {
-                        folder.feedIDs.remove(feed.feedID)
+                        folder.feedIDs = folder.feedIDs.filter { $0 != feed.feedID }
                     }
                     
                     self?._deleteFeed(feed: feed, completion: completion)
@@ -992,7 +1023,7 @@ enum SidebarItem: Hashable, Identifiable {
         
     }
     
-    @objc func delete(folder: Folder, indexPath: IndexPath) {
+    @objc func delete(folder: Folder, indexPath: IndexPath, completion:((_ completed: Bool) -> Void)?) {
         
         AlertManager.showDestructiveAlert(title: "Delete Folder", message: "Are you sure you want to delete this folder?", confirm: "Delete", confirmHandler: { [weak self] (_) in
             
@@ -1006,12 +1037,16 @@ enum SidebarItem: Hashable, Identifiable {
                 case .failure(let error):
                     AlertManager.showGenericAlert(withTitle: "Error Deleting Feed", message: error.localizedDescription)
                     
+                    completion?(false)
+                    
                 case .success(_):
                     DBManager.shared.delete(folder: folder)
                     
                     DispatchQueue.main.async {
                         sself.setupData()
                     }
+                    
+                    completion?(true)
                 
                 }
                 
@@ -1597,7 +1632,7 @@ extension SidebarVC {
                 
                 let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), identifier: nil) { (_) in
                     
-                    sself.delete(folder: f, indexPath: indexPath)
+                    sself.delete(folder: f, indexPath: indexPath, completion: nil)
                     
                 }
                 

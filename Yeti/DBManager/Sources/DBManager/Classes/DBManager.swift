@@ -571,7 +571,7 @@ public let notificationsKey = "notifications"
         if let folderID = feed.folderID,
            let folder = folder(for: folderID) {
             
-            folder.feedIDs = Set(Array(folder.feedIDs).filter { $0 != folderID })
+            folder.feedIDs = Array(Set(folder.feedIDs.filter { $0 != folderID }))
             folder.feeds = folder.feeds.filter { $0 != feed }
             // save the folder struct back to the DB.
             add(folder: folder)
@@ -743,6 +743,8 @@ public let notificationsKey = "notifications"
             t.setObject(folder, forKey: "\(folder.folderID!)", inCollection: .folders)
             
         }
+        
+        folders.append(folder)
         
     }
     
