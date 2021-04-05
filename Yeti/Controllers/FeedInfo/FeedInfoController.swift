@@ -11,10 +11,11 @@ import SDWebImage
 import DBManager
 import Models
 import Networking
+import Combine
 
 @objc final class FeedInfoController: UITableViewController {
     
-    var feed: Feed? {
+    var feed: Feed! {
         didSet {
             if let f = feed {
                 let m = DBManager.shared.metadataForFeed(f)
@@ -69,11 +70,14 @@ import Networking
         self.feed = feed
     }
     
+    var folderSub: AnyCancellable?
+    
     override func viewDidLoad() {
         
         super.viewDidLoad()
         
         FeedInfoCell.register(tableView: tableView)
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "folderCell")
         
         let headerView = self.headerView
         headerView.frame = CGRect(x: 0, y: 0, width: tableView.bounds.size.width, height: 48 + 24)
@@ -86,6 +90,27 @@ import Networking
         self.modalPresentationStyle = .fullScreen
         
         self.navigationItem.leftBarButtonItem = UIBarButtonItem.init(title: "Done", style: .plain, target: self, action: #selector(didTapDone))
+        
+        folderSub = NotificationCenter.default.publisher(for: .feedsUpdated)
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: { [weak self] _ in
+                
+                let indexPath = IndexPath(row: 0, section: 3)
+                guard let cell = self?.tableView.cellForRow(at: indexPath),
+                      let sself = self else {
+                    return
+                }
+                
+                let folderID = sself.feed.folderID
+                
+                if folderID == nil || folderID == 0 {
+                    cell.textLabel?.text = "None"
+                }
+                else if let folder = DBManager.shared.folder(for: folderID!) {
+                    cell.textLabel?.text = folder.title
+                }
+                
+            })
         
     }
     
@@ -120,7 +145,7 @@ import Networking
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
+        return 4
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -132,6 +157,9 @@ import Networking
             return 1
         }
         else if (section == 2 && self.feed?.extra?.url != nil) {
+            return 1
+        }
+        else if (section == 3) {
             return 1
         }
         
@@ -211,6 +239,28 @@ import Networking
             cell.label.text = self.feed?.extra?.url?.absoluteString ?? ""
             
         }
+        else if (indexPath.section == 3) {
+
+            let fCell = tableView.dequeueReusableCell(withIdentifier: "folderCell", for: indexPath)
+
+            fCell.imageView?.image = UIImage(systemName: "folder")
+            
+            if let folder = DBManager.shared.folder(for: feed?.folderID ?? 0) {
+                
+                fCell.textLabel?.text = folder.title
+                
+            }
+            else {
+                
+                fCell.textLabel?.text = "None"
+                
+            }
+            
+            fCell.accessoryType = .disclosureIndicator
+            
+            return fCell
+            
+        }
 
         return cell
     }
@@ -222,6 +272,9 @@ import Networking
         }
         else if (section == 2 && self.feed?.extra?.url != nil) {
             return "Website URL"
+        }
+        else if (section == 3) {
+            return "Folder"
         }
         
         return nil
@@ -306,6 +359,21 @@ import Networking
         }
         
         return nil
+        
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        guard indexPath.section == 3 && indexPath.row == 0 else {
+            tableView.deselectRow(at: indexPath, animated: true)
+            return
+        }
+        
+        let vc = FolderInfoVC(style: .insetGrouped)
+        vc.coordinator = coordinator
+        vc.feed = feed
+        
+        navigationController?.pushViewController(vc, animated: true)
         
     }
 

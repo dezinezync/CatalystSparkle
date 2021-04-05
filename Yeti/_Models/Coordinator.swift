@@ -1063,6 +1063,66 @@ extension Coordinator {
         
     }
     
+    func removeFromFolder(_ feed: Feed, folder: Folder, completion: ((Result<Bool, Error>) -> Void)?) {
+        
+        FeedsManager.shared.update(folder: folder.folderID, title: nil, add: nil, delete: [feed.feedID]) { result in
+            
+            switch result {
+            
+            case .failure(let error):
+                completion?(.failure(error))
+            
+            case .success(let status):
+                
+                if status == true {
+                    feed.folderID = nil
+                    DBManager.shared.update(feed: feed)
+                    
+                    _ = folder.feedIDs.remove(feed.feedID)
+                    folder.feeds = folder.feeds.filter { $0.feedID != feed.feedID }
+                    
+                    DBManager.shared.update(folder: folder)
+                    
+                }
+                
+                completion?(.success(status))
+            
+            }
+            
+        }
+        
+    }
+    
+    func addToFolder(_ feed: Feed, folder: Folder, completion: ((Result<Bool, Error>) -> Void)?) {
+        
+        FeedsManager.shared.update(folder: folder.folderID, title: nil, add: [feed.feedID], delete: nil) { result in
+            
+            switch result {
+            
+            case .failure(let error):
+                completion?(.failure(error))
+            
+            case .success(let status):
+                
+                if status == true {
+                    feed.folderID = folder.folderID
+                    DBManager.shared.update(feed: feed)
+                    
+                    folder.feedIDs.insert(feed.feedID)
+                    folder.feeds.append(feed)
+                    
+                    DBManager.shared.update(folder: folder)
+                    
+                }
+                
+                completion?(.success(status))
+            
+            }
+            
+        }
+        
+    }
+    
 }
 
 extension UIWindow {

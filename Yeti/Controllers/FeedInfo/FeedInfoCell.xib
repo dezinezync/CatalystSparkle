@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17505"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18092"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -33,13 +33,15 @@
                     </stackView>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="eGa-eY-XpV" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="12" id="ISK-LQ-C7e"/>
                     <constraint firstItem="eGa-eY-XpV" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="8" id="Ixj-De-SLa"/>
                     <constraint firstAttribute="bottom" secondItem="eGa-eY-XpV" secondAttribute="bottom" constant="8" id="NUe-0a-ShR"/>
                     <constraint firstAttribute="trailing" secondItem="eGa-eY-XpV" secondAttribute="trailing" constant="12" id="myj-Aa-ncI"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <constraints>
+                <constraint firstItem="eGa-eY-XpV" firstAttribute="leading" secondItem="njF-e1-oar" secondAttribute="leading" constant="12" id="MlI-JO-8xe"/>
+            </constraints>
             <connections>
                 <outlet property="label" destination="tyP-yt-ioW" id="xBo-Ea-6RO"/>
                 <outlet property="toggle" destination="ovx-GX-Lvo" id="oEW-nZ-Qla"/>

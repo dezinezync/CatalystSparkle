@@ -744,6 +744,18 @@ public let notificationsKey = "notifications"
         
     }
     
+    public func update(folder: Folder) {
+        
+        let key = "\(folder.folderID!)"
+        
+        bgConnection.readWrite({ (t) in
+            
+            t.setObject(folder, forKey: key, inCollection: .folders)
+            
+        })
+        
+    }
+    
     public func delete(folder: Folder) {
         
         bgConnection.readWrite { [weak self] (t) in

@@ -13,6 +13,7 @@
 		F003C20E2539685E00312913 /* Atkinson-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F003C20A2539685E00312913 /* Atkinson-Regular.ttf */; };
 		F003C20F2539685E00312913 /* Atkinson-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F003C20B2539685E00312913 /* Atkinson-BoldItalic.ttf */; };
 		F00685FE251F780E00239C80 /* elytramac.bundle in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F0783C88248F685C00C7A280 /* elytramac.bundle */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F008943F261ABDDF006060A0 /* FolderInfoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F008943E261ABDDF006060A0 /* FolderInfoVC.swift */; };
 		F00B0C1723F432CA002BCF41 /* CustomizeVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F00B0C1623F432CA002BCF41 /* CustomizeVC.m */; };
 		F00B0C1C23F4390B002BCF41 /* CustomizeCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F00B0C1A23F4390B002BCF41 /* CustomizeCell.m */; };
 		F00B0C1D23F4390B002BCF41 /* CustomizeCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F00B0C1B23F4390B002BCF41 /* CustomizeCell.xib */; };
@@ -1424,6 +1425,7 @@
 		F003C20B2539685E00312913 /* Atkinson-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Atkinson-BoldItalic.ttf"; sourceTree = "<group>"; };
 		F0068735251F808700239C80 /* PreferencePanes.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PreferencePanes.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk/System/Library/Frameworks/PreferencePanes.framework; sourceTree = DEVELOPER_DIR; };
 		F00710C6229FA1F0002943B2 /* BarPositioning.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BarPositioning.h; sourceTree = "<group>"; };
+		F008943E261ABDDF006060A0 /* FolderInfoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderInfoVC.swift; sourceTree = "<group>"; };
 		F00B0C1523F432CA002BCF41 /* CustomizeVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomizeVC.h; sourceTree = "<group>"; };
 		F00B0C1623F432CA002BCF41 /* CustomizeVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomizeVC.m; sourceTree = "<group>"; };
 		F00B0C1923F4390B002BCF41 /* CustomizeCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomizeCell.h; sourceTree = "<group>"; };
@@ -3198,6 +3200,7 @@
 				F0F35B09257779CD0043982C /* FeedInfoController.xib */,
 				F0F35B2A2577A05D0043982C /* FeedInfoCell.swift */,
 				F0F35B2B2577A05D0043982C /* FeedInfoCell.xib */,
+				F008943E261ABDDF006060A0 /* FolderInfoVC.swift */,
 			);
 			path = FeedInfo;
 			sourceTree = "<group>";
@@ -4649,6 +4652,7 @@
 				F0F049FC2532F0D4001CF7E1 /* UnreadsIntent.intentdefinition in Sources */,
 				F055AC1D1FD2AEF4004B9C29 /* ArticleVC+Toolbar.m in Sources */,
 				F00F646D24EC1DE700E5727C /* Blockquote.m in Sources */,
+				F008943F261ABDDF006060A0 /* FolderInfoVC.swift in Sources */,
 				F07DCA4420C51B550068ED51 /* ArticleVC+Keyboard.m in Sources */,
 				F00F647024EC1DE700E5727C /* GalleryCell.m in Sources */,
 				F0DB58F923F575250008D871 /* CustomizationHeader.m in Sources */,
