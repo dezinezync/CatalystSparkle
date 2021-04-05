@@ -303,10 +303,10 @@ class ArticleCell: UITableViewCell {
         
         // positive offsets push it up, negative push it down
         // this is similar to NSRect
-        let fontSize = Int(titleLabel.font.pointSize)
-        let baseLine = 17 // compute our expected using this
-        let expected = 7 // from the above, A:B :: C:D
-        var yOffset = (baseLine / fontSize) * expected * -1
+        let fontSize: Double = Double(titleLabel.font.pointSize)
+        let baseLine: Double = 17 // compute our expected using this
+        let expected: Double = 7 // from the above, A:B :: C:D
+        var yOffset: Double = (baseLine / fontSize) * expected * -1
         
         yOffset += 6
         

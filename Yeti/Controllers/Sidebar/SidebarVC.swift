@@ -295,6 +295,8 @@ enum SidebarItem: Hashable, Identifiable {
         
         definesPresentationContext = true
         
+        additionalSafeAreaInsets = UIEdgeInsets(top: 12, left: 0, bottom: 0, right: 0)
+        
         collectionView.setCollectionViewLayout(layout, animated: false)
         
         title = "Feeds"
@@ -674,11 +676,11 @@ enum SidebarItem: Hashable, Identifiable {
 
                         if case .folder(let folder) = folderItem {
 
-                            let feeds: [Feed] = folder.feeds.map { $0 }
+                            let feeds: [Feed] = Array(Set(folder.feeds))
 
                             if feeds.count > 0 {
 
-                                let uniqueFeeds: [SidebarItem] = Array(Set(feeds))
+                                let uniqueFeeds: [SidebarItem] = feeds
                                     .sorted(by: { (lhs, rhs) -> Bool in
                                         
                                         return lhs.displayTitle.localizedCompare(rhs.displayTitle) == .orderedAscending

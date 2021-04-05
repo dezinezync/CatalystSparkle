@@ -39,7 +39,7 @@ import BetterCodable
             }
             
             feedsUnread = Publishers.MergeMany(feeds.map { $0.$unread })
-                .receive(on: DispatchQueue.main)
+                .receive(on: DispatchQueue.global())
                 .sink { [weak self] _ in
                     
                     guard let sself = self else {
@@ -123,8 +123,8 @@ extension Folder {
     
     public func updateCounters () {
         
-        let value = self.feeds.map { $0.unread }.reduce(0) { counter, newValue in
-            counter + newValue
+        let value = self.feeds.reduce(0) { counter, newValue in
+            counter + newValue.unread
         }
         
         unread = value

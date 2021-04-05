@@ -358,10 +358,11 @@ extension Feed {
     
     static func == (lhs: Feed, rhs: Feed) -> Bool {
         
-        return lhs.url == rhs.url
+        let equal = lhs.url == rhs.url
             && lhs.feedID == rhs.feedID
-            && lhs.extra == rhs.extra
             && lhs.displayTitle == rhs.displayTitle
+        
+        return equal
         
     }
     
