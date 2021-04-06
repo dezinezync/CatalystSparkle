@@ -164,7 +164,6 @@
 		F05C7A9F20D8E1F3007D6B5C /* TableHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = F05C7A9E20D8E1F3007D6B5C /* TableHeader.m */; };
 		F05C7AA320D8E203007D6B5C /* TableHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = F05C7AA220D8E203007D6B5C /* TableHeader.xib */; };
 		F061508B24F62D18007F50A5 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F061508A24F62D18007F50A5 /* WidgetKit.framework */; };
-		F064A5322157638500A385AD /* LaunchVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F064A5302157638500A385AD /* LaunchVC.m */; };
 		F064A5382157678900A385AD /* IdentityVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F064A5362157678900A385AD /* IdentityVC.xib */; };
 		F064A53B21576E7200A385AD /* UIImage+Color.m in Sources */ = {isa = PBXBuildFile; fileRef = F064A53A21576E7200A385AD /* UIImage+Color.m */; };
 		F064A53F21576F5600A385AD /* TrialVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F064A53D21576F5600A385AD /* TrialVC.m */; };
@@ -1636,9 +1635,6 @@
 		F05C7A9E20D8E1F3007D6B5C /* TableHeader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TableHeader.m; sourceTree = "<group>"; };
 		F05C7AA220D8E203007D6B5C /* TableHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TableHeader.xib; sourceTree = "<group>"; };
 		F061508A24F62D18007F50A5 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk/System/iOSSupport/System/Library/Frameworks/WidgetKit.framework; sourceTree = DEVELOPER_DIR; };
-		F064A52F2157638500A385AD /* LaunchVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LaunchVC.h; sourceTree = "<group>"; };
-		F064A5302157638500A385AD /* LaunchVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LaunchVC.m; sourceTree = "<group>"; };
-		F064A5312157638500A385AD /* LaunchVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LaunchVC.xib; sourceTree = "<group>"; };
 		F064A5342157678900A385AD /* IdentityVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IdentityVC.h; sourceTree = "<group>"; };
 		F064A5352157678900A385AD /* IdentityVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IdentityVC.m; sourceTree = "<group>"; };
 		F064A5362157678900A385AD /* IdentityVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = IdentityVC.xib; sourceTree = "<group>"; };
@@ -2357,9 +2353,8 @@
 		F064A52E2157632700A385AD /* Intro */ = {
 			isa = PBXGroup;
 			children = (
-				F064A52F2157638500A385AD /* LaunchVC.h */,
-				F064A5302157638500A385AD /* LaunchVC.m */,
-				F064A5312157638500A385AD /* LaunchVC.xib */,
+				F045988925FB6CD800C87B82 /* LaunchVC.swift */,
+				F045989525FB897C00C87B82 /* LaunchVC.xib */,
 				F064A5342157678900A385AD /* IdentityVC.h */,
 				F064A5352157678900A385AD /* IdentityVC.m */,
 				F064A5362157678900A385AD /* IdentityVC.xib */,
@@ -2579,8 +2574,6 @@
 			isa = PBXGroup;
 			children = (
 				F05AD5F225F9DE77003B2D69 /* SplitVC.swift */,
-				F045988925FB6CD800C87B82 /* LaunchVC.swift */,
-				F045989525FB897C00C87B82 /* LaunchVC.xib */,
 				F0D07205205E9EC400A042CD /* DZWebViewController.h */,
 				F0D07204205E9EC400A042CD /* DZWebViewController.m */,
 				F02459C920590E6D002906C3 /* SearchResults.h */,
@@ -4742,7 +4735,6 @@
 				F0EE7F0B2608C56600931FA2 /* TodayVC.swift in Sources */,
 				F031A69225FDC68B0046467A /* FolderCell.swift in Sources */,
 				F042ACF425244A0500AA440A /* NSObject+SimpleSwizzle.m in Sources */,
-				F064A5322157638500A385AD /* LaunchVC.m in Sources */,
 				F00F647824EC1DE700E5727C /* Tweet.m in Sources */,
 				F0E86491234793870089F9EF /* ArticleVC+Photos.m in Sources */,
 				F03C6040251F702200F442C7 /* DZStepper.m in Sources */,

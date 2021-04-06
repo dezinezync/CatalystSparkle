@@ -804,14 +804,6 @@ typedef NS_ENUM(NSInteger, ArticleVCState) {
         return;
     }
     
-    // @TODO
-//    if (MyFeedsManager.reachability.currentReachabilityStatus == NotReachable) {
-//        NSError *error = [NSError errorWithDomain:@"ArticleInterface" code:500 userInfo:@{NSLocalizedDescriptionKey: @"Elytra cannot connect to the internet at the moment. Please check your connection and try again."}];
-//        self.articleLoadingError = error;
-//        self.state = ArticleVCStateError;
-//        return;
-//    }
-    
     self.state = ArticleVCStateLoading;
     
     weakify(self);
@@ -2629,8 +2621,6 @@ typedef NS_ENUM(NSInteger, ArticleVCState) {
     if (sender.state != UIGestureRecognizerStateEnded) {
         return;
     }
-    
-    // @TODO
     
     Feed *feed = [MyFeedsManager feedFor:((Article *)(self.item)).feedID];
 

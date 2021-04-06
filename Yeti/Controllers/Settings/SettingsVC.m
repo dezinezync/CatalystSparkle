@@ -28,8 +28,6 @@
 
 #import "PrefsManager.h"
 
-// @TODO: DBManager + Settings + CloudCore
-
 #if TARGET_OS_MACCATALYST
 typedef NS_ENUM(NSUInteger, SectionOneRows) {
     SectionBackgroundFetch = 0,
@@ -632,23 +630,14 @@ typedef NS_ENUM(NSUInteger, SectionOneRows) {
         NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
         formatter.dateFormat = @"YYYY-MM-dd HH:mm:ss";
         
-        // @TODO
-//        NSDate *date = MyFeedsManager.unreadLastUpdate ?: NSDate.date;
-//        
-//        formatter.dateStyle = NSDateFormatterShortStyle;
-//        formatter.timeStyle = NSDateFormatterShortStyle;
-//        formatter.timeZone = [NSTimeZone localTimeZone];
-//        
-//        NSString *formatted = [formatter stringFromDate:date];
-//        
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            
-//            _byLabel.text = formattedString(@"A Dezine Zync App.\nLast Synced: %@", formatted);
-//            [_byLabel sizeToFit];
-//            [_byLabel setNeedsLayout];
-//            [_byLabel layoutIfNeeded];
-//            
-//        });
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            _byLabel.text = formattedString(@"A Dezine Zync App.");
+            [_byLabel sizeToFit];
+            [_byLabel setNeedsLayout];
+            [_byLabel layoutIfNeeded];
+            
+        });
         
         [_footerView addSubview:_byLabel];
         

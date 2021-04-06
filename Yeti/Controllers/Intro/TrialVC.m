@@ -110,21 +110,6 @@
         
     }];
     
-    // @TODO
-//    [MyFeedsManager startUserFreeTrial:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//        NSLog(@"Expiry: %@, isTrial: %@", MyFeedsManager.user.subscription.expiry, MyFeedsManager.user.subscription.status.integerValue == 2 ? @"YES" : @"NO");
-//
-//        strongify(self);
-//
-//        return [self didComplete];
-//
-//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//        [AlertManager showGenericAlertWithTitle:@"Error Starting Trial" message:error.localizedDescription];
-//
-//    }];
-    
 }
 
 - (void)didComplete {
