@@ -122,7 +122,7 @@ extension Folder {
     }
     
     public func updateCounters () {
-        
+        // @TODO: Check why this crashes sometimes with GPFLT
         let value = self.feeds.reduce(0) { counter, newValue in
             counter + newValue.unread
         }

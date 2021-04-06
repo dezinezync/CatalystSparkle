@@ -173,40 +173,31 @@ class AuthorVC: FeedVC {
                     return
                 }
                 
-                if sself.sorting.isUnread == true {
+                let total = txn.numberOfItems(inGroup: GroupNames.articles.rawValue)
+                
+                let now = Date().timeIntervalSince1970
+                
+                var counting: UInt = 0
+                
+                txn.enumerateKeysAndMetadata(inGroup: GroupNames.articles.rawValue, with: [], range: NSMakeRange(0, Int(total))) { _, _ in
+                    return true
+                } using: { c, k, m, index, stop in
                     
-                    sself.unread = txn.numberOfItems(inGroup: GroupNames.articles.rawValue)
+                    guard let metadata = m as? ArticleMeta else { return }
                     
-                }
-                else {
-                    
-                    let total = txn.numberOfItems(inGroup: GroupNames.articles.rawValue)
-                    
-                    let now = Date().timeIntervalSince1970
-                    
-                    var counting: UInt = 0
-                    
-                    txn.enumerateKeysAndMetadata(inGroup: GroupNames.articles.rawValue, with: [], range: NSMakeRange(0, Int(total))) { _, _ in
-                        return true
-                    } using: { c, k, m, index, stop in
-                        
-                        guard let metadata = m as? ArticleMeta else { return }
-                        
-                        guard metadata.read == false else {
-                            return
-                        }
-                        
-                        let diff = now - metadata.timestamp
-                        
-                        if diff <= 1209600 {
-                            counting += 1
-                        }
-                        
+                    guard metadata.read == false else {
+                        return
                     }
                     
-                    sself.unread = counting
+                    let diff = now - metadata.timestamp
+                    
+                    if diff <= 1209600 {
+                        counting += 1
+                    }
                     
                 }
+                
+                sself.unread = counting
                 
             }
             
