@@ -28,7 +28,8 @@
 }
 
 - (NSAttributedString *)processContent:(Content *)content {
-    self.type = [content.type isEqualToString:@"orderedList"] ? 1 : 0;
+    
+    self.type = ([content.type isEqualToString:@"orderedList"] || [content.type isEqualToString:@"ol"]) ? 1 : 0;
     
     weakify(self);
     

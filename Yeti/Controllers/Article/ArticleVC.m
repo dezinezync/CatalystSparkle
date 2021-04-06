@@ -1514,7 +1514,8 @@ typedef NS_ENUM(NSInteger, ArticleVCState) {
         [self addQuote:content];
         
     }
-    else if ([content.type isEqualToString:@"list"] || [content.type containsString:@"list"]) {
+    else if ([content.type isEqualToString:@"list"] || [content.type containsString:@"list"]
+             || [content.type isEqualToString:@"ul"] || [content.type isEqualToString:@"ol"]) {
         
         [self addList:content];
         
