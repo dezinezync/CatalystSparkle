@@ -199,10 +199,8 @@
 
 - (BOOL)paymentQueue:(SKPaymentQueue *)queue shouldAddStorePayment:(SKPayment *)payment forProduct:(SKProduct *)product {
     
+     return MyFeedsManager.user != nil && MyFeedsManager.user.uuid != nil;
     
-    // @TODO
-//     return MyFeedsManager.userID != nil && [MyFeedsManager.userID integerValue] > 0;
-    return NO;
 }
 
 @end

@@ -341,8 +341,6 @@ enum SidebarItem: Hashable, Identifiable {
         
         #endif
         
-        // @TODO: Additional Feeds to sync using coalesing manager
-        
     }
     
     public override func viewDidAppear(_ animated: Bool) {

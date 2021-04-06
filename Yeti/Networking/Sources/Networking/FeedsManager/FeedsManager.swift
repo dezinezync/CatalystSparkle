@@ -44,6 +44,16 @@ public enum FeedsManagerError : Error {
         return fullVersion.components(separatedBy: ".").first!
     }
     
+    public var pushToken: String? {
+        didSet {
+            if pushToken != nil {
+                onSetPushToken()
+            }
+        }
+    }
+    
+    public weak var subsribeAfterPushEnabled: Feed?
+    
     // MARK: - Sessions
     public var session: DZURLSession {
         get {
@@ -919,14 +929,49 @@ extension FeedsManager {
 // MARK: - Push
 extension FeedsManager {
     
+    public func onSetPushToken() {
+        
+        if subsribeAfterPushEnabled != nil {
+            
+            subscribe(subsribeAfterPushEnabled!) { [weak self] result in
+                
+                switch result {
+                
+                case .failure(let error):
+                    print("Error subbing to feed after push was enabled: \(error)")
+                    self?.subsribeAfterPushEnabled = nil
+                    
+                case .success:
+                    NotificationCenter.default.post(name: Notification.Name.init(rawValue: "com.yeti.note.subscribedToFeed"), object: self?.subsribeAfterPushEnabled)
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        
+                        self?.subsribeAfterPushEnabled = nil
+                        
+                    }
+                    
+                }
+                
+            }
+            
+        }
+        
+        if pushToken != nil {
+            addPushToken(token: pushToken!, completion: nil)
+        }
+        
+    }
+    
     public func addPushToken(token: String, completion:((Result<Bool, Error>) -> Void)?) {
         
         session.PUT(path: "/user/token", query: nil, body: ["token": token], resultType: [String: Int].self) { result in
             
             switch result {
             case .failure(let error):
+                print(error)
                 completion?(.failure(error))
-            case .success(_):
+            case .success(let (response, status)):
+                print(response?.statusCode ?? 0, status ?? "No response value")
                 completion?(.success(true))
             }
             

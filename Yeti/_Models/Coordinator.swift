@@ -868,6 +868,11 @@ extension Coordinator {
 // MARK: - Briding DBManager and FeedsManager
 extension Coordinator {
     
+    // MARK: - AppDelegate
+    public func setPushToken(token: String) {
+        FeedsManager.shared.pushToken = token
+    }
+    
     // MARK: - Feeds
     
     public func showAddingFeedDialog() {

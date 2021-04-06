@@ -33,8 +33,8 @@
     }
     
     NSLog(@"Registered for Push notifications with token: %@", token);
-    // @TODO
-//    MyFeedsManager.pushToken = token;
+    
+    [self.coordinator setPushTokenWithToken:token];
 }
 
 - (void)application:(UIApplication *)app didFailToRegisterForRemoteNotificationsWithError:(NSError *)error

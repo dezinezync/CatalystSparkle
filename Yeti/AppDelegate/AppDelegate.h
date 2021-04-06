@@ -37,6 +37,7 @@ extern AppDelegate * _Nonnull MyAppDelegate;
 @property (nonatomic, strong, nonnull) Coordinator *coordinator;
 
 @property (nonatomic, assign) BOOL bgTaskHandlerRegistered;
+@property (nonatomic, assign) BOOL bgCleanupTaskHandlerRegistered;
 
 #if TARGET_OS_MACCATALYST
 

@@ -1078,7 +1078,7 @@ extension DBManager {
         
     }
     
-    public func cleanupDatabase() {
+    public func cleanupDatabase(completion:(() -> Void)?) {
         
         // remove articles older than 1 month from the DB.
         let interval = Date().timeIntervalSince1970
@@ -1086,6 +1086,7 @@ extension DBManager {
         writeQueue.async { [weak self] in
             
             guard let sself = self else {
+                completion?()
                 return
             }
         
@@ -1093,12 +1094,15 @@ extension DBManager {
                 
                 var keys = t.allKeys(inCollection: .articles).sorted()
                 
-                guard keys.count > 20 else {
+                guard keys.count > 100 else {
+                    completion?()
                     return
                 }
                 
-                // check the last 20 items
-                keys = keys.suffix(20)
+                // check the last 100 items
+                keys = keys.suffix(100)
+                
+                var cleaned: UInt = 0
                 
                 for key in keys {
                     
@@ -1111,10 +1115,15 @@ extension DBManager {
                     if ((interval - timestamp) > 2592000) {
                         
                         sself._delete(articleID: key, transaction: t)
+                        cleaned += 1
                         
                     }
                     
                 }
+                
+                print("Cleaned up \(cleaned) article\(cleaned == 1 ? "" : "s")")
+                
+                completion?()
                 
             }
             

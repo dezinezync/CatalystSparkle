@@ -23,6 +23,7 @@
 
 #import "Elytra-Swift.h"
 
+#define backgroundCleanupIdentifier @"com.yeti.cleanup"
 #define backgroundRefreshIdentifier @"com.yeti.refresh"
 
 @interface UIViewController (ElytraStateRestoration)
@@ -78,6 +79,8 @@
     }
     
 #endif
+    
+    [self setupBackgroundCleanup];
     
 #if !TARGET_OS_MACCATALYST
     [self setupBackgroundRefresh];
@@ -181,6 +184,8 @@
         
         [self scheduleBackgroundRefresh];
         
+        [self scheduleBackgroundCleanup];
+        
 //        if (cancelling == YES) {
 //
 //#ifdef DEBUG
@@ -255,12 +260,44 @@
 
 }
 
-#pragma mark -
-
 #pragma mark - Background Refresh
 
-- (void)scheduleBackgroundRefresh {
+- (void)scheduleBackgroundCleanup {
     
+    // Note from NetNewsWire code
+    // We send this to a dedicated serial queue because as of 11/05/19 on iOS 13.2 the call to the
+    // task scheduler can hang indefinitely.
+    dispatch_async(self.bgTaskDispatchQueue, ^{
+       
+        BGProcessingTaskRequest *request = [[BGProcessingTaskRequest alloc] initWithIdentifier:backgroundCleanupIdentifier];
+        request.requiresNetworkConnectivity = NO;
+        request.requiresExternalPower = NO;
+        
+        // Can be done 5min from now.
+        #ifdef DBEUG
+        request.earliestBeginDate = [NSDate dateWithTimeIntervalSinceNow:1];
+        #else
+        request.earliestBeginDate = [NSDate dateWithTimeIntervalSinceNow:(60 * 5)];
+        #endif
+        
+        NSError *error = nil;
+        
+        if ([[BGTaskScheduler sharedScheduler] submitTaskRequest:request error:&error] == NO) {
+            
+            if (error != nil && error.code != 1) {
+
+                NSLog(@"Error submitting bg cleanup request: %@", error.localizedDescription);
+
+            }
+            
+        }
+        
+    });
+    
+}
+
+- (void)scheduleBackgroundRefresh {
+        
 #if TARGET_OS_MACCATALYST
     return;
 #endif
@@ -346,6 +383,33 @@
     MyAppDelegate.bgTaskHandlerRegistered = registered;
     
     NSLog(@"Registered background refresh task: %@", @(registered));
+    
+}
+
+- (void)setupBackgroundCleanup {
+    
+    if (MyAppDelegate.bgCleanupTaskHandlerRegistered == YES) {
+        return;
+    }
+    
+    weakify(self);
+    
+    BOOL registered = [[BGTaskScheduler sharedScheduler] registerForTaskWithIdentifier:backgroundCleanupIdentifier usingQueue:nil launchHandler:^(__kindof BGAppRefreshTask * _Nonnull task) {
+        
+        NSLog(@"Woken to perform account cleanup.");
+        
+        strongify(self);
+        
+        // schedule next cleanup
+        [self scheduleBackgroundCleanup];
+        
+        [MyFeedsManager setupBGCleanupWithTask:task];
+        
+    }];
+    
+    MyAppDelegate.bgCleanupTaskHandlerRegistered = YES;
+    
+    NSLog(@"Registered background cleanup task: %@", @(registered));
     
 }
 

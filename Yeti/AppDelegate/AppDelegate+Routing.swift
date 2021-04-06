@@ -182,7 +182,7 @@ extension AppDelegate {
                 }
                 
                 if let url = URL(string: path) {
-                    // @TODO
+                    
                     self?.sharedGlue.open(url, inBackground: openInBackground)
                     
                 }

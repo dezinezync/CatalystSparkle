@@ -255,6 +255,14 @@ import BackgroundTasks
         
     }
     
+    static public func setupBGCleanup(task: BGAppRefreshTask) {
+        
+        DBManager.shared.cleanupDatabase(completion: {
+            task.setTaskCompleted(success: true)
+        })
+        
+    }
+    
     static public func completedBGSync() {
         
         DBManager.shared.syncCoordinator = nil
