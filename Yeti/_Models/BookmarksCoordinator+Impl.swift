@@ -53,7 +53,7 @@ extension BookmarksCoordinator {
         
         let query: [String: String] = ["userID": "\(userID)"]
         
-        FeedsManager.shared.session.POST(path: "/bookmarked", query: query, body: body, resultType: [String: [String]].self) { [weak self] result in
+        FeedsManager.shared.session.POST(path: "/bookmarked", query: query, body: body, resultType: [String: [Int]].self) { [weak self] result in
             
             switch result {
             case .failure(let error):
@@ -75,8 +75,8 @@ extension BookmarksCoordinator {
                     return
                 }
                 
-                let bookmarked: [String] = result["bookmarks"] ?? []
-                let deleted: [String] = result["deleted"] ?? []
+                let bookmarked: [String] = (result["bookmarks"] ?? []).map { "\($0)" }
+                let deleted: [String] = (result["deleted"] ?? []).map { "\($0)" }
                 
                 self?.deleteBookmarks(deleted: deleted)
                 self?.addBookmarks(added: bookmarked)

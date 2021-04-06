@@ -1647,11 +1647,14 @@ extension SidebarVC {
             DBManager.shared.countsConnection.asyncRead { (t) in
                 
                 guard let sself = self,
-                      let txn = t.ext(DBManagerViews.unreadsView.rawValue) as? YapDatabaseFilteredViewTransaction else {
+                      let txn = t.ext(DBManagerViews.unreadsView.rawValue) as? YapDatabaseFilteredViewTransaction,
+                      let btxn = t.ext(DBManagerViews.bookmarksView.rawValue) as? YapDatabaseFilteredViewTransaction else {
                     return
                 }
                 
                 let group = GroupNames.articles.rawValue
+                
+                self?.coordinator?.totalBookmarks = btxn.numberOfItems(inGroup: group)
                 
                 let total = Int(txn.numberOfItems(inGroup: group))
                 
