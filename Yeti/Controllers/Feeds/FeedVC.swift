@@ -1063,13 +1063,13 @@ extension FeedVC {
     
     @objc func markAllNewerRead(_ indexPath: IndexPath) {
         
-        markDirectional(.older, indexPath: indexPath)
+        markDirectional(.newer, indexPath: indexPath)
         
     }
     
     @objc func markAllOlderRead(_ indexPath: IndexPath) {
         
-        markDirectional(.newer, indexPath: indexPath)
+        markDirectional(.older, indexPath: indexPath)
         
     }
     
