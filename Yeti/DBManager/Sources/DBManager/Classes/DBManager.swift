@@ -52,6 +52,8 @@ public let notificationsKey = "notifications"
     
     public var syncCoordinator: SyncCoordinator?
     
+    public var bookmarksCoordinator: BookmarksCoordinator?
+    
     fileprivate var _lastUpdated: Date!
     
     public var lastUpdated: Date? {

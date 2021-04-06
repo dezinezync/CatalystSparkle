@@ -1252,7 +1252,8 @@ enum SidebarItem: Hashable, Identifiable {
                     
                 }
                 
-                // @TODO: Update Bookmarks from server
+                DBManager.shared.bookmarksCoordinator = BookmarksCoordinator(user: DBManager.shared.user!)
+                DBManager.shared.bookmarksCoordinator!.start()
                 
                 if let mc = sself.coordinator,
                    let f = mc.feedVC,
