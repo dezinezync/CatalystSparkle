@@ -613,6 +613,22 @@ extension FeedsManager {
         
     }
     
+    public func rename(feed id: UInt, title: String, completion:((Result<Bool, Error>) -> Void)?) {
+        
+        session.POST(path: "/1.2/customFeed", query: [:], body: ["title": title, "feedID": id], resultType: [String: Bool].self) { result in
+            
+            switch result {
+            case .failure(let error):
+                completion?(.failure(error))
+                
+            case .success(let (_, result)):
+                completion?(.success(result?["status"] ?? true))
+            }
+            
+        }
+        
+    }
+    
 }
 
 // MARK: - Folders

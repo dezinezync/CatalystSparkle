@@ -336,9 +336,16 @@ public let notificationsKey = "notifications"
                 
                 for k in keys {
                     
-                    let feed = t.object(forKey: k, inCollection: .feeds) as! Feed
+                    if let feed = t.object(forKey: k, inCollection: .feeds) as? Feed {
+                        
+                        // check for custom name
+                        if let customName = t.object(forKey: k, inCollection: .localNames) as? String {
+                            feed.localName = customName
+                        }
                     
-                    f.append(feed)
+                        f.append(feed)
+                        
+                    }
                     
                 }
                 
@@ -516,8 +523,6 @@ public let notificationsKey = "notifications"
             
             writeQueue.async { [weak self] in
                 
-                // @TODO: Add CloudCore operation
-                
                 self?.bgConnection.asyncReadWrite({ (t) in
                     
                     t.removeObject(forKey: localNameKey, inCollection: .localNames)
@@ -540,8 +545,6 @@ public let notificationsKey = "notifications"
         else {
             
             writeQueue.async { [weak self] in
-                
-                // @TODO: Add CloudCore operation
                 
                 self?.bgConnection.asyncReadWrite({ (t) in
                     

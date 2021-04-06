@@ -1780,38 +1780,24 @@ extension SidebarVC: UITextFieldDelegate {
             
             let name = (stf.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
             
-            // @TODO: Perform FeedsManager op first
-            DBManager.shared.rename(feed: f, customTitle: name) { (result) in
+            sself.coordinator?.rename(feed: f, title: name, completion: { status in
                 
-                switch result {
-                case .failure(let err):
-                    AlertManager.showGenericAlert(withTitle: "Error Renaming", message: err.localizedDescription)
+                if status == true {
                     
-                    
-                case .success(let result):
-                    
-                    if result == true {
+                    if let cell = sself.collectionView.cellForItem(at: indexPath) as? UICollectionViewListCell,
+                       var config = cell.contentConfiguration as? UIListContentConfiguration {
                         
-                        if let cell = sself.collectionView.cellForItem(at: indexPath) as? UICollectionViewListCell,
-                           var config = cell.contentConfiguration as? UIListContentConfiguration {
-                            
-                            config.text = f.displayTitle
-                            
-                            cell.contentConfiguration = config
-                            
-                        }
+                        config.text = f.displayTitle
+                        
+                        cell.contentConfiguration = config
                         
                     }
-                    else {
-                        AlertManager.showGenericAlert()
-                    }
-                    
-                    sself.clearAlertProperties()
                     
                 }
+                                
+                sself.clearAlertProperties()
                 
-            }
-            
+            })
             
         }
         

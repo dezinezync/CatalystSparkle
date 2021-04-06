@@ -1065,6 +1065,46 @@ extension Coordinator {
         
     }
     
+    public func rename(feed: Feed, title: String, completion:((Bool) -> Void)?) {
+        
+        FeedsManager.shared.rename(feed: feed.feedID, title: title) { result in
+            
+            switch result {
+            case .failure(let error):
+                
+                AlertManager.showGenericAlert(withTitle: "Error Renaming", message: error.localizedDescription)
+                completion?(false)
+                
+            case .success(let status):
+                
+                if (status == true) {
+                        
+                    DBManager.shared.rename(feed: feed, customTitle: title) { (result) in
+                        
+                        switch result {
+                        case .failure(let err):
+                            AlertManager.showGenericAlert(withTitle: "Error Renaming", message: err.localizedDescription)
+                            completion?(false)
+                            
+                        case .success:
+                            
+                            completion?(true)
+                            
+                        }
+                        
+                    }
+                    
+                }
+                else {
+                    completion?(false)
+                }
+                                
+            }
+            
+        }
+        
+    }
+    
     public func syncAdditionalFeed(_ feed: Feed) {
         
         guard let feedID = feed.feedID else {
