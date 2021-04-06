@@ -190,41 +190,45 @@ enum MarkDirection: Int {
         let titleView = FeedTitleView()
         
         switch type {
-        case .natural:
+        case .natural, .author:
             guard let feed = feed else {
                 return
             }
             
             self.title = feed.displayTitle
             
-            feed.displayTitle.publisher
-                .receive(on: DispatchQueue.main)
-                .sink { [weak self] (_) in
-                    
-                    guard let sself = self,
-                          let tv = sself.titleView,
-                          let f = sself.feed else {
-                        return
+            if (type != .author) {
+                
+                feed.displayTitle.publisher
+                    .receive(on: DispatchQueue.main)
+                    .sink { [weak self] (_) in
+                        
+                        guard let sself = self,
+                              let tv = sself.titleView,
+                              let f = sself.feed else {
+                            return
+                        }
+                        
+                        tv.titleLabel.text = f.displayTitle
+                        
                     }
-                    
-                    tv.titleLabel.text = f.displayTitle
-                    
-                }
-                .store(in: &cancellables)
-            
-            feed.$unread.receive(on: DispatchQueue.main)
-                .sink { [weak self] (unread) in
-                    
-                    guard let sself = self else {
-                        return
+                    .store(in: &cancellables)
+                
+                feed.$unread.receive(on: DispatchQueue.main)
+                    .sink { [weak self] (unread) in
+                        
+                        guard let sself = self else {
+                            return
+                        }
+                        
+                        let count = unread
+                        
+                        sself.titleView?.countLabel.text = "\(count) Unread\(count == 1 ? "" : "s")"
+                        
                     }
-                    
-                    let count = unread
-                    
-                    sself.titleView?.countLabel.text = "\(count) Unread\(count == 1 ? "" : "s")"
-                    
-                }
-                .store(in: &cancellables)
+                    .store(in: &cancellables)
+                
+            }
             
             if let image = feed.faviconImage {
                 titleView.faviconView.image = image
@@ -1878,7 +1882,7 @@ extension FeedVC {
             return
         }
         
-        // @TODO
+        coordinator?.showAuthorVC(feed!, author: author)
         
     }
     

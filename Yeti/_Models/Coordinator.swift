@@ -226,6 +226,16 @@ public var deviceName: String {
         
     }
     
+    public func showAuthorVC(_ feed: Feed, author: String) {
+        
+        let feedVC = AuthorVC(style: .plain)
+        feedVC.feed = feed
+        feedVC.author = author
+        
+        showSupplementaryController(feedVC)
+        
+    }
+    
     // MARK: - Articles
     public func showArticleVC(_ articleVC: ArticleVC) {
         

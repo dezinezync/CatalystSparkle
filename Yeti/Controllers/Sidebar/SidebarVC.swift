@@ -1254,8 +1254,6 @@ enum SidebarItem: Hashable, Identifiable {
                 
                 // @TODO: Update Bookmarks from server
                 
-                // @TODO: BG task to cleanup DB
-                
                 if let mc = sself.coordinator,
                    let f = mc.feedVC,
                    f is UnreadVC || f is TodayVC {
@@ -1504,19 +1502,6 @@ enum SidebarItem: Hashable, Identifiable {
     
     #endif
     
-    @objc func badgePreferenceChanged () {
-        
-        if SharedPrefs.badgeAppIcon == false {
-            UIApplication.shared.applicationIconBadgeNumber = 0
-        }
-        else {
-            // @TODO: Use actual unread value
-            UIApplication.shared.applicationIconBadgeNumber = 69
-            
-        }
-        
-    }
-    
 }
 
 // MARK: - UICollectionViewDelegate
@@ -1652,7 +1637,6 @@ extension SidebarVC {
 
 extension SidebarVC {
     
-    // @TODO: Move to Swift Coordinator
     @objc func updateCounters() {
         
         print("Updating counters")
