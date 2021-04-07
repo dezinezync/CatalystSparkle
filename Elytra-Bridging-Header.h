@@ -30,3 +30,4 @@
 #import "SettingsVC.h"
 #import "EmptyVC.h"
 #import "NewFolderController.h"
+#import "StoreVC.h"

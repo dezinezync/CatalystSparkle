@@ -301,7 +301,40 @@ extension FeedsManager {
             "env": Bundle.main.configurationString
         ]
         
-        session.GET(path: path, query: query, resultType: GetUserResult.self) { (result) in
+        session.GET(path: path, query: query) { (result) -> Result<GetUserResult, Error> in
+            
+            switch result {
+            case .success((_, let result)):
+                guard let data = result else {
+                    return Result.failure(FeedsManagerError.from(description: "Invalid or no data was received.", statusCode: 500))
+                }
+                
+                do {
+                    
+                    let json = try JSON(data: data)
+                    
+                    guard let s = json["user"].dictionaryObject
+                    else {
+                        return Result.failure(FeedsManagerError.general(message: "Invalid data received."))
+                    }
+
+                    let user = User(from: s)
+
+                    let retval = GetUserResult(user: user)
+
+                    return Result.success(retval)
+                    
+                }
+                catch {
+                    return Result.failure(error)
+                }
+                
+            case .failure(let error):
+                print(error)
+                return Result.failure(error)
+            }
+            
+        } completion: { result in
             
             switch result {
             case .success(let (_, results)):
@@ -475,9 +508,8 @@ extension FeedsManager {
                 }
             case .failure(let error):
                 print(error)
+                return Result.failure(error)
             }
-            
-            return .failure(FeedsManagerError.from(description: "An unknown error occurred when fetching feeds.", statusCode: 500))
             
         } completion: { (result) in
             

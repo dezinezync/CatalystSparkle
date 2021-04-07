@@ -313,7 +313,11 @@ public var deviceName: String {
         #if targetEnvironment(macCatalyst)
         openScene(name: "subscriptionInterface")
         #else
-        // @TODO
+        let vc = StoreVC(style: .plain)
+        vc.coordinator = self
+        
+        let nav = UINavigationController(rootViewController: vc)
+        splitVC.present(nav, animated: true, completion: nil)
         #endif
         
     }
@@ -909,6 +913,26 @@ extension Coordinator {
     // MARK: - Account
     public func setPushToken(token: String) {
         FeedsManager.shared.pushToken = token
+    }
+    
+    public func getSubscription(completion:((_ error: Error?) -> Void)?) {
+        
+        FeedsManager.shared.getSubscription { result in
+            
+            switch result {
+            case .failure(let error):
+                print("Error fetching subscription", error)
+                completion?(error)
+            case .success(let subscription):
+                let user: User = DBManager.shared.user!
+                user.subscription = subscription
+                
+                DBManager.shared.user = user
+                completion?(nil)
+            }
+            
+        }
+        
     }
     
     public func resetAccount(completion: (() -> Void)?) {

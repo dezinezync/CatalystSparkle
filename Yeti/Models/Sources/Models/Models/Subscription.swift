@@ -13,13 +13,13 @@ public enum SubscriptionEnv: String, Codable {
     case Production
 }
 
-public enum SubscriptionStatus: Int, Codable {
+@objc public enum SubscriptionStatus: Int, Codable {
     case expired = 0
     case active = 1
     case trial = 2
 }
 
-public final class Subscription: NSObject, Codable {
+@objcMembers public final class Subscription: NSObject, Codable {
     
     public static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -57,11 +57,11 @@ public final class Subscription: NSObject, Codable {
     }
     
     public var created: Date!
-    public var status: SubscriptionStatus! = .expired
+    public var status: SubscriptionStatus = .expired
     
-    public var preAppStore: Bool? = false
-    public var lifetime: Bool? = false
-    public var external: Bool? = false
+    public var preAppStore: Bool = false
+    public var lifetime: Bool = false
+    public var external: Bool = false
     
     public convenience init(from dict: [String: Any]) {
         
@@ -140,12 +140,12 @@ public final class Subscription: NSObject, Codable {
         }
         else if key == "status", let value = value as? Int {
             
-            status = SubscriptionStatus(rawValue: value)
+            status = SubscriptionStatus(rawValue: value)!
             
         }
         else if key == "preAppStore" {
             
-            preAppStore = value as? Bool
+            preAppStore = (value as? Bool) ?? false
             
         }
         else if key == "environment", let value = value as? String {
