@@ -437,6 +437,60 @@ extension FeedsManager {
         
     }
     
+    public func postAppReceipt(_ receipt: Data, completion:((Result<Subscription, Error>) -> Void)?) {
+        
+        guard let _ = user else {
+            completion?(.failure(FeedsManagerError.from(description: "Session not active", statusCode: 401)))
+            return
+        }
+        
+        let receiptString = receipt.base64EncodedString()
+        
+        session.POST(path: "/1.1/store", query: ["userID": "\(user!.userID!)"], body: ["receipt": receiptString]) { (result) -> Result<Subscription, Error> in
+            
+            switch result {
+            case .success((_, let result)):
+                guard let data = result else {
+                    return Result.failure(FeedsManagerError.from(description: "Invalid or no data was received.", statusCode: 500))
+                }
+                
+                do {
+                    
+                    let json = try JSON(data: data)
+                    
+                    guard let s = json["subscription"].dictionaryObject
+                    else {
+                        return Result.failure(FeedsManagerError.general(message: "Invalid data received."))
+                    }
+
+                    let sub = Subscription(from: s)
+
+                    return Result.success(sub)
+                    
+                }
+                catch {
+                    return Result.failure(error)
+                }
+                
+            case .failure(let error):
+                print(error)
+                return Result.failure(error)
+            }
+            
+        } completion: { result in
+            
+            switch result {
+            case .failure(let error):
+                completion?(.failure(error))
+            case .success(let (_, sub)):
+                completion?(.success(sub!))
+            }
+            
+        }
+
+        
+    }
+    
     public func deactivateAccount(completion:((Result<Bool, Error>) -> Void)?) {
         
         session.POST(path: "/1.4/\(user!.uuid!)/deactivate", query: [:], body: [:], resultType: [String: Bool].self) { result in

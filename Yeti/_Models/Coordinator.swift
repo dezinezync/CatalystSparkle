@@ -957,6 +957,29 @@ extension Coordinator {
         
     }
     
+    public func postAppReceipt(receipt: Data, completion:((_ subscription: Models.Subscription?, _ error: Error?) -> Void)?) {
+        
+        FeedsManager.shared.postAppReceipt(receipt) { result in
+            
+            switch result {
+            
+            case .failure(let error):
+                completion?(nil, error)
+            
+            case .success(let result):
+                
+                if let user = DBManager.shared.user {
+                    user.subscription = result
+                    DBManager.shared.user = user
+                }
+                
+                completion?(result, nil)
+            }
+            
+        }
+        
+    }
+    
     // MARK: - Feeds
     
     public func showAddingFeedDialog() {
