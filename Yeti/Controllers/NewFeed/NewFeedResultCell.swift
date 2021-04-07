@@ -8,8 +8,8 @@
 
 import UIKit
 import FeedsLib
-import Models
 import SDWebImage
+import Models
 
 @objcMembers class NewFeedResultCell: UITableViewCell {
     
