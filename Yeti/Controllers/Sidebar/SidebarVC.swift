@@ -353,8 +353,6 @@ enum SidebarItem: Hashable, Identifiable {
             sync()
             
         }
-    
-        // @TODO: Should Request Review
         
     }
     

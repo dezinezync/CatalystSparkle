@@ -258,8 +258,7 @@ typedef NS_ENUM(NSInteger, ArticleVCState) {
         [self.loader startAnimating];
         
     }
-    // @TODO
-//    [MyFeedsManager checkConstraintsForRequestingReview];
+    
 }
 
 - (void)viewDidAppear:(BOOL)animated {
