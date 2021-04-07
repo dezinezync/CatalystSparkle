@@ -9,7 +9,10 @@
 import UIKit
 import FeedsLib
 import SDWebImage
+
+#if !TARGET_IS_EXTENSION
 import Models
+#endif
 
 @objcMembers class NewFeedResultCell: UITableViewCell {
     
@@ -74,6 +77,7 @@ import Models
         
     }
     
+    #if !TARGET_IS_EXTENSION
     func configure(feed: Feed) {
         
         self.textLabel?.text = feed.title
@@ -90,6 +94,7 @@ import Models
         })
         
     }
+    #endif
 
 }
 
