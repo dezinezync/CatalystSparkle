@@ -14,6 +14,7 @@ import SwiftYapDatabase
 import Networking
 import Combine
 import Defaults
+import Dynamic
 
 let dbFilteredViewName: String = "feedFilteredView"
 
@@ -176,6 +177,10 @@ enum MarkDirection: Int {
             _hasSetup = true
             setupState()
             updateFeedSorting()
+            
+            #if targetEnvironment(macCatalyst)
+            setupTitleView()
+            #endif
         }
         
     }
@@ -527,7 +532,7 @@ enum MarkDirection: Int {
             return
         }
         
-        window.performSelector(onMainThread: NSSelectorFromString("setTitle:"), with: title, waitUntilDone: true)
+        Dynamic(window).title = title
         
         var publisher: Published<UInt>.Publisher!
         
@@ -553,7 +558,7 @@ enum MarkDirection: Int {
                               return
                           }
                     
-                    swindow.performSelector(onMainThread: NSSelectorFromString("setSubtitle:"), with: "\(unread) Unread", waitUntilDone: true)
+                    Dynamic(swindow).subtitle = "\(unread) Unread"
                     
                 }
                 .store(in: &cancellables)

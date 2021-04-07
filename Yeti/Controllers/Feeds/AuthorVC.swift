@@ -11,6 +11,7 @@ import Combine
 import DBManager
 import YapDatabase
 import SwiftYapDatabase
+import Dynamic
 
 class AuthorVC: FeedVC {
 
@@ -56,6 +57,38 @@ class AuthorVC: FeedVC {
         updateCounters()
         
     }
+    
+    #if targetEnvironment(macCatalyst)
+    public override func setupTitleView() {
+        
+        guard let title: String = self.title else {
+            return
+        }
+        
+        guard let window = coordinator?.innerWindow else {
+            return
+        }
+        
+        super.setupTitleView()
+        
+        Dynamic(window).title = title
+        
+        $unread
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] unread in
+                
+                guard let sself = self,
+                      let swindow = sself.coordinator?.innerWindow else {
+                          return
+                      }
+                
+                Dynamic(swindow).subtitle = "\(unread) Unread"
+                
+            }
+            .store(in: &cancellables)
+        
+    }
+    #endif
     
     // MARK: - Setup
     

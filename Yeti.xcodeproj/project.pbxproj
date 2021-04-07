@@ -2563,12 +2563,12 @@
 			isa = PBXGroup;
 			children = (
 				F073D5CD260C9D6C009447EC /* Coordinator.swift */,
+				F0EF6EB6261C9A9200C07B85 /* BookmarksCoordinator+Impl.swift */,
 				F032A75C244D7D8C0024AC63 /* YetiTheme.h */,
 				F032A75B244D7D8C0024AC63 /* YetiTheme.m */,
 				F093318B24EC14A90066FA41 /* UnreadCountObservor.h */,
 				F00F642F24EC1BC600E5727C /* VideoInfo.h */,
 				F00F642D24EC1BC600E5727C /* VideoInfo.m */,
-				F0EF6EB6261C9A9200C07B85 /* BookmarksCoordinator+Impl.swift */,
 			);
 			path = _Models;
 			sourceTree = "<group>";

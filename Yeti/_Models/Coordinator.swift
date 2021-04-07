@@ -519,7 +519,7 @@ public var deviceName: String {
                         self?.innerWindow = nsWindow
                         
                         if self?.feedVC != nil {
-                            self?.feedVC?.setupTitleView()
+                            self?.feedVC!.setupTitleView()
                         }
                         
                     }
@@ -536,7 +536,7 @@ public var deviceName: String {
         #endif
         
         if controller is FeedVC {
-            feedVC = (controller as! FeedVC)
+            self.feedVC = (controller as! FeedVC)
         }
         
         if (controller is UINavigationController) == false {
@@ -565,11 +565,9 @@ public var deviceName: String {
                 
             }
             
-            return
-            
         }
         
-        if let nav: UINavigationController = splitVC.viewControllers.first as? UINavigationController {
+        else if let nav: UINavigationController = splitVC.viewControllers.first as? UINavigationController {
             
             nav.pushViewController(controller, animated: true)
             
@@ -1418,6 +1416,20 @@ extension Coordinator {
             }
             
         }
+        
+    }
+    
+    // MARK: - MacOS
+    public func showPanel() {
+        
+        let panel = Dynamic.NSPanel()
+        panel.beginSheetModalForWindow(splitVC.view.window!.nsWindow, completionHandler: { response in
+            if let url: URL = panel.URLs.firstObject {
+                print("url: ", url)
+            }
+        } as ResponseBlock)
+
+        typealias ResponseBlock = @convention(block) (_ response: Int) -> Void
         
     }
     

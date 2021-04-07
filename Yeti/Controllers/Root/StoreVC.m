@@ -218,7 +218,6 @@
     
     NSString *baseText;
     
-    // @TODO
     if (MyFeedsManager.user.subscription != nil) {
 
         if (MyFeedsManager.user.subscription.expiry != nil) {
