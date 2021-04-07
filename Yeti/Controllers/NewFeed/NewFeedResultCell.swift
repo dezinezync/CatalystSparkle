@@ -8,11 +8,12 @@
 
 import UIKit
 import FeedsLib
+import Models
 import SDWebImage
 
-class NewFeedResultCell: UITableViewCell {
+@objcMembers class NewFeedResultCell: UITableViewCell {
     
-    static let identifer = "NewFeedResultCell"
+    static let identifer: String = "NewFeedResultCell"
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         
@@ -46,6 +47,7 @@ class NewFeedResultCell: UITableViewCell {
         
         if var frame = imageView?.frame {
             frame.size = CGSize(width: 32, height: 32)
+            frame.origin.y = (contentView.frame.height - 32)/2
             imageView?.frame = frame
         }
         
@@ -65,6 +67,23 @@ class NewFeedResultCell: UITableViewCell {
         }
         
         self.imageView?.sd_setImage(with: url, completed: { [weak self] (image, error, cacheType, url) in
+            
+            self?.setNeedsLayout()
+            
+        })
+        
+    }
+    
+    func configure(feed: Feed) {
+        
+        self.textLabel?.text = feed.title
+        self.detailTextLabel?.text = feed.url.absoluteString
+        
+        guard let iconUrl = feed.faviconURI else {
+            return
+        }
+        
+        self.imageView?.sd_setImage(with: iconUrl, completed: { [weak self] (image, error, cacheType, url) in
             
             self?.setNeedsLayout()
             

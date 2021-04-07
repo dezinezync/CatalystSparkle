@@ -52,7 +52,7 @@
 
 - (void)setupTableView {
     
-//    [FeedsCell registerOn:self.tableView];
+    [NewFeedResultCell register:self.tableView];
     
     self.tableView.estimatedRowHeight = 44.f;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
@@ -71,20 +71,17 @@
     
     self.DS = [[UITableViewDiffableDataSource alloc] initWithTableView:self.tableView cellProvider:^UITableViewCell * _Nullable(UITableView * _Nonnull tableView, NSIndexPath * _Nonnull indexPath, id _Nonnull feed) {
         
-        return nil;
-        
-//        FeedsCell *cell = (FeedsCell *)[tableView dequeueReusableCellWithIdentifier:kFeedsCell forIndexPath:indexPath];
-//
-//        cell.backgroundColor = UIColor.systemBackgroundColor;
-//
-//        if (feed) {
-//            [cell configure:feed];
-//        }
-//
-//        cell.countLabel.hidden = YES;
-//        cell.selectionStyle = UITableViewCellSelectionStyleNone;
-//
-//        return cell;
+        NewFeedResultCell *cell = (NewFeedResultCell *)[tableView dequeueReusableCellWithIdentifier:NewFeedResultCell.identifer forIndexPath:indexPath];
+
+        cell.backgroundColor = UIColor.systemBackgroundColor;
+
+        if (feed) {
+            [cell configureWithFeed:feed];
+        }
+
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+
+        return cell;
         
     }];
     
