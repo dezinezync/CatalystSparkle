@@ -906,9 +906,31 @@ extension Coordinator {
 // MARK: - Briding DBManager and FeedsManager
 extension Coordinator {
     
-    // MARK: - AppDelegate
+    // MARK: - Account
     public func setPushToken(token: String) {
         FeedsManager.shared.pushToken = token
+    }
+    
+    public func resetAccount(completion: (() -> Void)?) {
+        
+        DBManager.shared.resetAccount(completion: completion)
+        
+    }
+    
+    public func deactivateAccount(completion: ((_ status: Bool, _ error: Error?) -> Void)?) {
+        
+        FeedsManager.shared.deactivateAccount { result in
+            
+            switch result {
+            case .failure(let error):
+                completion?(false, error)
+                
+            case .success(let status):
+                completion?(status, nil)
+            }
+            
+        }
+        
     }
     
     // MARK: - Feeds

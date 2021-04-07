@@ -511,6 +511,8 @@ typedef NS_ENUM(NSUInteger, SectionOneRows) {
             break;
     }
     
+    vc.coordinator = self.coordinator;
+    
     if ([vc conformsToProtocol:@protocol(SettingsNotifier)]) {
         [(id<SettingsNotifier>)vc setSettingsDelegate:self];
     }

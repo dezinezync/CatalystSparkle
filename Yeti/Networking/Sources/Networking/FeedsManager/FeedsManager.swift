@@ -404,6 +404,27 @@ extension FeedsManager {
         
     }
     
+    public func deactivateAccount(completion:((Result<Bool, Error>) -> Void)?) {
+        
+        session.POST(path: "/1.4/\(user!.uuid!)/deactivate", query: [:], body: [:], resultType: [String: Bool].self) { result in
+            
+            switch result {
+            
+            case .failure(let error):
+                completion?(.failure(error))
+                
+            case .success(let (_, result)):
+                // assume it worked!
+                let status = result?["status"] ?? true
+                
+                completion?(.success(status))
+            
+            }
+            
+        }
+        
+    }
+    
 }
 
 // MARK: - Feeds

@@ -269,7 +269,7 @@
                 
                 asyncMain(^{
                     strongify(self);
-                    [self showInterfaceToSendDeactivationEmail];
+                    [self deactivateFromAPI];
                 });
                 
             }]];
@@ -318,25 +318,31 @@
 
 - (void)deactivateFromAPI {
     
-    // @TODO
-//    [MyFeedsManager deactivateAccountWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//#ifndef DEBUG
-//        [self userDidSendEmail];
-//#endif
-//
-//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//        [AlertManager showGenericAlertWithTitle:@"Error Deactivating Account" message:error.localizedDescription];
-//
-//    }];
+    Coordinator *coordinator = self.coordinator;
     
-}
-
-- (void)showInterfaceToSendDeactivationEmail {
+    weakify(self);
     
-    [self deactivateFromAPI];
-
+    [coordinator deactivateAccountWithCompletion:^(BOOL status, NSError * _Nullable error) {
+        
+        if (error != nil) {
+            [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription];
+            return;
+        }
+        
+        [coordinator resetAccountWithCompletion:^{
+            
+            strongify(self);
+            
+            [self.navigationController dismissViewControllerAnimated:YES completion:^{
+               
+                [coordinator showLaunchVC];
+                
+            }];
+            
+        }];
+        
+    }];
+    
 }
 
 - (void)showReplaceIDController {

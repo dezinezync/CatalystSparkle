@@ -507,7 +507,9 @@ enum SidebarItem: Hashable, Identifiable {
                 
                 guard hasChanges == true else { return }
                 
-                sself.coalescingQueue.add(sself, #selector(SidebarVC.updateCounters))
+                DispatchQueue.main.async {
+                    sself.coalescingQueue.add(sself, #selector(SidebarVC.updateCounters))
+                }
                 
             }
             .store(in: &cancellables)
