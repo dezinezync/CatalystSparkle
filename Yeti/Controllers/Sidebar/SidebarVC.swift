@@ -14,6 +14,7 @@ import Combine
 import Networking
 import YapDatabase
 import Defaults
+import StoreKit
 
 class SidebarDS: UICollectionViewDiffableDataSource<Int, SidebarItem> {
        
@@ -458,6 +459,23 @@ enum SidebarItem: Hashable, Identifiable {
                     else {
                         UIApplication.shared.applicationIconBadgeNumber = 0
                     }
+                    
+                }
+                .store(in: &cancellables)
+            
+            mc.publisher(for: \.shouldRequestReview)
+                .debounce(for: 0.5, scheduler: DispatchQueue.main)
+                .sink { _ in
+                    
+                    guard mc.shouldRequestReview == true else { return }
+                    
+                    SKStoreReviewController.requestReview(in: mc.sidebarVC.view.window!.windowScene!)
+                    
+                    mc.shouldRequestReview = false
+                    
+                    let fullVersion = FeedsManager.shared.fullVersion
+                    
+                    Keychain.add("requestedReview-\(fullVersion)", boolean: true)
                     
                 }
                 .store(in: &cancellables)

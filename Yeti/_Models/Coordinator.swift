@@ -108,6 +108,7 @@ public var deviceName: String {
                 self?.showEmptyVC()
             }
             
+            sself.checkConstraintsForRequestingReview()
             sself.checkForPushNotifications()
             
         }
@@ -789,6 +790,33 @@ public var deviceName: String {
                 
             }
             
+        }
+        
+    }
+    
+    // MARK: - Review
+    var shouldRequestReview: Bool = false
+    
+    public func checkConstraintsForRequestingReview() {
+        
+        guard shouldRequestReview == false else {
+            return
+        }
+        
+        let fullVersion = FeedsManager.shared.fullVersion
+        
+        var error: NSError?
+        var count = Keychain.integer(for: "launchCount-\(fullVersion)", error: &error)
+        
+        if error != nil {
+            count = 1
+        }
+        
+        Keychain.add("launchCount-\(fullVersion)", integer: count + 1)
+        
+        if count > 6 {
+            // request review on the 7th launch
+            shouldRequestReview = Keychain.bool(for: "requestedReview-\(fullVersion)") == false
         }
         
     }
