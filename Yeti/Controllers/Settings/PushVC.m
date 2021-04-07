@@ -117,22 +117,29 @@
     
     self.controllerState = StateLoading;
     
-    // @TODO
-//    [MyFeedsManager getAllWebSubWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//        self.feeds = responseObject;
-//
-//        [self setupData];
-//
-//        self.controllerState = StateLoaded;
-//
-//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//        self.controllerState = StateErrored;
-//
-//        [AlertManager showGenericAlertWithTitle:@"Error Loading Subscriptions" message:error.localizedDescription];
-//
-//    }];
+    weakify(self);
+    
+    [self.coordinator getAllWebSubWithCompletion:^(NSArray<Feed *> * _Nullable feeds, NSError * _Nullable error) {
+       
+        strongify(self);
+        
+        if (error != nil) {
+        
+            self.controllerState = StateErrored;
+            
+            [AlertManager showGenericAlertWithTitle:@"Error Loading Subscriptions" message:error.localizedDescription];
+            
+            return;
+            
+        }
+        
+        self.feeds = feeds ?: @[];
+        
+        [self setupData];
+        
+        self.controllerState = StateLoaded;
+        
+    }];
     
 }
 
@@ -143,35 +150,38 @@
     Feed *feed = [self.DS itemIdentifierForIndexPath:indexPath];
     
     if (feed) {
-        // @TODO
-//        [MyFeedsManager unsubscribe:feed success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//
-//                self.feeds = [self.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
-//
-//                    return ([obj.feedID isEqualToNumber:feed.feedID] == NO);
-//
-//                }];
-//
-//                if (completionHandler) {
-//                    completionHandler(YES);
-//                }
-//
-//                [self setupData];
-//
-//            });
-//
-//        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//            if (completionHandler) {
-//                completionHandler(YES);
-//            }
-//
-//            [AlertManager showGenericAlertWithTitle:@"Error Removing Subscription" message:error.localizedDescription];
-//
-//        }];
-//
+        
+        [self.coordinator unsubscribe:feed completion:^(BOOL status, NSError * _Nullable error) {
+            
+            if (error != nil || status == NO) {
+                
+                if (completionHandler) {
+                    completionHandler(NO);
+                }
+
+                [AlertManager showGenericAlertWithTitle:@"Error Removing Subscription" message: error ? error.localizedDescription : @"An unknown error occurred."];
+                
+                return;
+                
+            }
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+
+                self.feeds = [self.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+
+                    return obj.identifier != feed.identifier;
+
+                }];
+
+                if (completionHandler) {
+                    completionHandler(YES);
+                }
+
+                [self setupData];
+
+            });
+            
+        }];
     }
     
 }

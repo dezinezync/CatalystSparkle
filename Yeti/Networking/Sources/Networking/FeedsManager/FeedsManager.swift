@@ -1000,7 +1000,7 @@ extension FeedsManager {
         
     }
     
-    public func getAllWebSub(token: String, completion:((Result<[Feed], Error>) -> Void)?) {
+    public func getAllWebSub(completion:((Result<[Feed], Error>) -> Void)?) {
         
         session.GET(path: "/user/subscriptions", query: nil, resultType: [Feed].self) { result in
             

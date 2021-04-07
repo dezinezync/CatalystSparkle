@@ -1334,6 +1334,39 @@ extension Coordinator {
         
     }
     
+    // MARK: - WebSub
+    public func getAllWebSub(completion: ((_ feeds: [Feed]?, _ error: Error?) -> Void)?) {
+        
+        FeedsManager.shared.getAllWebSub { result in
+            
+            switch result {
+            case .failure(let error):
+                completion?(nil, error)
+                
+            case .success(let feeds):
+                completion?(feeds, nil)
+            }
+            
+        }
+        
+    }
+    
+    public func unsubscribe(_ feed: Feed, completion: ((_ status: Bool, _ error: Error?) -> Void)?) {
+        
+        FeedsManager.shared.unsubscribe(feed) { result in
+            
+            switch result {
+            case .failure(let error):
+                completion?(false, error)
+                
+            case .success(let status):
+                completion?(status, nil)
+            }
+            
+        }
+        
+    }
+    
 }
 
 extension UIWindow {

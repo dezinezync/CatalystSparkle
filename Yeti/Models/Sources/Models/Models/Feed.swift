@@ -33,6 +33,11 @@ private let imageExtensions = ["png", "jpg", "jpeg", "svg", "bmp", "ico", "webp"
     public var localName: String?
     public var podcast: Bool! = false
     
+    // bridged for objC
+    public var identifier: Int {
+        return Int(feedID)
+    }
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case feedID = "id"
         case summary
