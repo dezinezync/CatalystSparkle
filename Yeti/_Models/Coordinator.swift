@@ -1381,6 +1381,13 @@ extension Coordinator {
         
     }
     
+    // MARK: - Articles
+    public func deleteFullText(for article: Article) {
+        
+        DBManager.shared.delete(fullTextFor: article.identifier)
+        
+    }
+    
     // MARK: - WebSub
     public func getAllWebSub(completion: ((_ feeds: [Feed]?, _ error: Error?) -> Void)?) {
         

@@ -10,6 +10,7 @@
 #import "TypeFactory.h"
 #import "YetiConstants.h"
 #import "Elytra-Swift.h"
+#import "AppDelegate.h"
 
 @interface ArticleAuthorView () <UIContextMenuInteractionDelegate> {
     BOOL _didAddHorizontalConstraints;
@@ -219,18 +220,17 @@
     
     if (self.delegate != nil && [self.delegate respondsToSelector:aSel]) {
         // @TODO
-//        FeedItem *item = DZS_SILENCE_CALL_TO_UNKNOWN_SELECTOR([self.delegate performSelector:aSel];);
-//
-//        if (item == nil) {
-//            return;
-//        }
-//
-//        // @TODO
-////        DBManager.shared.removeFullText(...)
-//
-//        [self mercurialButton:self.mercurialButton];
-//
-//        item.mercury = NO;
+        Article *item = DZS_SILENCE_CALL_TO_UNKNOWN_SELECTOR([self.delegate performSelector:aSel];);
+
+        if (item == nil) {
+            return;
+        }
+        
+        [MyAppDelegate.coordinator deleteFullTextFor:item];
+
+        [self mercurialButton:self.mercurialButton];
+
+        item.fulltext = NO;
         
     }
     

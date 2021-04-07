@@ -2,6 +2,13 @@
 //  Use this file to import your target's public headers that you would like to expose to Swift.
 //
 
+#ifndef DZS_SILENCE_CALL_TO_UNKNOWN_SELECTOR
+
+#define DZS_SILENCE_CALL_TO_UNKNOWN_SELECTOR(expression) _Pragma("clang diagnostic push") _Pragma("clang diagnostic ignored \"-Warc-performSelector-leaks\"") expression _Pragma("clang diagnostic pop")
+
+
+#endif
+
 #import "AppDelegate+CatalystActions.h"
 
 #import <DZKit/DZKit.h>
