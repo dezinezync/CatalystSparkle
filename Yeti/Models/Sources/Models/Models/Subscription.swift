@@ -58,10 +58,16 @@ public enum SubscriptionEnv: String, Codable {
     
     public var created: Date!
     public var status: SubscriptionStatus = .expired
-    
-    public var preAppStore: Bool = false
     public var lifetime: Bool = false
     public var external: Bool = false
+    
+    enum CodingKeys: String, CodingKey {
+        case identifier = "id"
+        case environment
+        case expiry
+        case created
+        case status
+    }
     
     public convenience init(from dict: [String: Any]) {
         
@@ -141,11 +147,6 @@ public enum SubscriptionEnv: String, Codable {
         else if key == "status", let value = value as? Int {
             
             status = SubscriptionStatus(rawValue: value)!
-            
-        }
-        else if key == "preAppStore" {
-            
-            preAppStore = (value as? Bool) ?? false
             
         }
         else if key == "environment", let value = value as? String {
@@ -233,7 +234,6 @@ extension Subscription {
             dict["expiry"] = Subscription.dateFormatter.string(from: expiry)
             dict["created"] = Subscription.dateFormatter.string(from: created)
             dict["status"] = status.rawValue
-            dict["preAppStore"] = preAppStore
             dict["lifetime"] = lifetime
             dict["external"] = external
                         

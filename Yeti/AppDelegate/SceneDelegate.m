@@ -501,6 +501,7 @@
         windowScene.title = @"Your Subscription";
 
         StoreVC *vc = [[StoreVC alloc] initWithStyle:UITableViewStyleGrouped];
+        vc.coordinator = MyAppDelegate.coordinator;
 
         window.rootViewController = vc;
 
@@ -518,6 +519,7 @@
 
         DZWebViewController *webVC = [[DZWebViewController alloc] init];
         webVC.title = @"Attributions";
+        webVC.coordinator = MyAppDelegate.coordinator;
 
         webVC.URL = [[NSBundle bundleForClass:self.class] URLForResource:@"attributions" withExtension:@"html"];
 

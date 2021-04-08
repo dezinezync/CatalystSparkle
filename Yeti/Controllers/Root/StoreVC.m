@@ -111,15 +111,15 @@
     
     // @TODO
     
-    if ([MyFeedsManager.user subscription] == nil) {
+    if ([self.coordinator.user subscription] == nil) {
         [self getSubscription];
     }
     else {
         
-        if (MyFeedsManager.user.subscription.hasExpired) {
+        if (self.coordinator.user.subscription.hasExpired) {
             [self getSubscription];
         }
-        else if ([NSCalendar.currentCalendar isDateInToday:MyFeedsManager.user.subscription.expiry]) {
+        else if ([NSCalendar.currentCalendar isDateInToday:self.coordinator.user.subscription.expiry]) {
             [self getSubscription];
         }
         
@@ -218,34 +218,36 @@
     
     NSString *baseText;
     
-    if (MyFeedsManager.user.subscription != nil) {
+    Subscription *sub = self.coordinator.user.subscription;
 
-        if (MyFeedsManager.user.subscription.expiry != nil) {
+    if (sub != nil) {
+        
+        if (sub.expiry != nil) {
 
             NSDateFormatter *formatter = [NSDateFormatter new];
             formatter.dateStyle = NSDateFormatterMediumStyle;
             formatter.timeStyle = NSDateFormatterShortStyle;
 
-            if (MyFeedsManager.user.subscription.hasExpired) {
+            if (sub.hasExpired) {
 
-                baseText = formattedString(@"Your subscription expired on %@", [formatter stringFromDate:MyFeedsManager.user.subscription.expiry]);
+                baseText = formattedString(@"Your subscription expired on %@", [formatter stringFromDate:sub.expiry]);
 
             }
-            else if (MyFeedsManager.user.subscription.lifetime == NO &&  MyFeedsManager.user.subscription.status == SubscriptionStatusTrial) {
+            else if (sub.lifetime == NO &&  sub.status == SubscriptionStatusTrial) {
 
-                baseText = formattedString(@"Your free trial will end on %@", [formatter stringFromDate:MyFeedsManager.user.subscription.expiry]);
+                baseText = formattedString(@"Your free trial will end on %@", [formatter stringFromDate:sub.expiry]);
 
             }
             else {
 
-                if (MyFeedsManager.user.subscription.lifetime) {
+                if (sub.lifetime) {
 
                     baseText = @"Your account has a Lifetime subscription. Enjoy!";
 
                 }
                 else {
 
-                    baseText = formattedString(@"Your subscription will renew on %@", [formatter stringFromDate:MyFeedsManager.user.subscription.expiry]);
+                    baseText = formattedString(@"Your subscription will renew on %@", [formatter stringFromDate:sub.expiry]);
 
                 }
 
@@ -259,7 +261,7 @@
         baseText = @"Select a subscription type.";
     }
 
-    if (MyFeedsManager.user.subscription.external) {
+    if (sub.external) {
 
         baseText = formattedString(@"%@\nYour subscription is managed externally.", baseText);
 

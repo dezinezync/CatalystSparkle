@@ -909,6 +909,15 @@ extension Coordinator {
 // MARK: - Briding DBManager and FeedsManager
 extension Coordinator {
     
+    public var user: User? {
+        get {
+            return DBManager.shared.user
+        }
+        set {
+            DBManager.shared.user = newValue
+        }
+    }
+    
     // MARK: - Account
     public func setPushToken(token: String) {
         FeedsManager.shared.pushToken = token
