@@ -851,7 +851,38 @@ extension FeedsManager {
     
     public func getArticle(_ identifier: String, completion: ((Result<Article, Error>) -> Void)?) {
         
-        session.GET(path: "/article/\(identifier)", query: nil, resultType: Article.self) { result in
+        session.GET(path: "/article/\(identifier)", query: nil) { result -> Result<Article, Error> in
+            
+            switch result {
+            case .success((_, let result)):
+                guard let data = result else {
+                    return Result.failure(FeedsManagerError.from(description: "Invalid or no data was received.", statusCode: 500))
+                }
+                
+                do {
+                    
+                    let json = try JSON(data: data)
+                    
+                    guard let s = json.dictionaryObject
+                    else {
+                        return Result.failure(FeedsManagerError.general(message: "Invalid data received."))
+                    }
+
+                    let article = Article(from: s)
+
+                    return Result.success(article)
+                    
+                }
+                catch {
+                    return Result.failure(error)
+                }
+                
+            case .failure(let error):
+                print(error)
+                return Result.failure(error)
+            }
+            
+        } completion: { result in
             
             switch result {
             case .success(let (res, article)):
