@@ -82,6 +82,8 @@ class AuthorVC: FeedVC {
                           return
                       }
                 
+                sself.totalUnread = unread
+                
                 Dynamic(swindow).subtitle = "\(unread) Unread"
                 
             }

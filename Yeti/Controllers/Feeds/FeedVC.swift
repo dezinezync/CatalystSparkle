@@ -72,6 +72,10 @@ enum MarkDirection: Int {
     @objc var feed: Feed? = nil
     var cancellables: [AnyCancellable] = []
     
+    #if targetEnvironment(macCatalyst)
+    var totalUnread: UInt = 0
+    #endif
+    
     let feedbackGenerator = UISelectionFeedbackGenerator()
     
     static func imageNameForSortingOption(option: FeedSorting) -> String {
@@ -557,6 +561,8 @@ enum MarkDirection: Int {
                           let swindow = sself.coordinator?.innerWindow else {
                               return
                           }
+                    
+                    sself.totalUnread = unread
                     
                     Dynamic(swindow).subtitle = "\(unread) Unread"
                     
@@ -1640,6 +1646,23 @@ extension FeedVC: ArticleHandler, ArticleProvider {
         }
         
     }
+    
+    #if targetEnvironment(macCatalyst)
+    public override func responds(to aSelector: Selector!) -> Bool {
+        
+        let str = NSStringFromSelector(aSelector)
+
+        if str == "didTapMarkAll:" {
+            // conditionally enable or disable the mark all button.
+            // if we don't have any unread articles, let's return
+            // no from here.
+            return totalUnread > 0
+        }
+        
+        return super.responds(to: aSelector)
+        
+    }
+    #endif
     
 }
 

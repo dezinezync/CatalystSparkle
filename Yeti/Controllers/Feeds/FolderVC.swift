@@ -87,6 +87,8 @@ class FolderVC: FeedVC {
                           return
                       }
                 
+                sself.totalUnread = unread
+                
                 Dynamic(swindow).subtitle = "\(unread) Unread"
                 
             }
