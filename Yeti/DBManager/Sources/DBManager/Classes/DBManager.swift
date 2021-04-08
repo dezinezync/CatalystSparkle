@@ -3,6 +3,7 @@ import YapDatabase
 import SwiftYapDatabase
 import Models
 import Combine
+import OrderedCollections
 
 /// Have the changes been fully synced with our local store?
 private let SYNCED_CHANGES = "syncedChanges"
@@ -577,7 +578,7 @@ public let notificationsKey = "notifications"
            let folder = folder(for: folderID) {
             
             folder.feedIDs = Array(Set(folder.feedIDs.filter { $0 != folderID }))
-            folder.feeds = folder.feeds.filter { $0 != feed }
+            folder.feeds = OrderedSet<Feed>(folder.feeds.filter { $0 != feed })
             // save the folder struct back to the DB.
             add(folder: folder)
             

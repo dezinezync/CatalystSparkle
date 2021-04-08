@@ -16,6 +16,7 @@ import DBManager
 import DZKit
 import DeviceCheck
 import Combine
+import OrderedCollections
 
 public var deviceName: String {
     var systemInfo = utsname()
@@ -1268,7 +1269,7 @@ extension Coordinator {
                     DBManager.shared.update(feed: feed)
                     
                     folder.feedIDs = folder.feedIDs.filter { $0 != feed.feedID }
-                    folder.feeds = folder.feeds.filter { $0.feedID != feed.feedID }
+                    folder.feeds = OrderedSet<Feed>(folder.feeds.filter { $0.feedID != feed.feedID })
                     
                     DBManager.shared.update(folder: folder)
                     

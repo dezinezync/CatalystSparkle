@@ -608,7 +608,7 @@ enum MarkDirection: Int {
     
     func setupData() {
         
-        dispatchMainAsync { [weak self] in
+        runOnMainQueueWithoutDeadlocking { [weak self] in
             
             guard let sself = self else {
                 return
@@ -749,6 +749,8 @@ enum MarkDirection: Int {
         
         view.removeFromSuperview()
         _emptyView = nil
+        
+        isShowingEmptyState = false
         
     }
     

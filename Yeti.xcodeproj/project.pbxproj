@@ -80,6 +80,7 @@
 		F022B0DA20DC2D9500030185 /* AccentCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F022B0D720DC2D9500030185 /* AccentCell.xib */; };
 		F022B0DF20DC30DE00030185 /* AccentButton.m in Sources */ = {isa = PBXBuildFile; fileRef = F022B0DE20DC30DE00030185 /* AccentButton.m */; };
 		F026F79425FB27DB004AC31E /* FeedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F026F79325FB27DB004AC31E /* FeedCell.swift */; };
+		F027455C261EB8BE000521A0 /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = F027455B261EB8BE000521A0 /* OrderedCollections */; };
 		F02A483A25265210001063E9 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = F02A483925265210001063E9 /* SDWebImageSwiftUI */; };
 		F02A4894252653C7001063E9 /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = F02A4893252653C7001063E9 /* SDWebImage */; };
 		F02B704B24EA7E5C00DD607F /* IDMPhotoBrowser.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F02B701E24EA7E5C00DD607F /* IDMPhotoBrowser.bundle */; };
@@ -1967,6 +1968,7 @@
 			files = (
 				F0F00CE8260CACE500DB6A2B /* Dynamic in Frameworks */,
 				F0E0E6EE2457FF2300DFFD17 /* JLRoutes.framework in Frameworks */,
+				F027455C261EB8BE000521A0 /* OrderedCollections in Frameworks */,
 				F0E0DBBD22AE0F47006A2D93 /* WebKit.framework in Frameworks */,
 				F02A4894252653C7001063E9 /* SDWebImage in Frameworks */,
 				F06EA86125F9C02400A4C855 /* DBManager in Frameworks */,
@@ -3238,6 +3240,7 @@
 				F06EA86725F9C02B00A4C855 /* Networking */,
 				F0CB478A260712810098D372 /* Defaults */,
 				F0F00CE7260CACE500DB6A2B /* Dynamic */,
+				F027455B261EB8BE000521A0 /* OrderedCollections */,
 			);
 			productName = Yeti;
 			productReference = F070C2D91FBABC3500912CCF /* Elytra.app */;
@@ -3410,6 +3413,7 @@
 				F02A4892252653C7001063E9 /* XCRemoteSwiftPackageReference "SDWebImage" */,
 				F0CB4789260712810098D372 /* XCRemoteSwiftPackageReference "Defaults" */,
 				F0F00CE6260CACE500DB6A2B /* XCRemoteSwiftPackageReference "Dynamic" */,
+				F027455A261EB8BE000521A0 /* XCRemoteSwiftPackageReference "swift-collections" */,
 			);
 			productRefGroup = F070C2DA1FBABC3500912CCF /* Products */;
 			projectDirPath = "";
@@ -5639,6 +5643,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		F027455A261EB8BE000521A0 /* XCRemoteSwiftPackageReference "swift-collections" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-collections";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.0.1;
+			};
+		};
 		F02A483825265210001063E9 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI.git";
@@ -5674,6 +5686,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		F027455B261EB8BE000521A0 /* OrderedCollections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F027455A261EB8BE000521A0 /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = OrderedCollections;
+		};
 		F02A483925265210001063E9 /* SDWebImageSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = F02A483825265210001063E9 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;

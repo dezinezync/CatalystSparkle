@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 import BetterCodable
+import OrderedCollections
 
 @objcMembers public final class Folder: NSObject, Codable, ObservableObject {
     
@@ -30,7 +31,7 @@ import BetterCodable
         }
     }
     
-    public var feeds: [Feed] = [] {
+    public var feeds: OrderedSet<Feed> = OrderedSet<Feed>() {
         didSet {
             
             if feedsUnread != nil {
