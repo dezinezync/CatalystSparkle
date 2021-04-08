@@ -690,9 +690,13 @@ enum MarkDirection: Int {
         stack.axis = .vertical
         stack.isBaselineRelativeArrangement = true
         
+        #if !targetEnvironment(macCatalyst)
+        
         let widthConstraint = stack.widthAnchor.constraint(lessThanOrEqualToConstant: 351)
         widthConstraint.priority = UILayoutPriority(rawValue: 999)
         widthConstraint.isActive = true
+        
+        #endif
         
         return stack
         
@@ -712,6 +716,16 @@ enum MarkDirection: Int {
         ev.translatesAutoresizingMaskIntoConstraints = false
         
         view.addSubview(ev)
+        
+        #if targetEnvironment(macCatalyst)
+        let leadingConstraint = ev.leadingAnchor.constraint(equalTo: tableView.leadingAnchor, constant: 12)
+        leadingConstraint.priority = UILayoutPriority(rawValue: 999)
+        
+        let trailingConstraint = ev.trailingAnchor.constraint(equalTo: tableView.trailingAnchor, constant: 12)
+        trailingConstraint.priority = UILayoutPriority(rawValue: 999)
+        
+        NSLayoutConstraint.activate([leadingConstraint, trailingConstraint])
+        #endif
         
         _emptyView = ev
         isShowingEmptyState = true
