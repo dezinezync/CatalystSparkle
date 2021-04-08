@@ -99,8 +99,26 @@ AppDelegate *MyAppDelegate = nil;
         [UNUserNotificationCenter currentNotificationCenter].delegate = (id <UNUserNotificationCenterDelegate>)self;
         
 #if TARGET_OS_MACCATALYST
-        [self.coordinator registerForNotificationsWithCompletion:nil];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+            [self.coordinator registerForNotificationsWithCompletion:nil];
+            
+        });
 #endif
+        
+//#ifdef DEBUG
+//        
+//        NSDictionary *info = @{
+//            @"types": @{@"article": @YES},
+//            @"articleID": @"16895326"
+//        };
+//        
+//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//            [self application:application didReceiveRemoteNotification:info fetchCompletionHandler:^(UIBackgroundFetchResult result) {
+//                NSLog(@"Result: %@", @(result));
+//            }];
+//        });
+//#endif
         
         [self setupStoreManager];
         

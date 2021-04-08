@@ -92,10 +92,10 @@
 
     if (isArticle) {
 
-        NSString *articleID = [userInfo valueForKey:@"articleID"];
+        NSNumber *articleID = [userInfo valueForKey:@"articleID"];
         
         if (articleID != nil) {
-            [self.coordinator getArticle:articleID completion:completionHandler];
+            [self.coordinator getArticle:articleID.stringValue completion:completionHandler];
         }
 
         return YES;
