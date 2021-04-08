@@ -52,7 +52,7 @@
         
         UIImageConfiguration *imageConfig = [UIImageSymbolConfiguration  configurationWithWeight:UIImageSymbolWeightSemibold];
         
-        UIImage *image = [[UIImage systemImageNamed:@"m.square" withConfiguration:imageConfig] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+        UIImage *image = [[UIImage systemImageNamed:@"text.badge.star" withConfiguration:imageConfig] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
         
         [self.mercurialButton setImage:image forState:UIControlStateNormal];
         
@@ -98,7 +98,7 @@
     
     UIImageConfiguration *imageConfig = [UIImageSymbolConfiguration  configurationWithWeight:UIImageSymbolWeightSemibold];
     
-    UIImage *image = [[UIImage systemImageNamed:@"m.square.fill" withConfiguration:imageConfig] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    UIImage *image = [[UIImage systemImageNamed:@"text.badge.star" withConfiguration:imageConfig] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     
     [self.mercurialButton setImage:image forState:UIControlStateNormal];
     
