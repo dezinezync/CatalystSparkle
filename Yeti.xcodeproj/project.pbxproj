@@ -81,6 +81,7 @@
 		F022B0DF20DC30DE00030185 /* AccentButton.m in Sources */ = {isa = PBXBuildFile; fileRef = F022B0DE20DC30DE00030185 /* AccentButton.m */; };
 		F026F79425FB27DB004AC31E /* FeedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F026F79325FB27DB004AC31E /* FeedCell.swift */; };
 		F027455C261EB8BE000521A0 /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = F027455B261EB8BE000521A0 /* OrderedCollections */; };
+		F02745E4261EC0E7000521A0 /* BookmarksVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02745E3261EC0E7000521A0 /* BookmarksVC.swift */; };
 		F02A483A25265210001063E9 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = F02A483925265210001063E9 /* SDWebImageSwiftUI */; };
 		F02A4894252653C7001063E9 /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = F02A4893252653C7001063E9 /* SDWebImage */; };
 		F02B704B24EA7E5C00DD607F /* IDMPhotoBrowser.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F02B701E24EA7E5C00DD607F /* IDMPhotoBrowser.bundle */; };
@@ -1522,6 +1523,7 @@
 		F02459C920590E6D002906C3 /* SearchResults.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SearchResults.h; sourceTree = "<group>"; };
 		F02459CA20590E6D002906C3 /* SearchResults.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SearchResults.m; sourceTree = "<group>"; };
 		F026F79325FB27DB004AC31E /* FeedCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCell.swift; sourceTree = "<group>"; };
+		F02745E3261EC0E7000521A0 /* BookmarksVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookmarksVC.swift; sourceTree = "<group>"; };
 		F02B701E24EA7E5C00DD607F /* IDMPhotoBrowser.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = IDMPhotoBrowser.bundle; sourceTree = "<group>"; };
 		F02B701F24EA7E5C00DD607F /* IDMCaptionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDMCaptionView.h; sourceTree = "<group>"; };
 		F02B702024EA7E5C00DD607F /* IDMPBLocalizations.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = IDMPBLocalizations.bundle; sourceTree = "<group>"; };
@@ -2609,6 +2611,7 @@
 				F0EE7F0A2608C56600931FA2 /* TodayVC.swift */,
 				F0EE7F0C2608C64E00931FA2 /* FolderVC.swift */,
 				F0DC99AE261C7E0D009447CE /* AuthorVC.swift */,
+				F02745E3261EC0E7000521A0 /* BookmarksVC.swift */,
 			);
 			path = Feeds;
 			sourceTree = "<group>";
@@ -4721,6 +4724,7 @@
 				F06C666522B2ABBA00D425E9 /* UIViewController+Stateful.m in Sources */,
 				F00F647224EC1DE700E5727C /* Aside.m in Sources */,
 				F0C49D0C26004B26009B8E34 /* UIImage+Proxy.m in Sources */,
+				F02745E4261EC0E7000521A0 /* BookmarksVC.swift in Sources */,
 				F0DB58FF23F578E20008D871 /* CustomizationThemeCell.m in Sources */,
 				F03A5F6120971BAE00CE7D5E /* ThemeVC.m in Sources */,
 				F05AD60425F9E7DB003B2D69 /* SidebarVC.swift in Sources */,

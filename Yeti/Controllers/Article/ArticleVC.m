@@ -1463,7 +1463,7 @@ typedef NS_ENUM(NSInteger, ArticleVCState) {
         }
         
     }
-    else if ([content.type isEqualToString:@"paragraph"] || [content.type isEqualToString:@"cite"] || [content.type isEqualToString:@"span"]) {
+    else if ([content.type isEqualToString:@"p"] || [content.type isEqualToString:@"paragraph"] || [content.type isEqualToString:@"cite"] || [content.type isEqualToString:@"span"]) {
         
         if (content.content.length && [content.type isEqualToString:@"noscript"] == NO) {
             [self addParagraph:content caption:NO];

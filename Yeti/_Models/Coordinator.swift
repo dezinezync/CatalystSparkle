@@ -205,7 +205,10 @@ public var deviceName: String {
             
         }
         else if feed.feedType == .bookmarks {
-            // @TODO
+            
+            let bookmarks = BookmarksVC(style: .plain)
+            showSupplementaryController(bookmarks)
+            
         }
         
     }
