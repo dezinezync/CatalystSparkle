@@ -462,32 +462,33 @@
         windowScene.titlebar.toolbar = nil;
 
     }
-// @TODO
-//    else if ([activity.activityType isEqualToString:@"openArticle"] == YES) {
-//
-//        window = [[UIWindow alloc] initWithWindowScene:windowScene];
-//
-//        windowScene.sizeRestrictions.minimumSize = CGSizeMake(480.f, 600.f);
-//        windowScene.titlebar.toolbar = nil;
-//
-//        FeedItem *item = [FeedItem instanceFromDictionary:activity.userInfo];
-//
-//        ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
-//
-//        vc.externalWindow = YES;
-//
-//        Feed *feed = [ArticlesManager.shared feedForID:item.feedID];
-//
-//        if (item.articleTitle) {
-//            windowScene.title = formattedString(@"%@ - %@", item.articleTitle, feed.displayTitle);
-//        }
-//        else {
-//            windowScene.title = feed.displayTitle;
-//        }
-//
-//        window.rootViewController = vc;
-//
-//    }
+
+    else if ([activity.activityType isEqualToString:@"openArticle"] == YES) {
+
+        window = [[UIWindow alloc] initWithWindowScene:windowScene];
+
+        windowScene.sizeRestrictions.minimumSize = CGSizeMake(480.f, 600.f);
+        windowScene.titlebar.toolbar = nil;
+
+        Article *item = [Article new];
+        [item setValuesForKeysWithDictionary:activity.userInfo];
+
+        ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
+
+        vc.externalWindow = YES;
+
+        Feed *feed = [MyAppDelegate.coordinator feedFor:item.feedID];
+
+        if (item.title != nil) {
+            windowScene.title = formattedString(@"%@ - %@", item.title, feed.displayTitle);
+        }
+        else {
+            windowScene.title = feed.displayTitle;
+        }
+
+        window.rootViewController = vc;
+
+    }
     else if ([activity.activityType isEqualToString:@"subscriptionInterface"]) {
 
         window = [[UIWindow alloc] initWithWindowScene:windowScene];

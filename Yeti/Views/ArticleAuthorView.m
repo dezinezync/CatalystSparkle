@@ -219,7 +219,7 @@
     SEL aSel = NSSelectorFromString(@"item");
     
     if (self.delegate != nil && [self.delegate respondsToSelector:aSel]) {
-        // @TODO
+        
         Article *item = DZS_SILENCE_CALL_TO_UNKNOWN_SELECTOR([self.delegate performSelector:aSel];);
 
         if (item == nil) {

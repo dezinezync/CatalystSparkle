@@ -109,8 +109,6 @@
 
     }];
     
-    // @TODO
-    
     if ([self.coordinator.user subscription] == nil) {
         [self getSubscription];
     }

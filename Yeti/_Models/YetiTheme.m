@@ -52,9 +52,6 @@ static void * DefaultsAppleHighlightColorContext = &DefaultsAppleHighlightColorC
 #if TARGET_OS_MACCATALYST
     [self ct_updateSemanticAppKitColors];
 #endif
-    
-    // @TODO
-    
 
 //    [super updateAppearances];
 
