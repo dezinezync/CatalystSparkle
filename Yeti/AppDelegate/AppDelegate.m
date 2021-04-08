@@ -90,7 +90,7 @@ AppDelegate *MyAppDelegate = nil;
             [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
         }
         
-//        [MyFeedsManager resetAccount];
+//        [MyFeedsManager resetAccountWithCompletion:nil];
         
         self.coordinator = [Coordinator new];
         

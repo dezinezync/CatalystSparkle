@@ -154,7 +154,7 @@ extension SplitVC {
         
         let str = NSStringFromSelector(aSelector)
         
-        if str == "didBeginRefreshing:" || str == "didLongPressOnAllRead:" {
+        if str == "beginRefreshingAll:" || str == "didTapMarkAll:" {
            
             if let f = coordinator?.feedVC {
             
@@ -186,82 +186,76 @@ extension SplitVC {
         
     }
 
-//    override func responds(to aSelector: Selector!) -> Bool {
-//        
-//        let str = NSStringFromSelector(aSelector)
-//        
-//        if str == "didBeginRefreshing:" || str == "didLongPressOnAllRead:" {
-//           
-//            if let f = coordinator?.feedVC as? UIViewController {
-//            
-//                return f.responds(to: aSelector)
-//                
-//            }
-//            
-//            return false
-//            
-//        }
-//        else if str == "didTapSearch" {
-//            
-//            if let a = coordinator?.articleVC as? UIViewController {
-//                
-//                return a.responds(to: aSelector)
-//                
-//            }
-//            
-//            return false
-//            
-//        }
-//        else if str == "showSubscriptionsInterface" {
-//            
-//            return true
-//            
-//        }
-//        
-//        return super.responds(to: aSelector)
-//        
-//    }
+    public override func responds(to aSelector: Selector!) -> Bool {
+        
+        let str = NSStringFromSelector(aSelector)
+//        print(str)
+        if str == "beginRefreshingAll:" || str == "didTapMarkAll:" {
+           
+            if let f = coordinator?.feedVC {
+            
+                return f.responds(to: aSelector)
+                
+            }
+            
+            return false
+            
+        }
+        else if str == "didTapSearch" {
+            
+            if let a = coordinator?.articleVC {
+                
+                return a.responds(to: aSelector)
+                
+            }
+            
+            return false
+            
+        }
+        else if str == "showSubscriptionsInterface" {
+            
+            return true
+            
+        }
+        
+        return super.responds(to: aSelector)
+        
+    }
     
-//    override func method(for aSelector: Selector!) -> IMP! {
-//
-//        let str = NSStringFromSelector(aSelector)
-//
-//        if str == "didBeginRefreshing:" || str == "didLongPressOnAllRead:" {
-//
-//            if let f = coordinator?.feedVC as? UIViewController {
-//
-//                return f.method(for: aSelector)
-//
-//            }
-//
-//            return nil
-//
-//        }
-//        else if str == "didTapSearch" {
-//
-//            if let a = coordinator?.articleVC as? UIViewController {
-//
-//                return a.method(for: aSelector)
-//
-//            }
-//
-//            return nil
-//
-//        }
-//        else if str == "showSubscriptionsInterface" {
-//
-//            return coordinator?.method(for: aSelector)
-//
-//        }
-//
-//        return super.method(for: aSelector)
-//
-//    }
-//
-//    func forwardInvocation(_ invocation: NSInvocation) {
-//
-//
-//
-//    }
+    override public func method(for aSelector: Selector!) -> IMP! {
+
+        let str = NSStringFromSelector(aSelector)
+
+        if str == "beginRefreshingAll:" || str == "didTapMarkAll:" {
+
+            if let f = coordinator?.feedVC {
+
+                return f.method(for: aSelector)
+
+            }
+
+            return nil
+
+        }
+        else if str == "didTapSearch" {
+
+            if let a = coordinator?.articleVC {
+
+                return a.method(for: aSelector)
+
+            }
+
+            return nil
+
+        }
+        else if str == "showSubscriptionsInterface" {
+
+            return coordinator?.method(for: aSelector)
+
+        }
+
+        return super.method(for: aSelector)
+
+    }
     
 }

@@ -176,7 +176,7 @@
 
         image = [UIImage systemImageNamed:@"arrow.triangle.2.circlepath.circle"];
 
-        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:nil action:@selector(didBeginRefreshing:)];
+        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:nil action:@selector(beginRefreshingAll:)];
 
         item = [self toolbarItemWithItemIdentifier:kRefreshFeedToolbarIdentifier[0] title:title button:button];
 
@@ -273,42 +273,11 @@
     }
     else if ([itemIdentifier isEqualToString:kMarkItemsMenuToolbarIdentifier]) {
 
-        /*
-        UIAction *markCurrent = [UIAction actionWithTitle:@"Mark Current Read" image:[UIImage systemImageNamed:@"text.badge.checkmark"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
-
-            if (self.coordinator.feedVC == nil) {
-                return;
-            }
-
-            [self.coordinator.feedVC didTapAllRead:nil];
-
-        }];
-
-        UIAction *markAll = [UIAction actionWithTitle:@"Mark All Read" image:[UIImage systemImageNamed:@"checkmark"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
-
-            if (self.coordinator.feedVC == nil) {
-                return;
-            }
-
-            [self.coordinator.feedVC didLongPressOnAllRead:nil];
-
-        }];
-
-        UIMenu *menu = [UIMenu menuWithChildren:@[markCurrent, markAll]];
-
-        NSMenuToolbarItem *menuToolbarItem = [[NSMenuToolbarItem alloc] initWithItemIdentifier:kMarkItemsMenuToolbarIdentifier];
-        menuToolbarItem.showsIndicator = YES;
-        menuToolbarItem.itemMenu = menu;
-        menuToolbarItem.image = [UIImage systemImageNamed:@"checkmark"];
-
-        item = menuToolbarItem;
-         */
-
         title = @"Mark all Read";
 
         image = [UIImage systemImageNamed:@"checkmark"];
 
-        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:nil action:@selector(didLongPressOnAllRead:)];
+        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:nil action:@selector(didTapMarkAll:)];
 
         item = [self toolbarItemWithItemIdentifier:kOpenInBrowserToolbarIdentifier title:title button:button];
 
