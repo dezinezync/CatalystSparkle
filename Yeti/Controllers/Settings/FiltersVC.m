@@ -59,15 +59,15 @@ NSString *const kFiltersCell = @"filterCell";
     
     [super viewWillAppear:animated];
     
-    if (MyFeedsManager.user.filters != nil) {
+    if (self.coordinator.user.filters != nil) {
 
-        [self setupData:MyFeedsManager.user.filters];
+        [self setupData:self.coordinator.user.filters];
 
     }
     
     weakify(self);
     
-    [MyFeedsManager getFiltersWithCompletion:^(NSError * _Nullable error, NSArray<NSString *> * _Nullable filters) {
+    [self.coordinator getFiltersWithCompletion:^(NSError * _Nullable error, NSArray<NSString *> * _Nullable filters) {
         
         if (filters == nil) {
             
@@ -79,14 +79,14 @@ NSString *const kFiltersCell = @"filterCell";
             
         }
         
-        User *user = MyFeedsManager.user;
+        User *user = self.coordinator.user;
         user.filters = [NSSet setWithArray:filters].allObjects;
         
-        MyFeedsManager.user = user;
+        self.coordinator.user = user;
         
         strongify(self);
         
-        [self setupData:MyFeedsManager.user.filters];
+        [self setupData:self.coordinator.user.filters];
         
     }];
     
@@ -175,7 +175,7 @@ NSString *const kFiltersCell = @"filterCell";
     
     weakify(self);
     
-    [MyFeedsManager deleteFilterWithText:keyword completion:^(NSError * _Nullable error, BOOL status) {
+    [self.coordinator deleteFilterWithText:keyword completion:^(NSError * _Nullable error, BOOL status) {
        
         if (status == NO) {
             
@@ -195,10 +195,10 @@ NSString *const kFiltersCell = @"filterCell";
                 return ![obj isEqualToString:keyword];
             }];
 
-            User *user = MyFeedsManager.user;
+            User *user = self.coordinator.user;
             user.filters = [NSSet setWithArray:keywords].allObjects;
 
-            MyFeedsManager.user = user;
+            self.coordinator.user = user;
 
             [self setupData:keywords];
             
@@ -291,7 +291,7 @@ NSString *const kFiltersCell = @"filterCell";
         [textField becomeFirstResponder];
     });
     
-    [MyFeedsManager addFilterWithText:keyword completion:^(NSError * _Nullable error, BOOL status) {
+    [self.coordinator addFilterWithText:keyword completion:^(NSError * _Nullable error, BOOL status) {
         
         if (status == NO) {
        
@@ -312,10 +312,10 @@ NSString *const kFiltersCell = @"filterCell";
             
         }
         else {
-            User *user = MyFeedsManager.user;
+            User *user = self.coordinator.user;
             user.filters = [NSSet setWithArray:data].allObjects;
 
-            MyFeedsManager.user = user;
+            self.coordinator.user = user;
         }
         
     }];

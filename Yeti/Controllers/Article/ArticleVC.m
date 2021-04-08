@@ -807,7 +807,7 @@ typedef NS_ENUM(NSInteger, ArticleVCState) {
     
     weakify(self);
     
-    [MyFeedsManager getArticle:((Article *)(self.item)).identifier feedID:((Article *)(self.item)).feedID completion:^(NSError * _Nullable error, Article * _Nonnull responseObject) {
+    [self.coordinator getArticle:((Article *)(self.item)).identifier feedID:((Article *)(self.item)).feedID completion:^(NSError * _Nullable error, Article * _Nonnull responseObject) {
        
         strongify(self);
 
@@ -1220,7 +1220,7 @@ typedef NS_ENUM(NSInteger, ArticleVCState) {
         author = [author stringByAppendingString:@" • "];
     }
     
-    Feed *feed = [MyFeedsManager feedFor:((Article *)(self.item)).feedID];
+    Feed *feed = [self.coordinator feedFor:((Article *)(self.item)).feedID];
 
     NSString *firstLine = feed != nil ? feed.displayTitle : nil;
     NSString *timestamp = nil;
@@ -2621,7 +2621,7 @@ typedef NS_ENUM(NSInteger, ArticleVCState) {
         return;
     }
     
-    Feed *feed = [MyFeedsManager feedFor:((Article *)(self.item)).feedID];
+    Feed *feed = [self.coordinator feedFor:((Article *)(self.item)).feedID];
 
     if (feed == nil) {
 
@@ -2653,7 +2653,7 @@ typedef NS_ENUM(NSInteger, ArticleVCState) {
     
     if (((Article *)(self.item)).fulltext == YES) {
 
-        NSArray <Content *> *content = [MyFeedsManager getContentFromDB:((Article *)(self.item)).identifier];
+        NSArray <Content *> *content = [self.coordinator getContentFromDB:((Article *)(self.item)).identifier];
 
         if (content != nil) {
 
@@ -2684,7 +2684,7 @@ typedef NS_ENUM(NSInteger, ArticleVCState) {
     
     weakify(self);
     
-    [MyFeedsManager getFullText:self.item completion:^(NSError * _Nullable error, Article * _Nullable responseObject) {
+    [self.coordinator getFullText:self.item completion:^(NSError * _Nullable error, Article * _Nullable responseObject) {
         
         if (error != nil) {
             completionHandler(NO);
@@ -2892,7 +2892,7 @@ typedef NS_ENUM(NSInteger, ArticleVCState) {
     
     __block Paragraph *required = nil;
     
-    Feed *feed = [MyFeedsManager feedFor:((Article *)(self.item)).feedID];
+    Feed *feed = [self.coordinator feedFor:((Article *)(self.item)).feedID];
 
     NSString *base = @"";
 
@@ -3101,7 +3101,7 @@ typedef NS_ENUM(NSInteger, ArticleVCState) {
             return NO;
         }
         
-        Feed *feed = [MyFeedsManager feedFor:((Article *)(self.item)).feedID];
+        Feed *feed = [self.coordinator feedFor:((Article *)(self.item)).feedID];
         
         NSString *base = @"";
         

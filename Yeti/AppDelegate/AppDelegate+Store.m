@@ -199,7 +199,7 @@
 
 - (BOOL)paymentQueue:(SKPaymentQueue *)queue shouldAddStorePayment:(SKPayment *)payment forProduct:(SKProduct *)product {
     
-     return MyFeedsManager.user != nil && MyFeedsManager.user.uuid != nil;
+     return self.coordinator.user != nil && self.coordinator.user.uuid != nil;
     
 }
 

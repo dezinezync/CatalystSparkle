@@ -28,7 +28,7 @@
     
     NSLogDebug(@"Got a fresh background completion handler");
     
-    [MyFeedsManager setBackgroundCompletionBlockWithCompletion:completionHandler];
+    [self.coordinator setBackgroundCompletionBlockWithCompletion:completionHandler];
     
 }
 

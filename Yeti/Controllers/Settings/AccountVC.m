@@ -105,7 +105,7 @@
     
     NSRegularExpression *exp = [NSRegularExpression regularExpressionWithPattern:@"\\d{6}\\.[a-zA-Z0-9]{32}\\.\\d{4}" options:kNilOptions error:nil];
     
-    NSString *UUID = MyFeedsManager.user.uuid;
+    NSString *UUID = self.coordinator.user.uuid;
 
     if (exp != nil && UUID.length > 0 && [exp numberOfMatchesInString:UUID options:kNilOptions range:NSMakeRange(0, UUID.length)] > 0) {
         return 2;
@@ -168,7 +168,7 @@
                 switch (indexPath.row) {
                     case 0:
                     {
-                        cell.textLabel.text = MyFeedsManager.user.uuid;
+                        cell.textLabel.text = self.coordinator.user.uuid;
                         cell.textLabel.accessibilityValue = @"Account ID";
                         cell.selectionStyle = UITableViewCellSelectionStyleNone;
                     }
@@ -233,7 +233,7 @@
            
             UIAction *copyItem = [UIAction actionWithTitle:@"Copy Account ID" image:[UIImage systemImageNamed:@"doc.on.doc"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
                
-                [[UIPasteboard generalPasteboard] setString:MyFeedsManager.user.uuid];
+                [[UIPasteboard generalPasteboard] setString:self.coordinator.user.uuid];
                 
             }];
             

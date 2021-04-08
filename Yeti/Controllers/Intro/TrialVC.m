@@ -96,7 +96,7 @@
     
     weakify(self);
     
-    [MyFeedsManager startFreeTrialWithU:nil completion:^(NSError * _Nullable error, BOOL completed) {
+    [self.coordinator startFreeTrialWithU:nil completion:^(NSError * _Nullable error, BOOL completed) {
        
         if (error != nil) {
             [self setButtonsState:YES];

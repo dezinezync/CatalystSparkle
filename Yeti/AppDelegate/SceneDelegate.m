@@ -353,13 +353,13 @@
         // schedule next refresh
         [self scheduleBackgroundRefresh];
         
-        if (MyFeedsManager.user == nil) {
+        if (self.coordinator.user == nil) {
             return;
         }
         
-        [MyFeedsManager setupBGSyncCoordinatorWithTask:task completion:^(BOOL completed) {
+        [self.coordinator setupBGSyncCoordinatorWithTask:task completion:^(BOOL completed) {
             
-            [MyFeedsManager completedBGSync];
+            [self.coordinator completedBGSync];
             
             if (completed == NO) {
                 return;
@@ -403,7 +403,7 @@
         // schedule next cleanup
         [self scheduleBackgroundCleanup];
         
-        [MyFeedsManager setupBGCleanupWithTask:task];
+        [self.coordinator setupBGCleanupWithTask:task];
         
     }];
     
@@ -425,7 +425,7 @@
     
     if (reset) {
         
-        [MyFeedsManager resetAccountWithCompletion:^{
+        [self.coordinator resetAccountWithCompletion:^{
         
             SplitVC *v = self.coordinator.splitVC;
             

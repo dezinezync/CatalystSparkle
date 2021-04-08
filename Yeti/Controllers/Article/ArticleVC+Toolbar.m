@@ -352,11 +352,11 @@
     }
 #else
     
-    Feed *feed = [MyFeedsManager feedFor:((Article *)(self.item)).feedID];
+    Feed *feed = [self.coordinator feedFor:((Article *)(self.item)).feedID];
     
     if (feed != nil) {
         
-        FeedMeta *meta = [MyFeedsManager metadataForFeed:feed];
+        FeedMeta *meta = [self.coordinator metadataForFeed:feed];
         
         if (meta) {
             
