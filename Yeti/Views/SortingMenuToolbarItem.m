@@ -6,6 +6,8 @@
 //  Copyright © 2021 Dezine Zync Studios. All rights reserved.
 //
 
+#if TARGET_OS_MACCATALYST
+
 #import "SortingMenuToolbarItem.h"
 #import "Elytra-Swift.h"
 #import "AppDelegate.h"
@@ -98,3 +100,5 @@
 }
 
 @end
+
+#endif
