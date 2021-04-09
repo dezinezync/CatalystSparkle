@@ -273,7 +273,7 @@ private let imageExtensions = ["png", "jpg", "jpeg", "svg", "bmp", "ico", "webp"
         else if key == "lastRPC" {
             
             if let value = value as? String,
-               let date = Subscription.dateFormatter.date(from: value) {
+               let date = Article.dateFormatter.date(from: value) {
                 lastRPC = date
             }
             

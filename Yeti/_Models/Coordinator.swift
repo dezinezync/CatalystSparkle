@@ -196,6 +196,7 @@ public var deviceName: String {
             self.feedVC = nil
             
             let unread = UnreadVC(style: .plain)
+            unread.type = .unread
             showSupplementaryController(unread)
             
         }
@@ -577,6 +578,17 @@ public var deviceName: String {
             nav.pushViewController(controller, animated: true)
             
         }
+        
+        #if targetEnvironment(macCatalyst)
+        if controller is FeedVC,
+           let scene = MyAppDelegate.mainScene?.delegate as? SceneDelegate {
+            
+            if let toolbarItem: NSToolbarItem = scene.toolbar?.items.first(where: { $0.itemIdentifier.rawValue == "com.yeti.toolbar.sortingMenu" }) {
+                toolbarItem.validate()
+            }
+            
+        }
+        #endif
         
     }
     

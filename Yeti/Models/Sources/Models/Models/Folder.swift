@@ -12,6 +12,8 @@ import OrderedCollections
 
 @objcMembers public final class Folder: NSObject, Codable, ObservableObject {
     
+    static let countersQueue: DispatchQueue = DispatchQueue(label:"foldersCounting", qos: .userInteractive)
+    
     public var title: String!
     public var folderID: UInt!
     public var feedIDs: [UInt] = [UInt]()
@@ -35,12 +37,11 @@ import OrderedCollections
         didSet {
             
             if feedsUnread != nil {
-                feedsUnread.cancel()
                 feedsUnread = nil
             }
             
             feedsUnread = Publishers.MergeMany(feeds.map { $0.$unread })
-                .receive(on: DispatchQueue.global())
+                .receive(on: Folder.countersQueue)
                 .sink { [weak self] _ in
                     
                     guard let sself = self else {

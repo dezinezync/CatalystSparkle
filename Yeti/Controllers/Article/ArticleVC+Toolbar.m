@@ -226,9 +226,20 @@
         return;
     
     NSString *title = ((Article *)(self.item)).title;
+    
+    if (title == nil || [title isBlank] == YES) {
+        // Micro.blog
+        title = ((Article *)(self.item)).textFromContent;
+        
+        if ([title isBlank] == NO && title.length > 100) {
+            title = [[title substringToIndex:97] stringByAppendingString:@"..."];
+        }
+        
+    }
+    
     NSURL *URL = formattedURL(@"%@", ((Article *)(self.item)).url);
     
-    UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[title, @" ", URL] applicationActivities:nil];
+    UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[title, URL] applicationActivities:nil];
     
     if (sender && [sender isKindOfClass:UIBarButtonItem.class]) {
     

@@ -8,6 +8,7 @@
 
 #import "SceneDelegate+Catalyst.h"
 #import "AppDelegate.h"
+#import "SortingMenuToolbarItem.h"
 #import "Elytra-Swift.h"
 
 #if TARGET_OS_MACCATALYST
@@ -216,57 +217,7 @@
     }
     else if ([itemIdentifier isEqualToString:kSortingMenuToolbarIdentifier]) {
 
-        FeedSorting sorting = SharedPrefs.sortingOption.integerValue;
-        
-        image = [coordinator imageForSortingOption:sorting];
-
-        title = @"Sort Feed";
-
-        UIAction *unreadLatest = [UIAction actionWithTitle:@"Unread - Latest First" image:[self.coordinator imageForSortingOption:FeedSortingUnreadDescending] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
-
-            [UIApplication.sharedApplication sendAction:@selector(setSortingUnreadDesc) to:nil from:nil forEvent:nil];
-
-            self.sortingItem.image = [self.coordinator imageForSortingOption:FeedSortingUnreadDescending];
-
-        }];
-
-        UIAction *unreadOldest = [UIAction actionWithTitle:@"Unread - Oldest First" image:[self.coordinator imageForSortingOption:FeedSortingUnreadAscending] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
-
-            [UIApplication.sharedApplication sendAction:@selector(setSortingUnreadAsc) to:nil from:nil forEvent:nil];
-
-            self.sortingItem.image = [self.coordinator imageForSortingOption:FeedSortingUnreadAscending];
-
-        }];
-
-        UIAction *allLatest = [UIAction actionWithTitle:@"All - Latest First" image:[self.coordinator imageForSortingOption:FeedSortingDescending] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
-
-            [UIApplication.sharedApplication sendAction:@selector(setSortingAllDesc) to:nil from:nil forEvent:nil];
-
-            self.sortingItem.image = [self.coordinator imageForSortingOption:FeedSortingDescending];
-
-        }];
-
-        UIAction *allOldest = [UIAction actionWithTitle:@"All - Oldest First" image:[self.coordinator imageForSortingOption:FeedSortingAscending] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
-
-            [UIApplication.sharedApplication sendAction:@selector(setSortingAllAsc) to:nil from:nil forEvent:nil];
-
-            self.sortingItem.image = [self.coordinator imageForSortingOption:FeedSortingAscending];
-
-        }];
-
-        if (self.coordinator.feedVC != nil && self.coordinator.feedVC.type == FeedTypeUnread) {
-            allLatest.attributes = UIMenuElementAttributesHidden;
-            allOldest.attributes = UIMenuElementAttributesHidden;
-        }
-
-        UIMenu *menu = [UIMenu menuWithChildren:@[allLatest, allOldest, unreadLatest, unreadOldest]];
-
-        NSMenuToolbarItem *menuToolbarItem = [[NSMenuToolbarItem alloc] initWithItemIdentifier:kSortingMenuToolbarIdentifier];
-        menuToolbarItem.showsIndicator = YES;
-        menuToolbarItem.itemMenu = menu;
-        menuToolbarItem.image = image;
-
-        item = menuToolbarItem;
+        item = [[SortingMenuToolbarItem alloc] initWithItemIdentifier:kSortingMenuToolbarIdentifier];
 
         self.sortingItem = (NSMenuToolbarItem *)item;
 

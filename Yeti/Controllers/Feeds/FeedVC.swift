@@ -104,28 +104,51 @@ enum MarkDirection: Int {
         }
     }
     
-    static var sorting: FeedSorting = FeedSorting(rawValue: Defaults[.feedSorting])! {
+    weak var sortingBarItem: UIBarButtonItem? = nil
+   
+    var _sorting: FeedSorting! {
+        
         didSet {
-            
-            guard oldValue != sorting else {
-                return
+            if type == .unread {
+                if Defaults[.unreadFeedSorting] != _sorting.rawValue {
+                    Defaults[.unreadFeedSorting] = _sorting.rawValue
+                }
             }
-            
-            Defaults[.feedSorting] = sorting.rawValue
-            
+            else {
+                if Defaults[.feedSorting] != _sorting.rawValue {
+                    Defaults[.feedSorting] = _sorting.rawValue
+                }
+            }
         }
+        
     }
     
-    weak var sortingBarItem: UIBarButtonItem? = nil
-    
-    var sorting: FeedSorting = FeedVC.sorting {
-        didSet {
+    var sorting: FeedSorting {
+        
+        get {
             
-            guard oldValue != sorting else {
+            if _sorting == nil {
+                
+                if type == .unread {
+                    _sorting = FeedSorting(rawValue: Defaults[.unreadFeedSorting])!
+                }
+                else {
+                    _sorting = FeedSorting(rawValue: Defaults[.feedSorting])!
+                }
+            
+            }
+            
+            return _sorting;
+            
+        }
+        
+        set {
+            
+            guard newValue != sorting else {
                 return
             }
             
-            FeedVC.sorting = sorting
+            _sorting = newValue
             
             DispatchQueue.main.async { [weak self] in
                 if let name = self?.sorting.imageName {
@@ -135,6 +158,7 @@ enum MarkDirection: Int {
             
             updateFeedSorting()
         }
+        
     }
     
     var articles: [Article] = []

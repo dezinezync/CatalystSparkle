@@ -28,6 +28,7 @@ public enum SubscriptionEnv: String, Codable {
         return formatter
     }()
     
+    
     public var identifier: UInt!
     public var environment: SubscriptionEnv!
     public var expiry: Date! {

@@ -14,6 +14,15 @@ import BetterCodable
 
 @objcMembers open class Article: NSObject, Codable, ObservableObject {
     
+    static let dateFormatter: DateFormatter = {
+       
+        let f = DateFormatter()
+        f.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        
+        return f
+        
+    }()
+    
     public var identifier: String!
     public var title: String?
     @LossyOptional public var url: URL!
@@ -146,11 +155,11 @@ import BetterCodable
         }
         else if key == "timestamp" || key == "created" {
             
-            if let value = value as? Date {
-                timestamp = value
+            if let date = value as? Date {
+                timestamp = date
             }
-            else if let value = value as? String,
-                    let dateVal = Subscription.dateFormatter.date(from: value) {
+            else if let val = value as? String,
+                    let dateVal = Article.dateFormatter.date(from: val) {
                 timestamp = dateVal
             }
             
@@ -306,7 +315,7 @@ extension Article {
         
         dict["guid"] = guid
         
-        dict["timestamp"] = Subscription.dateFormatter.string(from: timestamp)
+        dict["timestamp"] = Article.dateFormatter.string(from: timestamp)
         
         dict["enclosures"] = (enclosures ?? []).map { $0.dictionaryRepresentation }
         

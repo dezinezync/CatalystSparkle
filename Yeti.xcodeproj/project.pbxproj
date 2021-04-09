@@ -214,6 +214,7 @@
 		F079F41C255BA32800121637 /* PreferencesTabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F079F40F255BA32800121637 /* PreferencesTabViewController.swift */; };
 		F079F461255BB06A00121637 /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = F079F40E255BA32800121637 /* Section.swift */; };
 		F07A31322297FC9D00822969 /* UIView+Anchoring.m in Sources */ = {isa = PBXBuildFile; fileRef = F07A31312297FC9D00822969 /* UIView+Anchoring.m */; };
+		F07BCDA2262011F9006A1251 /* SortingMenuToolbarItem.m in Sources */ = {isa = PBXBuildFile; fileRef = F07BCDA1262011F9006A1251 /* SortingMenuToolbarItem.m */; };
 		F07CA625249BA03500EA4212 /* AppDelegate+CatalystActions.m in Sources */ = {isa = PBXBuildFile; fileRef = F07CA624249BA03500EA4212 /* AppDelegate+CatalystActions.m */; platformFilter = maccatalyst; };
 		F07CD39522B266E9005BCDE7 /* OpenDyslexic-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F07CD37F22B266E9005BCDE7 /* OpenDyslexic-Italic.ttf */; };
 		F07CD39622B266E9005BCDE7 /* OpenDyslexic-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F07CD38022B266E9005BCDE7 /* OpenDyslexic-BoldItalic.ttf */; };
@@ -1719,6 +1720,8 @@
 		F079F46D255BB13200121637 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk/System/iOSSupport/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
 		F07A31302297FC9D00822969 /* UIView+Anchoring.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+Anchoring.h"; sourceTree = "<group>"; };
 		F07A31312297FC9D00822969 /* UIView+Anchoring.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+Anchoring.m"; sourceTree = "<group>"; };
+		F07BCDA0262011F9006A1251 /* SortingMenuToolbarItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SortingMenuToolbarItem.h; sourceTree = "<group>"; };
+		F07BCDA1262011F9006A1251 /* SortingMenuToolbarItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SortingMenuToolbarItem.m; sourceTree = "<group>"; };
 		F07CA623249BA03500EA4212 /* AppDelegate+CatalystActions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+CatalystActions.h"; sourceTree = "<group>"; };
 		F07CA624249BA03500EA4212 /* AppDelegate+CatalystActions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+CatalystActions.m"; sourceTree = "<group>"; };
 		F07CD37F22B266E9005BCDE7 /* OpenDyslexic-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenDyslexic-Italic.ttf"; sourceTree = "<group>"; };
@@ -2715,6 +2718,8 @@
 				F09CEA932508B2E6007941AD /* FeedHeaderView.h */,
 				F09CEA942508B2E6007941AD /* FeedHeaderView.m */,
 				F09CEAAF2508B2F4007941AD /* FeedHeaderView.xib */,
+				F07BCDA0262011F9006A1251 /* SortingMenuToolbarItem.h */,
+				F07BCDA1262011F9006A1251 /* SortingMenuToolbarItem.m */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -4709,6 +4714,7 @@
 				F0DC99AF261C7E0D009447CE /* AuthorVC.swift in Sources */,
 				F0B0EA3A24EC205500D675B4 /* CheckWifi.m in Sources */,
 				F00F647324EC1DE700E5727C /* Image.m in Sources */,
+				F07BCDA2262011F9006A1251 /* SortingMenuToolbarItem.m in Sources */,
 				F02B704E24EA7E5C00DD607F /* IDMUtils.m in Sources */,
 				F0710D292062D3090097CCD5 /* NewVCAnimator.m in Sources */,
 				F0F10A9C244C8020009FC108 /* DTConstants.m in Sources */,
