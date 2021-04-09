@@ -81,6 +81,14 @@
     if (coordinator.feedVC != nil && coordinator.feedVC.type == FeedTypeUnread) {
         allLatest.attributes = UIMenuElementAttributesHidden;
         allOldest.attributes = UIMenuElementAttributesHidden;
+        
+        NSInteger sorting = [[NSUserDefaults standardUserDefaults] integerForKey:@"unreadFeedSorting"];
+        self.image = [coordinator imageForSortingOption:sorting];
+        
+    }
+    else {
+        NSInteger sorting = [[NSUserDefaults standardUserDefaults] integerForKey:@"feedSorting"];
+        self.image = [coordinator imageForSortingOption:sorting];
     }
 
     UIMenu *menu = [UIMenu menuWithChildren:@[allLatest, allOldest, unreadLatest, unreadOldest]];
