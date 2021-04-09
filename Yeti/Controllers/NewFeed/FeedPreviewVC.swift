@@ -181,12 +181,18 @@ class FeedPreviewVC: UICollectionViewController {
         
         sender?.isEnabled = false
         
-        guard let url = URL(string: item.id?.replacingOccurrences(of: "feed/", with: "") ?? "") else {
+        let encoder = JSONEncoder()
+        guard let data = try? encoder.encode(item),
+              let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: AnyHashable] else {
+            
+            AlertManager.showGenericAlert(withTitle: "Error Parsing", message: "An error occurred when parsing the feed's information. If this repeats, please contact me.")
+            
             sender?.isEnabled = true
+            
             return
         }
         
-        coordinator?.addFeed(url: url, folderID: self.selectedFolder?.folderID, completion: { [weak self] result in
+        coordinator?.addFeed(json: json, folderID: self.selectedFolder?.folderID, completion: { [weak self] result in
             
             guard let sself = self else { return }
             
@@ -204,12 +210,20 @@ class FeedPreviewVC: UICollectionViewController {
     
     private func dismissSelf() {
         
-        let presenting = presentingViewController
+        let presenting: UIViewController? = presentingViewController
+        
+        let superPresenting: UIViewController? = presenting?.presentingViewController
         
         dismiss(animated: true, completion: {
             
             if let presenting = presenting {
-                presenting.dismiss(animated: true, completion: nil)
+                presenting.dismiss(animated: true) {
+                    
+                    if superPresenting != nil {
+                        superPresenting!.dismiss(animated: true, completion: nil)
+                    }
+                    
+                }
             }
             
         })

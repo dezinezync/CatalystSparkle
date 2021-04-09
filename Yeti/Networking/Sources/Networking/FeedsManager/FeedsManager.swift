@@ -585,20 +585,14 @@ extension FeedsManager {
         
     }
     
-    public func add(feed url: URL, completion:((Result<Feed, Error>) -> Void)?) {
+    public func add(feed stub: [String: AnyHashable], completion:((Result<Feed, Error>) -> Void)?) {
         
         guard let user = user else {
             completion?(.failure((NSError(domain: "Elytra", code: 401, userInfo: [NSLocalizedDescriptionKey: "User is not logged in."]) as Error)))
             return
         }
         
-        let query = ["version": "2"]
-        let body = [
-            "URL": url.absoluteString,
-            "userID": "\(user.userID!)"
-        ]
-        
-        session.PUT(path: "/feed", query: query, body: body, resultType: Feed.self) { [weak self] (result) in
+        session.PUT(path: "/2.3/feed", query: nil, body: stub, resultType: Feed.self) { [weak self] (result) in
             
             switch result {
             case .success(let (response, feed)): do {
@@ -1355,6 +1349,7 @@ extension FeedsManager {
         if components.path.contains("/user/") == true {
             
             // get it from the canonical head tag
+            getYoutubeCannonicalID(originalURL: url, completion: completion)
             
         }
         else {
@@ -1382,7 +1377,7 @@ extension FeedsManager {
                 if isChannelID == false {
                     
                     // get it from the canonical head tag
-                    
+                    getYoutubeCannonicalID(originalURL: url, completion: completion)
                     return
                     
                 }
@@ -1436,17 +1431,23 @@ extension FeedsManager {
                 
                 scanner.currentIndex = nextIndex
                 
+                cannonical = scanner.scanUpToString("\"")
+                
             } while (cannonical == originalURL.absoluteString)
             
             guard let c = cannonical,
                   let url = URL(string: c) else {
                 
-                completion?(.failure(FeedsManagerError.from(description: "No response was received from Youtube", statusCode: 500)))
+                DispatchQueue.main.async {
+                    completion?(.failure(FeedsManagerError.from(description: "No response was received from Youtube", statusCode: 500)))
+                }
                 return
                 
             }
             
-            completion?(.success(url))
+            DispatchQueue.main.async {
+                completion?(.success(url))
+            }
             
         }
         

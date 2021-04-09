@@ -8,6 +8,7 @@
 import Foundation
 
 @objc public class FeedInfo: NSObject, Codable {
+    
     public var id: String? = nil
     public var feedId: String? = nil
     public var title: String? = nil
@@ -35,7 +36,7 @@ import Foundation
 
 @objc public class FeedInfoResponse: NSObject, Codable {
     
-    public var results: [FeedInfo]? = nil
+    public var results: [FeedRecommendation]? = nil
     public var queryType: String? = nil
     public var scheme: String? = nil
     

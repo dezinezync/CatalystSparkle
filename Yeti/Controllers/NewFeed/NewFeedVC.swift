@@ -339,7 +339,9 @@ extension NewFeedVC: UISearchResultsUpdating, UISearchBarDelegate, UITextFieldDe
                 
                 switch result {
                 case .success(let url):
-                    self?.searchURL(url, isYoutube: true)
+                    runOnMainQueueWithoutDeadlocking {
+                        self?.searchURL(url, isYoutube: true)
+                    }
                     
                 case .failure(let error):
                     
@@ -358,52 +360,44 @@ extension NewFeedVC: UISearchResultsUpdating, UISearchBarDelegate, UITextFieldDe
             
         }
         
-        let path: String = url.path
+        guard let resultsInstance = searchController.searchResultsController as? NewFeedResultsVC else {
+            return
+        }
         
-        if (path.contains("/feed") || path.contains("/rss") || path.contains("xml") || path.contains("json")) == false {
+        FeedsLib.shared.getFeedInfo(url: url) { (error: Error?, response: FeedInfoResponse?) in
             
-            guard let resultsInstance = searchController.searchResultsController as? NewFeedResultsVC else {
+            if let error = error {
+                AlertManager.showGenericAlert(withTitle: "An Error Occurred", message: error.localizedDescription)
                 return
             }
             
-            FeedsLib.shared.getFeedInfo(url: url) { (error: Error?, response: FeedInfoResponse?) in
-                
-                if let error = error {
-                    AlertManager.showGenericAlert(withTitle: "An Error Occurred", message: error.localizedDescription)
-                    return
-                }
-                
-                guard let response = response else {
-                    return
-                }
-                
-                guard let results = response.results, results.count > 0 else {
-                    return
-                }
-                
-                let items: [FeedRecommendation] = results.map { $0.toRecommendation() }
-                
-                let recommendationsResponse = RecommendationsResponse()
-                recommendationsResponse.feedInfos = items
-                
-                resultsInstance.results = recommendationsResponse
-                
+            guard let response = response else {
+                return
             }
             
-            return
+            guard let results = response.results, results.count > 0 else {
+                return
+            }
+            
+            let items: [FeedRecommendation] = results
+            
+            let recommendationsResponse = RecommendationsResponse()
+            recommendationsResponse.feedInfos = items
+            
+            resultsInstance.results = recommendationsResponse
             
         }
         
-        let item = FeedRecommendation()
-        item.id = "feed/\(url.absoluteString)"
-        item.title = isYoutube == true ? "Youtube Channel" : "Untitled"
-        
-        let instance = FeedPreviewVC(collectionViewLayout: FeedPreviewVC.layout)
-        instance.item = item
-        instance.coordinator = self.coordinator
-        
-        let nav = UINavigationController(rootViewController: instance)
-        self.present(nav, animated: true, completion: nil)
+//        let item = FeedRecommendation()
+//        item.id = "feed/\(url.absoluteString)"
+//        item.title = isYoutube == true ? "Youtube Channel" : "Untitled"
+//
+//        let instance = FeedPreviewVC(collectionViewLayout: FeedPreviewVC.layout)
+//        instance.item = item
+//        instance.coordinator = self.coordinator
+//
+//        let nav = UINavigationController(rootViewController: instance)
+//        self.present(nav, animated: true, completion: nil)
         
     }
     

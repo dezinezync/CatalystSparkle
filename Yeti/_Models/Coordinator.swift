@@ -1021,12 +1021,29 @@ extension Coordinator {
     }
     
     public func addFeed(url: URL) {
+        
+        let json: [String: AnyHashable] = [
+            "id": "feed/\(url.absoluteString)",
+            "feedId": "feed/\(url.absoluteString)"
+        ]
      
-        addFeed(url: url, folderID: nil, completion: nil)
+        addFeed(json: json, folderID: nil, completion: nil)
         
     }
     
-    public func addFeed(url: URL, folderID: UInt?, completion: ((Result<Feed, Error>) -> Void)?) {
+    public func addFeed(json: [String: AnyHashable], folderID: UInt?, completion: ((Result<Feed, Error>) -> Void)?) {
+        
+        guard var feedID: String = (json["feedId"] ?? json["id"]) as? String else {
+            completion?(.failure(FeedsManagerError.from(description: "This feed does not have a URL representation.", statusCode: 400)))
+            return
+        }
+        
+        feedID = feedID.replacingOccurrences(of: "feed/", with: "")
+        
+        guard let url = URL(string: feedID) else {
+            completion?(.failure(FeedsManagerError.from(description: "This feed does not have a valid URL representation.", statusCode: 400)))
+            return
+        }
         
         let have: Feed? = DBManager.shared.feeds.first(where: { $0.url == url })
         
@@ -1049,7 +1066,12 @@ extension Coordinator {
                     completion?(.failure(FeedsManagerError.from(description:  "An error occurred when trying to process the Youtube URL: \(error.localizedDescription)", statusCode: 500)))
                     
                 case .success(let finalURL):
-                    self?.addFeed(url: finalURL)
+                    let json: [String: AnyHashable] = [
+                        "id": "feed/\(finalURL.absoluteString)",
+                        "feedId": "feed/\(finalURL.absoluteString)"
+                    ]
+                    
+                    self?.addFeed(json: json, folderID: folderID, completion: completion)
                 }
                 
             }
@@ -1058,7 +1080,7 @@ extension Coordinator {
             
         }
         
-        FeedsManager.shared.add(feed: url) { [weak self] result in
+        FeedsManager.shared.add(feed: json) { [weak self] result in
             
             guard let sself = self else {
                 return

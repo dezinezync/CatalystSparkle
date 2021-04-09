@@ -492,7 +492,7 @@ enum SidebarItem: Hashable, Identifiable {
             .store(in: &cancellables)
         
         NotificationCenter.default.publisher(for: .DBManagerDidUpdate)
-            .receive(on: DBManager.shared.writeQueue)
+            .debounce(for: 0.1, scheduler: DispatchQueue.main)
             .sink { [weak self] note in
                 
                 guard let sself = self,
@@ -1347,7 +1347,7 @@ enum SidebarItem: Hashable, Identifiable {
 //
 //        unreadWidgetsTimer = Timer(timeInterval: interval, repeats: false, block: { (_) in
             
-            DBManager.shared.countsConnection.asyncRead { [weak self] (t) in
+            DBManager.shared.uiConnection.asyncRead { [weak self] (t) in
                 
                 guard let sself = self else { return }
                 
@@ -1662,7 +1662,7 @@ extension SidebarVC {
         
         print("Updating counters")
         
-        DBManager.shared.readQueue.async { [weak self] in 
+        DBManager.shared.writeQueue.async { [weak self] in 
             
             DBManager.shared.countsConnection.asyncRead { (t) in
                 
