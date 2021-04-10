@@ -1,5 +1,8 @@
 # v2.3.0
 
+### Build 201
+- Updated licenses
+
 The app will do a full resync on first launch. If the app crashes for you, please reset the app from the Settings app (or delete and install again) and setup again.  
 
 ## New 
