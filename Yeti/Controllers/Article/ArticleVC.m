@@ -51,6 +51,8 @@
 #import "Tweet.h"
 #import "TweetImage.h"
 
+#import <LinkPresentation/LinkPresentation.h>
+
 static void *KVO_PlayerRate = &KVO_PlayerRate;
 
 typedef NS_ENUM(NSInteger, ArticleVCState) {
@@ -968,6 +970,19 @@ typedef NS_ENUM(NSInteger, ArticleVCState) {
         [self addYoutube:content];
         
     }
+//    else if ([((Article *)(self.item)).url.absoluteString containsString:@"trailers.apple.com"]) {
+//        
+//        LPMetadataProvider *provider = [LPMetadataProvider new];
+//        [provider startFetchingMetadataForURL:((Article *)(self.item)).url completionHandler:^(LPLinkMetadata * _Nullable metadata, NSError * _Nullable error) {
+//           
+//            if (error != nil) {
+//                [AlertManager showGenericAlertWithTitle:@"Error Fetching Preview" message:error.localizedDescription];
+//                return;
+//            }
+//            
+//        }];
+//        
+//    }
     
     NSMutableArray <NSURL *> *imagesFromEnclosures = @[].mutableCopy;
     

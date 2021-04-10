@@ -14,6 +14,8 @@ import Defaults
 
 @objcMembers public class SplitVC: UISplitViewController {
     
+    var iPadOSShowSidebarInPortraitOnLaunch: Bool = false
+    
     convenience init() {
         
         self.init(style: .tripleColumn)
@@ -50,10 +52,7 @@ import Defaults
         #else
         minimumPrimaryColumnWidth = 298
         minimumSupplementaryColumnWidth = 375
-        setupDisplayModes(size: view.bounds.size)
         #endif
-        
-        preferredSplitBehavior = .displace
         
         presentsWithGesture = true
         
@@ -70,12 +69,12 @@ import Defaults
             return
         }
         
-//        #if !DEBUG
+        #if !DEBUG
         // this prevents skipping the onboarding and trial setup.
         if Defaults[.hasShownIntro] == false {
             showOnboarding()
         }
-//        #endif
+        #endif
         
     }
     
@@ -102,15 +101,18 @@ import Defaults
         DispatchQueue.main.async { [weak self] in
             
             if size.width < 1024 {
-                self?.preferredSplitBehavior = .overlay
+                
+                self?.preferredDisplayMode = .twoBesideSecondary
+                self?.preferredSplitBehavior = .tile
+                
             }
             else if size.width > 1024 && size.width < 1180 {
-                self?.preferredSplitBehavior = .tile
                 self?.preferredDisplayMode = .twoOverSecondary
+                self?.preferredSplitBehavior = .tile
             }
             else {
-                self?.preferredSplitBehavior = .tile
                 self?.preferredDisplayMode = .twoBesideSecondary
+                self?.preferredSplitBehavior = .tile
             }
             
         }
@@ -130,6 +132,21 @@ import Defaults
 }
 
 extension SplitVC: UISplitViewControllerDelegate {
+    
+    public func splitViewController(_ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
+        
+        print(displayMode)
+        
+        if displayMode == .secondaryOnly,
+           iPadOSShowSidebarInPortraitOnLaunch == false {
+            
+            setupDisplayModes(size: svc.view.bounds.size)
+            
+            iPadOSShowSidebarInPortraitOnLaunch = true
+            
+        }
+        
+    }
     
     public func splitViewController(_ svc: UISplitViewController, topColumnForCollapsingToProposedTopColumn proposedTopColumn: UISplitViewController.Column) -> UISplitViewController.Column {
         
