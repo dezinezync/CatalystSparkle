@@ -467,13 +467,17 @@ enum SidebarItem: Hashable, Identifiable {
                     
                     guard mc.shouldRequestReview == true else { return }
                     
-                    SKStoreReviewController.requestReview(in: mc.sidebarVC.view.window!.windowScene!)
+                    if let scene = mc.sidebarVC.view.window?.windowScene {
+                        
+                        SKStoreReviewController.requestReview(in: scene)
+                        
+                        let fullVersion = FeedsManager.shared.fullVersion
+                        
+                        Keychain.add("requestedReview-\(fullVersion)", boolean: true)
+                        
+                    }                    
                     
                     mc.shouldRequestReview = false
-                    
-                    let fullVersion = FeedsManager.shared.fullVersion
-                    
-                    Keychain.add("requestedReview-\(fullVersion)", boolean: true)
                     
                 }
                 .store(in: &cancellables)
