@@ -6,7 +6,7 @@
 //  Copyright © 2018 Dezine Zync Studios. All rights reserved.
 //
 
-#import <DZThemeKit/DZThemeKit.h>
+#import <Foundation/Foundation.h>
 #import "YetiTheme.h"
 #import "TypeFactory.h"
 
@@ -14,7 +14,7 @@
 
 extern YetiThemeKit * _Nonnull YTThemeKit;
 
-@interface YetiThemeKit : ThemeKit
+@interface YetiThemeKit : NSObject
 
 /**
  Initialize DZThemeKit. Makes MyThemeKit available.

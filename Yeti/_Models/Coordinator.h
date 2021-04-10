@@ -17,11 +17,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Coordinator : NSObject
-
-- (void)start;
-
-@end
+//@interface Coordinator : NSObject
+//
+//- (void)start;
+//
+//@end
 
 @interface MainCoordinator : NSObject
 
@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign) NSUInteger totalBookmarks;
 
-@property (nonatomic, strong) NSMutableArray <Coordinator *> * childCoordinators;
+//@property (nonatomic, strong) NSMutableArray <Coordinator *> * childCoordinators;
 
 @property (nonatomic, weak) SplitVC *splitViewController;
 
@@ -113,15 +113,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 #define DZS_SILENCE_CALL_TO_UNKNOWN_SELECTOR(expression) _Pragma("clang diagnostic push") _Pragma("clang diagnostic ignored \"-Warc-performSelector-leaks\"") expression _Pragma("clang diagnostic pop")
 
-@interface UIWindow (MacCatalystExtension)
-
-- (nullable NSObject *)innerWindow;
-
-@end
+//@interface UIWindow (MacCatalystExtension)
+//
+//- (nullable NSObject *)innerWindow;
+//
+//@end
 
 @interface UIViewController (Coordination)
 
 @property (nonatomic, weak) MainCoordinator *mainCoordinator;
+@property (nonatomic, weak) id coordinator;
 
 @end
 

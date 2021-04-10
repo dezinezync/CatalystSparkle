@@ -8,7 +8,20 @@
 import Foundation
 import BetterCodable
 
+@objc public enum ArticleState: Int {
+    case Read, Unread, Bookmarked
+}
+
 @objcMembers open class Article: NSObject, Codable, ObservableObject {
+    
+    static let dateFormatter: DateFormatter = {
+       
+        let f = DateFormatter()
+        f.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        
+        return f
+        
+    }()
     
     public var identifier: String!
     public var title: String?
@@ -21,11 +34,36 @@ import BetterCodable
     public var enclosures: [Enclosure]?
     public var feedID: UInt = 0
     @LossyOptional public var summary: String?
-    @LosslessValue<Bool> public var bookmarked: Bool = false
-    @LosslessValue<Bool> public var read: Bool = false
+    
+    @LosslessValue<Bool> public var bookmarked: Bool = false {
+        didSet {
+            state = intState
+        }
+    }
+    
+    @LosslessValue<Bool> public var read: Bool = true {
+        didSet {
+            state = intState
+        }
+    }
+    
     @LosslessValue<Bool> public var fulltext: Bool = false
     
-    public enum CodingKeys: String, CodingKey {
+    @Published public var state: ArticleState = .Unread
+    
+    fileprivate var intState: ArticleState {
+        get {
+            if bookmarked == true {
+                return .Bookmarked
+            }
+            else if read == true {
+                return .Read
+            }
+            return .Unread
+        }
+    }
+    
+    public enum CodingKeys: String, CodingKey, CaseIterable {
         case identifier = "id"
         case title
         case url
@@ -115,13 +153,13 @@ import BetterCodable
             }
             
         }
-        else if key == " timestamp" || key == "created" {
+        else if key == "timestamp" || key == "created" {
             
-            if let value = value as? Date {
-                timestamp = value
+            if let date = value as? Date {
+                timestamp = date
             }
-            else if let value = value as? String,
-                    let dateVal = Subscription.dateFormatter.date(from: value) {
+            else if let val = value as? String,
+                    let dateVal = Article.dateFormatter.date(from: val) {
                 timestamp = dateVal
             }
             
@@ -277,7 +315,7 @@ extension Article {
         
         dict["guid"] = guid
         
-        dict["timestamp"] = Subscription.dateFormatter.string(from: timestamp)
+        dict["timestamp"] = Article.dateFormatter.string(from: timestamp)
         
         dict["enclosures"] = (enclosures ?? []).map { $0.dictionaryRepresentation }
         
@@ -288,6 +326,16 @@ extension Article {
         }
         
         return dict
+        
+    }
+    
+    public func copyFrom(article: Article) {
+        
+        for k in Article.CodingKeys.allCases {
+            let key = k.rawValue
+            let val = article.value(for: key)
+            self.setValue(val, forKey: key)
+        }
         
     }
     

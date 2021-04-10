@@ -60,34 +60,34 @@ NSArray <NSString *> * _themeNames;
 }
 
 + (void)loadThemeKit {
-    
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        
-        dispatch_sync(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-           
-            YTThemeKit = [YetiThemeKit new];
-            NSArray <UIColor *> *colours = [YetiThemeKit colours];
-            
-            [[YetiThemeKit themeNames] enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-               
-                NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-                NSString *defaultsKey = [NSString stringWithFormat:@"theme-%@-color", obj];
-                
-                NSURL *path = [[NSBundle bundleForClass:self.class] URLForResource:obj withExtension:@"json"];
-                
-                __unused YetiTheme *theme = (YetiTheme *)[YTThemeKit loadColorsFromFile:path];
-                NSInteger tintIndex = [defaults integerForKey:defaultsKey] ?: NSNotFound;
-                
-                if (tintIndex != NSNotFound) {
-                    theme.tintColor = colours[tintIndex];
-                }
-                
-            }];
-            
-        });
-        
-    });
+    // @TODO
+//    static dispatch_once_t onceToken;
+//    dispatch_once(&onceToken, ^{
+//
+//        dispatch_sync(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+//
+//            YTThemeKit = [YetiThemeKit new];
+//            NSArray <UIColor *> *colours = [YetiThemeKit colours];
+//
+//            [[YetiThemeKit themeNames] enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+//
+//                NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+//                NSString *defaultsKey = [NSString stringWithFormat:@"theme-%@-color", obj];
+//
+//                NSURL *path = [[NSBundle bundleForClass:self.class] URLForResource:obj withExtension:@"json"];
+//
+//                __unused YetiTheme *theme = (YetiTheme *)[YTThemeKit loadColorsFromFile:path];
+//                NSInteger tintIndex = [defaults integerForKey:defaultsKey] ?: NSNotFound;
+//
+//                if (tintIndex != NSNotFound) {
+//                    theme.tintColor = colours[tintIndex];
+//                }
+//
+//            }];
+//
+//        });
+//
+//    });
     
 }
 

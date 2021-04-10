@@ -11,6 +11,7 @@ import AuthenticationServices
 import Networking
 import DBManager
 import Models
+import Defaults
 
 @objc class LaunchVC: UIViewController {
     
@@ -90,7 +91,7 @@ import Models
             return
         }
         
-        #if DEBUG
+        #if targetEnvironment(simulator)
         process(uuid: "000768.e759fc828ab249ad98ceefc5f80279b3.1145")
         return
         #endif
@@ -166,6 +167,9 @@ import Models
         DBManager.shared.user = user
         
         guard user.subscription == nil else {
+            
+            Defaults[.hasShownIntro] = true
+            
             navigationController?.dismiss(animated: true, completion: nil)
             return
         }

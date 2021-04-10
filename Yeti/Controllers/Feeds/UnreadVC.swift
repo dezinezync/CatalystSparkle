@@ -20,33 +20,10 @@ class UnreadVC: FeedVC {
         
         self.type = .unread
         
-        originalSortOption = FeedSorting(rawValue: Defaults[.feedSorting])
-        var option = FeedSorting(rawValue: originalSortOption.rawValue)!
-        
-        if originalSortOption == .descending {
-            option = .unreadDescending
-        }
-        else if originalSortOption == .ascending {
-            option = .unreadAscending
-        }
-        
-        sorting = option
-        
         super.viewDidLoad()
         
     }
 
-    deinit {
-        
-        if originalSortOption != sorting,
-           Defaults[.feedSorting] != originalSortOption.rawValue {
-            
-            Defaults[.feedSorting] = originalSortOption.rawValue
-            
-        }
-        
-    }
-    
     // MARK: - State
     override var emptyViewDisplayTitle: String {
         return "Unreads"

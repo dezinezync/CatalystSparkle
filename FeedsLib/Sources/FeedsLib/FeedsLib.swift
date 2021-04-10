@@ -43,7 +43,7 @@ import WebKit
         
     }()
     
-    internal let baseURL = URL(string:"https://feedly.com")
+    internal let baseURL = URL(string:"https://red-cloud-8e34.elytra.workers.dev")
     
     public func getRecommendations(topic: String, locale: String?, completion: ((_ error: Error?, _ data: RecommendationsResponse?) -> Void)?) {
         

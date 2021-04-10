@@ -369,7 +369,7 @@
     
     NSTimeInterval delay = 0;
     
-    UISplitViewController *splitVC = self.coordinator.splitViewController;
+    UISplitViewController *splitVC = self.coordinator.splitVC;
     
     if ([splitVC presentedViewController] != nil) {
         [[splitVC presentedViewController] dismissViewControllerAnimated:YES completion:nil];
@@ -394,7 +394,7 @@
 - (BOOL)addFeed:(NSURL *)url {
     // check if we already have this feed
     // @TODO Maybe?
-//    Feed * have = nil;
+    Feed * have = nil;
 //
 //    @try {
 ////        if (ArticlesManager.shared != nil && ArticlesManager.shared.feeds != nil) {

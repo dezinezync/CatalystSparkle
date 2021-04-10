@@ -10,10 +10,12 @@ import UIKit
 import SDWebImage
 import DBManager
 import Models
+import Networking
+import Combine
 
 @objc final class FeedInfoController: UITableViewController {
     
-    var feed: Feed? {
+    var feed: Feed! {
         didSet {
             if let f = feed {
                 let m = DBManager.shared.metadataForFeed(f)
@@ -25,7 +27,7 @@ import Models
         }
     }
     
-    var metadata: FeedMeta?
+    var metadata: FeedMeta!
     
     weak var faviconView: UIImageView?
     
@@ -68,11 +70,14 @@ import Models
         self.feed = feed
     }
     
+    var folderSub: AnyCancellable?
+    
     override func viewDidLoad() {
         
         super.viewDidLoad()
         
         FeedInfoCell.register(tableView: tableView)
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "folderCell")
         
         let headerView = self.headerView
         headerView.frame = CGRect(x: 0, y: 0, width: tableView.bounds.size.width, height: 48 + 24)
@@ -85,6 +90,27 @@ import Models
         self.modalPresentationStyle = .fullScreen
         
         self.navigationItem.leftBarButtonItem = UIBarButtonItem.init(title: "Done", style: .plain, target: self, action: #selector(didTapDone))
+        
+        folderSub = NotificationCenter.default.publisher(for: .feedsUpdated)
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: { [weak self] _ in
+                
+                let indexPath = IndexPath(row: 0, section: 3)
+                guard let cell = self?.tableView.cellForRow(at: indexPath),
+                      let sself = self else {
+                    return
+                }
+                
+                let folderID = sself.feed.folderID
+                
+                if folderID == nil || folderID == 0 {
+                    cell.textLabel?.text = "None"
+                }
+                else if let folder = DBManager.shared.folder(for: folderID!) {
+                    cell.textLabel?.text = folder.title
+                }
+                
+            })
         
     }
     
@@ -119,7 +145,7 @@ import Models
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
+        return 4
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -131,6 +157,9 @@ import Models
             return 1
         }
         else if (section == 2 && self.feed?.extra?.url != nil) {
+            return 1
+        }
+        else if (section == 3) {
             return 1
         }
         
@@ -172,7 +201,7 @@ import Models
                     
                     if let m = metadata {
                         
-                        let val = (m.localNotifications ?? false)
+                        let val = m.localNotifications
                         
                         cell.toggle.setOn(val, animated: false)
                     }
@@ -210,6 +239,28 @@ import Models
             cell.label.text = self.feed?.extra?.url?.absoluteString ?? ""
             
         }
+        else if (indexPath.section == 3) {
+
+            let fCell = tableView.dequeueReusableCell(withIdentifier: "folderCell", for: indexPath)
+
+            fCell.imageView?.image = UIImage(systemName: "folder")
+            
+            if let folder = DBManager.shared.folder(for: feed?.folderID ?? 0) {
+                
+                fCell.textLabel?.text = folder.title
+                
+            }
+            else {
+                
+                fCell.textLabel?.text = "None"
+                
+            }
+            
+            fCell.accessoryType = .disclosureIndicator
+            
+            return fCell
+            
+        }
 
         return cell
     }
@@ -221,6 +272,9 @@ import Models
         }
         else if (section == 2 && self.feed?.extra?.url != nil) {
             return "Website URL"
+        }
+        else if (section == 3) {
+            return "Folder"
         }
         
         return nil
@@ -307,6 +361,21 @@ import Models
         return nil
         
     }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        guard indexPath.section == 3 && indexPath.row == 0 else {
+            tableView.deselectRow(at: indexPath, animated: true)
+            return
+        }
+        
+        let vc = FolderInfoVC(style: .insetGrouped)
+        vc.coordinator = coordinator
+        vc.feed = feed
+        
+        navigationController?.pushViewController(vc, animated: true)
+        
+    }
 
     // MARK: - Actions
     @objc func didTogglePush(toggle: UISwitch) {
@@ -321,44 +390,50 @@ import Models
             // supports push
             if (feed.subscribed == true && toggle.isOn == false) {
                 
-                // unsubscribe
-                // @TODO: Unsubscribe from notifications
-//                MyFeedsManager.unsubscribe(feed) { (_, _, _) in
-//
-//                    feed.isSubscribed = false
-//
-//                    MyDBManager.update(feed)
-//
-//                } error: { (error: Error?, _, _) in
-//
-//                    guard let err = error else {
-//                        return
-//                    }
-//
-//                    AlertManager.showGenericAlert(withTitle: "Unsubscribe Failed", message: err.localizedDescription)
-//
-//                }
+                FeedsManager.shared.unsubscribe(feed) { [weak self] result in
+                    
+                    guard let sself = self else { return }
+                    
+                    switch result {
+                    case .failure(let error):
+                        AlertManager.showGenericAlert(withTitle: "Unsubscribe Failed", message: error.localizedDescription)
+                        toggle.setOn(true, animated: true)
+                    case .success(let status):
+                        if status == true {
+                            feed.subscribed = false
+                            DBManager.shared.update(feed: feed, metadata: sself.metadata)
+                        }
+                        else {
+                            toggle.setOn(true, animated: true)
+                            AlertManager.showGenericAlert(withTitle: "Unsubscribe Failed", message: "An unknown error occurred when unsubscribing.")
+                        }
+                    }
+                    
+                }
                 
             }
             else if (feed.subscribed == false && toggle.isOn == true) {
-             
-                // subscribe
-                // @TODO: Subscribe from notifications
-//                MyFeedsManager.subscribe(feed) { (_, _, _) in
-//
-//                    feed.isSubscribed = true
-//
-//                    MyDBManager.update(feed)
-//
-//                } error: { (error: Error?, _, _) in
-//
-//                    guard let err = error else {
-//                        return
-//                    }
-//
-//                    AlertManager.showGenericAlert(withTitle: "Unsubscribe Failed", message: err.localizedDescription)
-//
-//                }
+                
+                FeedsManager.shared.subscribe(feed) { [weak self] result in
+                    
+                    guard let sself = self else { return }
+                    
+                    switch result {
+                    case .failure(let error):
+                        AlertManager.showGenericAlert(withTitle: "Subscribe Failed", message: error.localizedDescription)
+                        toggle.setOn(false, animated: true)
+                    case .success(let status):
+                        if status == true {
+                            feed.subscribed = true
+                            DBManager.shared.update(feed: feed, metadata: sself.metadata)
+                        }
+                        else {
+                            toggle.setOn(false, animated: true)
+                            AlertManager.showGenericAlert(withTitle: "Subscribe Failed", message: "An unknown error occurred when unsubscribing.")
+                        }
+                    }
+                    
+                }
 
             }
             
@@ -367,7 +442,7 @@ import Models
             
             // supports local
             
-            if var m = metadata {
+            if let m = metadata {
                 
                 let val = m.localNotifications
                 
@@ -402,7 +477,7 @@ import Models
             return
         }
         
-        if var m = metadata {
+        if let m = metadata {
             
             let val = m.readerMode
             

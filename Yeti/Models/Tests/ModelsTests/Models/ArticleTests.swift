@@ -51,7 +51,7 @@ final class ArticleTests: XCTestCase {
                 b = (b as? URL)?.absoluteString
             }
             else if key == "timestamp" {
-                b = Subscription.dateFormatter.string(from: b as! Date)
+                b = Article.dateFormatter.string(from: b as! Date)
             }
             
             print("\(key)\n\(String(describing: a))\n\(String(describing: b))")

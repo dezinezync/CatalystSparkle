@@ -9,107 +9,88 @@
 #import "AppDelegate+CatalystActions.h"
 
 #import "ArticleVC+Toolbar.h"
-
-@interface AppKitGlue : NSObject
-
-- (void)showPreferencesController;
-
-@end
+#import "Elytra-Swift.h"
 
 @implementation AppDelegate (CatalystActions)
 
-// @TODO 
-//- (void)createNewFeed {
-//
-//    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
-//
-//    SidebarVC *vc = sceneDelegate.coordinator.sidebarVC;
-//
-//    [vc didTapAdd:nil];
-//
-//}
-//
-//- (void)createNewFolder {
-//
-//    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
-//
-//    SidebarVC *vc = sceneDelegate.coordinator.sidebarVC;
-//
-//    [vc didTapAddFolder:nil];
-//
-//}
-//
-//- (void)refreshAll {
-//
-//    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
-//
-//    SidebarVC *vc = sceneDelegate.coordinator.sidebarVC;
-//
-//    [vc beginRefreshingAll:vc.refreshControl];
-//
-//}
-//
-//- (void)openSettings:(id)sender {
-//
-//#if TARGET_OS_MACCATALYST
-//
-//    [self.sharedGlue performSelectorOnMainThread:NSSelectorFromString(@"showPreferencesController") withObject:nil waitUntilDone:NO];
-//
-//#else
-//
-//    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
-//
-//    [sceneDelegate.coordinator showSettingsVC];
-//
-//#endif
-//
-//}
-//
-//- (void)openFAQ {
-//
-//    NSURL *URL = [NSURL URLWithString:@"https://faq.elytra.app"];
-//
-//    [UIApplication.sharedApplication openURL:URL options:nil completionHandler:nil];
-//
-//}
-//
-//- (void)setSortingOptionTo:(YetiSortOption)sortOption {
-//
-//    FeedVC *feedVC = self.coordinator.feedVC;
-//
-//    if (feedVC == nil) {
-//        return;
-//    }
-//
-//    [feedVC setSortingOption:sortOption];
-//
-//    [UIMenuSystem.mainSystem setNeedsRebuild];
-//
-//}
-//
-//- (void)setSortingAllDesc {
-//
-//    [self setSortingOptionTo:YTSortAllDesc];
-//
-//}
-//
-//- (void)setSortingAllAsc {
-//
-//    [self setSortingOptionTo:YTSortAllAsc];
-//
-//}
-//
-//- (void)setSortingUnreadDesc {
-//
-//    [self setSortingOptionTo:YTSortUnreadDesc];
-//
-//}
-//
-//- (void)setSortingUnreadAsc {
-//
-//    [self setSortingOptionTo:YTSortUnreadAsc];
-//
-//}
+
+- (void)createNewFeed {
+
+    [self.coordinator showNewFeedVC];
+
+}
+
+- (void)createNewFolder {
+
+    [self.coordinator showNewFolderVC];
+
+}
+
+- (void)refreshAll {
+
+    [self.coordinator.sidebarVC beginRefreshingAll:nil];
+
+}
+
+- (void)openSettings:(id)sender {
+
+#if TARGET_OS_MACCATALYST
+
+    [self.sharedGlue showPreferencesController];
+    
+#else
+
+    [self.coordinator showSettingsVC];
+
+#endif
+
+}
+
+- (void)openFAQ {
+
+    NSURL *URL = [NSURL URLWithString:@"https://faq.elytra.app"];
+
+    [UIApplication.sharedApplication openURL:URL options:@{} completionHandler:nil];
+
+}
+
+- (void)setSortingOptionTo:(FeedSorting)sortOption {
+
+    FeedVC *feedVC = self.coordinator.feedVC;
+
+    if (feedVC == nil) {
+        return;
+    }
+
+    feedVC.sorting = sortOption;
+
+    [UIMenuSystem.mainSystem setNeedsRebuild];
+
+}
+
+- (void)setSortingAllDesc {
+
+    [self setSortingOptionTo:FeedSortingDescending];
+
+}
+
+- (void)setSortingAllAsc {
+
+    [self setSortingOptionTo:FeedSortingAscending];
+
+}
+
+- (void)setSortingUnreadDesc {
+
+    [self setSortingOptionTo:FeedSortingUnreadDescending];
+
+}
+
+- (void)setSortingUnreadAsc {
+
+    [self setSortingOptionTo:FeedSortingUnreadAscending];
+
+}
 
 - (void)goToIndexPath:(NSIndexPath *)indexPath {
     
@@ -183,7 +164,9 @@
     
     [vc didTapRead:nil];
     
-    [UIMenuSystem.mainSystem setNeedsRebuild];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [UIMenuSystem.mainSystem setNeedsRebuild];
+    });
     
 }
 
@@ -197,7 +180,9 @@
     
     [vc didTapBookmark:nil];
     
-    [UIMenuSystem.mainSystem setNeedsRebuild];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [UIMenuSystem.mainSystem setNeedsRebuild];
+    });
     
 }
 
@@ -239,13 +224,13 @@
 
 - (void)didClickImportSubscriptions {
     
-    [self.coordinator showOPMLInterfaceFrom:nil direct:1];
+    [self.coordinator showOPMLInterfaceFrom:nil type:ShowOPMLTypeImport];
     
 }
 
 - (void)didClickExportSubscriptions {
     
-    [self.coordinator showOPMLInterfaceFrom:nil direct:2];
+    [self.coordinator showOPMLInterfaceFrom:nil type:ShowOPMLTypeExport];
     
 }
 

@@ -13,6 +13,8 @@ import Models
 import Combine
 import Networking
 import YapDatabase
+import Defaults
+import StoreKit
 
 class SidebarDS: UICollectionViewDiffableDataSource<Int, SidebarItem> {
        
@@ -27,14 +29,14 @@ class SidebarDS: UICollectionViewDiffableDataSource<Int, SidebarItem> {
     case author
 }
 
-@objc class CustomFeed: NSObject {
+@objcMembers public class CustomFeed: NSObject {
     
-    @objc let title: String
-    @objc let image: UIImage?
-    @objc let color: UIColor
-    @objc let feedType: FeedType
+    let title: String
+    let image: UIImage?
+    let color: UIColor
+    let feedType: FeedType
     
-    @objc required init(title: String, image: String, color: UIColor?, type: FeedType) {
+    required init(title: String, image: String, color: UIColor?, type: FeedType) {
         
         self.title = title
         self.image = UIImage(systemName: image)
@@ -43,11 +45,11 @@ class SidebarDS: UICollectionViewDiffableDataSource<Int, SidebarItem> {
         
     }
     
-    override var hash: Int {
+    public override var hash: Int {
         return title.hash + feedType.rawValue
     }
     
-    override func isEqual(_ object: Any?) -> Bool {
+    public override func isEqual(_ object: Any?) -> Bool {
         
         guard let rhs = object as? CustomFeed else {
             return false
@@ -67,7 +69,7 @@ enum SidebarSection: Int, CaseIterable {
     
 }
 
-enum SidebarItem: Hashable {
+enum SidebarItem: Hashable, Identifiable {
     
     static func == (lhs: SidebarItem, rhs: SidebarItem) -> Bool {
         
@@ -87,9 +89,36 @@ enum SidebarItem: Hashable {
     case custom(CustomFeed)
     case folder(Folder)
     case feed(Feed)
+    
+    func hash(into hasher: inout Hasher) {
+        
+        switch self {
+        case .custom(let f):
+            hasher.combine(f.feedType)
+        case .feed(let f):
+            hasher.combine(f.feedID)
+        case .folder(let f):
+            hasher.combine(f.folderID)
+        }
+        
+    }
+    
+    var id: Int {
+        get {
+            switch self {
+            case .custom(let f):
+                return f.feedType.rawValue
+            case .feed(let f):
+                return Int(f.feedID)
+            case .folder(let f):
+                return Int(f.folderID)
+            }
+        }
+    }
+    
 }
 
-@objc class SidebarVC: UICollectionViewController {
+@objcMembers public class SidebarVC: UICollectionViewController {
     
     var cancellables: [AnyCancellable] = []
     
@@ -152,7 +181,7 @@ enum SidebarItem: Hashable {
                         
                     }
                     
-                    move.backgroundColor = UIColor(red: 0, green: 122/255, blue: 1, alpha: 1)
+                    move.backgroundColor = .systemBlue
                     
                     let share = UIContextualAction(style: .normal, title: "Share") { [weak self, weak feed] (a, sourceView, completionHandler) in
                         
@@ -164,9 +193,40 @@ enum SidebarItem: Hashable {
                         
                     }
                     
-                    share.backgroundColor = UIColor(red: 126/255, green: 211/255, blue: 33/255, alpha: 1)
+                    share.backgroundColor = .systemGreen
                     
                     swipeConfig = UISwipeActionsConfiguration(actions: [delete, move, share])
+                    
+                }
+                else if case SidebarItem.folder(let folder) = item {
+                 
+                    let delete = UIContextualAction(style: .destructive, title: "Delete") { [weak self, weak folder] (a, sourceView, completionHandler) in
+                        
+                        guard let sself = self, let sfolder = folder else {
+                            return
+                        }
+                        
+                        sself.delete(folder: sfolder, indexPath: indexPath, completion: completionHandler)
+                        
+                        completionHandler(true)
+                        
+                    }
+                    
+                    let rename = UIContextualAction(style: .normal, title: "Rename") { [weak self, weak folder] (a, sourceView, completionHandler) in
+
+                        guard let sself = self, let sfolder = folder else {
+                            return
+                        }
+
+                        sself.rename(folder: sfolder, indexPath: indexPath)
+                        
+                        completionHandler(true)
+
+                    }
+
+                    rename.backgroundColor = .systemBlue
+                    
+                    swipeConfig = UISwipeActionsConfiguration(actions: [delete, rename])
                     
                 }
                 
@@ -210,6 +270,18 @@ enum SidebarItem: Hashable {
         
     }()
     
+    fileprivate var initialSyncCompleted = false
+    
+    public var requiresUpdatingUnreadsSharedData = false {
+        
+        didSet {
+            if requiresUpdatingUnreadsSharedData == true {
+                coalescingQueue.add(self, #selector(SidebarVC.updateSharedUnreadsData))
+            }
+        }
+        
+    }
+    
     init() {
         super.init(collectionViewLayout: UICollectionViewLayout())
     }
@@ -218,11 +290,13 @@ enum SidebarItem: Hashable {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         
         super.viewDidLoad()
         
         definesPresentationContext = true
+        
+        additionalSafeAreaInsets = UIEdgeInsets(top: 12, left: 0, bottom: 0, right: 0)
         
         collectionView.setCollectionViewLayout(layout, animated: false)
         
@@ -246,11 +320,14 @@ enum SidebarItem: Hashable {
         
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         
         super.viewWillAppear(animated)
         
         #if !targetEnvironment(macCatalyst)
+        
+//        navigationController?.navigationBar.prefersLargeTitles = true
+//        navigationItem.largeTitleDisplayMode = .always;
         
         if SharedPrefs.useToolbar == true {
 
@@ -265,23 +342,9 @@ enum SidebarItem: Hashable {
         
         #endif
         
-        // @TODO: Additional Feeds to sync using coalesing manager
-        
     }
     
-    fileprivate var initialSyncCompleted = false
-    
-    public var requiresUpdatingUnreadsSharedData = false {
-        
-        didSet {
-            if requiresUpdatingUnreadsSharedData == true {
-                updateSharedUnreadsData()
-            }
-        }
-        
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
+    public override func viewDidAppear(_ animated: Bool) {
         
         super.viewDidDisappear(true)
         
@@ -290,8 +353,6 @@ enum SidebarItem: Hashable {
             sync()
             
         }
-        
-        // @TODO: Should Request Review
         
     }
     
@@ -345,7 +406,7 @@ enum SidebarItem: Hashable {
             
             if case .custom(_) = item {
                 
-                cell.coordinator = self?.mainCoordinator
+                cell.coordinator = self?.coordinator
                 cell.configure(item: item, indexPath: indexPath)
                 
             }
@@ -378,19 +439,84 @@ enum SidebarItem: Hashable {
     
     func setupNotifications() {
         
-//        DBManager.shared.feeds.publisher.sink { [weak self] (_) in
-//
-//            self?.setupData()
-//
-//        }.store(in: &cancellables)
+        if let mc = coordinator {
+            
+            mc.$totalUnread
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] _ in
+                    
+                    guard let sself = self else { return }
+                    
+                    if sself.requiresUpdatingUnreadsSharedData == false {
+                        sself.requiresUpdatingUnreadsSharedData = true
+                    }
+                    
+                    if Defaults[.badgeAppIcon] == true {
+                        UIApplication.shared.applicationIconBadgeNumber = Int(mc.totalUnread)
+                    }
+                    else {
+                        UIApplication.shared.applicationIconBadgeNumber = 0
+                    }
+                    
+                }
+                .store(in: &cancellables)
+            
+            mc.publisher(for: \.shouldRequestReview)
+                .debounce(for: 0.5, scheduler: DispatchQueue.main)
+                .sink { _ in
+                    
+                    guard mc.shouldRequestReview == true else { return }
+                    
+                    if let scene = mc.sidebarVC.view.window?.windowScene {
+                        
+                        SKStoreReviewController.requestReview(in: scene)
+                        
+                        let fullVersion = FeedsManager.shared.fullVersion
+                        
+                        Keychain.add("requestedReview-\(fullVersion)", boolean: true)
+                        
+                    }                    
+                    
+                    mc.shouldRequestReview = false
+                    
+                }
+                .store(in: &cancellables)
+            
+        }
         
-        DBManager.shared.folders.publisher
+        DBManager.shared.publisher(for: \.lastUpdated)
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] (_) in
-            
-            self?.setupData()
-            
-        }.store(in: &cancellables)
+            .sink { [weak self] date in
+                
+                guard let sself = self else { return }
+                
+                CoalescingQueue.standard.add(sself, #selector(SidebarVC.updateLastUpdatedText))
+                
+            }
+            .store(in: &cancellables)
+        
+        NotificationCenter.default.publisher(for: .DBManagerDidUpdate)
+            .debounce(for: 0.1, scheduler: DispatchQueue.main)
+            .sink { [weak self] note in
+                
+                guard let sself = self,
+                      let notifications = note.userInfo?[notificationsKey] as? [Notification],
+                      notifications.count > 0 else {
+                    return
+                }
+                
+                // check if any of the notifications has a change for
+                // the unreads view. If we do, update the counters.
+                let hasChanges: Bool = DBManager.shared.uiConnection.hasMetadataChange(forCollection: CollectionNames.articles.rawValue, in: notifications)
+                
+                guard hasChanges == true else { return }
+                
+                DispatchQueue.main.async {
+                    sself.coalescingQueue.add(sself, #selector(SidebarVC.updateCounters))
+                }
+                
+            }
+            .store(in: &cancellables)
         
         SharedPrefs.publisher(for: \.hideBookmarks)
             .receive(on: DispatchQueue.main)
@@ -417,7 +543,7 @@ enum SidebarItem: Hashable {
             
             self?.navigationItem.rightBarButtonItem?.isEnabled = false
             
-            self?.mainCoordinator?.showSubscriptionsInterface()
+            self?.coordinator?.showSubscriptionsInterface()
             
         }.store(in: &cancellables)
         
@@ -474,13 +600,37 @@ enum SidebarItem: Hashable {
         
         NotificationCenter.default.addObserver(self, selector: #selector(setupData), name: NSNotification.Name.ShowBookmarksTabPreferenceChanged, object: nil)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(setupData), name: NSNotification.Name.ShowUnreadCountsPreferenceChanged, object: nil)
+        Defaults.publisher(.showUnreadCounts)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                guard let sself = self else { return }
+                sself.coalescingQueue.add(sself, #selector(sself.setupData))
+            }
+            .store(in: &cancellables)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(badgePreferenceChanged), name: NSNotification.Name.BadgeAppIconPreferenceUpdated, object: nil)
+        Defaults.publisher(.badgeAppIcon)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] change in
+                
+                if change.newValue == true {
+                    UIApplication.shared.applicationIconBadgeNumber = Int(self?.coordinator?.totalUnread ?? 0)
+                }
+                else {
+                    UIApplication.shared.applicationIconBadgeNumber = 0
+                }
+                
+            }
+            .store(in: &cancellables)
         
         #if targetEnvironment(macCatalyst)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(didChangeTimerPreference), name: NSNotification.Name.MacRefreshFeedsIntervalUpdated, object: nil)
+        Defaults.publisher(.refreshFeedsInterval)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                guard let sself = self else { return }
+                CoalescingQueue.standard.add(sself, #selector(sself.didChangeTimerPreference))
+            }
+            .store(in: &cancellables)
         
         #endif
         
@@ -495,72 +645,82 @@ enum SidebarItem: Hashable {
         
         var sectionSnapshot: NSDiffableDataSourceSectionSnapshot<SidebarItem>? = nil
 
-        let s = self.DS.snapshot()
+        let s: NSDiffableDataSourceSnapshot = self.DS.snapshot()
 
-        if s.numberOfSections > 1 {
+        DispatchQueue.global().async { [weak self] in
+            
+            guard let sself = self else { return }
+            
+            if s.numberOfSections > 1 {
 
-            let sectionIdentifier = s.sectionIdentifiers[1]
+                let sectionIdentifier = s.sectionIdentifiers[1]
 
-            sectionSnapshot = DS.snapshot(for: sectionIdentifier)
+                sectionSnapshot = sself.DS.snapshot(for: sectionIdentifier)
 
-        }
+            }
 
-        var customSnapshot = NSDiffableDataSourceSectionSnapshot<SidebarItem>()
+            var customSnapshot: NSDiffableDataSourceSectionSnapshot<SidebarItem> = NSDiffableDataSourceSectionSnapshot<SidebarItem>()
 
-        var customFeeds = [
-            CustomFeed(title: "Unread", image: "largecircle.fill.circle", color: .systemBlue, type: .unread),
-            CustomFeed(title: "Today", image: "calendar", color: .systemRed, type: .today)
-        ]
+            var customFeeds: [CustomFeed] = [
+                CustomFeed(title: "Unread", image: "largecircle.fill.circle", color: .systemBlue, type: .unread),
+                CustomFeed(title: "Today", image: "calendar", color: .systemRed, type: .today)
+            ]
 
-        if SharedPrefs.hideBookmarks == false {
-            customFeeds.append(CustomFeed(title: "Bookmarks", image: "bookmark.fill", color: .systemOrange, type: .bookmarks))
-        }
+            if SharedPrefs.hideBookmarks == false {
+                customFeeds.append(CustomFeed(title: "Bookmarks", image: "bookmark.fill", color: .systemOrange, type: .bookmarks))
+            }
 
-        customSnapshot.append(customFeeds.map { SidebarItem.custom($0) })
+            customSnapshot.append(customFeeds.map { SidebarItem.custom($0) })
 
-        DS.apply(customSnapshot, to: SidebarSection.custom.rawValue)
+            runOnMainQueueWithoutDeadlocking {
+                sself.DS.apply(customSnapshot, to: SidebarSection.custom.rawValue)
+            }
 
-        var foldersSnapshot = NSDiffableDataSourceSectionSnapshot<SidebarItem>()
+            var foldersSnapshot = NSDiffableDataSourceSectionSnapshot<SidebarItem>()
 
-        if DBManager.shared.feeds.count > 0 {
+            if DBManager.shared.feeds.count > 0 {
 
-            if DBManager.shared.folders.count > 0 {
+                if DBManager.shared.folders.count > 0 {
+                    
+                    let folders: [Folder] = Array(Set(DBManager.shared.folders))
 
-                let uniqueFolders = DBManager.shared.folders
-                    .sorted(by: { (lhs, rhs) -> Bool in
-                        return lhs.title.localizedCompare(rhs.title) == .orderedAscending
-                    })
-                    .map { SidebarItem.folder($0) }
+                    let uniqueFolders: [SidebarItem] = folders
+                        .sorted(by: { (lhs, rhs) -> Bool in
+                            return lhs.title.localizedCompare(rhs.title) == .orderedAscending
+                        })
+                        .map { SidebarItem.folder($0) }
 
-                foldersSnapshot.append(uniqueFolders)
+                    foldersSnapshot.append(uniqueFolders)
 
-                for folderItem in uniqueFolders {
+                    for folderItem in uniqueFolders {
 
-                    if case .folder(let folder) = folderItem {
+                        if case .folder(let folder) = folderItem {
 
-                        let feeds = folder.feeds.map { $0 }
+                            let feeds: [Feed] = Array(Set(folder.feeds))
 
-                        if feeds.count > 0 {
+                            if feeds.count > 0 {
 
-                            let uniqueFeeds = Array(Set(feeds))
-                                .sorted(by: { (lhs, rhs) -> Bool in
-                                    
-                                    return lhs.displayTitle.localizedCompare(rhs.displayTitle) == .orderedAscending
-                                    
-                                })
-                                .map { SidebarItem.feed($0) }
+                                let uniqueFeeds: [SidebarItem] = feeds
+                                    .sorted(by: { (lhs, rhs) -> Bool in
+                                        
+                                        return lhs.displayTitle.localizedCompare(rhs.displayTitle) == .orderedAscending
+                                        
+                                    })
+                                    .map { SidebarItem.feed($0) }
 
-                            foldersSnapshot.append(uniqueFeeds, to: folderItem)
+                                foldersSnapshot.append(uniqueFeeds, to: folderItem)
 
-                        }
+                            }
 
-                        // if the folder was originally in the expanded state, expand it from here too so the visual state is maintained.
-                        if let sc = sectionSnapshot,
-                           sc.items.count > 0,
-                           sc.contains(folderItem) == true,
-                           sc.isExpanded(folderItem) {
+                            // if the folder was originally in the expanded state, expand it from here too so the visual state is maintained.
+                            if let sc = sectionSnapshot,
+                               sc.items.count > 0,
+                               sc.contains(folderItem) == true,
+                               sc.isExpanded(folderItem) {
 
-                            foldersSnapshot.expand([folderItem])
+                                foldersSnapshot.expand([folderItem])
+
+                            }
 
                         }
 
@@ -568,51 +728,60 @@ enum SidebarItem: Hashable {
 
                 }
 
-            }
-
-            DS.apply(foldersSnapshot, to: SidebarSection.folders.rawValue)
-            
-            let feedsWithoutFolders = DBManager.shared.feeds.filter { $0.folderID == nil || $0.folderID == 0 }
-            
-            var feedsSnapshot = NSDiffableDataSourceSectionSnapshot<SidebarItem>()
-            
-            if feedsWithoutFolders.count > 0 {
-                
-                let alphaSorted = Array(Set(feedsWithoutFolders)).sorted { (lhs, rhs) -> Bool in
-                    return lhs.displayTitle.localizedCompare(rhs.displayTitle) == .orderedAscending
+                do {
+                    runOnMainQueueWithoutDeadlocking {
+                        try? sself.DS.apply(foldersSnapshot, to: SidebarSection.folders.rawValue)
+                    }
                 }
+                catch {
+                    print(error)
+                }
+                
+                let feedsWithoutFolders: [Feed] = DBManager.shared.feeds.filter { $0.folderID == nil || $0.folderID == 0 }
+                
+                var feedsSnapshot: NSDiffableDataSourceSectionSnapshot<SidebarItem> = NSDiffableDataSourceSectionSnapshot<SidebarItem>()
+                
+                if feedsWithoutFolders.count > 0 {
                     
-                feedsSnapshot.append(alphaSorted.map { SidebarItem.feed($0) })
+                    let alphaSorted = Array(Set(feedsWithoutFolders)).sorted { (lhs, rhs) -> Bool in
+                        return lhs.displayTitle.localizedCompare(rhs.displayTitle) == .orderedAscending
+                    }
+                        
+                    feedsSnapshot.append(alphaSorted.map { SidebarItem.feed($0) })
+                    
+                }
+                
+                runOnMainQueueWithoutDeadlocking {
+                    sself.DS.apply(feedsSnapshot, to: SidebarSection.feeds.rawValue)
+                }
                 
             }
             
-            DS.apply(feedsSnapshot, to: SidebarSection.feeds.rawValue)
-            
-        }
-        
-        if needsUpdateOfStructs == true && initialSyncCompleted == true {
-            needsUpdateOfStructs = false
-        }
-        
-        #if targetEnvironment(macCatalyst)
-        
-        if initialSnapshotSetup == false {
-            
-            if let item = snapshot.items.first {
-                // select Unread on launch
-                selected = DS.indexPath(for: item)
+            if sself.needsUpdateOfStructs == true && sself.initialSyncCompleted == true {
+                sself.needsUpdateOfStructs = false
             }
             
-            initialSnapshotSetup = true
-        }
-        
-        #endif
-        
-        if let s = selected {
+            #if targetEnvironment(macCatalyst)
             
-            DispatchQueue.main.async { [weak self] in
+            if sself.initialSnapshotSetup == false {
                 
-                self?.collectionView.selectItem(at: s, animated: false, scrollPosition: .init())
+                if let item = customSnapshot.items.first {
+                    // select Unread on launch
+                    selected = sself.DS.indexPath(for: item)
+                }
+                
+                sself.initialSnapshotSetup = true
+            }
+            
+            #endif
+            
+            if let s = selected {
+                
+                runOnMainQueueWithoutDeadlocking {
+                    
+                    sself.collectionView.selectItem(at: s, animated: false, scrollPosition: .init())
+                    
+                }
                 
             }
             
@@ -622,10 +791,10 @@ enum SidebarItem: Hashable {
     
     lazy var leftBarButtonItem: UIBarButtonItem = {
         
-        let coordinator = self.mainCoordinator!
+        let coordinator = self.coordinator!
        
         var image = UIImage(systemName: "gear")
-        var b = UIBarButtonItem(image: image, style: .plain, target: coordinator, action: #selector(MainCoordinator.showSettingsVC))
+        var b = UIBarButtonItem(image: image, style: .plain, target: coordinator, action: #selector(coordinator.showSettingsVC))
         
         return b
         
@@ -636,7 +805,7 @@ enum SidebarItem: Hashable {
         let newFolderImage = UIImage(systemName: "folder.badge.plus"),
             newFeedImage = UIImage(systemName: "plus")
         
-        let coordinator = self.mainCoordinator!
+        let coordinator = self.coordinator!
         
         let addItem = UIAction(title: "New Feed", image: newFeedImage, identifier: nil, discoverabilityTitle: nil, attributes: [], state: .off) { (a) in
             
@@ -710,7 +879,7 @@ enum SidebarItem: Hashable {
         
     }()
     
-    override var toolbarItems: [UIBarButtonItem]? {
+    public override var toolbarItems: [UIBarButtonItem]? {
         
         get {
             return [UIBarButtonItem(customView: progressStackView)]
@@ -748,8 +917,14 @@ enum SidebarItem: Hashable {
         
     }
     
+    func updateLastUpdatedText() {
+        
+        refreshControl?.attributedTitle = lastUpdateAttributedString()
+        
+    }
+    
     // MARK: - Actions
-    override var canBecomeFirstResponder: Bool {
+    public override var canBecomeFirstResponder: Bool {
         return true
     }
     
@@ -804,43 +979,73 @@ enum SidebarItem: Hashable {
                 return
             }
             
-            FeedsManager.shared.delete(feed: feed.feedID) { (result) in
+            if feed.folderID != nil,
+               let folder = DBManager.shared.folder(for: feed.folderID!) {
                 
-                switch result {
-                case .failure(let error):
-                    completion?(false)
-                    AlertManager.showGenericAlert(withTitle: "Error Deleting Feed", message: error.localizedDescription)
+                FeedsManager.shared.update(folder: folder.folderID, title: nil, add: nil, delete: [feed.feedID]) { [weak self] result in
                     
-                case .success(_):
-                    completion?(true)
-                    
-                    DBManager.shared.delete(feed: feed)
-                    
-                    DispatchQueue.main.async {
-                        sself.setupData()
+                    if case .success(let res) = result,
+                       res == true {
+                        folder.feedIDs = folder.feedIDs.filter { $0 != feed.feedID }
                     }
-                
+                    
+                    self?._deleteFeed(feed: feed, completion: completion)
+                    
                 }
                 
             }
+            else {
+                sself._deleteFeed(feed: feed, completion: completion)
+            }
+            
             
         }, cancel: "Cancel", cancelHandler: nil, from: self)
         
     }
     
+    func _deleteFeed(feed: Feed, completion: ((_ completed: Bool) -> Void)?) {
+        
+        FeedsManager.shared.delete(feed: feed.feedID) { (result) in
+            
+            switch result {
+            case .failure(let error):
+                completion?(false)
+                AlertManager.showGenericAlert(withTitle: "Error Deleting Feed", message: error.localizedDescription)
+                
+            case .success(_):
+                completion?(true)
+                
+                DBManager.shared.delete(feed: feed)
+            
+            }
+            
+        }
+        
+    }
+    
     @objc func showInfo(feed: Feed, indexPath: IndexPath) {
         
-        mainCoordinator?.showFeedInfo(feed, from: self)
+        coordinator?.showFeedInfo(feed: feed, from: self, completion: nil)
+        
+    }
+    
+    @objc func move(feed: Feed, indexPath: IndexPath, completion: ((_ completed: Bool) -> Void)?) {
+        
+        coordinator?.showFeedInfo(feed: feed, from: self, completion: { [weak self] in
+            
+            self?.coordinator?.showFolderInfo()
+            
+        })
         
     }
     
     @objc func rename(folder: Folder, indexPath: IndexPath) {
         
-        mainCoordinator?.showRenameFolderVC(folder)
+        coordinator?.showRenameFolderVC(folder)
         
     }
     
-    @objc func delete(folder: Folder, indexPath: IndexPath) {
+    @objc func delete(folder: Folder, indexPath: IndexPath, completion:((_ completed: Bool) -> Void)?) {
         
         AlertManager.showDestructiveAlert(title: "Delete Folder", message: "Are you sure you want to delete this folder?", confirm: "Delete", confirmHandler: { [weak self] (_) in
             
@@ -854,12 +1059,16 @@ enum SidebarItem: Hashable {
                 case .failure(let error):
                     AlertManager.showGenericAlert(withTitle: "Error Deleting Feed", message: error.localizedDescription)
                     
+                    completion?(false)
+                    
                 case .success(_):
                     DBManager.shared.delete(folder: folder)
                     
                     DispatchQueue.main.async {
                         sself.setupData()
                     }
+                    
+                    completion?(true)
                 
                 }
                 
@@ -926,7 +1135,31 @@ enum SidebarItem: Hashable {
         }
         
         if initialSyncCompleted == false {
+            updateCounters()
             initialSyncCompleted = true
+            
+            NotificationCenter.default.publisher(for: .feedsUpdated)
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] (_) in
+                
+                    guard let sself = self else { return }
+                    
+                    sself.coalescingQueue.add(sself, #selector(SidebarVC.setupData))
+                
+            }.store(in: &cancellables)
+            
+            NotificationCenter.default.publisher(for: .foldersUpdated)
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] (_) in
+                
+                    guard let sself = self else { return }
+                    
+                    sself.coalescingQueue.add(sself, #selector(SidebarVC.setupData))
+                
+            }.store(in: &cancellables)
+            
+            
+            
         }
         
         if (needsUpdateOfStructs == true)
@@ -999,7 +1232,7 @@ enum SidebarItem: Hashable {
         }
         
         if refreshControl?.isRefreshing == false {
-            DispatchQueue.main.async { [weak self] in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
                 self?.refreshControl?.beginRefreshing()
             }
         }
@@ -1023,9 +1256,15 @@ enum SidebarItem: Hashable {
             
             if progress == 1 {
                 
+                if sself.backgroundFetchHandler != nil {
+                    sself.backgroundFetchHandler?(.newData)
+                }
+                
                 if sself.refreshControl?.isRefreshing == true {
                     DispatchQueue.main.async {
+                        sself.additionalSafeAreaInsets = .zero
                         sself.refreshControl?.endRefreshing()
+                        DBManager.shared.lastUpdated = Date()
                     }
                 }
                 
@@ -1035,16 +1274,12 @@ enum SidebarItem: Hashable {
                     
                 }
                 
-                // @TODO: Update Bookmarks from server
+                if DBManager.shared.user != nil {
+                    DBManager.shared.bookmarksCoordinator = BookmarksCoordinator(user: DBManager.shared.user!)
+                    DBManager.shared.bookmarksCoordinator!.start()
+                }
                 
-                // @TODO: BG task to cleanup DB
-                
-                sself.coalescingQueue.add(sself, #selector(SidebarVC.updateCounters))
-                
-//                sself.updateCounters()
-                sself.updateSharedUnreadsData()
-                
-                if let mc = sself.mainCoordinator,
+                if let mc = sself.coordinator,
                    let f = mc.feedVC,
                    f is UnreadVC || f is TodayVC {
                     
@@ -1060,6 +1295,7 @@ enum SidebarItem: Hashable {
                 sself.navigationController?.setToolbarHidden(false, animated: animated)
                 sself.progressLabel?.text = "Syncing..."
                 sself.progressLabel?.sizeToFit()
+                sself.additionalSafeAreaInsets = UIEdgeInsets(top: 0, left: 0, bottom: sself.navigationController?.toolbar?.bounds.size.height ?? 44, right: 0)
             }
             else if progress >= 0.99 {
              
@@ -1092,30 +1328,30 @@ enum SidebarItem: Hashable {
         
     }
     
-    fileprivate var unreadWidgetsTimer: Timer?
+//    fileprivate var unreadWidgetsTimer: Timer?
     
     @objc func updateSharedUnreadsData() {
         
-        guard Thread.isMainThread == true else {
+//        guard Thread.isMainThread == true else {
+//
+//            performSelector(onMainThread: #selector(updateSharedUnreadsData), with: nil, waitUntilDone: false)
+//
+//            return
+//        }
+//
+//        var interval: Double = 0
+//
+//        if unreadWidgetsTimer != nil {
+//
+//            interval = 2
+//
+//            unreadWidgetsTimer?.invalidate()
+//            unreadWidgetsTimer = nil
+//        }
+//
+//        unreadWidgetsTimer = Timer(timeInterval: interval, repeats: false, block: { (_) in
             
-            performSelector(onMainThread: #selector(updateSharedUnreadsData), with: nil, waitUntilDone: false)
-            
-            return
-        }
-        
-        var interval: Double = 0
-        
-        if unreadWidgetsTimer != nil {
-            
-            interval = 2
-            
-            unreadWidgetsTimer?.invalidate()
-            unreadWidgetsTimer = nil
-        }
-        
-        unreadWidgetsTimer = Timer(timeInterval: interval, repeats: false, block: { (_) in
-            
-            DBManager.shared.countsConnection.asyncRead { [weak self] (t) in
+            DBManager.shared.uiConnection.asyncRead { [weak self] (t) in
                 
                 guard let sself = self else { return }
                 
@@ -1139,59 +1375,100 @@ enum SidebarItem: Hashable {
 
                 DBManager.shared.writeQueue.async {
                     
-                    var usableItems: [Article] = []
+                    let usableItems: [Article] = items
                     
-                    let coverItems = items.filter { $0.coverImage != nil }
+//                    let coverItems = items.filter { $0.coverImage != nil }
+//
+//                    if coverItems.count >= 4 {
+//                        usableItems = coverItems
+//                    }
+//                    else {
+//
+//                        /*
+//                         * A: Say we have 1 item with a cover. So we take the other 3 non-cover items
+//                         *    and concat it here.
+//                         *
+//                         * B: Say we have 3 items with covers. We take the first non-cover item
+//                         *    and use it here.
+//                         */
+//
+//                        let coverItemsCount = coverItems.count
+//                        var additionalRequired = max(0, 4 - coverItemsCount)
+//
+//                        let nonCoverItems = items.filter { $0.coverImage == nil }
+//
+//                        if nonCoverItems.count > 0 {
+//
+//                            additionalRequired = min(additionalRequired, nonCoverItems.count)
+//
+//                            usableItems = coverItems
+//
+//                            nonCoverItems.suffix(additionalRequired).forEach { usableItems.append($0) }
+//
+//                        }
+//
+//                    }
                     
-                    if coverItems.count >= 4 {
-                        usableItems = coverItems
-                    }
-                    else {
+                    // Actually stores WidgetArticle before writing to disk.
+                    var list: [Article] = []
+                    
+                    if usableItems.count > 0 {
                         
-                        /*
-                         * A: Say we have 1 item with a cover. So we take the other 3 non-cover items
-                         *    and concat it here.
-                         *
-                         * B: Say we have 3 items with covers. We take the first non-cover item
-                         *    and use it here.
-                         */
+                        let upperBound = max(0, min(4, usableItems.count))
                         
-                        let coverItemsCount = coverItems.count
-                        var additionalRequired = max(0, 4 - coverItemsCount)
+                        list = Array(usableItems[0..<upperBound])
                         
-                        let nonCoverItems = items.filter { $0.coverImage == nil }
+                        let widgetList: [WidgetArticle] = list.map { WidgetArticle.init(copyFrom: $0) }
                         
-                        if nonCoverItems.count > 0 {
+                        // get the feeds for these articles
+                        for article in widgetList {
                             
-                            additionalRequired = min(additionalRequired, nonCoverItems.count)
+                            if let feed = DBManager.shared.feed(for: article.feedID) {
+                                article.blog = feed.displayTitle
+                                article.favicon = feed.faviconProxyURI(size: 32)
+                            }
                             
-                            usableItems = coverItems
-                            
-                            nonCoverItems.suffix(additionalRequired).forEach { usableItems.append($0) }
+                            if article.title == nil || (article.title != nil && article.title!.isEmpty) {
+                                // micro.blog post.
+                                
+                                if article.summary == nil || article.summary?.isEmpty == true {
+                                    
+                                    if let content = t.object(forKey: article.identifier, inCollection: CollectionNames.articlesContent.rawValue) as? [Content] {
+                                        
+                                        article.content = content
+                                        article.summary = article.textFromContent
+                                        
+                                        article.content = []
+                                        
+                                    }
+                                    
+                                }
+                                
+                            }
                             
                         }
                         
-                    }
-                    
-                    let list = usableItems.sorted { (a, b) -> Bool in
-                        return a.timestamp > b.timestamp
+                        list = widgetList
+                        
                     }
                     
                     let encoder = JSONEncoder()
                     if let data = try? encoder.encode(list) {
                         
-                        sself.mainCoordinator?.write(toSharedFile: "articles.json", data: data)
+                        sself.coordinator?.writeTo(sharedFile: "articles.json", data: data)
                         WidgetManager.reloadTimeline(name: "UnreadsWidget")
                         
                     }
+                    
+                    sself.requiresUpdatingUnreadsSharedData = false
                     
                 }
                 
             }
             
-        })
-        
-        RunLoop.main.add(unreadWidgetsTimer!, forMode: .common)
+//        })
+//
+//        RunLoop.main.add(unreadWidgetsTimer!, forMode: .common)
         
     }
     
@@ -1218,11 +1495,17 @@ enum SidebarItem: Hashable {
             return
         }
         
-        guard SharedPrefs.refreshFeedsInterval != "-1" else {
+        guard var interval = RefreshIntervalKeys(rawValue: Defaults[.refreshFeedsInterval])?.interval,
+              interval > 0 else {
             return
         }
         
-        let interval = (SharedPrefs.refreshFeedsInterval as NSString).doubleValue
+        #if DEBUG
+        // half hour = 2.5min, full hour = 5min
+        interval *= 5
+        #else
+        interval *= 60
+        #endif
         
         let timer = Timer(timeInterval: interval, repeats: false) { [weak self] (t) in
             
@@ -1244,25 +1527,12 @@ enum SidebarItem: Hashable {
     
     #endif
     
-    @objc func badgePreferenceChanged () {
-        
-        if SharedPrefs.badgeAppIcon == false {
-            UIApplication.shared.applicationIconBadgeNumber = 0
-        }
-        else {
-            // @TODO: Use actual unread value
-            UIApplication.shared.applicationIconBadgeNumber = 69
-            
-        }
-        
-    }
-    
 }
 
 // MARK: - UICollectionViewDelegate
 extension SidebarVC {
     
-    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    public override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         guard let item = DS.itemIdentifier(for: indexPath) else {
             collectionView.deselectItem(at: indexPath, animated: false)
@@ -1271,18 +1541,18 @@ extension SidebarVC {
         
         switch item {
         case .custom(let c):
-            mainCoordinator?.showCustomVC(c)
+            coordinator?.showCustomVC(c)
         case .feed(let f):
-            mainCoordinator?.showFeedVC(f)
+            coordinator?.showFeedVC(f)
         case .folder(let f):
-            mainCoordinator?.showFolderFeed(f)
+            coordinator?.showFolderVC(f)
         }
         
         // @TODO: Restoration activity
         
     }
     
-    override func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+    public override func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         
         guard let object = DS.itemIdentifier(for: indexPath) else {
             return nil
@@ -1372,7 +1642,7 @@ extension SidebarVC {
                 
                 let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), identifier: nil) { (_) in
                     
-                    sself.delete(folder: f, indexPath: indexPath)
+                    sself.delete(folder: f, indexPath: indexPath, completion: nil)
                     
                 }
                 
@@ -1392,104 +1662,101 @@ extension SidebarVC {
 
 extension SidebarVC {
     
-    // @TODO: Move to Swift Coordinator
     @objc func updateCounters() {
         
-        DBManager.shared.countsConnection.asyncRead { [weak self] (t) in
+        print("Updating counters")
+        
+        DBManager.shared.writeQueue.async { [weak self] in 
             
-            guard let txn = t.ext(DBManagerViews.unreadsView.rawValue) as? YapDatabaseFilteredViewTransaction else {
-                return
-            }
-            
-            let group = GroupNames.articles.rawValue
-            
-            let total = Int(txn.numberOfItems(inGroup: group))
-            
-            guard total > 0 else {
-                // set all feeds to 0
-                return
-            }
-            
-            let folders = DBManager.shared.folders
-            
-            for folder in folders {
-                folder.updatingCounters = true
-            }
-            
-            // feedID : Unread Count
-            var feedsMapping: [UInt: UInt] = [:]
-            var totalToday: UInt = 0
-            
-            let calendar = NSCalendar.current
-            
-            txn.enumerateKeysAndMetadata(inGroup: group, with: [], range: NSMakeRange(0, total)) { (c, k) -> Bool in
-                return true
-            } using: { (c, k, metadata, index, stop) in
+            DBManager.shared.countsConnection.asyncRead { (t) in
                 
-                guard let metadata = metadata as? ArticleMeta,
-                      metadata.read == false else {
+                guard let sself = self,
+                      let txn = t.ext(DBManagerViews.unreadsView.rawValue) as? YapDatabaseFilteredViewTransaction,
+                      let btxn = t.ext(DBManagerViews.bookmarksView.rawValue) as? YapDatabaseFilteredViewTransaction else {
                     return
                 }
                 
-                let feedID = metadata.feedID
+                let group = GroupNames.articles.rawValue
                 
-                if feedsMapping[feedID] == nil {
-                    feedsMapping[feedID] = 0
+                self?.coordinator?.totalBookmarks = btxn.numberOfItems(inGroup: group)
+                
+                let total = Int(txn.numberOfItems(inGroup: group))
+                
+                guard total > 0 else {
+                    
+                    DBManager.shared.feeds.forEach { $0.unread = 0 }
+                    
+                    sself.coordinator?.totalUnread = 0
+                    sself.coordinator?.totalToday = 0
+                    
+                    return
                 }
                 
-                if calendar.isDateInToday(Date(timeIntervalSince1970: metadata.timestamp)) {
-                    totalToday += 1
+                let folders = DBManager.shared.folders
+                
+                for folder in folders {
+                    folder.updatingCounters = true
                 }
                 
-                feedsMapping[feedID]! += 1
+                // feedID : Unread Count
+                var feedsMapping: [UInt: UInt] = [:]
                 
-            }
-            
-            let unread = feedsMapping.values.reduce(0) { (result, c) -> UInt in
-                return result + c
-            }
-            
-            self?.mainCoordinator?.totalUnread = unread
-            self?.mainCoordinator?.totalToday = totalToday
-            
-            print(feedsMapping)
-            
-            for feedID in feedsMapping.keys {
+                // Ensure 0 reads are also updated.
+                DBManager.shared.feeds.forEach { feedsMapping[$0.feedID] = 0 }
                 
-                guard let feed = DBManager.shared.feedForID(feedID) else {
-                    continue
+                var totalToday: UInt = 0
+                
+                let calendar = NSCalendar.current
+                
+                txn.enumerateKeysAndMetadata(inGroup: group, with: [], range: NSMakeRange(0, total)) { (c, k) -> Bool in
+                    return true
+                } using: { (c, k, metadata, index, stop) in
+                    
+                    guard let metadata = metadata as? ArticleMeta,
+                          metadata.read == false else {
+                        return
+                    }
+                    
+                    let feedID = metadata.feedID
+                    
+                    if feedsMapping[feedID] == nil {
+                        feedsMapping[feedID] = 0
+                    }
+                    
+                    if calendar.isDateInToday(Date(timeIntervalSince1970: metadata.timestamp)) {
+                        totalToday += 1
+                    }
+                    
+                    feedsMapping[feedID]! += 1
+                    
                 }
                 
-                feed.unread = feedsMapping[feedID]
+                let unread = feedsMapping.values.reduce(0) { (result, c) -> UInt in
+                    return result + c
+                }
                 
-            }
-            
-            for folder in folders {
-                folder.updatingCounters = false
+                sself.coordinator?.totalUnread = unread
+                sself.coordinator?.totalToday = totalToday
+                
+                print(feedsMapping)
+                
+                for feedID in feedsMapping.keys {
+                    
+                    guard let feed = DBManager.shared.feedForID(feedID) else {
+                        continue
+                    }
+                    
+                    feed.unread = feedsMapping[feedID] ?? 0
+                    
+                }
+                
+                for folder in folders {
+                    folder.updatingCounters = false
+                }
+                
             }
             
         }
-        
-    }
-    
-}
-
-// MARK: - Move Feed
-extension SidebarVC: MoveFoldersDelegate {
-    
-    func feed(_ feed: Feed, didMove fromFolder: Folder?, toFolder: Folder?) {
-        
-        guard fromFolder != nil && toFolder != nil else {
-            return
-        }
-        
-        setupData()
-        
-    }
-    
-    @objc func move(feed: Feed, indexPath: IndexPath, completion: ((_ completed: Bool) -> Void)?) {
-        
-        // @TODO
         
     }
     
@@ -1523,38 +1790,24 @@ extension SidebarVC: UITextFieldDelegate {
             
             let name = (stf.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
             
-            // @TODO: Perform FeedsManager op first
-            DBManager.shared.rename(feed: f, customTitle: name) { (result) in
+            sself.coordinator?.rename(feed: f, title: name, completion: { status in
                 
-                switch result {
-                case .failure(let err):
-                    AlertManager.showGenericAlert(withTitle: "Error Renaming", message: err.localizedDescription)
+                if status == true {
                     
-                    
-                case .success(let result):
-                    
-                    if result == true {
+                    if let cell = sself.collectionView.cellForItem(at: indexPath) as? UICollectionViewListCell,
+                       var config = cell.contentConfiguration as? UIListContentConfiguration {
                         
-                        if let cell = sself.collectionView.cellForItem(at: indexPath) as? UICollectionViewListCell,
-                           var config = cell.contentConfiguration as? UIListContentConfiguration {
-                            
-                            config.text = f.displayTitle
-                            
-                            cell.contentConfiguration = config
-                            
-                        }
+                        config.text = f.displayTitle
+                        
+                        cell.contentConfiguration = config
                         
                     }
-                    else {
-                        AlertManager.showGenericAlert()
-                    }
-                    
-                    sself.clearAlertProperties()
                     
                 }
+                                
+                sself.clearAlertProperties()
                 
-            }
-            
+            })
             
         }
         
@@ -1598,7 +1851,7 @@ extension SidebarVC: UITextFieldDelegate {
         
     }
     
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    public func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         
         let newText = ((textField.text ?? "") as NSString).replacingCharacters(in: range, with: string).trimmingCharacters(in: .whitespacesAndNewlines)
         

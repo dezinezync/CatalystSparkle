@@ -12,12 +12,18 @@ private let urlMatchRegex = "((http|https|ftp)://)?((\\w)*|([0-9]*)|([-|_])*)+([
 
 extension String {
     
-    // https://so.com/a/57219660/1387258
+    // https://stackoverflow.com/a/57219660/1387258
     
     var isValidURL: Bool {
         
-        let predicate = NSPredicate(format: "SELF MATCHES %@", urlMatchRegex)
-        return predicate.evaluate(with: self)
+        if let _ = URL(string: self) {
+            return true
+        }
+        
+        return false
+        
+//        let predicate = NSPredicate(format: "SELF MATCHES %@", urlMatchRegex)
+//        return predicate.evaluate(with: self)
         
     }
     

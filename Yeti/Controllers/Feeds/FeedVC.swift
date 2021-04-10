@@ -14,6 +14,7 @@ import SwiftYapDatabase
 import Networking
 import Combine
 import Defaults
+import Dynamic
 
 let dbFilteredViewName: String = "feedFilteredView"
 
@@ -38,7 +39,7 @@ enum FeedVCState: Int {
     }
 }
 
-enum FeedSorting: Int {
+@objc public enum FeedSorting: Int {
     case descending
     case ascending
     case unreadDescending
@@ -54,16 +55,7 @@ enum FeedSorting: Int {
     
     var imageName: String {
         
-        switch self {
-        case .descending:
-            return "arrow.down.circle"
-        case .unreadDescending:
-            return "arrow.down.circle.fill"
-        case .ascending:
-            return "arrow.up.circle"
-        case .unreadAscending:
-            return "arrow.up.circle.fill"
-        }
+        return FeedVC.imageNameForSortingOption(option: self)
         
     }
     
@@ -74,13 +66,30 @@ enum MarkDirection: Int {
     case older = 2
 }
 
-@objc class FeedVC: UITableViewController {
+@objcMembers public class FeedVC: UITableViewController {
     
     var type: FeedType = .natural
     @objc var feed: Feed? = nil
     var cancellables: [AnyCancellable] = []
     
+    #if targetEnvironment(macCatalyst)
+    var totalUnread: UInt = 0
+    #endif
+    
     let feedbackGenerator = UISelectionFeedbackGenerator()
+    
+    static func imageNameForSortingOption(option: FeedSorting) -> String {
+        switch option {
+        case .descending:
+            return "arrow.down.circle"
+        case .unreadDescending:
+            return "arrow.down.circle.fill"
+        case .ascending:
+            return "arrow.up.circle"
+        case .unreadAscending:
+            return "arrow.up.circle.fill"
+        }
+    }
     
     var state: FeedVCState = .empty {
         didSet {
@@ -95,28 +104,51 @@ enum MarkDirection: Int {
         }
     }
     
-    static var sorting: FeedSorting = FeedSorting(rawValue: Defaults[.feedSorting])! {
+    weak var sortingBarItem: UIBarButtonItem? = nil
+   
+    var _sorting: FeedSorting! {
+        
         didSet {
-            
-            guard oldValue != sorting else {
-                return
+            if type == .unread {
+                if Defaults[.unreadFeedSorting] != _sorting.rawValue {
+                    Defaults[.unreadFeedSorting] = _sorting.rawValue
+                }
             }
-            
-            Defaults[.feedSorting] = sorting.rawValue
-            
+            else {
+                if Defaults[.feedSorting] != _sorting.rawValue {
+                    Defaults[.feedSorting] = _sorting.rawValue
+                }
+            }
         }
+        
     }
     
-    weak var sortingBarItem: UIBarButtonItem? = nil
-    
-    var sorting: FeedSorting = FeedVC.sorting {
-        didSet {
+    var sorting: FeedSorting {
+        
+        get {
             
-            guard oldValue != sorting else {
+            if _sorting == nil {
+                
+                if type == .unread {
+                    _sorting = FeedSorting(rawValue: Defaults[.unreadFeedSorting])!
+                }
+                else {
+                    _sorting = FeedSorting(rawValue: Defaults[.feedSorting])!
+                }
+            
+            }
+            
+            return _sorting;
+            
+        }
+        
+        set {
+            
+            guard newValue != sorting else {
                 return
             }
             
-            FeedVC.sorting = sorting
+            _sorting = newValue
             
             DispatchQueue.main.async { [weak self] in
                 if let name = self?.sorting.imageName {
@@ -126,9 +158,10 @@ enum MarkDirection: Int {
             
             updateFeedSorting()
         }
+        
     }
     
-    var articles = NSMutableOrderedSet()
+    var articles: [Article] = []
     
     static var filteringTag: UInt = 0
     var sortingTag: UInt = 0
@@ -151,7 +184,7 @@ enum MarkDirection: Int {
         
     }()
 
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         
         super.viewDidLoad()
 
@@ -165,13 +198,17 @@ enum MarkDirection: Int {
     
     fileprivate var _hasSetup: Bool = false
     
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         if _hasSetup == false {
             _hasSetup = true
             setupState()
             updateFeedSorting()
+            
+            #if targetEnvironment(macCatalyst)
+            setupTitleView()
+            #endif
         }
         
     }
@@ -186,41 +223,45 @@ enum MarkDirection: Int {
         let titleView = FeedTitleView()
         
         switch type {
-        case .natural:
+        case .natural, .author:
             guard let feed = feed else {
                 return
             }
             
             self.title = feed.displayTitle
             
-            feed.displayTitle.publisher
-                .receive(on: DispatchQueue.main)
-                .sink { [weak self] (_) in
-                    
-                    guard let sself = self,
-                          let tv = sself.titleView,
-                          let f = sself.feed else {
-                        return
+            if (type != .author) {
+                
+                feed.displayTitle.publisher
+                    .receive(on: DispatchQueue.main)
+                    .sink { [weak self] (_) in
+                        
+                        guard let sself = self,
+                              let tv = sself.titleView,
+                              let f = sself.feed else {
+                            return
+                        }
+                        
+                        tv.titleLabel.text = f.displayTitle
+                        
                     }
-                    
-                    tv.titleLabel.text = f.displayTitle
-                    
-                }
-                .store(in: &cancellables)
-            
-            feed.$unread.receive(on: DispatchQueue.main)
-                .sink { [weak self] (unread) in
-                    
-                    guard let sself = self else {
-                        return
+                    .store(in: &cancellables)
+                
+                feed.$unread.receive(on: DispatchQueue.main)
+                    .sink { [weak self] (unread) in
+                        
+                        guard let sself = self else {
+                            return
+                        }
+                        
+                        let count = unread
+                        
+                        sself.titleView?.countLabel.text = "\(count) Unread\(count == 1 ? "" : "s")"
+                        
                     }
-                    
-                    let count = unread ?? 0
-                    
-                    sself.titleView?.countLabel.text = "\(count) Unread\(count == 1 ? "" : "s")"
-                    
-                }
-                .store(in: &cancellables)
+                    .store(in: &cancellables)
+                
+            }
             
             if let image = feed.faviconImage {
                 titleView.faviconView.image = image
@@ -240,7 +281,7 @@ enum MarkDirection: Int {
             titleView.titleLabel.text = self.title;
             titleView.faviconView.isHidden = true
             
-            if let coordinator = mainCoordinator {
+            if let coordinator = coordinator {
                 
                 coordinator.publisher(for: \.totalUnread)
                     .receive(on: DispatchQueue.main)
@@ -262,7 +303,7 @@ enum MarkDirection: Int {
             titleView.titleLabel.text = self.title;
             titleView.faviconView.isHidden = true
             
-            if let coordinator = mainCoordinator {
+            if let coordinator = coordinator {
                 
                 coordinator.publisher(for: \.totalToday)
                     .receive(on: DispatchQueue.main)
@@ -286,13 +327,20 @@ enum MarkDirection: Int {
         navigationItem.titleView = titleView
         self.titleView = titleView
         
+        titleView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapTitleView)))
+        
     }
     
     func setupNavBar() {
         
+        #if targetEnvironment(macCatalyst)
+        navigationController?.navigationBar.isHidden = true
+        #else
+        
         navigationItem.rightBarButtonItems = self.rightBarButtonItems()
         navigationItem.largeTitleDisplayMode = .never
         
+        #endif
         
     }
     
@@ -403,6 +451,9 @@ enum MarkDirection: Int {
         
         let baseViewName = dbAutoViewName
         
+        let filters: [String] = DBManager.shared.user?.filters ?? []
+        let filtersSet: Set<String> = Set(filters)
+        
         let filtering = YapDatabaseViewFiltering.withMetadataBlock { [weak self] (t, g, c, k, m) -> Bool in
             
             guard let sself = self else {
@@ -432,6 +483,22 @@ enum MarkDirection: Int {
                     return false
                 }
                 
+            }
+            
+            // Filters of the user
+            guard filters.count > 0 else {
+                return true
+            }
+            
+            // compare the title to each item in the filters
+            let wordCloud = metadata.titleWordCloud ?? []
+            
+            let set1 = Set(wordCloud)
+            
+            let intersects = set1.intersection(filtersSet).count == 0
+            
+            guard intersects == true else {
+                return false
             }
             
             guard sself.sorting.isUnread == true else {
@@ -482,6 +549,55 @@ enum MarkDirection: Int {
         
     }
     
+    #if targetEnvironment(macCatalyst)
+    public func setupTitleView() {
+        
+        guard let title: String = self.title else {
+            return
+        }
+        
+        guard let window = coordinator?.innerWindow else {
+            return
+        }
+        
+        Dynamic(window).title = title
+        
+        var publisher: Published<UInt>.Publisher!
+        
+        switch type {
+        case .natural:
+            publisher = feed!.$unread
+        case .unread:
+            publisher = coordinator!.$totalUnread
+        case .today:
+            publisher = coordinator!.$totalToday
+        default: break
+            
+        }
+        
+        if publisher != nil {
+            
+            publisher!
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] unread in
+                    
+                    guard let sself = self,
+                          let swindow = sself.coordinator?.innerWindow else {
+                              return
+                          }
+                    
+                    sself.totalUnread = unread
+                    
+                    Dynamic(swindow).subtitle = "\(unread) Unread"
+                    
+                }
+                .store(in: &cancellables)
+            
+        }
+        
+    }
+    #endif
+    
     func setupState() {
         
         // if the state is empty and there are no articles,
@@ -522,7 +638,7 @@ enum MarkDirection: Int {
     
     func setupData() {
         
-        dispatchMainAsync { [weak self] in
+        runOnMainQueueWithoutDeadlocking { [weak self] in
             
             guard let sself = self else {
                 return
@@ -533,7 +649,7 @@ enum MarkDirection: Int {
             
             var snapshot = NSDiffableDataSourceSnapshot<Int, Article>()
             snapshot.appendSections([0])
-            snapshot.appendItems(sself.articles.map { $0 as! Article })
+            snapshot.appendItems(sself.articles)
             
             sself.DS.apply(snapshot, animatingDifferences: animated, completion: nil)
             
@@ -547,7 +663,7 @@ enum MarkDirection: Int {
     
     func _didSetSortingOption() {
         
-        articles = NSMutableOrderedSet()
+        articles = []
         state = .empty
         
         total = -1
@@ -582,7 +698,11 @@ enum MarkDirection: Int {
         title.textAlignment = .center
         
         let subtitle = UILabel()
+        #if targetEnvironment(macCatalyst)
+        subtitle.font = .preferredFont(forTextStyle: .body)
+        #else
         subtitle.font = .preferredFont(forTextStyle: .subheadline)
+        #endif
         subtitle.textColor = .secondaryLabel
         subtitle.numberOfLines = 0
         subtitle.textAlignment = .center
@@ -600,9 +720,13 @@ enum MarkDirection: Int {
         stack.axis = .vertical
         stack.isBaselineRelativeArrangement = true
         
+        #if !targetEnvironment(macCatalyst)
+        
         let widthConstraint = stack.widthAnchor.constraint(lessThanOrEqualToConstant: 351)
         widthConstraint.priority = UILayoutPriority(rawValue: 999)
         widthConstraint.isActive = true
+        
+        #endif
         
         return stack
         
@@ -622,6 +746,16 @@ enum MarkDirection: Int {
         ev.translatesAutoresizingMaskIntoConstraints = false
         
         view.addSubview(ev)
+        
+        #if targetEnvironment(macCatalyst)
+        let leadingConstraint = ev.leadingAnchor.constraint(equalTo: tableView.leadingAnchor, constant: 12)
+        leadingConstraint.priority = UILayoutPriority(rawValue: 999)
+        
+        let trailingConstraint = ev.trailingAnchor.constraint(equalTo: tableView.trailingAnchor, constant: 12)
+        trailingConstraint.priority = UILayoutPriority(rawValue: 999)
+        
+        NSLayoutConstraint.activate([leadingConstraint, trailingConstraint])
+        #endif
         
         _emptyView = ev
         isShowingEmptyState = true
@@ -645,6 +779,8 @@ enum MarkDirection: Int {
         
         view.removeFromSuperview()
         _emptyView = nil
+        
+        isShowingEmptyState = false
         
     }
     
@@ -672,59 +808,20 @@ enum MarkDirection: Int {
         activityIndicator.startAnimating()
         
     }
-    
-    func updateVisibleCells () {
-        
-        dispatchMainAsync { [weak self] in
-            
-            guard let sself = self else {
-                return
-            }
-            
-            var snapshot = sself.DS.snapshot()
-            
-            guard let visible = sself.tableView.indexPathsForVisibleRows,
-                  visible.count > 0 else {
-                return
-            }
-            
-            var items: [Article] = []
-            
-            visible.forEach {
-                
-                if let item = sself.DS.itemIdentifier(for: $0) {
-                    items.append(item)
-                }
-                
-            }
-            
-            snapshot.reloadItems(items)
-            
-            let animation = sself.DS.defaultRowAnimation
-            
-            sself.DS.defaultRowAnimation = .fade
-            
-            sself.DS.apply(snapshot, animatingDifferences: sself.tableView.window != nil, completion: nil)
-            
-            sself.DS.defaultRowAnimation = animation
-            
-        }
-        
-    }
 
 }
 
 extension FeedVC: ScrollLoading {
     
-    func isLoading() -> Bool {
+    public func isLoading() -> Bool {
         return state.isLoading
     }
     
-    func canLoadNext() -> Bool {
+    public func canLoadNext() -> Bool {
         return total == -1 || articles.count < total
     }
     
-    func loadNextPage() {
+    public func loadNextPage() {
         
         guard dbFilteredView != nil else {
             return
@@ -773,7 +870,16 @@ extension FeedVC: ScrollLoading {
             
             let page = sself.currentPage + 1
             
-            var range = NSMakeRange(((Int(page) - 1) * 20) - 1, 20)
+            var rangeLength: Int = 20
+            
+            if (rangeLength > total) {
+                rangeLength = total
+            }
+            else if ((rangeLength * Int(page)) > total) {
+                rangeLength = total - articles.count
+            }
+            
+            var range = NSMakeRange(((Int(page) - 1) * 20) - 1, rangeLength)
             
             if page == 1 {
                 range.location = 0
@@ -785,9 +891,14 @@ extension FeedVC: ScrollLoading {
                 return true
             } using: { (c, k, o, m, index, stop) in
                 
-                guard let article = o as? Article else {
+                guard let article = o as? Article,
+                      let metadata = m as? ArticleMeta else {
                     return
                 }
+                
+                article.read = metadata.read
+                article.bookmarked = metadata.bookmarked
+                article.fulltext = metadata.fulltext
                 
                 if article.title == nil || (article.title != nil && article.title!.isEmpty == true) {
                     // get the content, possibly micro.blog post
@@ -801,7 +912,7 @@ extension FeedVC: ScrollLoading {
                     }
                 }
                 
-                sself.articles.add(article)
+                sself.articles.append(article)
                 context += 1
                 
             }
@@ -836,7 +947,7 @@ extension FeedVC: ScrollLoading {
 // MARK: - Actions
 extension FeedVC {
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    public override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         guard let item = DS.itemIdentifier(for: indexPath) else {
             return
@@ -865,76 +976,66 @@ extension FeedVC {
     
     func markAllRead( _ sender: UIBarButtonItem?) {
         
-        DBManager.shared.bgConnection.asyncReadWrite { [weak self] (t) in
-            
-            guard let txn = t.ext(dbFilteredViewName) as? YapDatabaseFilteredViewTransaction else {
-                return
-            }
-            
-            var items: [String: Article] = [:]
-            var feedsMapping: [UInt: UInt] = [:]
-            
-            let count = txn.numberOfItems(inGroup: GroupNames.articles.rawValue)
-            
-            guard count > 0 else {
-                
-                if  self?.type == .natural, let feed = self?.feed, feed.unread > 0 {
-                    feed.unread = 0
-                }
-                
-                return
-            }
-            
-            let calendar = Calendar.current
-            var inToday: UInt = 0
-            
-            // get all unread items from this view
-            txn.enumerateKeysAndMetadata(inGroup: GroupNames.articles.rawValue, with: [], range: NSMakeRange(0, Int(count))) { (_, _) -> Bool in
-                return true
-            } using: { (c, k, m, index, stop) in
-                
-                guard let metadata = m as? ArticleMeta else {
-                    return
-                }
-                
-                guard metadata.read == false else {
-                    return
-                }
-                
-                guard let o = t.object(forKey: k, inCollection: c) as? Article else {
-                    return
-                }
-                
-                items[k] = o
-                
-                if feedsMapping[metadata.feedID] == nil {
-                    feedsMapping[metadata.feedID] = 0
-                }
-                
-                feedsMapping[metadata.feedID]! += 1
-                
-                if calendar.isDateInToday(Date(timeIntervalSince1970: metadata.timestamp)) == true {
-                    inToday += 1
-                }
-                
-            }
+        Haptics.shared.generate(feedbackType: .selectionChange)
+        
+        DBManager.shared.readQueue.async { [weak self] in
             
             guard let sself = self else {
                 return
             }
-
+            
+            var items: [String: Article] = [:]
+            
+            DBManager.shared.bgConnection.readWrite { [weak self] (t) in
+                
+                guard let txn = t.ext(dbFilteredViewName) as? YapDatabaseFilteredViewTransaction else {
+                    return
+                }
+                
+                let count = txn.numberOfItems(inGroup: GroupNames.articles.rawValue)
+                
+                guard count > 0 else {
+                    
+                    if  self?.type == .natural, let feed = self?.feed, feed.unread > 0 {
+                        feed.unread = 0
+                    }
+                    
+                    return
+                }
+                
+                // get all unread items from this view
+                txn.enumerateKeysAndMetadata(inGroup: GroupNames.articles.rawValue, with: [], range: NSMakeRange(0, Int(count))) { (_, _) -> Bool in
+                    return true
+                } using: { (c, k, m, index, stop) in
+                    
+                    guard let metadata = m as? ArticleMeta else {
+                        return
+                    }
+                    
+                    guard metadata.read == false else {
+                        return
+                    }
+                    
+                    guard let o = t.object(forKey: k, inCollection: c) as? Article else {
+                        return
+                    }
+                    
+                    items[k] = o
+                    
+                }
+                
+            }
+            
+            guard items.count > 0 else {
+                print("No items to be marked read. Exiting.")
+                return
+            }
+            
             print("Marking \(items.count) items as read")
             
-            sself.markRead(items, inToday: inToday, feedsMapping: feedsMapping) { [weak self] (count, feed) in
+            sself.markRead(items) { [weak self] in
                 
-                let unread = feed.unread ?? count
-                feed.unread = max(unread - count, 0)
-                
-                (self?.articles.objectEnumerator().allObjects as! [Article]).forEach { $0.read = true }
-                
-            } completion: { [weak self] in
-                
-                self?.updateVisibleCells()
+                self?.articles.forEach { $0.read = true }
                 
             }
             
@@ -942,15 +1043,11 @@ extension FeedVC {
         
     }
     
-    func markRead(_ inItems: [String: Article], inToday: UInt?, feedsMapping: [UInt: UInt]?, each:(( _ count: UInt, _ feed: Feed) -> Void)?, completion:(() -> Void)?) {
+    func markRead(_ inItems: [String: Article], completion:(() -> Void)?) {
         
-        var items = inItems
+        let items = inItems
         
-        FeedsManager.shared.markRead(true, items: items.values.map { $0 }) { [weak self] (result) in
-            
-            guard let sself = self else {
-                return
-            }
+        FeedsManager.shared.markRead(true, items: items.values.map { $0 }) { (result) in
             
             switch result {
             
@@ -969,38 +1066,25 @@ extension FeedVC {
                     .filter { $0.status == true }
                     .map { String($0.articleID) }
                 
-                items = items.filter({ (elem) -> Bool in
+                let successItems = items.filter({ (elem) -> Bool in
                     
                     return succeeded.contains(elem.key)
                     
                 })
                 
-                for i in items { i.value.read = true }
-                
-                sself.mainCoordinator?.totalUnread -= UInt(items.count)
-                
-                if inToday != nil {
-                    sself.mainCoordinator?.totalToday -= inToday!
+                // if the items count is 0, then the articles were already marked as read.
+                // we don't have that record on disk. This silently fails on the server and
+                // returns a succees response. We must do the same here as well.
+                if successItems.count > 0 {
+                    for i in successItems { i.value.read = true }
+                    DBManager.shared.add(articles: Array(successItems.values), strip: false)
+                }
+                else {
+                    for i in items { i.value.read = true }
+                    DBManager.shared.add(articles: Array(items.values), strip: false)
                 }
                 
                 DBManager.shared.add(articles: items.values.map { $0 }, strip: false)
-                
-                if feedsMapping != nil {
-                    for (key, count) in feedsMapping! {
-                        
-                        guard let feed = DBManager.shared.feedForID(key) else {
-                            print("Feed not found for ID:", key)
-                            continue
-                        }
-                        
-                        DispatchQueue.main.async {
-                            
-                            each?(count, feed)
-                            
-                        }
-                        
-                    }
-                }
                 
                 DispatchQueue.main.async {
                     
@@ -1024,34 +1108,29 @@ extension FeedVC {
         
         guard type == .natural,
               let feed = self.feed,
-              let coordinator = mainCoordinator else {
+              let coordinator = coordinator else {
             return
         }
         
-        coordinator.showFeedInfo(feed, from: self)
+        coordinator.showFeedInfo(feed: feed, from: self, completion: nil)
         
     }
     
     @objc func markAllNewerRead(_ indexPath: IndexPath) {
         
-        markDirectional(.older, indexPath: indexPath)
+        markDirectional(.newer, indexPath: indexPath)
         
     }
     
     @objc func markAllOlderRead(_ indexPath: IndexPath) {
         
-        markDirectional(.newer, indexPath: indexPath)
+        markDirectional(.older, indexPath: indexPath)
         
     }
     
     func markDirectional(_ direction: MarkDirection, indexPath: IndexPath) {
         
         let sorting = self.sorting
-        var feed: String?
-        
-        if type == .unread { feed = "unread" }
-        else if type == .today { feed = "today" }
-        else if type == .natural { feed = "\(self.feed!.feedID!)" }
         
         guard let item = DS.itemIdentifier(for: indexPath) else {
             return
@@ -1064,7 +1143,7 @@ extension FeedVC {
         
         // our unreads array count can't exceed this so we
         // can use this as a control to stop enumerating.
-        let grandTotal = mainCoordinator?.totalUnread ?? 0
+        let grandTotal = coordinator?.totalUnread ?? 0
         
         DBManager.shared.readQueue.async { [weak self] in
             
@@ -1086,8 +1165,6 @@ extension FeedVC {
                 let total = Int(txn.numberOfItems(inGroup: GroupNames.articles.rawValue))
             
                 var unreads: [String: Article] = [:]
-                var feedsMapping: [UInt: UInt] = [:]
-                var inToday: UInt = 0
                 
                 txn.enumerateKeysAndMetadata(inGroup: GroupNames.articles.rawValue, with: options, range: NSMakeRange(0, total)) { (_, _) -> Bool in
                     return true
@@ -1134,16 +1211,6 @@ extension FeedVC {
                         
                         unreads[k] = item
                         
-                        if feedsMapping[metadata.feedID] == nil {
-                            feedsMapping[metadata.feedID] = 0
-                        }
-                        
-                        feedsMapping[metadata.feedID]! += 1
-                        
-                        if Calendar.current.isDateInToday(item.timestamp) {
-                            inToday += 1
-                        }
-                        
                     }
                     
                     if grandTotal == unreads.count {
@@ -1162,33 +1229,13 @@ extension FeedVC {
                 print("IDs: ", unreadKeys)
                 #endif
                 
-                sself.markRead(unreads, inToday: inToday, feedsMapping: feedsMapping, each: nil) {
-                    
-                    switch sself.type {
-                    case .natural, .author:
-                        if let f = sself.feed {
-                            let current = f.unread ?? 1
-                            f.unread = max(current - UInt(unreadKeys.count), 0)
-                        }
-                    case .unread:
-                        if let mc = sself.mainCoordinator {
-                            let current = mc.totalUnread
-                            mc.totalUnread = max(current - UInt(unreadKeys.count), 0)
-                        }
-                    case .today:
-                        if let mc = sself.mainCoordinator {
-                            let current = mc.totalToday
-                            mc.totalToday = max(current - UInt(unreadKeys.count), 0)
-                        }
-                    default:
-                        print("Unhandled case for \(sself.type)")
-                    }
+                sself.markRead(unreads) {
                     
                     var toUpdate: [Article] = []
                     
                     for key in unreadKeys {
                         
-                        if let a: Article = sself.articles.objectEnumerator().allObjects.first(where: { ($0 as! Article).identifier == key }) as? Article {
+                        if let a: Article = sself.articles.first(where: { $0.identifier == key }) {
                             
                             a.read = true
                             
@@ -1200,92 +1247,9 @@ extension FeedVC {
                     
                     DBManager.shared.add(articles: toUpdate, strip: false)
                     
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        
-                        sself.reloadCells(identifiers: toUpdate)
-                        
-                    }
-                    
                 }
                 
             }
-            
-        }
-        
-    }
-    
-    func reloadCells(identifiers: [Article]) {
-        
-        guard identifiers.count > 0 else {
-            return
-        }
-        
-        var snapshot = self.DS.snapshot()
-        
-        snapshot.reloadItems(identifiers)
-        
-        dispatchMainAsync { [weak self] in
-            
-            guard let sself = self else { return }
-            
-            let animation = sself.DS.defaultRowAnimation
-            
-            sself.DS.defaultRowAnimation = .fade
-            
-            sself.DS.apply(snapshot, animatingDifferences: self?.view.window != nil, completion: nil)
-            
-            sself.DS.defaultRowAnimation = animation
-            
-        }
-        
-    }
-    
-    func reloadVisibleCells () {
-        
-        guard Thread.isMainThread == true else {
-            
-            DispatchQueue.main.async { [weak self] in
-                self?.reloadVisibleCells()
-            }
-            
-            return
-            
-        }
-        
-        var snapshot = DS.snapshot()
-        
-        var visible: [Article] = []
-        
-        if let indices = tableView.indexPathsForVisibleRows,
-           indices.count > 0 {
-            
-            for indexPath in indices {
-                
-                if let item = DS.itemIdentifier(for: indexPath) {
-                    
-                    visible.append(item)
-                    
-                }
-                
-            }
-            
-        }
-        
-        snapshot.reloadItems(visible)
-        
-        dispatchMainAsync { [weak self] in
-            
-            guard let sself = self else {
-                return
-            }
-            
-            let animation = sself.DS.defaultRowAnimation
-            
-            sself.DS.defaultRowAnimation = .fade
-            
-            sself.DS.apply(snapshot, animatingDifferences: self?.view.window != nil, completion: nil)
-            
-            sself.DS.defaultRowAnimation = animation
             
         }
         
@@ -1295,7 +1259,7 @@ extension FeedVC {
 
 extension FeedVC: BarPositioning {
     
-    func rightBarButtonItems() -> [UIBarButtonItem]? {
+    public func rightBarButtonItems() -> [UIBarButtonItem]? {
         
         var sortingActions: [UIAction] = [
             
@@ -1340,7 +1304,7 @@ extension FeedVC: BarPositioning {
         
     }
     
-    var toolbarBarItems: [UIBarButtonItem]? {
+    @nonobjc var toolbarBarItems: [UIBarButtonItem]? {
         
         guard SharedPrefs.useToolbar == true else {
             return nil
@@ -1428,17 +1392,17 @@ extension FeedVC: ArticleHandler, ArticleProvider {
         
     }
     
-    func setupArticle(_ article: Any) {
+    public func setupArticle(_ article: Any) {
         
         guard let a = article as? Article else {
             return
         }
         
-        mainCoordinator?.showArticle(a)
+        coordinator?.showArticle(a)
         
     }
     
-    func currentArticle() -> Any? {
+    public func currentArticle() -> Any? {
         
         guard let selected = tableView.indexPathForSelectedRow else {
             return nil
@@ -1448,17 +1412,22 @@ extension FeedVC: ArticleHandler, ArticleProvider {
         
     }
     
-    @objc func userMarkedArticle(_ article: Any, read: Bool) {
+    @objc public func userMarkedArticle(_ article: Any, read: Bool) {
         userMarkedArticle(article, read: read, completion: nil)
     }
         
-    @objc func userMarkedArticle(_ article: Any, read: Bool, completion: ((_ completed: Bool) -> Void)?) {
+    @objc public func userMarkedArticle(_ article: Any, read: Bool, completion: ((_ completed: Bool) -> Void)?) {
         
         guard let article = article as? Article else {
             return
         }
         
         FeedsManager.shared.markRead(read, items: [article]) { [weak self] (result) in
+            
+            guard let sself = self,
+                  let coordinator = sself.coordinator else {
+                return
+            }
             
             switch result {
             case .failure(let error):
@@ -1471,27 +1440,40 @@ extension FeedVC: ArticleHandler, ArticleProvider {
                 
                 DBManager.shared.add(article: article, strip: false)
                 
-                self?.reloadVisibleCells()
-                
                 let inToday = Calendar.current.isDateInToday(article.timestamp)
                 
                 let feed = DBManager.shared.feedForID(article.feedID)
                 
                 if read == true {
                     
-                    self?.mainCoordinator?.totalUnread -= 1
+                    var read = coordinator.totalUnread
                     
-                    if inToday { self?.mainCoordinator?.totalToday -= 1 }
+                    if read == 0 { read = 1 }
                     
-                    let unread = feed?.unread ?? 1
+                    coordinator.totalUnread = max(read - 1, 0)
+                    
+                    if inToday {
+                        
+                        var today = coordinator.totalToday
+                        
+                        if today == 0 { today = 1 }
+                        
+                        coordinator.totalToday = max(today - 1, 0)
+                        
+                    }
+                    
+                    var unread = feed?.unread ?? 1
+                    
+                    if unread == 0 { unread = 1 }
+                    
                     feed?.unread = max(unread - 1, 0)
                     
                 }
                 else {
                     
-                    self?.mainCoordinator?.totalUnread += 1
+                    self?.coordinator?.totalUnread += 1
                     
-                    if inToday { self?.mainCoordinator?.totalToday += 1 }
+                    if inToday { self?.coordinator?.totalToday += 1 }
                     
                     feed?.unread += 1
                     
@@ -1505,11 +1487,11 @@ extension FeedVC: ArticleHandler, ArticleProvider {
         
     }
     
-    @objc func userMarkedArticle(_ article: Any, bookmarked: Bool) {
+    @objc public func userMarkedArticle(_ article: Any, bookmarked: Bool) {
         userMarkedArticle(article, bookmarked: bookmarked, completion: nil)
     }
     
-    @objc func userMarkedArticle(_ article: Any, bookmarked: Bool, completion: ((_ completed: Bool) -> Void)?) {
+    @objc public func userMarkedArticle(_ article: Any, bookmarked: Bool, completion: ((_ completed: Bool) -> Void)?) {
         
         guard let article = article as? Article else {
             return
@@ -1539,13 +1521,11 @@ extension FeedVC: ArticleHandler, ArticleProvider {
                 DBManager.shared.add(article: article, strip: false)
                 
                 if bookmarked == true {
-                    self?.mainCoordinator?.totalBookmarks += 1
+                    self?.coordinator?.totalBookmarks += 1
                 }
                 else {
-                    self?.mainCoordinator?.totalBookmarks -= 1
+                    self?.coordinator?.totalBookmarks -= 1
                 }
-                
-                self?.reloadVisibleCells()
                 
                 completion?(true)
             
@@ -1555,7 +1535,7 @@ extension FeedVC: ArticleHandler, ArticleProvider {
         
     }
     
-    func hasPreviousArticle(forArticle item: Any) -> Bool {
+    public func hasPreviousArticle(forArticle item: Any) -> Bool {
         
         guard let item = item as? Article else {
             return false
@@ -1565,11 +1545,11 @@ extension FeedVC: ArticleHandler, ArticleProvider {
             return false
         }
         
-        return indexPath.row > 0 && DS.snapshot().numberOfItems > 2
+        return indexPath.row > 0 && DS.snapshot().numberOfItems >= 2
         
     }
     
-    func hasNextArticle(forArticle item: Any) -> Bool {
+    public func hasNextArticle(forArticle item: Any) -> Bool {
         
         guard let item = item as? Article else {
             return false
@@ -1585,11 +1565,11 @@ extension FeedVC: ArticleHandler, ArticleProvider {
             return false
         }
         
-        return lastIndex > 1
+        return lastIndex >= 1
         
     }
     
-    func previousArticle(for item: Any) -> Any? {
+    public func previousArticle(for item: Any) -> Any? {
         
         guard let item = item as? Article else {
             return nil
@@ -1613,7 +1593,7 @@ extension FeedVC: ArticleHandler, ArticleProvider {
         
     }
     
-    func nextArticle(for item: Any) -> Any? {
+    public func nextArticle(for item: Any) -> Any? {
         
         guard let item = item as? Article else {
             return nil
@@ -1641,14 +1621,11 @@ extension FeedVC: ArticleHandler, ArticleProvider {
     
     func willChangeArticle() {
         
-        dispatchMainAsync { [weak self] in
-            self?.feedbackGenerator.selectionChanged()
-            self?.feedbackGenerator.prepare()
-        }
+        Haptics.shared.generate(feedbackType: .selectionChange)
         
     }
     
-    func didChange(toArticle item: Any) {
+    public func didChange(toArticle item: Any) {
         
         guard let item = item as? Article else {
             return
@@ -1694,12 +1671,29 @@ extension FeedVC: ArticleHandler, ArticleProvider {
         
     }
     
+    #if targetEnvironment(macCatalyst)
+    public override func responds(to aSelector: Selector!) -> Bool {
+        
+        let str = NSStringFromSelector(aSelector)
+
+        if str == "didTapMarkAll:" {
+            // conditionally enable or disable the mark all button.
+            // if we don't have any unread articles, let's return
+            // no from here.
+            return totalUnread > 0
+        }
+        
+        return super.responds(to: aSelector)
+        
+    }
+    #endif
+    
 }
 
 // MARK: - Context Menus
 extension FeedVC {
     
-    override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+    public override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         
         guard let item = DS.itemIdentifier(for: indexPath) else {
             return nil
@@ -1823,7 +1817,7 @@ extension FeedVC {
         
     }
     
-    override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    public override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
         guard let item = DS.itemIdentifier(for: indexPath) else {
             return nil
@@ -1866,7 +1860,7 @@ extension FeedVC {
         
     }
     
-    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    public override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
         guard let item = DS.itemIdentifier(for: indexPath) else {
             return nil
@@ -1956,7 +1950,7 @@ extension FeedVC {
             return
         }
         
-        // @TODO
+        coordinator?.showAuthorVC(feed!, author: author)
         
     }
     
@@ -1993,7 +1987,7 @@ extension FeedVC {
 
 extension FeedVC: UIAdaptivePresentationControllerDelegate {
     
-    func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
+    public func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
         
         if traitCollection.horizontalSizeClass == .regular {
             return .popover

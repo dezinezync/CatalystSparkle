@@ -55,4 +55,11 @@
     
 }
 
+- (nullable UIContextMenuConfiguration *)contextMenuInteraction:(nonnull UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location {
+    
+    // @TODO
+    return nil;
+    
+}
+
 @end

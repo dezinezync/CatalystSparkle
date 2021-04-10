@@ -84,7 +84,7 @@ import UIKit
     
     func updateCoordinator () {
         
-        if let coordinator: NSObject = self.value(forKey: "mainCoordinator") as? NSObject {
+        if let coordinator: NSObject = self.value(forKey: "coordinator") as? NSObject {
             
             let selector = NSSelectorFromString("didTapCloseForPushRequest")
             
@@ -97,36 +97,34 @@ import UIKit
     // MARK: Actions
     @IBAction func didTapEnable(_ sender: UIButton) {
         
-        if let coordinator: NSObject = self.value(forKey: "mainCoordinator") as? NSObject {
-         
-            let completionBlock: @convention(block) (_ completed: Bool, _ error: NSError?) -> Void = { (completed: Bool, error: NSError?) in
+        if let coordinator: Coordinator = self.coordinator {
+            
+            coordinator.registerForNotifications { [weak self] error, completed in
+                
+                guard let sself = self else { return }
                 
                 if (error != nil) {
-                    return AlertManager.showGenericAlert(withTitle: "An Error Occurred", message: error?.localizedDescription ?? "", fromVC: self)
+                    return AlertManager.showGenericAlert(withTitle: "An Error Occurred", message: error?.localizedDescription ?? "", fromVC: sself)
                 }
                 
                 if (completed) {
-                    return self.didTapClose(nil)
+                    return sself.didTapClose(nil)
                 }
                 else {
                     
-                    UIView.animate(withDuration: 0.1) { [weak self] in
+                    UIView.animate(withDuration: 0.1) {
                         
-                        self?.view.alpha = 0
+                        sself.view.alpha = 0
                         
                     } completion: { (_) in
                         
-                        self.dismiss(animated: false, completion: nil)
+                        sself.dismiss(animated: false, completion: nil)
                         
                     }
                     
                 }
                 
             }
-            
-            let selector = NSSelectorFromString("registerForNotifications:")
-            
-            coordinator.perform(selector, with: completionBlock)
             
         }
         else {

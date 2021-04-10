@@ -10,6 +10,7 @@ import Foundation
 @objc public class FeedRecommendation: NSObject, Codable {
     public var relevanceScore: Double? = 0
     public var id: String? = nil
+    public var feedId: String? = nil
     public var title: String? = nil
     public var topics: [String]? = nil
     public var updated: Date? = nil
@@ -21,6 +22,30 @@ import Foundation
     public var language: String? = nil
     public var coverColor: String? = nil
     public var workmark: String? = nil
+    public var summary: String? = nil
+    public var accentColor: String? = nil
+    public var logo: String? = nil
+    
+    enum CodingKeys: String, CodingKey, CaseIterable {
+        case relevanceScore
+        case id
+        case feedId
+        case title
+        case topics
+        case updated
+        case website
+        case iconUrl
+        case coverUrl
+        case visualUrl
+        case contentType
+        case language
+        case coverColor
+        case workmark
+        case summary = "description"
+        case accentColor
+        case logo
+    }
+    
 }
 
 @objc public class RelatedTopic: NSObject, Codable {

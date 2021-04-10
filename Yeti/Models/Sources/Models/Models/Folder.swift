@@ -7,19 +7,21 @@
 
 import Foundation
 import Combine
+import BetterCodable
+import OrderedCollections
 
 @objcMembers public final class Folder: NSObject, Codable, ObservableObject {
     
+    static let countersQueue: DispatchQueue = DispatchQueue(label:"foldersCounting", qos: .userInteractive)
+    
     public var title: String!
     public var folderID: UInt!
-    public var expanded: Bool = false
-    public var feedIDs = Set<UInt>()
+    public var feedIDs: [UInt] = [UInt]()
     
     public enum CodingKeys: String, CodingKey {
         case title
-        case folderID
-        case feedIDs
-        case expanded
+        case folderID = "id"
+        case feedIDs = "feedIDs"
     }
     
     public var updatingCounters: Bool = false {
@@ -31,16 +33,15 @@ import Combine
         }
     }
     
-    public var feeds: [Feed] = [] {
+    public var feeds: OrderedSet<Feed> = OrderedSet<Feed>() {
         didSet {
             
             if feedsUnread != nil {
-                feedsUnread.cancel()
                 feedsUnread = nil
             }
             
             feedsUnread = Publishers.MergeMany(feeds.map { $0.$unread })
-                .receive(on: DispatchQueue.main)
+                .receive(on: Folder.countersQueue)
                 .sink { [weak self] _ in
                     
                     guard let sself = self else {
@@ -81,7 +82,7 @@ import Combine
         }
         else if key == "feeds", let value = value as? [UInt] {
             
-            value.forEach { feedIDs.insert($0) }
+            value.forEach { feedIDs.append($0) }
             
         }
         else {
@@ -118,16 +119,15 @@ extension Folder {
             dict["title"] = title
         }
         
-        dict["expanded"] = expanded
-        
         return dict
         
     }
     
     public func updateCounters () {
-        
-        let value = self.feeds.map { $0.unread }.reduce(0) { counter, newValue in
-            counter + newValue
+        // @TODO: Check why this crashes sometimes with GPFLT
+        // Doesn't seem to crash with the new SortedSet 
+        let value = self.feeds.reduce(0) { counter, newValue in
+            counter + newValue.unread
         }
         
         unread = value

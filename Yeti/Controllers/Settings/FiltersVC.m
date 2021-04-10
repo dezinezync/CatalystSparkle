@@ -55,41 +55,40 @@ NSString *const kFiltersCell = @"filterCell";
 
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
+- (void)viewWillAppear:(BOOL)animated {
+    
     [super viewWillAppear:animated];
     
+    if (self.coordinator.user.filters != nil) {
+
+        [self setupData:self.coordinator.user.filters];
+
+    }
+    
     weakify(self);
-    // @TODO
-//    if (MyFeedsManager.user.filters != nil) {
-//
-//        [self setupData:MyFeedsManager.user.filters.allObjects.reverseObjectEnumerator.allObjects];
-//
-//    }
-//    else {
-//
-//        [MyFeedsManager getFiltersWithSuccess:^(NSArray <NSString *> *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//            if (responseObject == nil) {
-//                responseObject = @[];
-//            }
-//
-//            User *user = MyFeedsManager.user;
-//            user.filters = [NSSet setWithArray:responseObject];
-//
-//            [MyDBManager setUser:user];
-//
-//            strongify(self);
-//
-//            [self setupData:MyFeedsManager.user.filters.allObjects.reverseObjectEnumerator.allObjects];
-//
-//        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//            [AlertManager showGenericAlertWithTitle:@"Failed to Load Filters" message:error.localizedDescription];
-//
-//        }];
-//
-//    }
+    
+    [self.coordinator getFiltersWithCompletion:^(NSError * _Nullable error, NSArray<NSString *> * _Nullable filters) {
+        
+        if (filters == nil) {
+            
+            if (error != nil) {
+                [AlertManager showGenericAlertWithTitle:@"Failed to Fetch Filters" message:error.localizedDescription];
+            }
+            
+            return;
+            
+        }
+        
+        User *user = self.coordinator.user;
+        user.filters = [NSSet setWithArray:filters].allObjects;
+        
+        self.coordinator.user = user;
+        
+        strongify(self);
+        
+        [self setupData:self.coordinator.user.filters];
+        
+    }];
     
 }
 
@@ -175,33 +174,37 @@ NSString *const kFiltersCell = @"filterCell";
     }
     
     weakify(self);
-    // @TODO
-//    [MyFeedsManager removeFilter:keyword success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//        if ([responseObject boolValue]) {
-//
-//            strongify(self);
-//
-//            NSArray *keywords = [self.DS.snapshot itemIdentifiersInSectionWithIdentifier:@1];
-//
-//            keywords = [keywords rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
-//                return ![obj isEqualToString:keyword];
-//            }];
-//
-//            User *user = MyFeedsManager.user;
-//            user.filters = [NSSet setWithArray:keywords];
-//
-//            [MyDBManager setUser:user];
-//
-//            [self setupData:keywords];
-//
-//        }
-//
-//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//        [AlertManager showGenericAlertWithTitle:@"Failed to Delete Filter" message:error.localizedDescription];
-//
-//    }];
+    
+    [self.coordinator deleteFilterWithText:keyword completion:^(NSError * _Nullable error, BOOL status) {
+       
+        if (status == NO) {
+            
+            if (error != nil) {
+                [AlertManager showGenericAlertWithTitle:@"Failed to Delete Filter" message:error.localizedDescription];
+                return;
+            }
+            
+        }
+        else {
+            
+            strongify(self);
+
+            NSArray *keywords = [self.DS.snapshot itemIdentifiersInSectionWithIdentifier:@1];
+
+            keywords = [keywords rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+                return ![obj isEqualToString:keyword];
+            }];
+
+            User *user = self.coordinator.user;
+            user.filters = [NSSet setWithArray:keywords].allObjects;
+
+            self.coordinator.user = user;
+
+            [self setupData:keywords];
+            
+        }
+        
+    }];
     
 }
 
@@ -264,8 +267,7 @@ NSString *const kFiltersCell = @"filterCell";
     return YES;
 }
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
     
     weakify(self);
     
@@ -288,28 +290,35 @@ NSString *const kFiltersCell = @"filterCell";
         textField.text = nil;
         [textField becomeFirstResponder];
     });
-    // @TODO
-//    [MyFeedsManager addFilter:keyword success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//        User *user = MyFeedsManager.user;
-//        user.filters = [NSSet setWithArray:data];
-//
-//        [MyDBManager setUser:user];
-//
-//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//        [AlertManager showGenericAlertWithTitle:@"Failed to add Filter" message:error.localizedDescription];
-//
-//        strongify(self);
-//
-//        NSArray *keywords = [self.DS.snapshot itemIdentifiersInSectionWithIdentifier:@1];
-//        keywords = [keywords rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
-//            return [obj isEqualToString:keyword] == NO;
-//        }];
-//
-//        [self setupData:keywords];
-//
-//    }];
+    
+    [self.coordinator addFilterWithText:keyword completion:^(NSError * _Nullable error, BOOL status) {
+        
+        if (status == NO) {
+       
+            if (error != nil) {
+                [AlertManager showGenericAlertWithTitle:@"Failed to add Filter" message:error.localizedDescription];
+            }
+
+            strongify(self);
+
+            NSArray *keywords = [self.DS.snapshot itemIdentifiersInSectionWithIdentifier:@1];
+            keywords = [keywords rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+                return [obj isEqualToString:keyword] == NO;
+            }];
+
+            [self setupData:keywords];
+            
+            return;
+            
+        }
+        else {
+            User *user = self.coordinator.user;
+            user.filters = [NSSet setWithArray:data].allObjects;
+
+            self.coordinator.user = user;
+        }
+        
+    }];
     
     return NO;
 }

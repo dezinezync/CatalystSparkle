@@ -21,6 +21,7 @@
 #import "Keychain.h"
 
 #import "PhotosController.h"
+#import "Elytra-Swift.h"
 
 AppDelegate *MyAppDelegate = nil;
 
@@ -89,17 +90,35 @@ AppDelegate *MyAppDelegate = nil;
             [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
         }
         
-//        [MyFeedsManager resetAccount];
+//        [MyFeedsManager resetAccountWithCompletion:nil];
         
-        self.coordinator = [MainCoordinator new];
+        self.coordinator = [Coordinator new];
         
 //        weakify(self);
         
         [UNUserNotificationCenter currentNotificationCenter].delegate = (id <UNUserNotificationCenterDelegate>)self;
         
 #if TARGET_OS_MACCATALYST
-        [self.coordinator registerForNotifications:nil];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+            [self.coordinator registerForNotificationsWithCompletion:nil];
+            
+        });
 #endif
+        
+//#ifdef DEBUG
+//        
+//        NSDictionary *info = @{
+//            @"types": @{@"article": @YES},
+//            @"articleID": @"16895326"
+//        };
+//        
+//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//            [self application:application didReceiveRemoteNotification:info fetchCompletionHandler:^(UIBackgroundFetchResult result) {
+//                NSLog(@"Result: %@", @(result));
+//            }];
+//        });
+//#endif
         
         [self setupStoreManager];
         
@@ -215,7 +234,7 @@ AppDelegate *MyAppDelegate = nil;
     
     SceneDelegate * scene = (id)[[UIApplication.sharedApplication.connectedScenes.allObjects firstObject] delegate];
     
-    return scene.coordinator.splitViewController;
+    return scene.coordinator.splitVC;
     
 }
 
@@ -313,19 +332,6 @@ AppDelegate *MyAppDelegate = nil;
         }
     }
 
-}
-
-#pragma mark -
-
-- (UINotificationFeedbackGenerator *)notificationGenerator {
-    
-    if (!_notificationGenerator) {
-        _notificationGenerator = [[UINotificationFeedbackGenerator alloc] init];
-        [_notificationGenerator prepare];
-    }
-    
-    return _notificationGenerator;
-    
 }
 
 #pragma mark -

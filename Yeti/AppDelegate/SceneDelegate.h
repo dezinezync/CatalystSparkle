@@ -6,7 +6,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Coordinator.h"
+
+@class Coordinator;
 
 @interface SceneDelegate : UIResponder <UIWindowSceneDelegate> {
     UIImageSymbolConfiguration * _Nullable _toolbarSymbolConfiguration;
@@ -14,7 +15,7 @@
 
 @property (strong, nonatomic) UIWindow * _Nonnull window;
 
-@property (strong, nonatomic) MainCoordinator * _Nonnull coordinator;
+@property (strong, nonatomic) Coordinator * _Nonnull coordinator;
 
 #if TARGET_OS_MACCATALYST
 

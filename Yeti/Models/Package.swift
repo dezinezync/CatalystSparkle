@@ -29,6 +29,10 @@ let package = Package(
             name: "BetterCodable",
             url: "https://github.com/marksands/BetterCodable.git",
             .branch("master")
+        ),
+        .package(
+            url: "https://github.com/apple/swift-collections",
+            from: "0.0.1"
         )
     ],
     targets: [
@@ -38,7 +42,8 @@ let package = Package(
             name: "Models",
             dependencies: [
                 "HTMLEntities",
-                "BetterCodable"
+                "BetterCodable",
+                .product(name: "OrderedCollections", package: "swift-collections")
             ]),
         .testTarget(
             name: "ModelsTests",

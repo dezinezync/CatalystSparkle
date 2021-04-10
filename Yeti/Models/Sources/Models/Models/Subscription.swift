@@ -13,13 +13,13 @@ public enum SubscriptionEnv: String, Codable {
     case Production
 }
 
-public enum SubscriptionStatus: Int, Codable {
+@objc public enum SubscriptionStatus: Int, Codable {
     case expired = 0
     case active = 1
     case trial = 2
 }
 
-public final class Subscription: NSObject, Codable {
+@objcMembers public final class Subscription: NSObject, Codable {
     
     public static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -27,6 +27,7 @@ public final class Subscription: NSObject, Codable {
         formatter.timeZone = NSTimeZone.system
         return formatter
     }()
+    
     
     public var identifier: UInt!
     public var environment: SubscriptionEnv!
@@ -57,11 +58,17 @@ public final class Subscription: NSObject, Codable {
     }
     
     public var created: Date!
-    public var status: SubscriptionStatus! = .expired
+    public var status: SubscriptionStatus = .expired
+    public var lifetime: Bool = false
+    public var external: Bool = false
     
-    public var preAppStore: Bool? = false
-    public var lifetime: Bool? = false
-    public var external: Bool? = false
+    enum CodingKeys: String, CodingKey {
+        case identifier = "id"
+        case environment
+        case expiry
+        case created
+        case status
+    }
     
     public convenience init(from dict: [String: Any]) {
         
@@ -140,12 +147,7 @@ public final class Subscription: NSObject, Codable {
         }
         else if key == "status", let value = value as? Int {
             
-            status = SubscriptionStatus(rawValue: value)
-            
-        }
-        else if key == "preAppStore" {
-            
-            preAppStore = value as? Bool
+            status = SubscriptionStatus(rawValue: value)!
             
         }
         else if key == "environment", let value = value as? String {
@@ -233,7 +235,6 @@ extension Subscription {
             dict["expiry"] = Subscription.dateFormatter.string(from: expiry)
             dict["created"] = Subscription.dateFormatter.string(from: created)
             dict["status"] = status.rawValue
-            dict["preAppStore"] = preAppStore
             dict["lifetime"] = lifetime
             dict["external"] = external
                         

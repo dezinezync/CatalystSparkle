@@ -73,44 +73,44 @@ NSString * _Nonnull const kCustomizeThemeCell = @"com.dezinezync.elytra.cell.cus
 
 - (void)didTapButton:(UIButton *)sender {
     
-    NSUInteger index = NSNotFound;
-    
-    if (sender == self.defaultTheme) {
-        index = 0;
-    }
-    else if (sender == self.readerTheme) {
-        index = 1;
-    }
-    else if (sender == self.blackTheme) {
-        index = 2;
-    }
-    
-    [self setActive:index];
-    
-    NSString *val = [YetiThemeKit.themeNames objectAtIndex:index];
-    
-    NSString *themeName = [val lowercaseString];
-    
-    if ([SharedPrefs.theme isEqualToString:themeName] == NO) {
-        
-        [SharedPrefs setValue:themeName forKey:propSel(theme)];
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [NSNotificationCenter.defaultCenter postNotificationName:kWillUpdateTheme object:nil];
-        });
-        
-        YTThemeKit.theme = [YTThemeKit themeNamed:themeName];
-        [CodeParser.sharedCodeParser loadTheme:themeName];
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            
-            [NSNotificationCenter.defaultCenter postNotificationName:kDidUpdateTheme object:nil];
-            
-            [self updateTints];
-            
-        });
-        
-    }
+//    NSUInteger index = NSNotFound;
+//    
+//    if (sender == self.defaultTheme) {
+//        index = 0;
+//    }
+//    else if (sender == self.readerTheme) {
+//        index = 1;
+//    }
+//    else if (sender == self.blackTheme) {
+//        index = 2;
+//    }
+//    
+//    [self setActive:index];
+//    
+//    NSString *val = [YetiThemeKit.themeNames objectAtIndex:index];
+//    
+//    NSString *themeName = [val lowercaseString];
+//    
+//    if ([SharedPrefs.theme isEqualToString:themeName] == NO) {
+//        
+//        [SharedPrefs setValue:themeName forKey:propSel(theme)];
+//        
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [NSNotificationCenter.defaultCenter postNotificationName:kWillUpdateTheme object:nil];
+//        });
+//        
+//        YTThemeKit.theme = [YTThemeKit themeNamed:themeName];
+//        [CodeParser.sharedCodeParser loadTheme:themeName];
+//        
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            
+//            [NSNotificationCenter.defaultCenter postNotificationName:kDidUpdateTheme object:nil];
+//            
+//            [self updateTints];
+//            
+//        });
+//        
+//    }
     
 }
 

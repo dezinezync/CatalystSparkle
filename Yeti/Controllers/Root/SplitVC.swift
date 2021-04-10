@@ -10,8 +10,11 @@ import Foundation
 import UIKit
 import Networking
 import DBManager
+import Defaults
 
-@objc class SplitVC: UISplitViewController {
+@objcMembers public class SplitVC: UISplitViewController {
+    
+    var iPadOSShowSidebarInPortraitOnLaunch: Bool = false
     
     convenience init() {
         
@@ -21,7 +24,7 @@ import DBManager
         
     }
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         
         super.viewDidLoad()
         
@@ -49,10 +52,7 @@ import DBManager
         #else
         minimumPrimaryColumnWidth = 298
         minimumSupplementaryColumnWidth = 375
-        setupDisplayModes(size: view.bounds.size)
         #endif
-        
-        preferredSplitBehavior = .displace
         
         presentsWithGesture = true
         
@@ -60,7 +60,7 @@ import DBManager
         
     }
     
-    override func viewDidAppear(_ animated: Bool) {
+    public override func viewDidAppear(_ animated: Bool) {
         
         super.viewDidAppear(animated)
         
@@ -70,8 +70,10 @@ import DBManager
         }
         
         #if !DEBUG
-        // @TODO: Check and show intro based on hasShownIntro
-        showOnboarding()
+        // this prevents skipping the onboarding and trial setup.
+        if Defaults[.hasShownIntro] == false {
+            showOnboarding()
+        }
         #endif
         
     }
@@ -79,7 +81,7 @@ import DBManager
     // MARK: - Size Changes
     #if !targetEnvironment(macCatalyst)
     
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+    public override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         
         super.viewWillTransition(to: size, with: coordinator)
         
@@ -99,15 +101,18 @@ import DBManager
         DispatchQueue.main.async { [weak self] in
             
             if size.width < 1024 {
-                self?.preferredSplitBehavior = .overlay
+                
+                self?.preferredDisplayMode = .twoBesideSecondary
+                self?.preferredSplitBehavior = .tile
+                
             }
             else if size.width > 1024 && size.width < 1180 {
-                self?.preferredSplitBehavior = .tile
                 self?.preferredDisplayMode = .twoOverSecondary
+                self?.preferredSplitBehavior = .tile
             }
             else {
-                self?.preferredSplitBehavior = .tile
                 self?.preferredDisplayMode = .twoBesideSecondary
+                self?.preferredSplitBehavior = .tile
             }
             
         }
@@ -116,13 +121,9 @@ import DBManager
     
     func showOnboarding () {
         
-        guard presentedViewController == nil else {
-            return
-        }
-        
         NotificationCenter.default.removeObserver(self)
         
-        mainCoordinator?.showLaunchVC()
+        coordinator?.showLaunchVC()
         
     }
     
@@ -132,12 +133,27 @@ import DBManager
 
 extension SplitVC: UISplitViewControllerDelegate {
     
-    func splitViewController(_ svc: UISplitViewController, topColumnForCollapsingToProposedTopColumn proposedTopColumn: UISplitViewController.Column) -> UISplitViewController.Column {
+    public func splitViewController(_ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
         
-        if let _ = mainCoordinator?.articleVC {
+        print(displayMode)
+        
+        if displayMode == .secondaryOnly,
+           iPadOSShowSidebarInPortraitOnLaunch == false {
+            
+            setupDisplayModes(size: svc.view.bounds.size)
+            
+            iPadOSShowSidebarInPortraitOnLaunch = true
+            
+        }
+        
+    }
+    
+    public func splitViewController(_ svc: UISplitViewController, topColumnForCollapsingToProposedTopColumn proposedTopColumn: UISplitViewController.Column) -> UISplitViewController.Column {
+        
+        if let _ = coordinator?.articleVC {
             return .secondary
         }
-        else if let _ = mainCoordinator?.feedVC {
+        else if let _ = coordinator?.feedVC {
             return .supplementary
         }
         else {
@@ -151,13 +167,13 @@ extension SplitVC: UISplitViewControllerDelegate {
 // MARK: - Forwarding
 extension SplitVC {
     
-    override func forwardingTarget(for aSelector: Selector!) -> Any? {
+    public override func forwardingTarget(for aSelector: Selector!) -> Any? {
         
         let str = NSStringFromSelector(aSelector)
         
-        if str == "didBeginRefreshing:" || str == "didLongPressOnAllRead:" {
+        if str == "beginRefreshingAll:" || str == "didTapMarkAll:" {
            
-            if let f = mainCoordinator?.feedVC {
+            if let f = coordinator?.feedVC {
             
                 return f.responds(to: aSelector)  ? f : nil
                 
@@ -168,7 +184,7 @@ extension SplitVC {
         }
         else if str == "didTapSearch" {
             
-            if let a = mainCoordinator?.articleVC {
+            if let a = coordinator?.articleVC {
                 
                 return a.responds(to: aSelector) ? a : nil
                 
@@ -179,7 +195,7 @@ extension SplitVC {
         }
         else if str == "showSubscriptionsInterface" {
             
-            return mainCoordinator
+            return coordinator
             
         }
         
@@ -187,82 +203,76 @@ extension SplitVC {
         
     }
 
-//    override func responds(to aSelector: Selector!) -> Bool {
-//        
-//        let str = NSStringFromSelector(aSelector)
-//        
-//        if str == "didBeginRefreshing:" || str == "didLongPressOnAllRead:" {
-//           
-//            if let f = mainCoordinator?.feedVC as? UIViewController {
-//            
-//                return f.responds(to: aSelector)
-//                
-//            }
-//            
-//            return false
-//            
-//        }
-//        else if str == "didTapSearch" {
-//            
-//            if let a = mainCoordinator?.articleVC as? UIViewController {
-//                
-//                return a.responds(to: aSelector)
-//                
-//            }
-//            
-//            return false
-//            
-//        }
-//        else if str == "showSubscriptionsInterface" {
-//            
-//            return true
-//            
-//        }
-//        
-//        return super.responds(to: aSelector)
-//        
-//    }
+    public override func responds(to aSelector: Selector!) -> Bool {
+        
+        let str = NSStringFromSelector(aSelector)
+//        print(str)
+        if str == "beginRefreshingAll:" || str == "didTapMarkAll:" {
+           
+            if let f = coordinator?.feedVC {
+            
+                return f.responds(to: aSelector)
+                
+            }
+            
+            return false
+            
+        }
+        else if str == "didTapSearch" {
+            
+            if let a = coordinator?.articleVC {
+                
+                return a.responds(to: aSelector)
+                
+            }
+            
+            return false
+            
+        }
+        else if str == "showSubscriptionsInterface" {
+            
+            return true
+            
+        }
+        
+        return super.responds(to: aSelector)
+        
+    }
     
-//    override func method(for aSelector: Selector!) -> IMP! {
-//
-//        let str = NSStringFromSelector(aSelector)
-//
-//        if str == "didBeginRefreshing:" || str == "didLongPressOnAllRead:" {
-//
-//            if let f = mainCoordinator?.feedVC as? UIViewController {
-//
-//                return f.method(for: aSelector)
-//
-//            }
-//
-//            return nil
-//
-//        }
-//        else if str == "didTapSearch" {
-//
-//            if let a = mainCoordinator?.articleVC as? UIViewController {
-//
-//                return a.method(for: aSelector)
-//
-//            }
-//
-//            return nil
-//
-//        }
-//        else if str == "showSubscriptionsInterface" {
-//
-//            return mainCoordinator?.method(for: aSelector)
-//
-//        }
-//
-//        return super.method(for: aSelector)
-//
-//    }
-//
-//    func forwardInvocation(_ invocation: NSInvocation) {
-//
-//
-//
-//    }
+    override public func method(for aSelector: Selector!) -> IMP! {
+
+        let str = NSStringFromSelector(aSelector)
+
+        if str == "beginRefreshingAll:" || str == "didTapMarkAll:" {
+
+            if let f = coordinator?.feedVC {
+
+                return f.method(for: aSelector)
+
+            }
+
+            return nil
+
+        }
+        else if str == "didTapSearch" {
+
+            if let a = coordinator?.articleVC {
+
+                return a.method(for: aSelector)
+
+            }
+
+            return nil
+
+        }
+        else if str == "showSubscriptionsInterface" {
+
+            return coordinator?.method(for: aSelector)
+
+        }
+
+        return super.method(for: aSelector)
+
+    }
     
 }

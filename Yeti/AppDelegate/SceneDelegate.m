@@ -23,6 +23,7 @@
 
 #import "Elytra-Swift.h"
 
+#define backgroundCleanupIdentifier @"com.yeti.cleanup"
 #define backgroundRefreshIdentifier @"com.yeti.refresh"
 
 @interface UIViewController (ElytraStateRestoration)
@@ -79,6 +80,8 @@
     
 #endif
     
+    [self setupBackgroundCleanup];
+    
 #if !TARGET_OS_MACCATALYST
     [self setupBackgroundRefresh];
 #endif
@@ -96,9 +99,13 @@
      };
 #endif
     
-    [self setupRootViewController];
+    SplitVC *splitVC = [[SplitVC alloc] init];
     
-    [self.coordinator start];
+    self.window.rootViewController = splitVC;
+    
+    [self.coordinator start:splitVC];
+    
+    [splitVC loadViewIfNeeded];
     
     // @TODO
 //    if (activity != nil && [activity.activityType isEqualToString:@"restoration"]) {
@@ -177,8 +184,10 @@
         
         [self scheduleBackgroundRefresh];
         
-        if (cancelling == YES) {
-            
+        [self scheduleBackgroundCleanup];
+        
+//        if (cancelling == YES) {
+//
 //#ifdef DEBUG
 //#pragma clang diagnostic push
 //#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
@@ -189,8 +198,8 @@
 //
 //#pragma clang diagnostic pop
 //#endif
-            
-        }
+//
+//        }
         
     }];
     
@@ -210,12 +219,11 @@
             
             NSString *feedID = [uniqueIdentifier stringByReplacingOccurrencesOfString:@"feed:" withString:@""];
             
-            // @TODO
-//            NSURL *url = [NSURL URLWithFormat:@"elytra://feed/%@", feedID];
+            NSURL *url = [NSURL URLWithFormat:@"elytra://feed/%@", feedID];
             
-//            runOnMainQueueWithoutDeadlocking(^{
-//                [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
-//            });
+            runOnMainQueueWithoutDeadlocking(^{
+                [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
+            });
             
         }
         
@@ -252,26 +260,44 @@
 
 }
 
-#pragma mark -
+#pragma mark - Background Refresh
 
-- (void)setupRootViewController {
+- (void)scheduleBackgroundCleanup {
     
-    SplitVC *splitVC = [[SplitVC alloc] init];
-    
-    splitVC.mainCoordinator = self.coordinator;
-    
-    self.window.rootViewController = splitVC;
-    
-    self.coordinator.splitViewController = (SplitVC *)[self.window rootViewController];
-    
-    [splitVC loadViewIfNeeded];
+    // Note from NetNewsWire code
+    // We send this to a dedicated serial queue because as of 11/05/19 on iOS 13.2 the call to the
+    // task scheduler can hang indefinitely.
+    dispatch_async(self.bgTaskDispatchQueue, ^{
+       
+        BGProcessingTaskRequest *request = [[BGProcessingTaskRequest alloc] initWithIdentifier:backgroundCleanupIdentifier];
+        request.requiresNetworkConnectivity = NO;
+        request.requiresExternalPower = NO;
+        
+        // Can be done 5min from now.
+        #ifdef DBEUG
+        request.earliestBeginDate = [NSDate dateWithTimeIntervalSinceNow:1];
+        #else
+        request.earliestBeginDate = [NSDate dateWithTimeIntervalSinceNow:(60 * 5)];
+        #endif
+        
+        NSError *error = nil;
+        
+        if ([[BGTaskScheduler sharedScheduler] submitTaskRequest:request error:&error] == NO) {
+            
+            if (error != nil && error.code != 1) {
+
+                NSLog(@"Error submitting bg cleanup request: %@", error.localizedDescription);
+
+            }
+            
+        }
+        
+    });
     
 }
 
-#pragma mark - Background Refresh
-
 - (void)scheduleBackgroundRefresh {
-    
+        
 #if TARGET_OS_MACCATALYST
     return;
 #endif
@@ -326,33 +352,30 @@
         
         // schedule next refresh
         [self scheduleBackgroundRefresh];
-       
-        // @TODO
-//        [MyDBManager setupSync:task completionHandler:^(BOOL completed) {
-//
-//            if (completed == NO) {
-//                return;
-//            }
-//
-//            SceneDelegate * scene = (id)[[UIApplication.sharedApplication.connectedScenes.allObjects firstObject] delegate];
-//
-//            SidebarVC *vc = scene.coordinator.sidebarVC;
-//
-//            if (vc == nil) {
-//                return;
-//            }
-//
-//            [vc.refreshControl setAttributedTitle:[vc lastUpdateAttributedString]];
-//
-////            [MyFeedsManager getCountersWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-////
-////                [vc setupData];
-////
-////                [vc.refreshControl setAttributedTitle:[vc lastUpdateAttributedString]];
-////
-////            } error:nil];
-//
-//        }];
+        
+        if (self.coordinator.user == nil) {
+            return;
+        }
+        
+        [self.coordinator setupBGSyncCoordinatorWithTask:task completion:^(BOOL completed) {
+            
+            [self.coordinator completedBGSync];
+            
+            if (completed == NO) {
+                return;
+            }
+
+            SceneDelegate * scene = (id)[[UIApplication.sharedApplication.connectedScenes.allObjects firstObject] delegate];
+
+            SidebarVC *vc = scene.coordinator.sidebarVC;
+
+            if (vc == nil) {
+                return;
+            }
+
+            [vc updateLastUpdatedText];
+
+        }];
 
         
     }];
@@ -360,6 +383,33 @@
     MyAppDelegate.bgTaskHandlerRegistered = registered;
     
     NSLog(@"Registered background refresh task: %@", @(registered));
+    
+}
+
+- (void)setupBackgroundCleanup {
+    
+    if (MyAppDelegate.bgCleanupTaskHandlerRegistered == YES) {
+        return;
+    }
+    
+    weakify(self);
+    
+    BOOL registered = [[BGTaskScheduler sharedScheduler] registerForTaskWithIdentifier:backgroundCleanupIdentifier usingQueue:nil launchHandler:^(__kindof BGAppRefreshTask * _Nonnull task) {
+        
+        NSLog(@"Woken to perform account cleanup.");
+        
+        strongify(self);
+        
+        // schedule next cleanup
+        [self scheduleBackgroundCleanup];
+        
+        [self.coordinator setupBGCleanupWithTask:task];
+        
+    }];
+    
+    MyAppDelegate.bgCleanupTaskHandlerRegistered = YES;
+    
+    NSLog(@"Registered background cleanup task: %@", @(registered));
     
 }
 
@@ -374,14 +424,18 @@
 //#endif
     
     if (reset) {
-        // @TODO
-//        [MyFeedsManager resetAccount];
-//
-//        SplitVC *v = self.coordinator.splitViewController;
-//        [v userNotFound];
-//
-//        [defaults setBool:NO forKey:kResetAccountSettingsPref];
-//        [defaults synchronize];
+        
+        [self.coordinator resetAccountWithCompletion:^{
+        
+            SplitVC *v = self.coordinator.splitVC;
+            
+            [v.coordinator showLaunchVC];
+            
+            [defaults setBool:NO forKey:kResetAccountSettingsPref];
+            [defaults synchronize];
+            
+        }];
+
     }
     
 }
@@ -391,123 +445,125 @@
 - (void)handleSceneActivity:(NSUserActivity *)activity scene:(UIWindowScene *)windowScene {
     
     UIWindow *window = nil;
-    // @TODO
-//    if ([activity.activityType isEqualToString:@"viewImage"] == YES) {
-//
-//        window = [[UIWindow alloc] initWithWindowScene:windowScene];
-//        window.canResizeToFitContent = YES;
-//
-//        PhotosController *photosVC = [[PhotosController alloc] initWithUserInfo:activity.userInfo];
-//
-//        window.rootViewController = photosVC;
-//
-//        CGSize size = CGSizeFromString([activity.userInfo valueForKey:@"size"]);
-//
-//        windowScene.sizeRestrictions.minimumSize = size;
-//        windowScene.titlebar.titleVisibility = UITitlebarTitleVisibilityHidden;
-//        windowScene.titlebar.toolbar = nil;
-//
-//    }
-//
-//    else if ([activity.activityType isEqualToString:@"openArticle"] == YES) {
-//
-//        window = [[UIWindow alloc] initWithWindowScene:windowScene];
-//
-//        windowScene.sizeRestrictions.minimumSize = CGSizeMake(480.f, 600.f);
-//        windowScene.titlebar.toolbar = nil;
-//
-//        FeedItem *item = [FeedItem instanceFromDictionary:activity.userInfo];
-//
-//        ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
-//
-//        vc.externalWindow = YES;
-//
-//        Feed *feed = [ArticlesManager.shared feedForID:item.feedID];
-//
-//        if (item.articleTitle) {
-//            windowScene.title = formattedString(@"%@ - %@", item.articleTitle, feed.displayTitle);
-//        }
-//        else {
-//            windowScene.title = feed.displayTitle;
-//        }
-//
-//        window.rootViewController = vc;
-//
-//    }
-//    else if ([activity.activityType isEqualToString:@"subscriptionInterface"]) {
-//
-//        window = [[UIWindow alloc] initWithWindowScene:windowScene];
-//        window.canResizeToFitContent = NO;
-//
-//        CGSize fixedSize = CGSizeMake(375.f, 480.f);
-//
-//        windowScene.sizeRestrictions.maximumSize = fixedSize;
-//        windowScene.sizeRestrictions.minimumSize = fixedSize;
-//
-//        windowScene.title = @"Your Subscription";
-//
-//        StoreVC *vc = [[StoreVC alloc] initWithStyle:UITableViewStyleGrouped];
-//
-//        window.rootViewController = vc;
-//
-//    }
-//    else if ([activity.activityType isEqualToString:@"attributionsScene"]) {
-//
-//        window = [[UIWindow alloc] initWithWindowScene:windowScene];
-//        window.canResizeToFitContent = NO;
-//
-//        CGSize fixedSize = CGSizeMake(375.f, 480.f);
-//
-//        windowScene.sizeRestrictions.minimumSize = fixedSize;
-//
-//        windowScene.title = @"Attributions";
-//
-//        DZWebViewController *webVC = [[DZWebViewController alloc] init];
-//        webVC.title = @"Attributions";
-//
-//        webVC.URL = [[NSBundle bundleForClass:self.class] URLForResource:@"attributions" withExtension:@"html"];
-//
-//        NSString *tint = [UIColor hexFromUIColor:SharedPrefs.tintColor];
-//        NSString *js = formattedString(@"anchorStyle(\"%@\")", tint);
-//
-//        webVC.evalJSOnLoad = js;
-//
-//        window.rootViewController = webVC;
-//
-//    }
-//    else if ([activity.activityType isEqualToString:@"newFeedScene"]) {
-//
-//        window = [[UIWindow alloc] initWithWindowScene:windowScene];
-//        window.canResizeToFitContent = NO;
-//
-//        CGSize fixedSize = CGSizeMake(480.f, 600.f);
-//
-//        windowScene.sizeRestrictions.minimumSize = fixedSize;
-//        windowScene.sizeRestrictions.maximumSize = fixedSize;
-//
-//        windowScene.titlebar.titleVisibility = UITitlebarTitleVisibilityVisible;
-//        windowScene.titlebar.toolbarStyle = UITitlebarToolbarStyleUnified;
-//        windowScene.title = @"New Feed";
-//
-//        NewFeedVC *vc = [[NewFeedVC alloc] initWithCollectionViewLayout:NewFeedVC.gridLayout];
-//        vc.mainCoordinator = self.coordinator;
-//        vc.moveFoldersDelegate = self.coordinator.sidebarVC;
-//
-//        window.rootViewController = [[UINavigationController alloc] initWithRootViewController:vc];
-//
-//    }
-//
-//    if (window != nil && window.rootViewController != nil) {
-//
-//        self.window = window;
-//        self.window.tintColor = SharedPrefs.tintColor;
-//
-//        [window makeKeyAndVisible];
-//
-//    }
-//    else {
-//        window = nil;
-//    }
+    
+    if ([activity.activityType isEqualToString:@"viewImage"] == YES) {
+
+        window = [[UIWindow alloc] initWithWindowScene:windowScene];
+        window.canResizeToFitContent = YES;
+
+        PhotosController *photosVC = [[PhotosController alloc] initWithUserInfo:activity.userInfo];
+
+        window.rootViewController = photosVC;
+
+        CGSize size = CGSizeFromString([activity.userInfo valueForKey:@"size"]);
+
+        windowScene.sizeRestrictions.minimumSize = size;
+        windowScene.titlebar.titleVisibility = UITitlebarTitleVisibilityHidden;
+        windowScene.titlebar.toolbar = nil;
+
+    }
+
+    else if ([activity.activityType isEqualToString:@"openArticle"] == YES) {
+
+        window = [[UIWindow alloc] initWithWindowScene:windowScene];
+
+        windowScene.sizeRestrictions.minimumSize = CGSizeMake(480.f, 600.f);
+        windowScene.titlebar.toolbar = nil;
+
+        Article *item = [Article new];
+        [item setValuesForKeysWithDictionary:activity.userInfo];
+
+        ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
+
+        vc.externalWindow = YES;
+
+        Feed *feed = [MyAppDelegate.coordinator feedFor:item.feedID];
+
+        if (item.title != nil) {
+            windowScene.title = formattedString(@"%@ - %@", item.title, feed.displayTitle);
+        }
+        else {
+            windowScene.title = feed.displayTitle;
+        }
+
+        window.rootViewController = vc;
+
+    }
+    else if ([activity.activityType isEqualToString:@"subscriptionInterface"]) {
+
+        window = [[UIWindow alloc] initWithWindowScene:windowScene];
+        window.canResizeToFitContent = NO;
+
+        CGSize fixedSize = CGSizeMake(375.f, 480.f);
+
+        windowScene.sizeRestrictions.maximumSize = fixedSize;
+        windowScene.sizeRestrictions.minimumSize = fixedSize;
+
+        windowScene.title = @"Your Subscription";
+
+        StoreVC *vc = [[StoreVC alloc] initWithStyle:UITableViewStyleGrouped];
+        vc.coordinator = MyAppDelegate.coordinator;
+
+        window.rootViewController = vc;
+
+    }
+    else if ([activity.activityType isEqualToString:@"attributionsScene"]) {
+
+        window = [[UIWindow alloc] initWithWindowScene:windowScene];
+        window.canResizeToFitContent = NO;
+
+        CGSize fixedSize = CGSizeMake(375.f, 480.f);
+
+        windowScene.sizeRestrictions.minimumSize = fixedSize;
+
+        windowScene.title = @"Attributions";
+
+        DZWebViewController *webVC = [[DZWebViewController alloc] init];
+        webVC.title = @"Attributions";
+        webVC.coordinator = MyAppDelegate.coordinator;
+
+        webVC.URL = [[NSBundle bundleForClass:self.class] URLForResource:@"attributions" withExtension:@"html"];
+
+        NSString *tint = [UIColor hexFromUIColor:SharedPrefs.tintColor];
+        NSString *js = formattedString(@"anchorStyle(\"%@\")", tint);
+
+        webVC.evalJSOnLoad = js;
+
+        window.rootViewController = webVC;
+
+    }
+    else if ([activity.activityType isEqualToString:@"newFeedScene"]) {
+
+        window = [[UIWindow alloc] initWithWindowScene:windowScene];
+        window.canResizeToFitContent = NO;
+
+        CGSize fixedSize = CGSizeMake(480.f, 600.f);
+
+        windowScene.sizeRestrictions.minimumSize = fixedSize;
+        windowScene.sizeRestrictions.maximumSize = fixedSize;
+
+        windowScene.titlebar.titleVisibility = UITitlebarTitleVisibilityVisible;
+        windowScene.titlebar.toolbarStyle = UITitlebarToolbarStyleUnified;
+        windowScene.title = @"New Feed";
+
+        NewFeedVC *vc = [[NewFeedVC alloc] initWithCollectionViewLayout:NewFeedVC.gridLayout];
+        vc.coordinator = self.coordinator;
+
+        window.rootViewController = [[UINavigationController alloc] initWithRootViewController:vc];
+
+    }
+
+    if (window != nil && window.rootViewController != nil) {
+
+        self.window = window;
+        self.window.tintColor = SharedPrefs.tintColor;
+
+        [window makeKeyAndVisible];
+
+    }
+    else {
+        window = nil;
+    }
     
 }
 

@@ -96,6 +96,38 @@ extension DZURLSession {
         
     }
     
+    @discardableResult public func POST<R: Decodable>(path: String, query: [String: String]?, body: [String: AnyHashable]?, resultTransformer: @escaping resultTransformer<R>, completion: @escaping successTypedBlock<R>) -> URLSessionTask? {
+        
+        return performRequest(withURI: path, method: "POST", query: query, body: body) { [weak self] (data, response, _) in
+            
+            guard let data = data as? Data else {
+                completion(.success((response, nil)))
+                return
+            }
+            
+            let r = resultTransformer(Result.success((response, data)))
+            
+            switch r {
+            case .success(let feeds):
+                completion(.success((response, feeds)))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+            
+        } error: { (error: Error?, response, _) in
+            
+            guard let error = error else {
+                return
+            }
+            
+            DispatchQueue.main.async {
+                completion(.failure(error))
+            }
+            
+        }
+        
+    }
+    
     @discardableResult public func PUT<R: Decodable>(path: String, query: [String: String]?, body: [String: AnyHashable]?, resultType: R.Type, completion: @escaping successTypedBlock<R>) -> URLSessionTask? {
         
         return performRequest(withURI: path, method: "PUT", query: query, body: body) { [weak self] (data, response, _) in
@@ -148,7 +180,7 @@ extension DZURLSession {
     
     @discardableResult public func DELETE<R: Decodable>(path: String, query: [String: String]?, resultType: R.Type, completion: @escaping successTypedBlock<R>)  -> URLSessionTask? {
         
-        return performRequest(withURI: path, method: "DELETE", params: query) { [weak self] (data, response, task) in
+        return performRequest(withURI: path, method: "DELETE", query: query, body: nil) { [weak self] data, response, task in
             
             guard let data = data else {
                 completion(.success((response, nil)))

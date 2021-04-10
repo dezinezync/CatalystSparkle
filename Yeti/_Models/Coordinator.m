@@ -48,7 +48,7 @@ NSString* deviceName(void) {
     
     if (self = [super init]) {
         
-        self.childCoordinators = [NSMutableArray arrayWithCapacity:3];
+//        self.childCoordinators = [NSMutableArray arrayWithCapacity:3];
         
     }
     
@@ -65,15 +65,15 @@ NSString* deviceName(void) {
     SidebarVC *sidebar = [[SidebarVC alloc] init];
     sidebar.mainCoordinator = self;
     
-    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:sidebar];
-    sidebar.navigationController.navigationBar.prefersLargeTitles = YES;
-    sidebar.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
-    
     if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:sidebar];
+        sidebar.navigationController.navigationBar.prefersLargeTitles = YES;
+        sidebar.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
+        
         [self.splitViewController setViewController:nav forColumn:UISplitViewControllerColumnCompact];
     }
 
-    [self.splitViewController setViewController:nav forColumn:UISplitViewControllerColumnPrimary];
+    [self.splitViewController setViewController:sidebar forColumn:UISplitViewControllerColumnPrimary];
     
     self.sidebarVC = sidebar;
     
@@ -909,9 +909,19 @@ static void *UIViewControllerMainCoordinatorKey;
     
 }
 
+- (id)coordinator {
+    return objc_getAssociatedObject(self, &UIViewControllerMainCoordinatorKey);
+}
+
 - (void)setMainCoordinator:(MainCoordinator *)mainCoordinator {
     
     objc_setAssociatedObject(self, &UIViewControllerMainCoordinatorKey, mainCoordinator, OBJC_ASSOCIATION_ASSIGN);
+    
+}
+
+- (void)setCoordinator:(id)coordinator {
+    
+    objc_setAssociatedObject(self, &UIViewControllerMainCoordinatorKey, coordinator, OBJC_ASSOCIATION_ASSIGN);
     
 }
 
@@ -923,33 +933,33 @@ static void *UIViewControllerMainCoordinatorKey;
 
 @end
 
-@implementation UIWindow (MacCatalystExtension)
-
-- (nullable NSObject *)innerWindow {
-    
-    id delegate = [[NSClassFromString(@"NSApplication") sharedApplication] delegate];
-    
-    const SEL hostWinSEL = NSSelectorFromString([NSString stringWithFormat:@"_%@Window%@Window:", @"host", @"ForUI"]);
-    
-    @try {
-        // There's also hostWindowForUIWindow 🤷‍♂️
-        DZS_SILENCE_CALL_TO_UNKNOWN_SELECTOR(id nsWindow = [delegate performSelector:hostWinSEL withObject:self];)
-            
-        // macOS 11.0 changed this to return an UINSWindowProxy
-        SEL attachedWin = NSSelectorFromString([NSString stringWithFormat:@"%@%@", @"attached", @"Window"]);
-        
-        if ([nsWindow respondsToSelector:attachedWin]) {
-            nsWindow = [nsWindow valueForKey:NSStringFromSelector(attachedWin)];
-        }
-        
-        return nsWindow;
-    }
-    @catch (...) {
-        NSLogDebug(@"Failed to get NSWindow for %@.", self);
-    }
-    
-    return nil;
-    
-}
-
-@end
+//@implementation UIWindow (MacCatalystExtension)
+//
+//- (nullable NSObject *)innerWindow {
+//    
+//    id delegate = [[NSClassFromString(@"NSApplication") sharedApplication] delegate];
+//    
+//    const SEL hostWinSEL = NSSelectorFromString([NSString stringWithFormat:@"_%@Window%@Window:", @"host", @"ForUI"]);
+//    
+//    @try {
+//        // There's also hostWindowForUIWindow 🤷‍♂️
+//        DZS_SILENCE_CALL_TO_UNKNOWN_SELECTOR(id nsWindow = [delegate performSelector:hostWinSEL withObject:self];)
+//            
+//        // macOS 11.0 changed this to return an UINSWindowProxy
+//        SEL attachedWin = NSSelectorFromString([NSString stringWithFormat:@"%@%@", @"attached", @"Window"]);
+//        
+//        if ([nsWindow respondsToSelector:attachedWin]) {
+//            nsWindow = [nsWindow valueForKey:NSStringFromSelector(attachedWin)];
+//        }
+//        
+//        return nsWindow;
+//    }
+//    @catch (...) {
+//        NSLogDebug(@"Failed to get NSWindow for %@.", self);
+//    }
+//    
+//    return nil;
+//    
+//}
+//
+//@end

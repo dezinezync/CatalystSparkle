@@ -90,12 +90,11 @@
                 
                 NSString *title = nil;
                 
-                // @TODO
-//                if (content.attributes != nil
-//                    && (content.attributes[@"title"] || content.attributes[@"alt"])) {
-//
-//                    title = content.attributes[@"alt"] ?: content.attributes[@"title"];
-//                }
+                if (content.attributes != nil
+                    && (content.attributes[@"title"] || content.attributes[@"alt"])) {
+
+                    title = content.attributes[@"alt"] ?: content.attributes[@"title"];
+                }
                 
                 photo.caption = title;
                 
@@ -116,7 +115,7 @@
             
             for (Content *img in [(Gallery *)image images]) {
                 
-                IDMPhoto *photo = [IDMPhoto photoWithURL:[NSURL URLWithString:img.url]];
+                IDMPhoto *photo = [IDMPhoto photoWithURL:[NSURL URLWithString:img.url.absoluteString]];
                 
 //                photo.referenceView = image;
                 

@@ -3,6 +3,7 @@ import YapDatabase
 import SwiftYapDatabase
 import Models
 import Combine
+import OrderedCollections
 
 /// Have the changes been fully synced with our local store?
 private let SYNCED_CHANGES = "syncedChanges"
@@ -31,24 +32,28 @@ public enum GroupNames: String, CaseIterable {
 
 public extension Notification.Name {
     static let userUpdated = Notification.Name(rawValue: "com.yeti.note.userDidUpdate")
+    static let feedsUpdated = Notification.Name(rawValue: "feedsUpdated")
+    static let foldersUpdated = Notification.Name(rawValue: "foldersUpdated")
 }
 
-private let DB_VERSION_TAG = "2021-03-26 08:00AM IST"
+private let DB_VERSION_TAG = "2021-03-29 09:30AM IST"
 
 extension NSNotification.Name {
 //    static let YapDatabaseModifiedNotification = NSNotification.Name("YapDatabaseModifiedNotification")
-    static let DBManagerDidUpdate = Notification.Name("DBManagerDidUpdate")
+    public static let DBManagerDidUpdate = Notification.Name("DBManagerDidUpdate")
 }
 
 public let titleWordCloudKey = "titleWordCloud"
 
 public let notificationsKey = "notifications"
 
-@objcMembers public final class DBManager {
+@objcMembers public final class DBManager: NSObject {
     
     public static let shared = DBManager()
     
     public var syncCoordinator: SyncCoordinator?
+    
+    public var bookmarksCoordinator: BookmarksCoordinator?
     
     fileprivate var _lastUpdated: Date!
     
@@ -74,13 +79,19 @@ public let notificationsKey = "notifications"
             
             let date = Subscription.dateFormatter.date(from: ds)
             
+            _lastUpdated = date
+            
             return date
             
         }
         
         set {
             
+            willChangeValue(for: \.lastUpdated)
+            
             _lastUpdated = newValue
+            
+            didChangeValue(for: \.lastUpdated)
             
             bgConnection.readWrite { (t) in
                 
@@ -101,7 +112,9 @@ public let notificationsKey = "notifications"
         
     }
     
-    public init() {
+    public override init() {
+        
+        super.init()
         
         setupDatabase(self.database)
         setupViews(self.database)
@@ -123,9 +136,9 @@ public let notificationsKey = "notifications"
             
             let fm = FileManager.default
             #if DEBUG
-            let dbName = "elytra-v2.3.0i-debug.sqlite"
+            let dbName = "elytra-v2.3.0k-debug.sqlite"
             #else
-            let dbName = "elytra-v2.3.0a.sqlite"
+            let dbName = "elytra-v2.3.0b.sqlite"
             #endif
             
             guard let baseURL = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
@@ -215,13 +228,13 @@ public let notificationsKey = "notifications"
                 }
                 
                 // Move connections to the latest commit
-                let notes = sself.uiConnection.beginLongLivedReadTransaction()
-                let notes2 = sself.countsConnection.beginLongLivedReadTransaction()
+                let notes: [Notification] = sself.uiConnection.beginLongLivedReadTransaction()
+                let notes2: [Notification] = sself.countsConnection.beginLongLivedReadTransaction()
                 
-                var uniqueNotes = Set(notes)
+                var uniqueNotes: Set<Notification> = Set(notes)
                 uniqueNotes = uniqueNotes.union(Set(notes2))
                 
-                let notifications = uniqueNotes.map { $0 }
+                let notifications: [Notification] = Array(uniqueNotes)
                 
                 if notifications.count == 0 {
                     // nothing changed.
@@ -232,8 +245,7 @@ public let notificationsKey = "notifications"
                 DispatchQueue.main.async {
                     NotificationCenter.default.post(name: .DBManagerDidUpdate, object: self, userInfo: [notificationsKey: notifications])
                 }
-                
-                // @TODO: Update unread counters
+
             }
             .store(in: &cancellables)
         
@@ -327,9 +339,16 @@ public let notificationsKey = "notifications"
                 
                 for k in keys {
                     
-                    let feed = t.object(forKey: k, inCollection: .feeds) as! Feed
+                    if let feed = t.object(forKey: k, inCollection: .feeds) as? Feed {
+                        
+                        // check for custom name
+                        if let customName = t.object(forKey: k, inCollection: .localNames) as? String {
+                            feed.localName = customName
+                        }
                     
-                    f.append(feed)
+                        f.append(feed)
+                        
+                    }
                     
                 }
                 
@@ -343,11 +362,13 @@ public let notificationsKey = "notifications"
         
         set {
             
+            _feeds = newValue
+            
+            NotificationCenter.default.post(name: .feedsUpdated, object: self)
+            
             if newValue.count == 0 {
                 return
             }
-            
-            _feeds = newValue
             
             writeQueue.sync { [weak self] in
                 
@@ -383,6 +404,14 @@ public let notificationsKey = "notifications"
         
     }
     
+    public func add(feed: Feed) {
+        
+        update(feed: feed)
+        
+        feeds.append(feed)
+        
+    }
+    
     fileprivate var _preSyncFeedMetadata: [UInt: FeedMeta] = [:]
     
     fileprivate func _metadataForFeed(_ feed: Feed) -> FeedMeta {
@@ -399,7 +428,7 @@ public let notificationsKey = "notifications"
             
             if feed.feedID != nil && feed.url != nil {
                 
-                var m = FeedMeta(id: feed.feedID, url: feed.url, title: feed.title)
+                let m = FeedMeta(id: feed.feedID, url: feed.url, title: feed.title)
                 
                 if feed.folderID != nil {
                     m.folderID = feed.folderID
@@ -443,17 +472,15 @@ public let notificationsKey = "notifications"
     
     public func update(feed: Feed, metadata: FeedMeta) {
         
-        writeQueue.async { [weak self] in
+        let key = "\(feed.feedID!)"
+        
+        bgConnection.readWrite({ (t) in
             
-            let key = "\(feed.feedID!)"
+            t.setObject(feed, forKey: key, inCollection: .feeds, withMetadata: metadata)
             
-            self?.bgConnection.asyncReadWrite({ (t) in
-                
-                t.setObject(feed, forKey: key, inCollection: .feeds, withMetadata: metadata)
-                
-            })
-            
-        }
+        })
+        
+        NotificationCenter.default.post(name: .feedsUpdated, object: self)
         
     }
     
@@ -499,8 +526,6 @@ public let notificationsKey = "notifications"
             
             writeQueue.async { [weak self] in
                 
-                // @TODO: Add CloudCore operation
-                
                 self?.bgConnection.asyncReadWrite({ (t) in
                     
                     t.removeObject(forKey: localNameKey, inCollection: .localNames)
@@ -523,8 +548,6 @@ public let notificationsKey = "notifications"
         else {
             
             writeQueue.async { [weak self] in
-                
-                // @TODO: Add CloudCore operation
                 
                 self?.bgConnection.asyncReadWrite({ (t) in
                     
@@ -554,20 +577,55 @@ public let notificationsKey = "notifications"
         if let folderID = feed.folderID,
            let folder = folder(for: folderID) {
             
-            folder.feedIDs = Set(Array(folder.feedIDs).filter { $0 != folderID })
-            folder.feeds = folder.feeds.filter { $0 != feed }
-            
+            folder.feedIDs = Array(Set(folder.feedIDs.filter { $0 != folderID }))
+            folder.feeds = OrderedSet<Feed>(folder.feeds.filter { $0 != feed })
+            // save the folder struct back to the DB.
             add(folder: folder)
             
         }
         
         feeds = feeds.filter { $0 != feed }
         
-        uiConnection.readWrite { (t) in
+        let feedID = feed.feedID
+        
+        bgConnection.readWrite { [weak self] (t) in
             
             t.removeObject(forKey: "\(feed.feedID!)", inCollection: .feeds)
             
+            // Delete all articles for this feed
+            guard let txn = t.ext(.articlesView) as? YapDatabaseFilteredViewTransaction else {
+                return
+            }
+            
+            var articlesToDelete: [String] = []
+            
+            txn.enumerateKeysAndMetadata(inGroup: GroupNames.articles.rawValue, with: [], range: NSMakeRange(0, Int(txn.numberOfItems(inGroup: GroupNames.articles.rawValue)))) { _, _ in
+                return true
+            } using: { c, k, m, index, stop in
+                
+                guard let meta = m as? ArticleMeta else {
+                    return
+                }
+                
+                if meta.feedID == feedID {
+                    
+                    articlesToDelete.append(k)
+                    
+                }
+                
+            }
+            
+            guard articlesToDelete.count > 0 else {
+                // nothing to delete.
+                return
+            }
+            
+            for key in articlesToDelete {
+                self?._delete(articleID: key, transaction: t)
+            }
+            
         }
+        
         
     }
     
@@ -627,6 +685,8 @@ public let notificationsKey = "notifications"
         set {
             
             _folders = newValue
+            
+            NotificationCenter.default.post(name: .foldersUpdated, object: self)
             
             guard newValue.count > 0 else {
                 return
@@ -690,6 +750,22 @@ public let notificationsKey = "notifications"
             
         }
         
+        folders.append(folder)
+        
+    }
+    
+    public func update(folder: Folder) {
+        
+        let key = "\(folder.folderID!)"
+        
+        bgConnection.readWrite({ (t) in
+            
+            t.setObject(folder, forKey: key, inCollection: .folders)
+            
+        })
+        
+        NotificationCenter.default.post(name: .foldersUpdated, object: self)
+        
     }
     
     public func delete(folder: Folder) {
@@ -716,6 +792,8 @@ public let notificationsKey = "notifications"
             }
             
             t.removeObject(forKey: "\(folder.folderID!)", inCollection: .folders)
+            
+            sself.folders = sself.folders.filter { $0.folderID != folder.folderID }
             
         }
         
@@ -901,30 +979,51 @@ public let notificationsKey = "notifications"
         
     }
     
-    public func delete(allArticlesFor feed: Feed) {
-        
-        let col = "\(CollectionNames.articles.rawValue):\(feed.feedID!)"
-        
-        bgConnection.asyncReadWrite({ (t) in
-            
-            let keys = t.allKeys(inCollection: col)
-            
-            t.removeAllObjects(inCollection: col)
-            
-            t.removeObjects(forKeys: keys, inCollection: .articlesContent)
-            
-            t.removeObjects(forKeys: keys, inCollection: .articlesFulltext)
-            
-            t.removeObject(forKey: "\(feed.feedID!)", inCollection: .feeds)
-            
-        })
-        
-    }
+//    public func delete(allArticlesFor feed: Feed) {
+//
+//        let col = "\(CollectionNames.articles.rawValue):\(feed.feedID!)"
+//
+//        bgConnection.asyncReadWrite({ (t) in
+//
+//            let keys = t.allKeys(inCollection: col)
+//
+//            t.removeAllObjects(inCollection: col)
+//
+//            t.removeObjects(forKeys: keys, inCollection: .articlesContent)
+//
+//            t.removeObjects(forKeys: keys, inCollection: .articlesFulltext)
+//
+//            t.removeObject(forKey: "\(feed.feedID!)", inCollection: .feeds)
+//
+//        })
+//
+//    }
     
 }
 
 // MARK: - Bulk Operations
 extension DBManager {
+    
+    public func resetAccount(completion: (() -> Void)?) {
+        
+        bgConnection.asyncReadWrite { t in
+            
+            t.removeAllObjectsInAllCollections()
+            
+        } completionBlock: { [weak self] in
+            
+            DispatchQueue.main.async {
+                self?.user = nil
+                self?.feeds = []
+                self?.folders = []
+                
+                completion?()
+            }
+            
+        }
+
+        
+    }
     
     public func purgeDataForResync (completion: (() -> Void)?) {
      
@@ -952,7 +1051,6 @@ extension DBManager {
     
     public func purgeFeedsForResync (completion: (() -> Void)?) {
         
-        // @TODO: Persist Feed metadata
         var preSyncMetadata: [UInt: FeedMeta] = [:]
         
         for feed in feeds {
@@ -965,9 +1063,6 @@ extension DBManager {
             
         }
         
-        _feeds = []
-        _folders = []
-        
         bgConnection.readWrite { (transaction) in
             
             transaction.removeAllObjects(inCollection: .feeds)
@@ -975,7 +1070,10 @@ extension DBManager {
             
         }
         
-        _preSyncFeedMetadata = preSyncMetadata
+        feeds = []
+        folders = []
+        
+       _preSyncFeedMetadata = preSyncMetadata
         
         DispatchQueue.main.async {
             completion?()
@@ -983,7 +1081,7 @@ extension DBManager {
         
     }
     
-    public func cleanupDatabase() {
+    public func cleanupDatabase(completion:(() -> Void)?) {
         
         // remove articles older than 1 month from the DB.
         let interval = Date().timeIntervalSince1970
@@ -991,6 +1089,7 @@ extension DBManager {
         writeQueue.async { [weak self] in
             
             guard let sself = self else {
+                completion?()
                 return
             }
         
@@ -998,12 +1097,15 @@ extension DBManager {
                 
                 var keys = t.allKeys(inCollection: .articles).sorted()
                 
-                guard keys.count > 20 else {
+                guard keys.count > 100 else {
+                    completion?()
                     return
                 }
                 
-                // check the last 20 items
-                keys = keys.suffix(20)
+                // check the last 100 items
+                keys = keys.suffix(100)
+                
+                var cleaned: UInt = 0
                 
                 for key in keys {
                     
@@ -1016,10 +1118,15 @@ extension DBManager {
                     if ((interval - timestamp) > 2592000) {
                         
                         sself._delete(articleID: key, transaction: t)
+                        cleaned += 1
                         
                     }
                     
                 }
+                
+                print("Cleaned up \(cleaned) article\(cleaned == 1 ? "" : "s")")
+                
+                completion?()
                 
             }
             
@@ -1030,7 +1137,6 @@ extension DBManager {
 }
 
 // MARK: - DB Registrations
-private let versionTag = "2021-03-15 10:53 IST"
 
 public enum DBManagerViews: String {
     
@@ -1116,7 +1222,7 @@ extension DBManager {
 
             }
             
-            let view = YapDatabaseAutoView(grouping: group, sorting: sort, versionTag: versionTag)
+            let view = YapDatabaseAutoView(grouping: group, sorting: sort, versionTag: DB_VERSION_TAG)
             db.register(view, withName: .rootView)
             
         }
@@ -1150,11 +1256,13 @@ extension DBManager {
                     return .orderedSame
                 }
                 
-                return md1.timestamp.compare(other: md2.timestamp)
+                // we reverse compare since we need the default sorting
+                // to be latest first.
+                return md2.timestamp.compare(other: md1.timestamp)
                 
             }
             
-            let view = YapDatabaseAutoView(grouping: grouping, sorting: sorting, versionTag: versionTag)
+            let view = YapDatabaseAutoView(grouping: grouping, sorting: sorting, versionTag: DB_VERSION_TAG)
             
             db.register(view, withName: .feedView)
             
@@ -1187,11 +1295,11 @@ extension DBManager {
                 let set1 = Set(wordCloud)
                 let set2 = Set(user.filters)
                 
-                return set1.intersection(set2).count > 0
+                return set1.intersection(set2).count == 0
                 
             }
             
-            let articlesView = YapDatabaseFilteredView(parentViewName: DBManagerViews.feedView.rawValue, filtering: filter, versionTag: versionTag)
+            let articlesView = YapDatabaseFilteredView(parentViewName: DBManagerViews.feedView.rawValue, filtering: filter, versionTag: DB_VERSION_TAG)
             
             db.register(articlesView, withName: .articlesView)
             
@@ -1229,7 +1337,7 @@ extension DBManager {
                 
             }
             
-            let unreadsView = YapDatabaseFilteredView(parentViewName: DBManagerViews.articlesView.rawValue, filtering: filter, versionTag: versionTag)
+            let unreadsView = YapDatabaseFilteredView(parentViewName: DBManagerViews.articlesView.rawValue, filtering: filter, versionTag: DB_VERSION_TAG)
             
             db.register(unreadsView, withName: .unreadsView)
             
@@ -1252,7 +1360,7 @@ extension DBManager {
                 
             }
             
-            let bookmarksView = YapDatabaseFilteredView(parentViewName: DBManagerViews.articlesView.rawValue, filtering: filtering, versionTag: versionTag)
+            let bookmarksView = YapDatabaseFilteredView(parentViewName: DBManagerViews.articlesView.rawValue, filtering: filtering, versionTag: DB_VERSION_TAG)
             
             db.register(bookmarksView, withName: .bookmarksView)
             

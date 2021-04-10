@@ -10,6 +10,7 @@ import UIKit
 import Combine
 import Models
 import SDWebImage
+import DBManager
 
 class FeedCell: UICollectionViewListCell {
     
@@ -20,6 +21,8 @@ class FeedCell: UICollectionViewListCell {
     var cancellables: [AnyCancellable] = []
     var isExploring: Bool = false
     var isAdding: Bool = false
+    
+    weak var faviconOp: SDWebImageCombinedOperation?
     
     func configure(item: SidebarItem, indexPath: IndexPath) {
         
@@ -49,7 +52,7 @@ class FeedCell: UICollectionViewListCell {
             
             if SharedPrefs.showUnreadCounts == true {
                 
-                content.secondaryText = (feed.unread ?? 0) > 0 ? "\(feed.unread!)" : ""
+                content.secondaryText = feed.unread > 0 ? "\(feed.unread)" : ""
                 
                 feed.$unread
                     .receive(on: DispatchQueue.main)
@@ -59,7 +62,7 @@ class FeedCell: UICollectionViewListCell {
                             return
                         }
                         
-                        sself.updateUnreadCount(unread ?? 0)
+                        sself.updateUnreadCount(unread)
                         
                 }
                 .store(in: &cancellables)
@@ -104,7 +107,33 @@ class FeedCell: UICollectionViewListCell {
             
             content.image = feed.faviconImage ?? UIImage(systemName: "square.dashed")
             
-            setupFavicon()
+            feed.$faviconImage
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] _ in
+                    
+                    guard let sself = self else {
+                        return
+                    }
+                    
+                    if (sself.feed.faviconImage == nil) {
+                        sself.setupDefaultIcon()
+                    }
+                    else {
+                        
+                        guard var content = sself.contentConfiguration as? UIListContentConfiguration else {
+                            return
+                        }
+                        
+                        content.image = sself.feed.faviconImage
+                        
+                        sself.contentConfiguration = content
+                        
+                    }
+                    
+                }
+                .store(in: &cancellables)
+            
+            if feed.faviconImage == nil { setupFavicon() }
             
         }
         
@@ -132,6 +161,10 @@ class FeedCell: UICollectionViewListCell {
             cancellables.removeAll()
             
         }
+        
+        feed = nil
+        
+        faviconOp?.cancel()
         
         super.prepareForReuse()
         
@@ -178,7 +211,15 @@ class FeedCell: UICollectionViewListCell {
         DispatchQueue.main.async { [weak self] in
             
             if self?.feed.faviconImage == nil {
-                self?.feed.faviconImage = UIImage(systemName: "square.dashed")
+                
+                guard var content = self?.contentConfiguration as? UIListContentConfiguration else {
+                    return
+                }
+                
+                content.image = UIImage(systemName: "square.dashed")
+                
+                self?.contentConfiguration = content
+                
             }
             
         }
@@ -199,6 +240,10 @@ class FeedCell: UICollectionViewListCell {
             return
         }
         
+        if faviconOp != nil {
+            faviconOp!.cancel()
+        }
+        
         let maxWidth = 48 * UIScreen.main.scale
         
         guard let url = feed.faviconProxyURI(size: maxWidth) else {
@@ -209,31 +254,14 @@ class FeedCell: UICollectionViewListCell {
 //        print("Downloading favicon for feed \(feed.displayTitle) with url \(url)")
         #endif
         
-        let _ = SDWebImageManager.shared.loadImage(with: url, options: [.scaleDownLargeImages], progress: nil) { [weak self, weak feed] (image, data, error, cacheType, finished, imageURL) in
+        faviconOp = SDWebImageManager.shared.loadImage(with: url, options: [.scaleDownLargeImages], progress: nil) { [weak self] (image, data, error, cacheType, finished, imageURL) in
             
             guard let sself = self,
-                  let sfeed = feed else {
-                return
-            }
-            
-            guard sself.feed == sfeed else {
+                  let sfeed = sself.feed else {
                 return
             }
             
             sfeed.faviconImage = image
-            
-            guard sself.feed != nil || sself.feed.faviconImage == nil || image != nil else {
-                sself.setupDefaultIcon()
-                return
-            }
-            
-            guard var content = self?.contentConfiguration as? UIListContentConfiguration else {
-                return
-            }
-            
-            content.image = image
-            
-            sself.contentConfiguration = content
             
         }
         

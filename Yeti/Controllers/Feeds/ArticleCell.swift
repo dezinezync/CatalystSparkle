@@ -10,6 +10,7 @@ import UIKit
 import Models
 import SDWebImage
 import DBManager
+import Combine
 
 class ArticleCell: UITableViewCell {
     
@@ -22,6 +23,8 @@ class ArticleCell: UITableViewCell {
     @IBOutlet var timeLabel: UILabel!
     @IBOutlet var titleLabel: UILabel!
     @IBOutlet var titleLabelWidthConstraint: NSLayoutConstraint!
+    
+    var cancellables: [AnyCancellable] = []
     
     weak var article: Article?
     var feedType: FeedType!
@@ -78,6 +81,13 @@ class ArticleCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         resetUI()
+        
+        for o in cancellables {
+            o.cancel()
+        }
+        
+        cancellables = []
+        
     }
     
     func resetUI() {
@@ -221,8 +231,6 @@ class ArticleCell: UITableViewCell {
             
         }
         
-        updateMarkerView()
-        
         let width = bounds.size.width - 48
         
         titleLabel.preferredMaxLayoutWidth = width - (isShowingCover ? 92 : 4) // 80 + 12
@@ -239,6 +247,15 @@ class ArticleCell: UITableViewCell {
         
         timeLabel.text = timestamp
         timeLabel.accessibilityLabel = timestamp
+        
+        updateMarkerView()
+        
+        article.$state
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                self?.updateMarkerView()
+            }
+            .store(in: &cancellables)
         
     }
     
@@ -286,10 +303,10 @@ class ArticleCell: UITableViewCell {
         
         // positive offsets push it up, negative push it down
         // this is similar to NSRect
-        let fontSize = Int(titleLabel.font.pointSize)
-        let baseLine = 17 // compute our expected using this
-        let expected = 7 // from the above, A:B :: C:D
-        var yOffset = (baseLine / fontSize) * expected * -1
+        let fontSize: Double = Double(titleLabel.font.pointSize)
+        let baseLine: Double = 17 // compute our expected using this
+        let expected: Double = 7 // from the above, A:B :: C:D
+        var yOffset: Double = (baseLine / fontSize) * expected * -1
         
         yOffset += 6
         
@@ -323,11 +340,27 @@ class ArticleCell: UITableViewCell {
         
         var proxyURL = url
         
-        if SharedPrefs.imageProxy == true {
+        if proxyURL.absoluteString.contains(".gif") {
+            
+            // only load covers for GIFs. Loading the full gif can
+            // cause a lot of memory to be used for unpacking the
+            // gif data and eventually crashing the app.
+            
+            let proxyPath = url.absoluteString.path(forImageProxy: false, maxWidth: coverImage.bounds.size.width, quality: 0.9, firstFrameForGIF: true, useImageProxy: true, sizePreference:  SharedPrefs.imageBandwidth, forWidget: false)
+            
+            if let aURL = URL(string: proxyPath) {
+                proxyURL = aURL
+            }
+            
+        }
+        
+        else if SharedPrefs.imageProxy == true {
             
             let proxyPath = url.absoluteString.path(forImageProxy: false, maxWidth: coverImage.bounds.size.width, quality: 0.9, firstFrameForGIF: false, useImageProxy: true, sizePreference:  SharedPrefs.imageBandwidth, forWidget: false)
             
-            proxyURL = URL(string: proxyPath) ?? url
+            if let aURL = URL(string: proxyPath) {
+                proxyURL = aURL
+            }
              
         }
         
@@ -335,7 +368,7 @@ class ArticleCell: UITableViewCell {
         
         DispatchQueue.global(qos: .userInteractive).async { [weak self, weak coverImage] in
             
-            self?.coverTask = SDWebImageManager.shared.loadImage(with: url, options: [.scaleDownLargeImages, .retryFailed], context: nil, progress: nil, completed: { (image, data, error, cacheType, finished, imageURL) in
+            self?.coverTask = SDWebImageManager.shared.loadImage(with: proxyURL, options: [.scaleDownLargeImages, .retryFailed], context: nil, progress: nil, completed: { (image, data, error, cacheType, finished, imageURL) in
                 
                 guard finished == true else {
                     return
@@ -343,7 +376,7 @@ class ArticleCell: UITableViewCell {
                 
                 if let err = error,
                     proxyURL == url
-                        && (err as NSError).userInfo[SDWebImageErrorDownloadStatusCodeKey] as! Int == 404 {
+                        && ((err as NSError).userInfo[SDWebImageErrorDownloadStatusCodeKey] as? Int) ?? 0 == 404 {
                     
                     #if DEBUG
                     print("Failed to download cover image with URL:", proxyURL)
@@ -426,13 +459,13 @@ class ArticleCell: UITableViewCell {
             return
         }
         
-        if a.bookmarked == true && feedType != .bookmarks {
+        if a.state == .Bookmarked && feedType != .bookmarks {
             
             markerView.tintColor = .systemOrange
             markerView.image = UIImage(systemName: "bookmark.fill")
             
         }
-        else if a.read == false {
+        else if a.state == .Unread {
             
             markerView.tintColor = SharedPrefs.tintColor
             markerView.image = UIImage(systemName: "largecircle.fill.circle")

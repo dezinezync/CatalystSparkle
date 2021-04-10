@@ -96,7 +96,7 @@
     
     weakify(self);
     
-    [MyFeedsManager startFreeTrialWithU:nil completion:^(NSError * _Nullable error, BOOL completed) {
+    [self.coordinator startFreeTrialWithU:nil completion:^(NSError * _Nullable error, BOOL completed) {
        
         if (error != nil) {
             [self setButtonsState:YES];
@@ -110,31 +110,14 @@
         
     }];
     
-    // @TODO
-//    [MyFeedsManager startUserFreeTrial:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//        NSLog(@"Expiry: %@, isTrial: %@", MyFeedsManager.user.subscription.expiry, MyFeedsManager.user.subscription.status.integerValue == 2 ? @"YES" : @"NO");
-//
-//        strongify(self);
-//
-//        return [self didComplete];
-//
-//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//        [AlertManager showGenericAlertWithTitle:@"Error Starting Trial" message:error.localizedDescription];
-//
-//    }];
-    
 }
 
 - (void)didComplete {
     
     dispatch_async(dispatch_get_main_queue(), ^{
         
-        [Keychain add:kHasShownOnboarding boolean:YES];
-        
-        // @TODO
-//        [MyAppDelegate.coordinator.sidebarVC beginRefreshingAll:nil];
+        [NSUserDefaults.standardUserDefaults setBool:YES forKey:@"hasShownIntro"];
+        [NSUserDefaults.standardUserDefaults synchronize];
         
         [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
         

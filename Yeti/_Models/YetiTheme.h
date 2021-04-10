@@ -6,9 +6,9 @@
 //  Copyright © 2018 Dezine Zync Studios. All rights reserved.
 //
 
-#import <DZThemeKit/DZThemeKit.h>
+#import <Foundation/Foundation.h>
 
-@interface YetiTheme : Theme
+@interface YetiTheme : NSObject
 
 @property (nonatomic, copy) UIColor *cellColor;
 
@@ -36,5 +36,13 @@
 #pragma mark - 1.4
 
 @property (nonatomic, copy) UIColor *paragraphColor;
+
+#pragma mark - 2.3-macOS
+
+@property (nonatomic, copy) UIColor *backgroundColor;
+
+@property (nonatomic, copy) UIColor *borderColor;
+
+@property (nonatomic, copy) UIColor *tableColor;
 
 @end

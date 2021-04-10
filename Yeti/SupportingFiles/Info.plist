@@ -5,6 +5,7 @@
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>com.yeti.refresh</string>
+		<string>com.yeti.cleanup</string>
 	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
@@ -223,7 +224,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>173</string>
+	<string>200</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSApplicationCategoryType</key>

@@ -8,7 +8,6 @@
 
 #import "LaunchVC.h"
 #import "TrialVC.h"
-#import "Coordinator.h"
 
 #import "Keychain.h"
 
@@ -175,7 +174,7 @@
 //                    
 //                    if (expired) {
 //                        
-//                        [self.mainCoordinator showSubscriptionsInterface];
+//                        [self.coordinator showSubscriptionsInterface];
 //                        
 //                    }
 //                    

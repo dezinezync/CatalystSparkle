@@ -10,7 +10,6 @@
 #import "ArticleProvider.h"
 #import "ArticleHandler.h"
 #import "ArticleHelperView.h"
-#import "FeedItem.h"
 
 #import "BarPositioning.h"
 
@@ -39,9 +38,9 @@
 
 @property (nonatomic, assign) BOOL noAuth;
 
-- (instancetype _Nonnull)initWithItem:(Article * _Nonnull)item;
+- (instancetype _Nonnull)initWithItem:(id _Nonnull)item;
 
-@property (nonatomic, strong) Article * _Nullable item;
+@property (nonatomic, strong) id _Nullable item;
 
 @property (weak, nonatomic) IBOutlet UIStackView * _Nullable stackView;
 

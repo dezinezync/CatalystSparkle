@@ -33,17 +33,17 @@
     }
     
     UIImage * readImage = [UIImage systemImageNamed:@"smallcircle.fill.circle"],
-            * bookmarkImage = [UIImage systemImageNamed:(self.item.bookmarked ? @"bookmark.fill" : @"bookmark")],
+            * bookmarkImage = [UIImage systemImageNamed:(((Article *)(self.item)).bookmarked ? @"bookmark.fill" : @"bookmark")],
             * searchImage = [UIImage systemImageNamed:@"magnifyingglass"];
 
     UIBarButtonItem *read = [[UIBarButtonItem alloc] initWithImage:readImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapRead:)];
-    read.accessibilityValue = self.item.read ? @"Mark article unread" : @"Mark article read";
-    read.accessibilityLabel = self.item.read ? @"Mark Unread" : @"Mark Read";
+    read.accessibilityValue = ((Article *)(self.item)).read ? @"Mark article unread" : @"Mark article read";
+    read.accessibilityLabel = ((Article *)(self.item)).read ? @"Mark Unread" : @"Mark Read";
     
     UIBarButtonItem *bookmark = [[UIBarButtonItem alloc] initWithImage:bookmarkImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapBookmark:)];
     
-    bookmark.accessibilityValue = self.item.bookmarked ? @"Remove from bookmarks" : @"Bookmark article";
-    bookmark.accessibilityLabel = self.item.bookmarked ? @"Unbookmark" : @"Bookmark";
+    bookmark.accessibilityValue = ((Article *)(self.item)).bookmarked ? @"Remove from bookmarks" : @"Bookmark article";
+    bookmark.accessibilityLabel = ((Article *)(self.item)).bookmarked ? @"Unbookmark" : @"Bookmark";
     
     UIBarButtonItem *search = [[UIBarButtonItem alloc] initWithImage:searchImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapSearch)];
     
@@ -205,9 +205,9 @@
         return;
     }
     
-    [self.mainCoordinator showEmptyVC];
+    [self.coordinator showEmptyVC];
     
-    FeedVC *top = self.mainCoordinator.feedVC;
+    FeedVC *top = self.coordinator.feedVC;
 
     if (top != nil && ([top isKindOfClass:FeedVC.class] || [top.class isSubclassOfClass:FeedVC.class])) {
         NSArray <NSIndexPath *> *selectedItems = [top.tableView indexPathsForSelectedRows];
@@ -225,10 +225,21 @@
     if (!self.item)
         return;
     
-    NSString *title = self.item.title;
-    NSURL *URL = formattedURL(@"%@", self.item.url);
+    NSString *title = ((Article *)(self.item)).title;
     
-    UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[title, @" ", URL] applicationActivities:nil];
+    if (title == nil || [title isBlank] == YES) {
+        // Micro.blog
+        title = ((Article *)(self.item)).textFromContent;
+        
+        if ([title isBlank] == NO && title.length > 100) {
+            title = [[title substringToIndex:97] stringByAppendingString:@"..."];
+        }
+        
+    }
+    
+    NSURL *URL = formattedURL(@"%@", ((Article *)(self.item)).url);
+    
+    UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[title, URL] applicationActivities:nil];
     
     if (sender && [sender isKindOfClass:UIBarButtonItem.class]) {
     
@@ -265,7 +276,7 @@
     
     weakify(self);
     
-    [self.providerDelegate userMarkedArticle:self.item bookmarked:!(self.item.bookmarked) completion:^(BOOL completed) {
+    [self.providerDelegate userMarkedArticle:self.item bookmarked:!(((Article *)(self.item)).bookmarked) completion:^(BOOL completed) {
         
         if (isButton) {
             
@@ -273,7 +284,7 @@
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
 
-                    UIImage *image = self.item.bookmarked ? [UIImage systemImageNamed:@"bookmark.fill"] : [UIImage systemImageNamed:@"bookmark"];
+                    UIImage *image = ((Article *)(self.item)).bookmarked ? [UIImage systemImageNamed:@"bookmark.fill"] : [UIImage systemImageNamed:@"bookmark"];
                     
                     [button setImage:image];
                     
@@ -304,7 +315,7 @@
     
     weakify(self);
     
-    BOOL read = !self.item.read;
+    BOOL read = !((Article *)(self.item)).read;
     
     [self.providerDelegate userMarkedArticle:self.item read:read completion:^(BOOL completed) {
         
@@ -314,7 +325,7 @@
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
                     
-                    button.image = self.item.read ? [UIImage systemImageNamed:@"smallcircle.fill.circle"] : [UIImage systemImageNamed:@"largecircle.fill.circle"];
+                    button.image = ((Article *)(self.item)).read ? [UIImage systemImageNamed:@"smallcircle.fill.circle"] : [UIImage systemImageNamed:@"largecircle.fill.circle"];
                     
                     strongify(self);
                     
@@ -342,7 +353,7 @@
         return;
     }
     
-    NSURL *URL = formattedURL(@"yeti://external?link=%@", self.item.url);
+    NSURL *URL = formattedURL(@"yeti://external?link=%@", ((Article *)(self.item)).url);
     
 #if TARGET_OS_MACCATALYST
     if (self->_shiftPressedBeforeClickingURL) {
@@ -352,11 +363,11 @@
     }
 #else
     
-    Feed *feed = [MyFeedsManager feedFor:self.item.feedID];
+    Feed *feed = [self.coordinator feedFor:((Article *)(self.item)).feedID];
     
     if (feed != nil) {
         
-        FeedMeta *meta = [MyFeedsManager metadataForFeed:feed];
+        FeedMeta *meta = [self.coordinator metadataForFeed:feed];
         
         if (meta) {
             
@@ -581,7 +592,7 @@
     
     NSUserActivity *openArticleActivity = [[NSUserActivity alloc] initWithActivityType:@"openArticle"];
     
-    NSDictionary *dict = self.item.dictionaryRepresentation;
+    NSDictionary *dict = ((Article *)(self.item)).dictionaryRepresentation;
     
     [openArticleActivity addUserInfoEntriesFromDictionary:dict];
     

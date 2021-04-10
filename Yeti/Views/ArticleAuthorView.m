@@ -9,8 +9,8 @@
 #import "ArticleAuthorView.h"
 #import "TypeFactory.h"
 #import "YetiConstants.h"
-#import "Coordinator.h"
 #import "Elytra-Swift.h"
+#import "AppDelegate.h"
 
 @interface ArticleAuthorView () <UIContextMenuInteractionDelegate> {
     BOOL _didAddHorizontalConstraints;
@@ -52,7 +52,7 @@
         
         UIImageConfiguration *imageConfig = [UIImageSymbolConfiguration  configurationWithWeight:UIImageSymbolWeightSemibold];
         
-        UIImage *image = [[UIImage systemImageNamed:@"m.square" withConfiguration:imageConfig] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+        UIImage *image = [[UIImage systemImageNamed:@"text.badge.star" withConfiguration:imageConfig] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
         
         [self.mercurialButton setImage:image forState:UIControlStateNormal];
         
@@ -98,7 +98,7 @@
     
     UIImageConfiguration *imageConfig = [UIImageSymbolConfiguration  configurationWithWeight:UIImageSymbolWeightSemibold];
     
-    UIImage *image = [[UIImage systemImageNamed:@"m.square.fill" withConfiguration:imageConfig] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    UIImage *image = [[UIImage systemImageNamed:@"text.badge.star" withConfiguration:imageConfig] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     
     [self.mercurialButton setImage:image forState:UIControlStateNormal];
     
@@ -219,19 +219,18 @@
     SEL aSel = NSSelectorFromString(@"item");
     
     if (self.delegate != nil && [self.delegate respondsToSelector:aSel]) {
-        // @TODO
-//        FeedItem *item = DZS_SILENCE_CALL_TO_UNKNOWN_SELECTOR([self.delegate performSelector:aSel];);
-//
-//        if (item == nil) {
-//            return;
-//        }
-//
-//        // @TODO
-////        DBManager.shared.removeFullText(...)
-//
-//        [self mercurialButton:self.mercurialButton];
-//
-//        item.mercury = NO;
+        
+        Article *item = DZS_SILENCE_CALL_TO_UNKNOWN_SELECTOR([self.delegate performSelector:aSel];);
+
+        if (item == nil) {
+            return;
+        }
+        
+        [MyAppDelegate.coordinator deleteFullTextFor:item];
+
+        [self mercurialButton:self.mercurialButton];
+
+        item.fulltext = NO;
         
     }
     

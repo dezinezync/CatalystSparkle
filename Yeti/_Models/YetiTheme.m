@@ -12,6 +12,8 @@
 #import "AppDelegate+Catalyst.h"
 #endif
 
+#import "PrefsManager.h"
+
 static void * DefaultsAppleHighlightColorContext = &DefaultsAppleHighlightColorContext;
 
 @interface YetiTheme () {
@@ -46,29 +48,29 @@ static void * DefaultsAppleHighlightColorContext = &DefaultsAppleHighlightColorC
         [self performSelectorOnMainThread:@selector(updateAppearances) withObject:nil waitUntilDone:NO];
         return;
     }
-    
+//
 #if TARGET_OS_MACCATALYST
     [self ct_updateSemanticAppKitColors];
 #endif
-    
-    [super updateAppearances];
-    
+
+//    [super updateAppearances];
+
 #ifndef SHARE_EXTENSION
-    
+
     for (UIWindow *window in [UIApplication.sharedApplication windows]) {
         if (window.rootViewController && ![NSStringFromClass(window.class) hasPrefix:@"UIText"]) {
 //            window.rootViewController.view.backgroundColor = self.backgroundColor;
-            window.tintColor = self.tintColor;
+            window.tintColor = SharedPrefs.tintColor;
         }
 
     };
 
 #endif
-    
-    UINavigationBar *navBar = [UINavigationBar appearance];
-    
-    [navBar setLargeTitleTextAttributes:@{NSForegroundColorAttributeName: self.titleColor}];
-    [navBar setTitleTextAttributes:@{NSForegroundColorAttributeName: self.titleColor}];
+
+//    UINavigationBar *navBar = [UINavigationBar appearance];
+//
+//    [navBar setLargeTitleTextAttributes:@{NSForegroundColorAttributeName: self.titleColor}];
+//    [navBar setTitleTextAttributes:@{NSForegroundColorAttributeName: self.titleColor}];
     
 }
 

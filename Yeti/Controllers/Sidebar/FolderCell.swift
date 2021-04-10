@@ -33,9 +33,7 @@ class FolderCell: UICollectionViewListCell {
         
         content.textProperties.font = UIFont.preferredFont(forTextStyle: .body)
         
-        content.text = folder.title
-        
-        folder.title.publisher
+        folder.publisher(for: \.title)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] (title) in
             
@@ -43,12 +41,7 @@ class FolderCell: UICollectionViewListCell {
                 return
             }
             
-            guard var c = sself.contentConfiguration as? UIListContentConfiguration else {
-                return
-            }
-            
-            c.text = title
-            sself.contentConfiguration = c
+            CoalescingQueue.standard.add(sself, #selector(sself.updateTitle))
             
         }
         .store(in: &cancellables)
@@ -70,12 +63,7 @@ class FolderCell: UICollectionViewListCell {
             
         }
         
-        if traitCollection.userInterfaceIdiom == .mac {
-            content.textProperties.color = .secondaryLabel
-        }
-        else {
-            content.textProperties.color = .label
-        }
+        content.textProperties.color = .label
         
         content.secondaryTextProperties.color = .secondaryLabel
         
@@ -167,6 +155,20 @@ class FolderCell: UICollectionViewListCell {
         content.secondaryText = unread > 0 ? "\(unread)" : ""
         
         contentConfiguration = content
+        
+    }
+    
+    @objc func updateTitle() {
+        
+        guard var content = contentConfiguration as? UIListContentConfiguration else {
+            return
+        }
+        
+        content.text = folder!.title
+        
+        runOnMainQueueWithoutDeadlocking { [weak self] in
+            self?.contentConfiguration = content
+        }
         
     }
     

@@ -12,6 +12,7 @@ import Combine
 import DBManager
 import SwiftYapDatabase
 import YapDatabase
+import Dynamic
 
 class FolderVC: FeedVC {
     
@@ -61,6 +62,40 @@ class FolderVC: FeedVC {
             .store(in: &cancellables)
         
     }
+    
+    #if targetEnvironment(macCatalyst)
+    public override func setupTitleView() {
+        
+        guard let title: String = self.title else {
+            return
+        }
+        
+        guard let window = coordinator?.innerWindow else {
+            return
+        }
+        
+        super.setupTitleView()
+        
+        Dynamic(window).title = title
+        
+        folder.$unread
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] unread in
+                
+                guard let sself = self,
+                      let swindow = sself.coordinator?.innerWindow else {
+                          return
+                      }
+                
+                sself.totalUnread = unread
+                
+                Dynamic(swindow).subtitle = "\(unread) Unread"
+                
+            }
+            .store(in: &cancellables)
+        
+    }
+    #endif
     
     override var dbAutoViewName: String {
         

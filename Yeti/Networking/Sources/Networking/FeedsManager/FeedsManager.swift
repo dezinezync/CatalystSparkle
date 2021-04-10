@@ -25,9 +25,9 @@ public enum FeedsManagerError : Error {
         return String(describing: self).replacingOccurrences(of: "general(message: \"", with: "").replacingOccurrences(of: "\")", with: "")
     }
     
-    static public func from(description: String, statusCode: Int) -> FeedsManagerError {
+    static public func from(description: String, statusCode: Int) -> NSError {
         
-        return NSError(domain: "Elytra", code: statusCode, userInfo: [NSLocalizedDescriptionKey: description]) as! FeedsManagerError
+        return NSError(domain: "Elytra", code: statusCode, userInfo: [NSLocalizedDescriptionKey: description])
         
     }
     
@@ -39,12 +39,20 @@ public enum FeedsManagerError : Error {
     public var deviceID: String?
     public unowned var user: User?
     
-    public var additionalFeedsToSync: [Feed] = []
-    
-    var fullVersion: String = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String
-    var majorVersion: String {
+    public var fullVersion: String = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String
+    public var majorVersion: String {
         return fullVersion.components(separatedBy: ".").first!
     }
+    
+    public var pushToken: String? {
+        didSet {
+            if pushToken != nil {
+                onSetPushToken()
+            }
+        }
+    }
+    
+    public weak var subsribeAfterPushEnabled: Feed?
     
     // MARK: - Sessions
     public var session: DZURLSession {
@@ -74,7 +82,7 @@ public enum FeedsManagerError : Error {
         }
     }
     
-    lazy var mainSession: DZURLSession = {
+    public lazy var mainSession: DZURLSession = {
         
         let sessionConfiguration = URLSessionConfiguration.default
         
@@ -105,8 +113,8 @@ public enum FeedsManagerError : Error {
         
         var s = DZURLSession(sessionConfiguration: sessionConfiguration)
         
-        s.baseURL = URL(string: "https://staging.api.elytra.app")
-//        s.baseURL = URL(string: "https://api.elytra.app")
+//        s.baseURL = URL(string: "https://staging.api.elytra.app")
+        s.baseURL = URL(string: "https://api.elytra.app")
         
 //        #if !DEBUG
 //        s.baseURL = URL(string: "https://api.elytra.app")
@@ -155,7 +163,7 @@ public enum FeedsManagerError : Error {
         return s
     }()
     
-    lazy var backgroundSession: DZURLSession = {
+    public lazy var backgroundSession: DZURLSession = {
         
         let sessionConfiguration = URLSessionConfiguration.background(withIdentifier: "elytra.background")
         sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
@@ -181,8 +189,8 @@ public enum FeedsManagerError : Error {
         
         var s = DZURLSession(sessionConfiguration: sessionConfiguration)
         
-        s.baseURL = URL(string: "https://staging.api.elytra.app")
-//        s.baseURL = URL(string: "https://api.elytra.app")
+//        s.baseURL = URL(string: "https://staging.api.elytra.app")
+        s.baseURL = URL(string: "https://api.elytra.app")
         
 //        #if !DEBUG
 //        s.baseURL = URL(string: "https://api.elytra.app")
@@ -293,7 +301,40 @@ extension FeedsManager {
             "env": Bundle.main.configurationString
         ]
         
-        session.GET(path: path, query: query, resultType: GetUserResult.self) { (result) in
+        session.GET(path: path, query: query) { (result) -> Result<GetUserResult, Error> in
+            
+            switch result {
+            case .success((_, let result)):
+                guard let data = result else {
+                    return Result.failure(FeedsManagerError.from(description: "Invalid or no data was received.", statusCode: 500))
+                }
+                
+                do {
+                    
+                    let json = try JSON(data: data)
+                    
+                    guard let s = json["user"].dictionaryObject
+                    else {
+                        return Result.failure(FeedsManagerError.general(message: "Invalid data received."))
+                    }
+
+                    let user = User(from: s)
+
+                    let retval = GetUserResult(user: user)
+
+                    return Result.success(retval)
+                    
+                }
+                catch {
+                    return Result.failure(error)
+                }
+                
+            case .failure(let error):
+                print(error)
+                return Result.failure(error)
+            }
+            
+        } completion: { result in
             
             switch result {
             case .success(let (_, results)):
@@ -396,6 +437,81 @@ extension FeedsManager {
         
     }
     
+    public func postAppReceipt(_ receipt: Data, completion:((Result<Subscription, Error>) -> Void)?) {
+        
+        guard let _ = user else {
+            completion?(.failure(FeedsManagerError.from(description: "Session not active", statusCode: 401)))
+            return
+        }
+        
+        let receiptString = receipt.base64EncodedString()
+        
+        session.POST(path: "/1.1/store", query: ["userID": "\(user!.userID!)"], body: ["receipt": receiptString]) { (result) -> Result<Subscription, Error> in
+            
+            switch result {
+            case .success((_, let result)):
+                guard let data = result else {
+                    return Result.failure(FeedsManagerError.from(description: "Invalid or no data was received.", statusCode: 500))
+                }
+                
+                do {
+                    
+                    let json = try JSON(data: data)
+                    
+                    guard let s = json["subscription"].dictionaryObject
+                    else {
+                        return Result.failure(FeedsManagerError.general(message: "Invalid data received."))
+                    }
+
+                    let sub = Subscription(from: s)
+
+                    return Result.success(sub)
+                    
+                }
+                catch {
+                    return Result.failure(error)
+                }
+                
+            case .failure(let error):
+                print(error)
+                return Result.failure(error)
+            }
+            
+        } completion: { result in
+            
+            switch result {
+            case .failure(let error):
+                completion?(.failure(error))
+            case .success(let (_, sub)):
+                completion?(.success(sub!))
+            }
+            
+        }
+
+        
+    }
+    
+    public func deactivateAccount(completion:((Result<Bool, Error>) -> Void)?) {
+        
+        session.POST(path: "/1.4/\(user!.uuid!)/deactivate", query: [:], body: [:], resultType: [String: Bool].self) { result in
+            
+            switch result {
+            
+            case .failure(let error):
+                completion?(.failure(error))
+                
+            case .success(let (_, result)):
+                // assume it worked!
+                let status = result?["status"] ?? true
+                
+                completion?(.success(status))
+            
+            }
+            
+        }
+        
+    }
+    
 }
 
 // MARK: - Feeds
@@ -446,16 +562,15 @@ extension FeedsManager {
                 }
             case .failure(let error):
                 print(error)
+                return Result.failure(error)
             }
-            
-            return .failure(FeedsManagerError.general(message: "An unknown error occurred when fetching feeds."))
             
         } completion: { (result) in
             
             switch result {
             case .success((_, let result)):
                 guard let result = result else {
-                    completion?(.failure(FeedsManagerError.general(message: "No response received when fetching feeds")))
+                    completion?(.failure(FeedsManagerError.from(description: "No response received when fetching feeds", statusCode: 500)))
                     return
                 }
 
@@ -470,33 +585,27 @@ extension FeedsManager {
         
     }
     
-    public func add(feed url: URL, completion:((Result<Feed, Error>) -> Void)?) {
+    public func add(feed stub: [String: AnyHashable], completion:((Result<Feed, Error>) -> Void)?) {
         
         guard let user = user else {
             completion?(.failure((NSError(domain: "Elytra", code: 401, userInfo: [NSLocalizedDescriptionKey: "User is not logged in."]) as Error)))
             return
         }
         
-        let query = ["version": "2"]
-        let body = [
-            "URL": url.absoluteString,
-            "userID": "\(user.userID!)"
-        ]
-        
-        session.PUT(path: "/feed", query: query, body: body, resultType: Feed.self) { [weak self] (result) in
+        session.PUT(path: "/2.3/feed", query: nil, body: stub, resultType: Feed.self) { [weak self] (result) in
             
             switch result {
             case .success(let (response, feed)): do {
                 
                 guard let response = response else {
-                    completion?(.failure(FeedsManagerError.general(message: "No response recevied when trying to add the feed.")))
+                    completion?(.failure(FeedsManagerError.from(description: "No response recevied when trying to add the feed.", statusCode: 500)))
                     return
                 }
                 
                 if response.statusCode == 300 {
                     
                     // multiple options
-                    completion?(.failure(FeedsManagerError.general(message: "Not a supported URL.")))
+                    completion?(.failure(FeedsManagerError.from(description: "Not a supported URL.", statusCode: 400)))
                     return
                     
                 }
@@ -525,13 +634,7 @@ extension FeedsManager {
                     return
                 }
                 
-                // @TODO Update Keychain for YTSubscriptionHasAddedFirstFeed
-                
                 feed.unread = 0
-                
-                self?.additionalFeedsToSync.append(feed)
-                
-                // @TODO: Add to DB Manager
                 
                 completion?(.success(feed))
                 
@@ -557,34 +660,28 @@ extension FeedsManager {
             "userID": "\(user.userID!)"
         ]
         
-        session.PUT(path: "/feed", query: query, body: body, resultType: Feed.self) { [weak self] (result) in
+        session.PUT(path: "/feed", query: query, body: body, resultType: Feed.self) { (result) in
             
             switch result {
             case .success(let (response, feed)): do {
                 
                 guard let response = response else {
-                    completion?(.failure(FeedsManagerError.general(message: "No response recevied when trying to add the feed.")))
+                    completion?(.failure(FeedsManagerError.from(description: "No response recevied when trying to add the feed.", statusCode: 500)))
                     return
                 }
                 
                if response.statusCode == 304 {
                     // feed already exists in the user's list.
-                    completion?(.failure(FeedsManagerError.general(message: "Feed already exists in your list.")))
+                    completion?(.failure(FeedsManagerError.from(description: "Feed already exists in your list.", statusCode: 400)))
                     return
                 }
                 
                 guard let feed = feed else {
-                    completion?(.failure(FeedsManagerError.general(message: "An unknown error occurred when adding this feed to your account")))
+                    completion?(.failure(FeedsManagerError.from(description: "An unknown error occurred when adding this feed to your account", statusCode: 500)))
                     return
                 }
                 
-                // @TODO Update Keychain for YTSubscriptionHasAddedFirstFeed
-                
                 feed.unread = 0
-                
-                self?.additionalFeedsToSync.append(feed)
-                
-                // @TODO: Add to DB Manager
                 
                 completion?(.success(feed))
                 
@@ -627,15 +724,98 @@ extension FeedsManager {
         
     }
     
+    public func rename(feed id: UInt, title: String, completion:((Result<Bool, Error>) -> Void)?) {
+        
+        session.POST(path: "/1.2/customFeed", query: [:], body: ["title": title, "feedID": id], resultType: [String: Bool].self) { result in
+            
+            switch result {
+            case .failure(let error):
+                completion?(.failure(error))
+                
+            case .success(let (_, result)):
+                completion?(.success(result?["status"] ?? true))
+            }
+            
+        }
+        
+    }
+    
 }
 
-// MARK: - Folders {
+// MARK: - Folders
 extension FeedsManager {
+    
+    public func add(folder title: String, completion:((Result<Folder, Error>) -> Void)?) {
+        
+        guard let _ = user else {
+            completion?(.failure(FeedsManagerError.from(description: "User is not logged in", statusCode: 401)))
+            return
+        }
+        
+        session.PUT(path: "/folder", query: nil, body: ["title": title], resultType: [String: Folder].self) { result in
+            
+            switch result {
+            case .failure(let error):
+                completion?(.failure(error))
+            case .success(let (_, retval)):
+                guard let folder = retval?["folder"] else {
+                    completion?(.failure(FeedsManagerError.from(description: "An invalid or no response was received", statusCode: 500)))
+                    return
+                }
+                
+                completion?(.success(folder))
+            }
+            
+        }
+        
+    }
+    
+    public func update(folder id: UInt, title: String?, add: [UInt]?, delete: [UInt]?, completion:((Result<Bool, Error>) -> Void)?) {
+        
+        guard let _ = user else {
+            completion?(.failure(FeedsManagerError.from(description: "User is not logged in", statusCode: 401)))
+            return
+        }
+        
+        var body: [String: AnyHashable] = [
+            "folderID": id
+        ]
+        
+        if title != nil {
+            body["title"] = title!
+        }
+        
+        if add != nil, add!.count > 0 {
+            body["add"] = add.map { "\($0)" }
+        }
+        
+        if delete != nil, delete!.count > 0 {
+            body["del"] = delete.map { "\($0)" }
+        }
+        
+        session.POST(path: "/folder", query: nil, body: body, resultType: [String: Bool].self) { result in
+            
+            switch result {
+            case .failure(let error):
+                completion?(.failure(error))
+                
+            case .success(let (_, result)):
+                guard let result = result else {
+                    completion?(.failure(FeedsManagerError.from(description: "An invalid or no response was received", statusCode: 500)))
+                    return
+                }
+                
+                completion?(.success(result["status"] ?? false))
+            }
+            
+        }
+        
+    }
     
     public func delete(folder id: UInt, completion:((Result<Bool, Error>) -> Void)?) {
         
         guard let _ = user else {
-            completion?(.failure((NSError(domain: "Elytra", code: 401, userInfo: [NSLocalizedDescriptionKey: "User is not logged in."]) as Error)))
+            completion?(.failure(FeedsManagerError.from(description: "User is not logged in", statusCode: 401)))
             return
         }
         
@@ -665,7 +845,38 @@ extension FeedsManager {
     
     public func getArticle(_ identifier: String, completion: ((Result<Article, Error>) -> Void)?) {
         
-        session.GET(path: "/article/\(identifier)", query: nil, resultType: Article.self) { result in
+        session.GET(path: "/article/\(identifier)", query: nil) { result -> Result<Article, Error> in
+            
+            switch result {
+            case .success((_, let result)):
+                guard let data = result else {
+                    return Result.failure(FeedsManagerError.from(description: "Invalid or no data was received.", statusCode: 500))
+                }
+                
+                do {
+                    
+                    let json = try JSON(data: data)
+                    
+                    guard let s = json.dictionaryObject
+                    else {
+                        return Result.failure(FeedsManagerError.general(message: "Invalid data received."))
+                    }
+
+                    let article = Article(from: s)
+
+                    return Result.success(article)
+                    
+                }
+                catch {
+                    return Result.failure(error)
+                }
+                
+            case .failure(let error):
+                print(error)
+                return Result.failure(error)
+            }
+            
+        } completion: { result in
             
             switch result {
             case .success(let (res, article)):
@@ -847,6 +1058,106 @@ extension FeedsManager {
     
 }
 
+// MARK: - Push
+extension FeedsManager {
+    
+    public func onSetPushToken() {
+        
+        if subsribeAfterPushEnabled != nil {
+            
+            subscribe(subsribeAfterPushEnabled!) { [weak self] result in
+                
+                switch result {
+                
+                case .failure(let error):
+                    print("Error subbing to feed after push was enabled: \(error)")
+                    self?.subsribeAfterPushEnabled = nil
+                    
+                case .success:
+                    NotificationCenter.default.post(name: Notification.Name.init(rawValue: "com.yeti.note.subscribedToFeed"), object: self?.subsribeAfterPushEnabled)
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        
+                        self?.subsribeAfterPushEnabled = nil
+                        
+                    }
+                    
+                }
+                
+            }
+            
+        }
+        
+        if pushToken != nil {
+            addPushToken(token: pushToken!, completion: nil)
+        }
+        
+    }
+    
+    public func addPushToken(token: String, completion:((Result<Bool, Error>) -> Void)?) {
+        
+        session.PUT(path: "/user/token", query: nil, body: ["token": token], resultType: [String: Int].self) { result in
+            
+            switch result {
+            case .failure(let error):
+                print(error)
+                completion?(.failure(error))
+            case .success(let (response, status)):
+                print(response?.statusCode ?? 0, status ?? "No response value")
+                completion?(.success(true))
+            }
+            
+        }
+        
+    }
+    
+    public func getAllWebSub(completion:((Result<[Feed], Error>) -> Void)?) {
+        
+        session.GET(path: "/user/subscriptions", query: nil, resultType: [Feed].self) { result in
+            
+            switch result {
+            case .failure(let error):
+                completion?(.failure(error))
+            case .success(let (_, feeds)):
+                completion?(.success(feeds ?? []))
+            }
+            
+        }
+        
+    }
+    
+    public func subscribe(_ feed: Feed, completion:((Result<Bool, Error>) -> Void)?) {
+        
+        session.PUT(path: "/user/subscriptions", query: ["feedID": "\(feed.feedID!)"], body: [:], resultType: [String: Bool].self) { result in
+            
+            switch result {
+            case .failure(let error):
+                completion?(.failure(error))
+            case .success(let (_, result)):
+                completion?(.success(result?["status"] ?? false))
+            }
+            
+        }
+        
+    }
+    
+    public func unsubscribe(_ feed: Feed, completion:((Result<Bool, Error>) -> Void)?) {
+        
+        session.DELETE(path: "/user/subscriptions", query: ["feedID": "\(feed.feedID!)"], resultType: [String: Bool].self) { result in
+            
+            switch result {
+            case .failure(let error):
+                completion?(.failure(error))
+            case .success(let (_, result)):
+                completion?(.success(result?["status"] ?? false))
+            }
+            
+        }
+        
+    }
+    
+}
+
 // MARK: - Sync
 extension FeedsManager {
     
@@ -870,7 +1181,7 @@ extension FeedsManager {
             case .success(let (response, changeSet)):
                 
                 guard let response = response else {
-                    completion?(.failure(FeedsManagerError.general(message: "No response was received when trying to fetch sync data.")))
+                    completion?(.failure(FeedsManagerError.from(description: "No response was received when trying to fetch sync data.", statusCode: 500)))
                     return
                 }
                 
@@ -881,6 +1192,119 @@ extension FeedsManager {
                 }
                 
                 completion?(.success(changeSet!))
+                
+            case .failure(let error):
+                completion?(.failure(error))
+            }
+            
+        }
+        
+    }
+    
+}
+
+// MARK: - Filters
+extension FeedsManager {
+    
+    public func getFilters(completion:((Result<[String], Error>) -> Void)?) {
+        
+        guard let _ = self.user else {
+            completion?(.failure(FeedsManagerError.from(description: "An invalid or no session exists.", statusCode: 401)))
+            return
+        }
+        
+        session.GET(path: "/user/filters", query: nil, resultType: [String: [String]].self) { result in
+            
+            switch result {
+            case .success(let (response, result)):
+                
+                guard let _ = response else {
+                    completion?(.failure(FeedsManagerError.from(description: "No response was received when trying to add the filter.", statusCode: 500)))
+                    return
+                }
+                
+                guard let result = result else {
+                    completion?(.failure(FeedsManagerError.from(description: "No response was received when trying to add the filter.", statusCode: 500)))
+                    return
+                }
+                
+                completion?(.success(result["filters"] ?? []))
+                
+            case .failure(let error):
+                completion?(.failure(error))
+            }
+            
+        }
+        
+    }
+    
+    public func addFilter(_ text: String, completion:((Result<Bool, Error>) -> Void)?) {
+        
+        guard text.isEmpty == false else {
+            completion?(.failure(FeedsManagerError.from(description: "An invalid or no text was provided for the filter.", statusCode: 400)))
+            return
+        }
+        
+        session.PUT(path: "/user/filters", query: nil, body: ["word": text], resultType: [String: Bool].self) { result in
+            
+            switch result {
+            case .success(let (response, result)):
+                
+                guard let response = response else {
+                    completion?(.failure(FeedsManagerError.from(description: "No response was received when trying to add the filter.", statusCode: 500)))
+                    return
+                }
+                
+                guard response.statusCode != 304 else {
+                    // already deleted.
+                    completion?(.success(true))
+                    return
+                }
+                
+                guard let result = result else {
+                    completion?(.failure(FeedsManagerError.from(description: "No response was received when trying to add the filter.", statusCode: 500)))
+                    return
+                }
+                
+                completion?(.success(result["status"] ?? false))
+                
+            case .failure(let error):
+                completion?(.failure(error))
+            }
+            
+        }
+        
+    }
+    
+    public func deleteFilter(_ text: String, completion:((Result<Bool, Error>) -> Void)?) {
+        
+        guard text.isEmpty == false else {
+            completion?(.failure(FeedsManagerError.from(description: "An invalid or no text was provided for the filter.", statusCode: 400)))
+            return
+        }
+        
+        session.DELETE(path: "/user/filters", query: ["word": text], resultType: [String: Bool].self) { result in
+            
+            switch result {
+            case .success(let (response, result)):
+                
+                guard let response = response else {
+                    completion?(.failure(FeedsManagerError.from(description: "No response was received when trying to delete the filter.", statusCode: 500)))
+                    return
+                }
+                
+                guard response.statusCode != 304 else {
+                    // already deleted.
+                    completion?(.success(true))
+                    return
+                }
+                
+                guard let result = result else {
+                    completion?(.failure(FeedsManagerError.from(description: "No response was received when trying to delete the filter.", statusCode: 500)))
+                    return
+                }
+                
+                completion?(.success(result["status"] ?? false))
                 
             case .failure(let error):
                 completion?(.failure(error))
@@ -925,6 +1349,7 @@ extension FeedsManager {
         if components.path.contains("/user/") == true {
             
             // get it from the canonical head tag
+            getYoutubeCannonicalID(originalURL: url, completion: completion)
             
         }
         else {
@@ -952,7 +1377,7 @@ extension FeedsManager {
                 if isChannelID == false {
                     
                     // get it from the canonical head tag
-                    
+                    getYoutubeCannonicalID(originalURL: url, completion: completion)
                     return
                     
                 }
@@ -981,12 +1406,12 @@ extension FeedsManager {
             }
             
             guard let data = data else {
-                completion?(.failure(FeedsManagerError.general(message: "No response was received from Youtube.")))
+                completion?(.failure(FeedsManagerError.from(description: "No response was received when trying to fetch sync data.", statusCode: 500)))
                 return
             }
             
             guard let html = String(data: data, encoding: .utf8) else {
-                completion?(.failure(FeedsManagerError.general(message: "No response was received from Youtube.")))
+                completion?(.failure(FeedsManagerError.from(description: "No response was received when trying to fetch sync data.", statusCode: 500)))
                 return
             }
             
@@ -1006,17 +1431,23 @@ extension FeedsManager {
                 
                 scanner.currentIndex = nextIndex
                 
+                cannonical = scanner.scanUpToString("\"")
+                
             } while (cannonical == originalURL.absoluteString)
             
             guard let c = cannonical,
                   let url = URL(string: c) else {
                 
-                completion?(.failure(FeedsManagerError.general(message: "No response was received from Youtube.")))
+                DispatchQueue.main.async {
+                    completion?(.failure(FeedsManagerError.from(description: "No response was received from Youtube", statusCode: 500)))
+                }
                 return
                 
             }
             
-            completion?(.success(url))
+            DispatchQueue.main.async {
+                completion?(.success(url))
+            }
             
         }
         

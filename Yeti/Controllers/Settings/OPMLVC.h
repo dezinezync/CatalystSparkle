@@ -20,15 +20,15 @@ typedef NS_ENUM(NSInteger, OPMLState) {
 
 @property (nonatomic, assign) OPMLState state;
 
-@property (weak, nonatomic) IBOutlet UIView *ioView;
-@property (weak, nonatomic) IBOutlet UILabel *ioTitleLabel;
-@property (weak, nonatomic) IBOutlet UIButton *ioDoneButton;
-@property (weak, nonatomic) IBOutlet UIProgressView *ioProgressView;
-@property (weak, nonatomic) IBOutlet UILabel *ioSubtitleLabel;
+@property (weak, nonatomic) IBOutlet UIView * _Nullable ioView;
+@property (weak, nonatomic) IBOutlet UILabel * _Nullable ioTitleLabel;
+@property (weak, nonatomic) IBOutlet UIButton * _Nullable ioDoneButton;
+@property (weak, nonatomic) IBOutlet UIProgressView * _Nullable ioProgressView;
+@property (weak, nonatomic) IBOutlet UILabel * _Nullable ioSubtitleLabel;
 
-@property (weak, nonatomic) IBOutlet UIView *detailsView;
-@property (weak, nonatomic) IBOutlet UILabel *detailsTitleLabel;
-@property (weak, nonatomic) IBOutlet UILabel *detailsSubtitleLabel;
+@property (weak, nonatomic) IBOutlet UIView * _Nullable detailsView;
+@property (weak, nonatomic) IBOutlet UILabel * _Nullable detailsTitleLabel;
+@property (weak, nonatomic) IBOutlet UILabel * _Nullable detailsSubtitleLabel;
 
 - (void)didTapExport:(UIButton * _Nullable)sender;
 

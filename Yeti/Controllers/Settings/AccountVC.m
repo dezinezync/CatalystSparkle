@@ -105,12 +105,11 @@
     
     NSRegularExpression *exp = [NSRegularExpression regularExpressionWithPattern:@"\\d{6}\\.[a-zA-Z0-9]{32}\\.\\d{4}" options:kNilOptions error:nil];
     
-    // @TODO
-//    NSString *UUID = MyFeedsManager.user.uuid;
-//
-//    if (exp != nil && UUID.length > 0 && [exp numberOfMatchesInString:UUID options:kNilOptions range:NSMakeRange(0, UUID.length)] > 0) {
-//        return 2;
-//    }
+    NSString *UUID = self.coordinator.user.uuid;
+
+    if (exp != nil && UUID.length > 0 && [exp numberOfMatchesInString:UUID options:kNilOptions range:NSMakeRange(0, UUID.length)] > 0) {
+        return 2;
+    }
     
     return 3;
     
@@ -169,8 +168,7 @@
                 switch (indexPath.row) {
                     case 0:
                     {
-                        // @TODO
-//                        cell.textLabel.text = MyFeedsManager.user.uuid;
+                        cell.textLabel.text = self.coordinator.user.uuid;
                         cell.textLabel.accessibilityValue = @"Account ID";
                         cell.selectionStyle = UITableViewCellSelectionStyleNone;
                     }
@@ -235,8 +233,7 @@
            
             UIAction *copyItem = [UIAction actionWithTitle:@"Copy Account ID" image:[UIImage systemImageNamed:@"doc.on.doc"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
                
-                // @TODO
-//                [[UIPasteboard generalPasteboard] setString:MyFeedsManager.user.uuid];
+                [[UIPasteboard generalPasteboard] setString:self.coordinator.user.uuid];
                 
             }];
             
@@ -272,7 +269,7 @@
                 
                 asyncMain(^{
                     strongify(self);
-                    [self showInterfaceToSendDeactivationEmail];
+                    [self deactivateFromAPI];
                 });
                 
             }]];
@@ -321,31 +318,31 @@
 
 - (void)deactivateFromAPI {
     
-    // @TODO
-//    [MyFeedsManager deactivateAccountWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//#ifndef DEBUG
-//        [self userDidSendEmail];
-//#endif
-//
-//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//        [AlertManager showGenericAlertWithTitle:@"Error Deactivating Account" message:error.localizedDescription];
-//
-//    }];
+    Coordinator *coordinator = self.coordinator;
     
-}
-
-- (void)showInterfaceToSendDeactivationEmail {
+    weakify(self);
     
-    [self deactivateFromAPI];
-    return;
+    [coordinator deactivateAccountWithCompletion:^(BOOL status, NSError * _Nullable error) {
+        
+        if (error != nil) {
+            [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription];
+            return;
+        }
+        
+        [coordinator resetAccountWithCompletion:^{
+            
+            strongify(self);
+            
+            [self.navigationController dismissViewControllerAnimated:YES completion:^{
+               
+                [coordinator showLaunchVC];
+                
+            }];
+            
+        }];
+        
+    }];
     
-//    NSString *formatted = formattedString(@"Deactivate Account: %@<br />User Conset: Yes<br />User confirmed subscription cancelled: Yes", MyFeedsManager.user.uuid);
-//
-//    DZMessagingController.shared.delegate = self;
-//
-//    [DZMessagingController presentEmailWithBody:formatted subject:@"Deactivate Elytra Account" recipients:@[@"support@elytra.app"] fromController:self];
 }
 
 - (void)showReplaceIDController {
@@ -460,37 +457,6 @@
     
     return YES;
 }
-
-#pragma mark - <DZMessagingDelegate>
-
-- (void)userDidSendEmail {
-    
-//    [DZMessagingController shared].delegate = nil;
-    
-    // @TODO
-//    [MyFeedsManager resetAccount];
-//
-//    dispatch_async(dispatch_get_main_queue(), ^{
-//        UINavigationController *nav = self.navigationController;
-//
-//        [nav popToRootViewControllerAnimated:NO];
-//
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            [nav dismissViewControllerAnimated:YES completion:^{
-//
-//                SplitVC *v = (SplitVC *)[UIApplication.keyWindow rootViewController];
-//                [v userNotFound];
-//
-//            }];
-//        });
-//    });
-    
-}
-
-- (void)emailWasCancelledOrFailedToSend {
-    [DZMessagingController shared].delegate = nil;
-}
-
 
 #pragma mark - <ASAuthorizationControllerDelegate>
 

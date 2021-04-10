@@ -10,7 +10,8 @@
 #import "SettingsCell.h"
 #import "YetiConstants.h"
 #import "UIColor+HEX.h"
-#import "Coordinator.h"
+
+#import "Elytra-Swift.h"
 
 #import "AccountVC.h"
 #import "ImageLoadingVC.h"
@@ -26,8 +27,6 @@
 #import <DZKit/UIViewController+AnimatedDeselect.h>
 
 #import "PrefsManager.h"
-
-// @TODO: DBManager + Settings + CloudCore
 
 #if TARGET_OS_MACCATALYST
 typedef NS_ENUM(NSUInteger, SectionOneRows) {
@@ -398,7 +397,7 @@ typedef NS_ENUM(NSUInteger, SectionOneRows) {
         
         [tableView deselectRowAtIndexPath:indexPath animated:NO];
         
-        [self.mainCoordinator prepareDataForFullResync];
+        [self.coordinator prepareForFullResync];
         
         [self.navigationController dismissViewControllerAnimated:YES completion:nil];
         
@@ -472,7 +471,7 @@ typedef NS_ENUM(NSUInteger, SectionOneRows) {
                 {
                     OPMLVC *vc1 = [[OPMLVC alloc] initWithNibName:NSStringFromClass(OPMLVC.class) bundle:nil];
                     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc1];
-                    nav.modalTransitionStyle = UIModalPresentationAutomatic;
+                    nav.modalPresentationStyle = UIModalPresentationAutomatic;
                     
                     vc = nav;
                 }
@@ -511,6 +510,8 @@ typedef NS_ENUM(NSUInteger, SectionOneRows) {
             }
             break;
     }
+    
+    vc.coordinator = self.coordinator;
     
     if ([vc conformsToProtocol:@protocol(SettingsNotifier)]) {
         [(id<SettingsNotifier>)vc setSettingsDelegate:self];
@@ -553,7 +554,7 @@ typedef NS_ENUM(NSUInteger, SectionOneRows) {
                 
                 strongify(self);
                 
-                [self.mainCoordinator prepareDataForFullResync];
+                [self.coordinator prepareForFullResync];
                 
                 [self.navigationController dismissViewControllerAnimated:YES completion:nil];
                 
@@ -563,7 +564,7 @@ typedef NS_ENUM(NSUInteger, SectionOneRows) {
                 
                 strongify(self);
                 
-                [self.mainCoordinator prepareFeedsForFullResync];
+                [self.coordinator prepareForFeedsResync];
                 
                 [self.navigationController dismissViewControllerAnimated:YES completion:nil];
                 
@@ -593,7 +594,7 @@ typedef NS_ENUM(NSUInteger, SectionOneRows) {
 
 - (void)showContactInterface {
     
-    [self.mainCoordinator showContactInterface];
+    [self.coordinator showContactInterface];
     
 }
 
@@ -631,23 +632,14 @@ typedef NS_ENUM(NSUInteger, SectionOneRows) {
         NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
         formatter.dateFormat = @"YYYY-MM-dd HH:mm:ss";
         
-        // @TODO
-//        NSDate *date = MyFeedsManager.unreadLastUpdate ?: NSDate.date;
-//        
-//        formatter.dateStyle = NSDateFormatterShortStyle;
-//        formatter.timeStyle = NSDateFormatterShortStyle;
-//        formatter.timeZone = [NSTimeZone localTimeZone];
-//        
-//        NSString *formatted = [formatter stringFromDate:date];
-//        
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            
-//            _byLabel.text = formattedString(@"A Dezine Zync App.\nLast Synced: %@", formatted);
-//            [_byLabel sizeToFit];
-//            [_byLabel setNeedsLayout];
-//            [_byLabel layoutIfNeeded];
-//            
-//        });
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            _byLabel.text = formattedString(@"A Dezine Zync App.");
+            [_byLabel sizeToFit];
+            [_byLabel setNeedsLayout];
+            [_byLabel layoutIfNeeded];
+            
+        });
         
         [_footerView addSubview:_byLabel];
         

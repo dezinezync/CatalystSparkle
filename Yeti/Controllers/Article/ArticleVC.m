@@ -51,14 +51,16 @@
 #import "Tweet.h"
 #import "TweetImage.h"
 
+#import <LinkPresentation/LinkPresentation.h>
+
 static void *KVO_PlayerRate = &KVO_PlayerRate;
 
-typedef NS_ENUM(NSInteger, ArticleState) {
-    ArticleStateUnknown,
-    ArticleStateLoading,
-    ArticleStateLoaded,
-    ArticleStateError,
-    ArticleStateEmpty
+typedef NS_ENUM(NSInteger, ArticleVCState) {
+    ArticleVCStateUnknown,
+    ArticleVCStateLoading,
+    ArticleVCStateLoaded,
+    ArticleVCStateError,
+    ArticleVCStateEmpty
 };
 
 @interface ArticleVC () <UIScrollViewDelegate, UITextViewDelegate, UIViewControllerRestoration, AVPlayerViewControllerDelegate, ArticleAuthorViewDelegate, UIPointerInteractionDelegate, TextSharing> {
@@ -84,7 +86,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 @property (nonatomic, weak) UIView *hairlineView;
 
-@property (nonatomic, assign) ArticleState state;
+@property (nonatomic, assign) ArticleVCState state;
 
 @property (nonatomic, strong) NSError *articleLoadingError;
 @property (weak, nonatomic) IBOutlet UILabel *errorTitleLabel;
@@ -126,7 +128,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     self.navigationItem.leftItemsSupplementBackButton = YES;
     
-    self.state = ArticleStateLoading;
+    self.state = ArticleVCStateLoading;
     
 #if TARGET_OS_MACCATALYST
     
@@ -187,8 +189,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     weakify(self);
     
-    if (!(self.item != nil && self.item.content != nil
-          && (self.item.bookmarked == YES || self.item.textFromContent != nil) )) {
+    if (!(self.item != nil && ((Article *)(self.item)).content != nil
+          && (((Article *)(self.item)).bookmarked == YES || ((Article *)(self.item)).textFromContent != nil) )) {
         
         // this ensures that bookmarked articles render the title.
         // when this runs, the title has already been added to the view
@@ -214,7 +216,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [center addObserver:self selector:@selector(keyboardFrameChanged:) name:UIKeyboardDidHideNotification object:nil];
     [center addObserver:self selector:@selector(didChangePreferredContentSize) name:UserUpdatedPreferredFontMetrics object:nil];
     
-    self.state = (self.item.content && self.item.content.count) ? ArticleStateLoaded : ArticleStateLoading;
+    self.state = (((Article *)(self.item)).content && ((Article *)(self.item)).content.count) ? ArticleVCStateLoaded : ArticleVCStateLoading;
     
     self.ytExtractor = [[YTExtractor alloc] init];
     
@@ -258,8 +260,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         [self.loader startAnimating];
         
     }
-    // @TODO
-//    [MyFeedsManager checkConstraintsForRequestingReview];
+    
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -437,7 +438,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 - (void)didChangePreferredContentSize {
     
-    if (self.state == ArticleStateLoading) {
+    if (self.state == ArticleVCStateLoading) {
         return;
     }
     
@@ -633,13 +634,13 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 #pragma mark - <ArticleHandler>
 
-- (void)setState:(ArticleState)state {
+- (void)setState:(ArticleVCState)state {
     
     [self setState:state isChangingArticle:YES];
     
 }
 
-- (void)setState:(ArticleState)state isChangingArticle:(BOOL)isChangingArticle {
+- (void)setState:(ArticleVCState)state isChangingArticle:(BOOL)isChangingArticle {
     
     if (_state == state) {
         return;
@@ -657,7 +658,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     _state = state;
     
     switch (state) {
-        case ArticleStateLoading:
+        case ArticleVCStateLoading:
         {
             self.errorStackView.hidden = YES;
             self.stackView.hidden = YES;
@@ -687,7 +688,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             self.videos = [NSPointerArray strongObjectsPointerArray];
         }
             break;
-        case ArticleStateLoaded:
+        case ArticleVCStateLoaded:
         {
             self.errorStackView.hidden = YES;
             
@@ -727,7 +728,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             
         }
             break;
-        case ArticleStateError:
+        case ArticleVCStateError:
         {
             if (!self.articleLoadingError) {
                 break;
@@ -773,16 +774,16 @@ typedef NS_ENUM(NSInteger, ArticleState) {
      *
     if (self.item) {
         
-        if (self.item.isBookmarked == NO) {
+        if (((Article *)(self.item)).isBookmarked == NO) {
             if (_isRestoring == YES) {
                 _isRestoring = NO;
             }
             else {
                 // only do this when not restoring state.
                 // and for non-microblog posts
-                if ([(self.item.articleTitle ?: @"") isBlank] == NO) {
+                if ([(((Article *)(self.item)).articleTitle ?: @"") isBlank] == NO) {
                 
-                    self.item.content = nil;
+                    ((Article *)(self.item)).content = nil;
                     
                 }
             }
@@ -790,45 +791,42 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }
     */
     
-    BOOL isChangingArticle = self.item && self.item.identifier.integerValue != article.identifier.integerValue;
+    BOOL isChangingArticle = self.item && ((Article *)(self.item)).identifier.integerValue != article.identifier.integerValue;
     
     self.item = article;
     
     NSDate *start = NSDate.date;
     
-    if (self.item.content && self.item.content.count) {
+    if (((Article *)(self.item)).content && ((Article *)(self.item)).content.count) {
         
-        [self setState:ArticleStateLoading isChangingArticle:isChangingArticle];
+        [self setState:ArticleVCStateLoading isChangingArticle:isChangingArticle];
         
         [self _setupArticle:self.item start:start isChangingArticle:isChangingArticle];
         return;
     }
     
-    // @TODO
-//    if (MyFeedsManager.reachability.currentReachabilityStatus == NotReachable) {
-//        NSError *error = [NSError errorWithDomain:@"ArticleInterface" code:500 userInfo:@{NSLocalizedDescriptionKey: @"Elytra cannot connect to the internet at the moment. Please check your connection and try again."}];
-//        self.articleLoadingError = error;
-//        self.state = ArticleStateError;
-//        return;
-//    }
-    
-    self.state = ArticleStateLoading;
+    self.state = ArticleVCStateLoading;
     
     weakify(self);
     
-    [MyFeedsManager getArticle:self.item.identifier feedID:self.item.feedID completion:^(NSError * _Nullable error, Article * _Nonnull responseObject) {
+    [self.coordinator getArticle:((Article *)(self.item)).identifier feedID:((Article *)(self.item)).feedID completion:^(NSError * _Nullable error, Article * _Nonnull responseObject) {
        
         strongify(self);
 
         if (error != nil) {
             self.articleLoadingError = error;
-            self.state = ArticleStateError;
+            self.state = ArticleVCStateError;
             return;
         }
         
         // since we're only fetching content and fulltext from here, update those
-        self.item.content = responseObject.content;
-        self.item.fulltext = responseObject.fulltext;
+        if (((Article *)(self.item)).title == nil && ((Article *)(self.item)).content.count == 0) {
+            [((Article *)(self.item)) copyFromArticle:responseObject];
+        }
+        else {
+            ((Article *)(self.item)).content = responseObject.content;
+            ((Article *)(self.item)).fulltext = responseObject.fulltext;
+        }
         
         [self _setupArticle:self.item start:start isChangingArticle:isChangingArticle];
         
@@ -919,7 +917,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     __block BOOL included = NO;
     
-    [self.item.content enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    [((Article *)(self.item)).content enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
        
         included = [self _imageURL:url.copy appearsInContent:obj];
         
@@ -943,22 +941,22 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     self.item = responseObject;
     
-    if (self.item.url != nil && [[self.item.url.absoluteString lowercaseString] containsString:@"iosicongallery"]) {
+    if (((Article *)(self.item)).url != nil && [[((Article *)(self.item)).url.absoluteString lowercaseString] containsString:@"iosicongallery"]) {
         self.isiOSIconGallery = YES;
     }
     
-//    if (self.item.isRead == NO) {
+//    if (((Article *)(self.item)).isRead == NO) {
 //        [self didTapRead:nil];
 //    }
     
-    BOOL isYoutubeVideo = [self.item.url.absoluteString containsString:@"youtube.com/watch"];
+    BOOL isYoutubeVideo = [((Article *)(self.item)).url.absoluteString containsString:@"youtube.com/watch"];
     
     // add Body
     [self addTitle];
     
     // iOS 13 shouldn't need it and handle it well.
 #if !TARGET_OS_MACCATALYST
-    if (self.item.content.count > 30) {
+    if (((Article *)(self.item)).content.count > 30) {
         self->_deferredProcessing = YES;
     }
 #endif
@@ -967,28 +965,41 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         Content *content = [Content new];
         content.type = @"youtube";
-        content.url = self.item.url;
+        content.url = ((Article *)(self.item)).url;
         
         [self addYoutube:content];
         
     }
+//    else if ([((Article *)(self.item)).url.absoluteString containsString:@"trailers.apple.com"]) {
+//        
+//        LPMetadataProvider *provider = [LPMetadataProvider new];
+//        [provider startFetchingMetadataForURL:((Article *)(self.item)).url completionHandler:^(LPLinkMetadata * _Nullable metadata, NSError * _Nullable error) {
+//           
+//            if (error != nil) {
+//                [AlertManager showGenericAlertWithTitle:@"Error Fetching Preview" message:error.localizedDescription];
+//                return;
+//            }
+//            
+//        }];
+//        
+//    }
     
     NSMutableArray <NSURL *> *imagesFromEnclosures = @[].mutableCopy;
     
-    if (self.item.coverImage != nil) {
+    if (((Article *)(self.item)).coverImage != nil) {
         
-        if ([self imageURLAppearsInContent:self.item.coverImage] == NO) {
+        if ([self imageURLAppearsInContent:((Article *)(self.item)).coverImage] == NO) {
             
-            [imagesFromEnclosures addObject:self.item.coverImage];
+            [imagesFromEnclosures addObject:((Article *)(self.item)).coverImage];
             
             /*
              * In the event of a Youtube video, we add the video itself
              * instead of the cover and then the video.
              */
-            if (isYoutubeVideo == NO && self.item.coverImage) {
+            if (isYoutubeVideo == NO && ((Article *)(self.item)).coverImage) {
                 Content *content = [Content new];
                 content.type = @"image";
-                content.url = self.item.coverImage;
+                content.url = ((Article *)(self.item)).coverImage;
 
                 weakify(self);
 
@@ -1002,13 +1013,13 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
     }
     
-    if (self.item.enclosures && self.item.enclosures.count) {
+    if (((Article *)(self.item)).enclosures && ((Article *)(self.item)).enclosures.count) {
         
         NSArray *const IMAGE_TYPES = @[@"image", @"image/jpeg", @"image/jpg", @"image/png", @"image/webp"];
         NSArray *const VIDEO_TYPES = @[@"video", @"video/h264", @"video/mp4", @"video/webm"];
         
         // check for images
-        NSArray <Enclosure *> *enclosures = [self.item.enclosures rz_filter:^BOOL(Enclosure *obj, NSUInteger idx, NSArray *array) {
+        NSArray <Enclosure *> *enclosures = [((Article *)(self.item)).enclosures rz_filter:^BOOL(Enclosure *obj, NSUInteger idx, NSArray *array) {
            
             BOOL isImage = obj.type && [IMAGE_TYPES containsObject:obj.type];
             
@@ -1040,7 +1051,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
                         [imagesFromEnclosures addObject:content.url];
                         
-                        self.item.content = [@[content] arrayByAddingObjectsFromArray:self.item.content];
+                        ((Article *)(self.item)).content = [@[content] arrayByAddingObjectsFromArray:((Article *)(self.item)).content];
                         
                     }
                     
@@ -1079,13 +1090,13 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                 
                 content.images = images;
                 
-                self.item.content = [@[content] arrayByAddingObjectsFromArray:self.item.content];
+                ((Article *)(self.item)).content = [@[content] arrayByAddingObjectsFromArray:((Article *)(self.item)).content];
                 
             }
             
         }
         
-        enclosures = [self.item.enclosures rz_filter:^BOOL(Enclosure *obj, NSUInteger idx, NSArray *array) {
+        enclosures = [((Article *)(self.item)).enclosures rz_filter:^BOOL(Enclosure *obj, NSUInteger idx, NSArray *array) {
            
             return obj.type && [VIDEO_TYPES containsObject:obj.type];
             
@@ -1101,7 +1112,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                     subcontent.type = @"video";
                     subcontent.url = enc.url;
                     
-                    self.item.content = [@[subcontent] arrayByAddingObjectsFromArray:self.item.content];
+                    ((Article *)(self.item)).content = [@[subcontent] arrayByAddingObjectsFromArray:((Article *)(self.item)).content];
                 }
                 
             } }
@@ -1110,7 +1121,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
     }
     
-    [self.item.content enumerateObjectsUsingBlock:^(Content *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    [((Article *)(self.item)).content enumerateObjectsUsingBlock:^(Content *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         
         dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
@@ -1128,7 +1139,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                     
                     ContentRange *rangeObj = [ContentRange new];
                     rangeObj.element = @"anchor";
-                    rangeObj.url = self.item.url;
+                    rangeObj.url = ((Article *)(self.item)).url;
                     rangeObj.nsRange = [obj.content rangeOfString:@"click here"];
                     
                     if ([obj.ranges indexOfObject:rangeObj] == NSNotFound) {
@@ -1156,7 +1167,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         NSLog(@"Processing: %@", @([NSDate.date timeIntervalSinceDate:start]));
         
         
-        if (self.item && self.item.read == NO) {
+        if (self.item && ((Article *)(self.item)).read == NO) {
 
             if (self.providerDelegate && [self.providerDelegate respondsToSelector:@selector(userMarkedArticle:read:)]) {
                 [self.providerDelegate userMarkedArticle:self.item read:YES];
@@ -1177,7 +1188,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         NSLogDebug(@"ScrollView contentsize: %@", NSStringFromCGSize(contentSize));
         
-        [self setState:ArticleStateLoaded isChangingArticle:isChangingArticle];
+        [self setState:ArticleVCStateLoaded isChangingArticle:isChangingArticle];
         
     });
     
@@ -1206,12 +1217,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     NSString *author = nil;
     
-    if (self.item.author) {
-        if ([self.item.author isKindOfClass:NSString.class]) {
-            author = self.item.author;
+    if (((Article *)(self.item)).author) {
+        if ([((Article *)(self.item)).author isKindOfClass:NSString.class]) {
+            author = ((Article *)(self.item)).author;
         }
         else {
-            author = [self.item.author valueForKey:@"name"];
+            author = [((Article *)(self.item)).author valueForKey:@"name"];
         }
     }
     else {
@@ -1224,12 +1235,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         author = [author stringByAppendingString:@" • "];
     }
     
-    Feed *feed = [MyFeedsManager feedFor:self.item.feedID];
+    Feed *feed = [self.coordinator feedFor:((Article *)(self.item)).feedID];
 
     NSString *firstLine = feed != nil ? feed.displayTitle : nil;
     NSString *timestamp = nil;
     
-    timestamp = [[NSRelativeDateTimeFormatter new] localizedStringForDate:self.item.timestamp relativeToDate:NSDate.date];
+    timestamp = [[NSRelativeDateTimeFormatter new] localizedStringForDate:((Article *)(self.item)).timestamp relativeToDate:NSDate.date];
     
     NSString *sublineText = formattedString(@"%@%@", author, timestamp);
     
@@ -1241,7 +1252,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     ArticleLayoutFont fontPref = SharedPrefs.paraTitleFont ?: SharedPrefs.articleFont;
     CGFloat baseFontSize = 32.f;
 
-    if (self.item.title.length > 24) {
+    if (((Article *)(self.item)).title.length > 24) {
         baseFontSize = 26.f;
     }
     
@@ -1261,7 +1272,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     ArticleAuthorView *authorView = [[ArticleAuthorView alloc] initWithNib];
     authorView.delegate = self;
     
-    if ([Paragraph languageDirectionForText:self.item.title] == NSLocaleLanguageDirectionRightToLeft) {
+    if ([Paragraph languageDirectionForText:((Article *)(self.item)).title] == NSLocaleLanguageDirectionRightToLeft) {
         
         authorView.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
         
@@ -1276,7 +1287,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                                      NSKernAttributeName: @0,
                                      };
 
-    NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:self.item.title attributes:baseAttributes];
+    NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:((Article *)(self.item)).title attributes:baseAttributes];
     
     // this will be reused later after setting up the label.
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 48.f);
@@ -1308,9 +1319,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 #endif
     
     // Hide full-text button for Youtube videos.
-    authorView.mercurialButton.hidden = ([self.item.url.absoluteString containsString:@"youtube.com/watch"]);
+    authorView.mercurialButton.hidden = ([((Article *)(self.item)).url.absoluteString containsString:@"youtube.com/watch"]);
     
-    authorView.mercurialed = self.item.fulltext;
+    authorView.mercurialed = ((Article *)(self.item)).fulltext;
     
     [self.stackView addArrangedSubview:authorView];
     
@@ -1382,7 +1393,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
      * 3. The article declares a cover image
      */
     BOOL isImage = [content.type isEqualToString:@"img"] || [content.type isEqualToString:@"image"];
-    BOOL hasCover = self.item.coverImage != nil;
+    BOOL hasCover = ((Article *)(self.item)).coverImage != nil;
     BOOL imageFromEnclosure = isImage ? ([imagesFromEnclosures indexOfObject:content.url] != NSNotFound) : NO;
     
     if (idx == 0 && isImage && imageFromEnclosure == YES) {
@@ -1392,7 +1403,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (idx == 0 && isImage && hasCover && imagesFromEnclosures.count) {
        // check if the cover image and the first image
        // are the same entities
-       NSURLComponents *coverComponents = [NSURLComponents componentsWithString:self.item.coverImage.absoluteString];
+       NSURLComponents *coverComponents = [NSURLComponents componentsWithString:((Article *)(self.item)).coverImage.absoluteString];
        NSURLComponents *imageComponents = [NSURLComponents componentsWithString:content.url.absoluteString];
        
        if ([coverComponents.path isEqualToString:imageComponents.path]) {
@@ -1467,7 +1478,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         }
         
     }
-    else if ([content.type isEqualToString:@"paragraph"] || [content.type isEqualToString:@"cite"] || [content.type isEqualToString:@"span"]) {
+    else if ([content.type isEqualToString:@"p"] || [content.type isEqualToString:@"paragraph"] || [content.type isEqualToString:@"cite"] || [content.type isEqualToString:@"span"]) {
         
         if (content.content.length && [content.type isEqualToString:@"noscript"] == NO) {
             [self addParagraph:content caption:NO];
@@ -1509,7 +1520,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         [self addQuote:content];
         
     }
-    else if ([content.type isEqualToString:@"list"] || [content.type containsString:@"list"]) {
+    else if ([content.type isEqualToString:@"list"] || [content.type containsString:@"list"]
+             || [content.type isEqualToString:@"ul"] || [content.type isEqualToString:@"ol"]) {
         
         [self addList:content];
         
@@ -1859,7 +1871,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         NSAttributedString *attrs = heading.attributedText;
         
-        NSURL *url = formattedURL(@"%@#%@", self.item.url.absoluteString, identifier);
+        NSURL *url = formattedURL(@"%@#%@", ((Article *)(self.item)).url.absoluteString, identifier);
         
         NSMutableDictionary *attributes = @{NSFontAttributeName: [UIFont systemFontOfSize:MAX(14.f, heading.bodyFont.pointSize - 8.f)]}.mutableCopy;
         
@@ -1945,7 +1957,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     NSString *absolute = content.url ? content.url.absoluteString : @"";
     
     // 9mac ads and some tracking scripts
-    if (content.url && (
+    if (content.url
+        && [absolute containsString:@"theoatmeal"] == NO
+        && [absolute containsString:@"amazonaws"] == NO 
+        && (
             ([absolute containsString:@"ads"] && [absolute containsString:@"assoc"])
             || ([absolute containsString:@"deal"] && [absolute containsString:@"Daily-Deals-"] == NO)
             || ([absolute containsString:@"amaz"]
@@ -2102,7 +2117,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
         NSLogDebug(@"No hostname for URL: %@", url);
 
-        NSURLComponents *articleURLComps = [NSURLComponents componentsWithString:self.item.url];
+        NSURLComponents *articleURLComps = [NSURLComponents componentsWithString:((Article *)(self.item)).url.absoluteString];
 
         articleURLComps.path = [articleURLComps.path stringByAppendingPathComponent:url.absoluteString];
 
@@ -2360,10 +2375,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (![self showImage])
         return;
     
-    NSString *videoID = [[content url] lastPathComponent];
+    NSString *videoID = [[content url] query];
     
-    if ([videoID containsString:@"watch?v="] == YES) {
-        videoID = [videoID stringByReplacingOccurrencesOfString:@"watch?v=" withString:@""];
+    if ([videoID containsString:@"v="] == YES) {
+        videoID = [videoID stringByReplacingOccurrencesOfString:@"v=" withString:@""];
     }
     
     NSLogDebug(@"Extracting YT info for: %@", videoID);
@@ -2414,6 +2429,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                 imageView.translatesAutoresizingMaskIntoConstraints = NO;
 
                 [playerController.contentOverlayView addSubview:imageView];
+                
+                imageView.layer.masksToBounds = YES;
 
                 [imageView.widthAnchor constraintEqualToAnchor:playerController.contentOverlayView.widthAnchor multiplier:1.f].active = YES;
                 [imageView.heightAnchor constraintEqualToAnchor:playerController.contentOverlayView.heightAnchor multiplier:1.f].active = YES;
@@ -2424,6 +2441,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                 
                 if (thumbnail == nil || [thumbnail isBlank] == YES) {}
                 else {
+                    
+                    if (SharedPrefs.imageProxy == YES) {
+                        thumbnail = [thumbnail pathForImageProxy:NO maxWidth:playerController.view.bounds.size.width quality:0.9];
+                    }
+                    
+                    NSLog(@"Loading thumbnail for youtube video %@", videoID);
                     
                     [imageView sd_setImageWithURL:[NSURL URLWithString:thumbnail] placeholderImage:nil options:SDWebImageScaleDownLargeImages completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
                         
@@ -2613,9 +2636,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         return;
     }
     
-    // @TODO
-    
-    Feed *feed = [MyFeedsManager feedFor:self.item.feedID];
+    Feed *feed = [self.coordinator feedFor:((Article *)(self.item)).feedID];
 
     if (feed == nil) {
 
@@ -2625,7 +2646,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         return;
     }
 
-    [self.mainCoordinator showFeedVC:feed];
+    [self.coordinator showFeedVC:feed];
     
 }
 
@@ -2633,7 +2654,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 - (void)didTapMercurialButton:(id)sender completion:(void (^)(BOOL))completionHandler {
     
-    if (self.item == nil || self.item.identifier == nil) {
+    if (self.item == nil || ((Article *)(self.item)).identifier == nil) {
         
         if (completionHandler) {
             completionHandler(NO);
@@ -2645,16 +2666,16 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     // if the article already has a mercury source
     // so we swap back to the normal content
     
-    if (self.item.fulltext == YES) {
+    if (((Article *)(self.item)).fulltext == YES) {
 
-        NSArray <Content *> *content = [MyFeedsManager getContentFromDB:self.item.identifier];
+        NSArray <Content *> *content = [self.coordinator getContentFromDB:((Article *)(self.item)).identifier];
 
         if (content != nil) {
 
             runOnMainQueueWithoutDeadlocking(^{
 
-                self.item.content = content;
-                self.item.fulltext = NO;
+                ((Article *)(self.item)).content = content;
+                ((Article *)(self.item)).fulltext = NO;
 
                 [self setupArticle:self.item];
 
@@ -2678,7 +2699,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     weakify(self);
     
-    [MyFeedsManager getFullText:self.item completion:^(NSError * _Nullable error, Article * _Nullable responseObject) {
+    [self.coordinator getFullText:self.item completion:^(NSError * _Nullable error, Article * _Nullable responseObject) {
         
         if (error != nil) {
             completionHandler(NO);
@@ -2688,22 +2709,22 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         strongify(self);
         
-        self.item.fulltext = responseObject.fulltext;
-        self.item.read = responseObject.read;
-        self.item.bookmarked = responseObject.bookmarked;
+        ((Article *)(self.item)).fulltext = responseObject.fulltext;
+        ((Article *)(self.item)).read = responseObject.read;
+        ((Article *)(self.item)).bookmarked = responseObject.bookmarked;
 
         if (responseObject.content && responseObject.content.count) {
 
-            self.item.content = responseObject.content;
+            ((Article *)(self.item)).content = responseObject.content;
 
         }
 
         if (responseObject.coverImage) {
-            self.item.coverImage = responseObject.coverImage;
+            ((Article *)(self.item)).coverImage = responseObject.coverImage;
         }
 
         if (responseObject.enclosures && responseObject.enclosures.count) {
-            self.item.enclosures = responseObject.enclosures;
+            ((Article *)(self.item)).enclosures = responseObject.enclosures;
         }
 
         [self setupArticle:self.item];
@@ -2886,7 +2907,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     __block Paragraph *required = nil;
     
-    Feed *feed = [MyFeedsManager feedFor:self.item.feedID];
+    Feed *feed = [self.coordinator feedFor:((Article *)(self.item)).feedID];
 
     NSString *base = @"";
 
@@ -3069,7 +3090,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     if (URL.host == nil) {
         // absolute link in the article. Resovle to fully qualified URL
-        NSURLComponents *articleComp = [NSURLComponents componentsWithString:[self.item.url absoluteString]];
+        NSURLComponents *articleComp = [NSURLComponents componentsWithString:[((Article *)(self.item)).url absoluteString]];
         NSURLComponents *urlComp = [NSURLComponents componentsWithString:URL.absoluteString];
         
         urlComp.host = articleComp.host;
@@ -3095,7 +3116,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             return NO;
         }
         
-        Feed *feed = [MyFeedsManager feedFor:self.item.feedID];
+        Feed *feed = [self.coordinator feedFor:((Article *)(self.item)).feedID];
         
         NSString *base = @"";
         
@@ -3117,7 +3138,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         }
         
         // links to sections within the article
-        if ([absolute containsString:self.item.url.absoluteString] && ![absolute isEqualToString:self.item.url.absoluteString]) {
+        if ([absolute containsString:((Article *)(self.item)).url.absoluteString] && ![absolute isEqualToString:((Article *)(self.item)).url.absoluteString]) {
             // get the section ID
             NSRange range = [absolute rangeOfString:@"#"];
             
@@ -3147,7 +3168,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         if ([text isEqualToString:linkedHeader]) {
             text = [[textView text] stringByReplacingOccurrencesOfString:linkedHeader withString:@""];
             
-            NSString *articleTitle = (self.item.title && ![self.item.title isBlank]) ? formattedString(@"- %@", self.item.title) : @"";
+            NSString *articleTitle = (((Article *)(self.item)).title && ![((Article *)(self.item)).title isBlank]) ? formattedString(@"- %@", ((Article *)(self.item)).title) : @"";
             text = formattedString(@"%@%@", text, articleTitle);
         }
         
@@ -3499,90 +3520,90 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 #pragma mark - State Restoration
 
-NSString * const kArticleData = @"ArticleData";
-NSString * const kScrollViewSize = @"ScrollViewContentSize";
-NSString * const kScrollViewOffset = @"ScrollViewOffset";
+//NSString * const kArticleData = @"ArticleData";
+//NSString * const kScrollViewSize = @"ScrollViewContentSize";
+//NSString * const kScrollViewOffset = @"ScrollViewOffset";
 
-- (void)continueActivity:(NSUserActivity *)activity {
-    
-    NSDictionary *article = [activity.userInfo valueForKey:@"article"];
-    
-    if (article == nil) {
-        return;
-    }
-    
-//    CGSize size = CGSizeFromString([article valueForKey:kScrollViewSize]);
-    CGPoint offset = CGPointFromString([article valueForKey:kScrollViewOffset]);
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self.scrollView setContentOffset:offset animated:NO];
-    });
-    
-}
-
-- (void)saveRestorationActivity:(NSUserActivity * _Nonnull)activity {
-    
-    NSString *contentSize = NSStringFromCGSize(self.scrollView.contentSize);
-    NSString *contentOffset = NSStringFromCGPoint(self.scrollView.contentOffset);
-    
-    [activity addUserInfoEntriesFromDictionary:@{@"article": @{
-                                                         kScrollViewSize: contentSize,
-                                                         kScrollViewOffset: contentOffset
-    }
-    }];
-    
-}
-
-+ (UIViewController *)viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
-    
-    Article *item = [coder decodeObjectForKey:kArticleData];
-    
-    if (item != nil) {
-        ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
-        return vc;
-    }
-    
-    return nil;
-    
-}
-
-- (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
-    
-    NSLogDebug(@"Encoding restoration: %@", self.restorationIdentifier);
-    
-    [super encodeRestorableStateWithCoder:coder];
-    
-    [coder encodeObject:self.item forKey:kArticleData];
-    [coder encodeCGSize:self.scrollView.contentSize forKey:kScrollViewSize];
-    [coder encodeCGPoint:self.scrollView.contentOffset forKey:kScrollViewOffset];
-}
-
-- (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
-    
-    NSLogDebug(@"Decoding restoration: %@", self.restorationIdentifier);
-    
-    [super decodeRestorableStateWithCoder:coder];
-    
-    FeedItem * item = [coder decodeObjectForKey:kArticleData];
-    
-    if (item) {
-        _isRestoring = YES;
-        
-        [self setupArticle:item];
-        
-        weakify(self);
-        
-        CGSize size = [coder decodeCGSizeForKey:kScrollViewSize];
-        CGPoint offset = [coder decodeCGPointForKey:kScrollViewOffset];
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            strongify(self);
-            
-            self.scrollView.contentSize = size;
-            [self.scrollView setContentOffset:offset animated:NO];
-        });
-    }
-}
+//- (void)continueActivity:(NSUserActivity *)activity {
+//
+//    NSDictionary *article = [activity.userInfo valueForKey:@"article"];
+//
+//    if (article == nil) {
+//        return;
+//    }
+//
+////    CGSize size = CGSizeFromString([article valueForKey:kScrollViewSize]);
+//    CGPoint offset = CGPointFromString([article valueForKey:kScrollViewOffset]);
+//
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        [self.scrollView setContentOffset:offset animated:NO];
+//    });
+//
+//}
+//
+//- (void)saveRestorationActivity:(NSUserActivity * _Nonnull)activity {
+//
+//    NSString *contentSize = NSStringFromCGSize(self.scrollView.contentSize);
+//    NSString *contentOffset = NSStringFromCGPoint(self.scrollView.contentOffset);
+//
+//    [activity addUserInfoEntriesFromDictionary:@{@"article": @{
+//                                                         kScrollViewSize: contentSize,
+//                                                         kScrollViewOffset: contentOffset
+//    }
+//    }];
+//
+//}
+//
+//+ (UIViewController *)viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
+//
+//    Article *item = [coder decodeObjectForKey:kArticleData];
+//
+//    if (item != nil) {
+//        ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
+//        return vc;
+//    }
+//
+//    return nil;
+//
+//}
+//
+//- (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
+//
+//    NSLogDebug(@"Encoding restoration: %@", self.restorationIdentifier);
+//
+//    [super encodeRestorableStateWithCoder:coder];
+//
+//    [coder encodeObject:self.item forKey:kArticleData];
+//    [coder encodeCGSize:self.scrollView.contentSize forKey:kScrollViewSize];
+//    [coder encodeCGPoint:self.scrollView.contentOffset forKey:kScrollViewOffset];
+//}
+//
+//- (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
+//
+//    NSLogDebug(@"Decoding restoration: %@", self.restorationIdentifier);
+//
+//    [super decodeRestorableStateWithCoder:coder];
+//
+//    Article * item = [coder decodeObjectForKey:kArticleData];
+//
+//    if (item) {
+//        _isRestoring = YES;
+//
+//        [self setupArticle:item];
+//
+//        weakify(self);
+//
+//        CGSize size = [coder decodeCGSizeForKey:kScrollViewSize];
+//        CGPoint offset = [coder decodeCGPointForKey:kScrollViewOffset];
+//
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            strongify(self);
+//
+//            self.scrollView.contentSize = size;
+//            [self.scrollView setContentOffset:offset animated:NO];
+//        });
+//    }
+//}
 
 #pragma mark - KVO
 
@@ -3668,7 +3689,7 @@ NSString * const kScrollViewOffset = @"ScrollViewOffset";
     
     text = formattedString(@"\"%@\"", text);
     
-    UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[text, self.item.url] applicationActivities:nil];
+    UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[text, ((Article *)(self.item)).url] applicationActivities:nil];
     
     if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
         

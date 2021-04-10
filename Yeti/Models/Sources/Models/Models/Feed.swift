@@ -33,6 +33,11 @@ private let imageExtensions = ["png", "jpg", "jpeg", "svg", "bmp", "ico", "webp"
     public var localName: String?
     public var podcast: Bool! = false
     
+    // bridged for objC
+    public var identifier: Int {
+        return Int(feedID)
+    }
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case feedID = "id"
         case summary
@@ -49,13 +54,14 @@ private let imageExtensions = ["png", "jpg", "jpeg", "svg", "bmp", "ico", "webp"
         case podcast
     }
     
-    @Published public var unread: UInt! = 0
+    @Published public var unread: UInt = 0
     
     weak var folder: Folder?
+    
     #if os(macOS)
-    public var faviconImage: NSImage?
+    @Published public var faviconImage: NSImage?
     #else
-    public var faviconImage: UIImage?
+    @Published public var faviconImage: UIImage?
     #endif
     
     public var canShowExtraLevel: Bool {
@@ -267,7 +273,7 @@ private let imageExtensions = ["png", "jpg", "jpeg", "svg", "bmp", "ico", "webp"
         else if key == "lastRPC" {
             
             if let value = value as? String,
-               let date = Subscription.dateFormatter.date(from: value) {
+               let date = Article.dateFormatter.date(from: value) {
                 lastRPC = date
             }
             
@@ -357,10 +363,11 @@ extension Feed {
     
     static func == (lhs: Feed, rhs: Feed) -> Bool {
         
-        return lhs.url == rhs.url
+        let equal = lhs.url == rhs.url
             && lhs.feedID == rhs.feedID
-            && lhs.extra == rhs.extra
             && lhs.displayTitle == rhs.displayTitle
+        
+        return equal
         
     }
     

@@ -4,9 +4,6 @@
 [submodule "Yeti/Vendors/Keychain"]
 	path = Yeti/Vendors/Keychain
 	url = git@github.com:dezinezync/Keychain.git
-[submodule "Yeti/Vendors/DZNetworking"]
-	path = Yeti/Vendors/DZNetworking
-	url = git@github.com:DZNS/DZNetworking.git
 [submodule "Yeti/Vendors/DZKit"]
 	path = Yeti/Vendors/DZKit
 	url = git@github.com:dezinezync/DZKit.git
@@ -16,9 +13,6 @@
 [submodule "Yeti/Vendors/DZThemeKit"]
 	path = Yeti/Vendors/DZThemeKit
 	url = git@github.com:DZNS/DZThemeKit.git
-[submodule "Yeti/Vendors/YapDatabase"]
-	path = Yeti/Vendors/YapDatabase
-	url = https://github.com/yapstudios/YapDatabase.git
 [submodule "Yeti/Vendors/DateTools"]
 	path = Yeti/Vendors/DateTools
 	url = https://github.com/MatthewYork/DateTools.git
@@ -34,6 +28,3 @@
 [submodule "elytramac/Vendors/Preferences"]
 	path = elytramac/Vendors/Preferences
 	url = git@github.com:dezinezync/Preferences.git
-[submodule "Yeti/Vendors/AWS"]
-	path = Yeti/Vendors/AWS
-	url = git@github.com:aws-amplify/aws-sdk-ios.git
