@@ -119,6 +119,14 @@
 
 #pragma mark -
 
+- (void)tintColorDidChange {
+    
+    [super tintColorDidChange];
+    
+    self.blogLabel.textColor = self.tintColor;
+    
+}
+
 - (IBAction)mercurialButton:(id)sender {
     
     // disable it so the action does not trigger twice.
