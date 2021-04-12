@@ -913,11 +913,42 @@ extension FeedsManager {
             return
         }
         
-        session.GET(path: "/2.2/feeds/\(feedID)", query: ["page": "\(page)"], resultType: GetArticlesResult.self) { (result) in
+        session.GET(path: "/2.2/feeds/\(feedID)", query: ["page":"\(page)"]) { result -> Result<[Article],Error> in
+            
+            switch result {
+            case .success((_, let result)):
+                guard let data = result else {
+                    return Result.failure(FeedsManagerError.from(description: "Invalid or no data was received.", statusCode: 500))
+                }
+                
+                do {
+                    
+                    let json = try JSON(data: data)
+                    
+                    guard let s = json.dictionaryObject?["articles"] as? [[String: Any]]
+                    else {
+                        return Result.failure(FeedsManagerError.general(message: "Invalid data received."))
+                    }
+
+                    let articles = s.map { Article(from: $0) }
+
+                    return Result.success(articles)
+                    
+                }
+                catch {
+                    return Result.failure(error)
+                }
+                
+            case .failure(let error):
+                print(error)
+                return Result.failure(error)
+            }
+            
+        } completion: { result in
             
             switch result {
             case .success(let (_, aResult)):
-                let a = aResult?.articles ?? []
+                let a = aResult ?? []
                 completion?(.success(a))
             case .failure(let error):
                 completion?(.failure(error))
@@ -929,7 +960,38 @@ extension FeedsManager {
     
     public func getFullTextFor(_ articleID: String, completion:((Result<Article, Error>) -> Void)?) {
         
-        session.GET(path: "/2.2/mercurial/\(articleID)", query: nil, resultType: Article.self) { result in
+        session.GET(path: "/2.2/mercurial/\(articleID)", query: nil) { (result) -> Result<Article, Error> in
+            
+            switch result {
+            case .success((_, let result)):
+                guard let data = result else {
+                    return Result.failure(FeedsManagerError.from(description: "Invalid or no data was received.", statusCode: 500))
+                }
+                
+                do {
+                    
+                    let json = try JSON(data: data)
+                    
+                    guard let s = json.dictionaryObject
+                    else {
+                        return Result.failure(FeedsManagerError.general(message: "Invalid data received."))
+                    }
+
+                    let article = Article(from: s)
+
+                    return Result.success(article)
+                    
+                }
+                catch {
+                    return Result.failure(error)
+                }
+                
+            case .failure(let error):
+                print(error)
+                return Result.failure(error)
+            }
+            
+        } completion: { result in
             
             switch result {
             case .success(let (res, article)):
