@@ -6,6 +6,12 @@
 
 - Fixes updating titles for Unread & Today Feeds. 
 
+- Fixes an issue with some articles not being downloaded correctly. 
+
+- New interaction: You can now long tap (on iOS/iPadOS, or right click on macOS ) on the article title inside the reader to reload the article. Use this sparingly and only when needed. 
+
+Additional bug fixes will come in a following build. 
+
 ### Build 201
 
 - iPadOS: Shows sidebar on launch in portrait mode. 
