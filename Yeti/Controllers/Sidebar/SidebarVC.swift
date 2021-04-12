@@ -567,7 +567,7 @@ enum SidebarItem: Hashable, Identifiable {
                 FeedsManager.shared.user = DBManager.shared.user
             
                 if DBManager.shared.user != nil,
-                   DBManager.shared.user?.subscription.hasExpired == false,
+                   DBManager.shared.user?.subscription?.hasExpired == false,
                    sself.initialSyncCompleted == false {
                     
                     sself.needsUpdateOfStructs = true
@@ -588,7 +588,7 @@ enum SidebarItem: Hashable, Identifiable {
                 FeedsManager.shared.user = DBManager.shared.user
             
                 if DBManager.shared.user != nil,
-                   DBManager.shared.user?.subscription.hasExpired == false,
+                   DBManager.shared.user?.subscription?.hasExpired == false,
                    sself.initialSyncCompleted == false {
                     
                     sself.needsUpdateOfStructs = true

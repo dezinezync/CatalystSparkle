@@ -188,6 +188,7 @@ import Defaults
         }
         
         let trialVC = TrialVC(nibName: "TrialVC", bundle: Bundle.main)
+        trialVC.coordinator = self.coordinator;
         
         navigationController?.pushViewController(trialVC, animated: true)
         

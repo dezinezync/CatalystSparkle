@@ -1,5 +1,11 @@
 # v2.3.0
 
+### Build 204
+
+- Fixed an issue with counters not updating in certain cases. 
+
+- Fixed an issue with the "Start Trial" button not doing anything. 
+
 ### Build 203
 
 - Fixes sorting for Folders and Author Feeds.
