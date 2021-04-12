@@ -443,6 +443,7 @@ enum SidebarItem: Hashable, Identifiable {
             
             mc.$totalUnread
                 .receive(on: DispatchQueue.main)
+                .debounce(for: 0.15, scheduler: DispatchQueue.main)
                 .sink { [weak self] _ in
                     
                     guard let sself = self else { return }
