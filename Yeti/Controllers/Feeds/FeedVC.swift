@@ -278,7 +278,7 @@ enum MarkDirection: Int {
             
             if let coordinator = coordinator {
                 
-                coordinator.publisher(for: \.totalUnread)
+                coordinator.$totalUnread
                     .receive(on: DispatchQueue.main)
                     .sink { [weak self] count in
                         
@@ -300,7 +300,7 @@ enum MarkDirection: Int {
             
             if let coordinator = coordinator {
                 
-                coordinator.publisher(for: \.totalToday)
+                coordinator.$totalToday
                     .receive(on: DispatchQueue.main)
                     .sink { [weak self] count in
                         

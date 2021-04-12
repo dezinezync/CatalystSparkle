@@ -4,6 +4,8 @@
 
 - Fixes sorting for Folders and Author Feeds.
 
+- Fixes updating titles for Unread & Today Feeds. 
+
 ### Build 201
 
 - iPadOS: Shows sidebar on launch in portrait mode. 
