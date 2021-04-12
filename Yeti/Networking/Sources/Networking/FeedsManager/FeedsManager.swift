@@ -1180,7 +1180,38 @@ extension FeedsManager {
             "page": "\(page)"
         ]
         
-        session.GET(path: "/2.2.1/sync", query: query, resultType: ChangeSet.self) { (result) in
+        session.GET(path: "/2.2.1/sync", query: query) { result -> Result<ChangeSet, Error> in
+            
+            switch result {
+            case .success(let (_, result)):
+                
+                guard let data = result else {
+                    return Result.failure(FeedsManagerError.from(description: "Invalid or no data was received.", statusCode: 500))
+                }
+                
+                do {
+                    
+                    let json = try JSON(data: data)
+                    
+                    guard let s = json.dictionaryObject else {
+                        return .failure(FeedsManagerError.general(message: "Invalid data received."))
+                    }
+
+                    let changeSet: ChangeSet = ChangeSet.init(from: s)
+
+                    return .success(changeSet)
+                    
+                }
+                catch {
+                    return .failure(error)
+                }
+                
+            case .failure(let error):
+                print(error)
+                return Result.failure(error)
+            }
+            
+        } completion: { result in
             
             switch result {
             case .success(let (response, changeSet)):
@@ -1191,7 +1222,7 @@ extension FeedsManager {
                 }
                 
                 if response.statusCode == 304 || changeSet == nil {
-                    let dummy = ChangeSet(changeToken: token, changeTokenID: tokenID, customFeeds: nil, articles: nil, reads: nil)
+                    let dummy = ChangeSet(from: [:])
                     completion?(.success(dummy))
                     return
                 }
@@ -1201,7 +1232,7 @@ extension FeedsManager {
             case .failure(let error):
                 completion?(.failure(error))
             }
-            
+                
         }
         
     }

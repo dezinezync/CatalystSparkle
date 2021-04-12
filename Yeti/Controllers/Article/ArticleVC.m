@@ -2650,6 +2650,44 @@ typedef NS_ENUM(NSInteger, ArticleVCState) {
     
 }
 
+- (void)didTapRefetchArticle {
+    
+    self.state = ArticleVCStateLoading;
+    
+    weakify(self);
+    
+    [self.coordinator getArticle:((Article *)self.item).identifier feedID:((Article *)self.item).feedID reload:true completion:^(NSError * _Nullable error, Article * _Nullable article) {
+        
+        strongify(self);
+       
+        if (error != nil) {
+            
+            [AlertManager showGenericAlertWithTitle:@"Error Reloading" message:error.localizedDescription];
+            self.state = ArticleVCStateLoaded;
+            return;
+            
+        }
+        
+        if (article == nil) {
+            
+            [AlertManager showGenericAlertWithTitle:@"Error Reloading" message:@"No article received after reloading."];
+            self.state = ArticleVCStateLoaded;
+            return;
+            
+        }
+        
+        Article *item = (Article *)[self item];
+        
+        item.content = article.content;
+        item.coverImage = article.coverImage;
+        item.title = article.title;
+        
+        [self _setupArticle:self.item start:[NSDate date] isChangingArticle:NO];
+        
+    }];
+    
+}
+
 #pragma mark - <ArticleAuthorViewDelegate>
 
 - (void)didTapMercurialButton:(id)sender completion:(void (^)(BOOL))completionHandler {

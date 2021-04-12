@@ -70,6 +70,10 @@
         UIContextMenuInteraction *interaction = [[UIContextMenuInteraction alloc] initWithDelegate:self];
         [self.mercurialButton addInteraction:interaction];
         
+        self.titleLabel.userInteractionEnabled = YES;
+        UIContextMenuInteraction *titleLabelInteraction = [[UIContextMenuInteraction alloc] initWithDelegate:self];
+        [self.titleLabel addInteraction:titleLabelInteraction];
+        
     }
     
     return self;
@@ -183,9 +187,35 @@
     
     UIContextMenuConfiguration *config = nil;
     
-    if (self.mercurialed) {
+    weakify(self);
+    
+    if (interaction.view == self.titleLabel) {
         
-        weakify(self);
+        config = [UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:nil actionProvider:^UIMenu * _Nullable(NSArray<UIMenuElement *> * _Nonnull suggestedActions) {
+           
+            UIAction *redownload = [UIAction actionWithTitle:@"Redownload" image:[UIImage systemImageNamed:@"arrow.triangle.2.circlepath.circle"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                
+                strongify(self);
+                
+                if ([self.delegate respondsToSelector:@selector(didTapRefetchArticle)] == YES) {
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                       
+                        [self.delegate didTapRefetchArticle];
+                        
+                    });
+                    
+                }
+                
+            }];
+            
+            return [UIMenu menuWithTitle:@"Article Options" children:@[redownload]];
+            
+        }];
+        
+    }
+    
+    if (self.mercurialed) {
         
         config = [UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:nil actionProvider:^UIMenu * _Nullable(NSArray<UIMenuElement *> * _Nonnull suggestedActions) {
            

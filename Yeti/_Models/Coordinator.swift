@@ -1550,7 +1550,14 @@ extension Coordinator {
     
     public func getArticle(_ id: String, feedID: UInt, completion: ((_ error: Error?, _ article: Article?) -> Void)?) {
         
-        if let article = DBManager.shared.article(for: id, feedID: feedID) {
+        getArticle(id, feedID: feedID, reload: false, completion: completion)
+        
+    }
+    
+    public func getArticle(_ id: String, feedID: UInt, reload: Bool = false, completion: ((_ error: Error?, _ article: Article?) -> Void)?) {
+        
+        if reload == false,
+           let article = DBManager.shared.article(for: id, feedID: feedID) {
             
             if article.content.count == 0 {
                 

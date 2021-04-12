@@ -14,6 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)didTapMercurialButton:(id)sender completion:(void (^_Nullable)(BOOL completed))completionHandler;
 
+- (void)didTapRefetchArticle;
+
 @end
 
 @interface ArticleAuthorView : NibView
