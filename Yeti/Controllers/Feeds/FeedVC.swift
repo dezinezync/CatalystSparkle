@@ -479,19 +479,19 @@ enum MarkDirection: Int {
             }
             
             // Filters of the user
-            guard filters.count > 0 else {
-                return true
-            }
-            
-            // compare the title to each item in the filters
-            let wordCloud = metadata.titleWordCloud ?? []
-            
-            let set1 = Set(wordCloud)
-            
-            let intersects = set1.intersection(filtersSet).count == 0
-            
-            guard intersects == true else {
-                return false
+            if filters.count > 0 {
+                
+                // compare the title to each item in the filters
+                let wordCloud = metadata.titleWordCloud ?? []
+                
+                let set1 = Set(wordCloud)
+                
+                let intersects = set1.intersection(filtersSet).count == 0
+                
+                guard intersects == true else {
+                    return false
+                }
+                
             }
             
             guard sself.sorting.isUnread == true else {

@@ -6,6 +6,8 @@
 
 - Fixed an issue with the "Start Trial" button not doing anything. 
 
+- Fixed an issue with read articles appearing when the Unread Sorting is applied. This would happen when no filters are set up.  
+
 ### Build 203
 
 - Fixes sorting for Folders and Author Feeds.
