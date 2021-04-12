@@ -1,5 +1,9 @@
 # v2.3.0
 
+### Build 203
+
+- Fixes sorting for Folders and Author Feeds.
+
 ### Build 201
 
 - iPadOS: Shows sidebar on launch in portrait mode. 

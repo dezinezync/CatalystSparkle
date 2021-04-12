@@ -93,13 +93,8 @@ enum MarkDirection: Int {
     
     var state: FeedVCState = .empty {
         didSet {
-            if Thread.isMainThread == true {
-                setupState()
-            }
-            else {
-                DispatchQueue.main.sync { [weak self] in
-                    self?.setupState()
-                }
+            runOnMainQueueWithoutDeadlocking { [weak self] in
+                self?.setupState()
             }
         }
     }
@@ -164,7 +159,7 @@ enum MarkDirection: Int {
     var articles: [Article] = []
     
     static var filteringTag: UInt = 0
-    var sortingTag: UInt = 0
+    static var sortingTag: String = "2021-04-12 10:47"
     
     var loadOnReady: String?
     
@@ -373,9 +368,7 @@ enum MarkDirection: Int {
         
         let sortingOption = self.sorting
         
-        let registered: YapDatabaseExtensionConnection! = DBManager.shared.bgConnection.ext(dbAutoViewName)
-        
-        if registered != nil  {
+        if let _ = DBManager.shared.bgConnection.ext(dbAutoViewName) as? YapDatabaseAutoViewConnection {
             // not required. already setup.
             DispatchQueue.main.async { [weak self] in
                 self?._didSetSortingOption()
@@ -392,22 +385,22 @@ enum MarkDirection: Int {
                     return .orderedSame
                 }
 
-                let result = a1.timestamp.compare(other: a2.timestamp)
+                var result: ComparisonResult = a1.timestamp.compare(other: a2.timestamp)
                 
                 if result == .orderedSame {
-                    return result
+                    
+                    // compare against IDs
+                    result = k1.compare(k2)
                 }
-                
+
                 if sortingOption.isAscending == true {
-                    
                     return result
-                    
                 }
-                
+
                 if result == .orderedDescending {
                     return .orderedAscending
                 }
-                
+
                 return .orderedDescending
                 
             }
@@ -431,7 +424,7 @@ enum MarkDirection: Int {
                 let options: YapDatabaseViewOptions = YapDatabaseViewOptions()
                 options.isPersistent = true
                 
-                let newView: YapDatabaseAutoView = YapDatabaseAutoView(grouping: grouping, sorting: sortingClosure, versionTag: "\(sself.sortingTag)", options: options)
+                let newView: YapDatabaseAutoView = YapDatabaseAutoView(grouping: grouping, sorting: sortingClosure, versionTag: FeedVC.sortingTag, options: options)
                 
                 DBManager.shared.database.asyncRegister(newView, withName: sself.dbAutoViewName) { completed in
                     

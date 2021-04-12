@@ -131,7 +131,7 @@ class AuthorVC: FeedVC {
     
     override func setupViews() {
         
-        let baseViewName = sorting.isUnread == true ? DBManagerViews.unreadsView : DBManagerViews.articlesView
+        let baseViewName = dbAutoViewName
         
         let filtering = YapDatabaseViewFiltering.withMetadataBlock { [weak self] (t, g, c, k, m) -> Bool in
             
@@ -176,7 +176,7 @@ class AuthorVC: FeedVC {
             
             FeedVC.filteringTag += 1
             
-            let filteredView = YapDatabaseFilteredView(parentViewName: baseViewName.rawValue, filtering: filtering, versionTag: "\(FeedVC.filteringTag)")
+            let filteredView = YapDatabaseFilteredView(parentViewName: baseViewName, filtering: filtering, versionTag: "\(FeedVC.filteringTag)")
             
             DBManager.shared.database.register(filteredView, withName: dbFilteredViewName)
             
