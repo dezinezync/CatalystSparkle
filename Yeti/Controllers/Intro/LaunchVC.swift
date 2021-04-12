@@ -92,6 +92,8 @@ import Defaults
         }
         
         #if targetEnvironment(simulator)
+        // expired Store : 000768.e759fc828ab249ad98ceefc5f80279b3.1010
+        // Testing account: 4800: 000768.e759fc828ab249ad98ceefc5f80279b3.1145
         process(uuid: "000768.e759fc828ab249ad98ceefc5f80279b3.1145")
         return
         #endif
@@ -165,8 +167,19 @@ import Defaults
         }
         
         DBManager.shared.user = user
+        FeedsManager.shared.user = DBManager.shared.user
         
         guard user.subscription == nil else {
+            
+            guard user.subscription.hasExpired == false else {
+                
+                let storeVC = StoreVC(style: .plain)
+                storeVC.coordinator = self.coordinator
+                storeVC.fromIntro = true
+                
+                navigationController?.pushViewController(storeVC, animated: true)
+                return
+            }
             
             Defaults[.hasShownIntro] = true
             

@@ -113,12 +113,12 @@ public enum FeedsManagerError : Error {
         
         var s = DZURLSession(sessionConfiguration: sessionConfiguration)
         
-//        s.baseURL = URL(string: "https://staging.api.elytra.app")
+        s.baseURL = URL(string: "http://192.168.1.90:3000")
         s.baseURL = URL(string: "https://api.elytra.app")
         
-//        #if !DEBUG
-//        s.baseURL = URL(string: "https://api.elytra.app")
-//        #endif
+        #if !DEBUG
+        s.baseURL = URL(string: "https://api.elytra.app")
+        #endif
         
         s.useOMGUserAgent = true
         s.responseParser = nil
@@ -189,12 +189,12 @@ public enum FeedsManagerError : Error {
         
         var s = DZURLSession(sessionConfiguration: sessionConfiguration)
         
-//        s.baseURL = URL(string: "https://staging.api.elytra.app")
+        s.baseURL = URL(string: "http://192.168.1.90:3000")
         s.baseURL = URL(string: "https://api.elytra.app")
         
-//        #if !DEBUG
-//        s.baseURL = URL(string: "https://api.elytra.app")
-//        #endif
+        #if !DEBUG
+        s.baseURL = URL(string: "https://api.elytra.app")
+        #endif
         
         s.useOMGUserAgent = true
         s.responseParser = nil
@@ -446,7 +446,12 @@ extension FeedsManager {
         
         let receiptString = receipt.base64EncodedString()
         
-        session.POST(path: "/1.1/store", query: ["userID": "\(user!.userID!)"], body: ["receipt": receiptString]) { (result) -> Result<Subscription, Error> in
+        let query = [
+            "userID": "\(user!.userID!)",
+            "env": Bundle.main.configurationString
+        ]
+        
+        session.POST(path: "/1.1/store", query: query, body: ["receipt": receiptString]) { (result) -> Result<Subscription, Error> in
             
             switch result {
             case .success((_, let result)):

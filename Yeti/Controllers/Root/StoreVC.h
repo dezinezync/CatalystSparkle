@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface StoreVC : UITableViewController
 
+@property (nonatomic, assign) BOOL fromIntro;
+
 - (void)didTapDone:(UIBarButtonItem *)sender;
 
 @end

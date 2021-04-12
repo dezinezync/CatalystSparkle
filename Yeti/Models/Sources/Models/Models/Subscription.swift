@@ -23,14 +23,13 @@ public enum SubscriptionEnv: String, Codable {
     
     public static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'.000Z'"
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         formatter.timeZone = NSTimeZone.system
         return formatter
     }()
     
-    
     public var identifier: UInt!
-    public var environment: SubscriptionEnv!
+    public var environment: SubscriptionEnv = .Production
     public var expiry: Date! {
         didSet {
             
@@ -57,8 +56,9 @@ public enum SubscriptionEnv: String, Codable {
         }
     }
     
-    public var created: Date!
+    public var created: Date = Date()
     public var status: SubscriptionStatus = .expired
+    public var netStatus: SubscriptionStatus = .expired
     public var lifetime: Bool = false
     public var external: Bool = false
     
@@ -67,7 +67,7 @@ public enum SubscriptionEnv: String, Codable {
         case environment
         case expiry
         case created
-        case status
+        case netStatus = "status"
     }
     
     public convenience init(from dict: [String: Any]) {
@@ -123,11 +123,13 @@ public enum SubscriptionEnv: String, Codable {
                 
             }
             
-            if key == "expiry" {
-                expiry = dateValue
-            }
-            else if key == "created" {
-                created = dateValue
+            if let dateValue = dateValue {
+                if key == "expiry" {
+                    expiry = dateValue
+                }
+                else if key == "created" {
+                    created = dateValue
+                }
             }
             
             return
@@ -152,7 +154,7 @@ public enum SubscriptionEnv: String, Codable {
         }
         else if key == "environment", let value = value as? String {
             
-            environment = SubscriptionEnv(rawValue: value)
+            environment = SubscriptionEnv(rawValue: value) ?? .Production
             
         }
         else if key == "stripe" {

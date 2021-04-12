@@ -221,7 +221,7 @@
     if (sub != nil) {
         
         if (sub.expiry != nil) {
-
+            
             NSDateFormatter *formatter = [NSDateFormatter new];
             formatter.dateStyle = NSDateFormatterMediumStyle;
             formatter.timeStyle = NSDateFormatterShortStyle;
@@ -231,14 +231,14 @@
                 baseText = formattedString(@"Your subscription expired on %@", [formatter stringFromDate:sub.expiry]);
 
             }
-            else if (sub.lifetime == NO &&  sub.status == SubscriptionStatusTrial) {
-
-                baseText = formattedString(@"Your free trial will end on %@", [formatter stringFromDate:sub.expiry]);
-
-            }
             else {
+                
+                if (sub.lifetime == NO && sub.netStatus == SubscriptionStatusTrial) {
 
-                if (sub.lifetime) {
+                    baseText = formattedString(@"Your free trial will end on %@", [formatter stringFromDate:sub.expiry]);
+
+                }
+                else if (sub.lifetime) {
 
                     baseText = @"Your account has a Lifetime subscription. Enjoy!";
 
@@ -247,6 +247,10 @@
 
                     baseText = formattedString(@"Your subscription will renew on %@", [formatter stringFromDate:sub.expiry]);
 
+                }
+                
+                if (self.fromIntro == YES) {
+                    [self didComplete];
                 }
 
             }
@@ -345,6 +349,30 @@
 }
 
 #pragma mark Actions
+
+- (void)didComplete {
+    
+    weakify(self);
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        strongify(self);
+        [self setButtonsState:NO];
+    });
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        
+        [NSUserDefaults.standardUserDefaults setBool:YES forKey:@"hasShownIntro"];
+        [NSUserDefaults.standardUserDefaults synchronize];
+        
+        [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
+        
+        strongify(self);
+        
+        [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+        
+    });
+    
+}
 
 - (void)setButtonsState:(BOOL)enabled {
     
@@ -452,6 +480,32 @@
 }
 
 #pragma mark - Helpers
+
+- (void)storePaymentTransactionFailed:(NSNotification *)note {
+    
+    NSLog(@"Receipt validation failed: %@", note);
+    
+    NSData *errorData = [[note.userInfo valueForKeyPath:@"storeError.userInfo"] valueForKey:@"com.dz.error.data"];
+    
+    if (errorData != nil) {
+        
+        NSDictionary * obj = [NSJSONSerialization JSONObjectWithData:errorData options:kNilOptions error:nil];
+        
+        if (obj != nil && [obj valueForKey:@"error"] != nil) {
+            
+            NSString *error = [obj valueForKey:@"error"];
+            
+            [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error];
+            
+        }
+        
+    }
+    
+    runOnMainQueueWithoutDeadlocking(^{
+        [self setButtonsState:YES];
+    });
+    
+}
 
 - (void)resetSelectedCellState {
     
