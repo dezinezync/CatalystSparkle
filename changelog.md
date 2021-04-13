@@ -6,6 +6,8 @@
 
 - Fixed folder feeds not filtering content based on Filters. 
 
+- Fixed a crash on launch when counting unread items a in folder.
+
 ### Build 204
 
 - Fixed an issue with counters not updating in certain cases. 
