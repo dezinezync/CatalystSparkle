@@ -592,7 +592,7 @@ extension FeedsManager {
     
     public func add(feed stub: [String: AnyHashable], completion:((Result<Feed, Error>) -> Void)?) {
         
-        guard let user = user else {
+        guard let _ = user else {
             completion?(.failure((NSError(domain: "Elytra", code: 401, userInfo: [NSLocalizedDescriptionKey: "User is not logged in."]) as Error)))
             return
         }

@@ -256,6 +256,86 @@ enum MarkDirection: Int {
                     }
                     .store(in: &cancellables)
                 
+                // article states from authorVC propagated to feedVC
+                NotificationCenter.default.publisher(for: .DBManagerDidUpdate)
+                    .debounce(for: 0.2, scheduler: DBManager.shared.writeQueue)
+                    .filter { $0.userInfo?[notificationsKey] != nil && ($0.userInfo?[notificationsKey]! as? [Notification])?.count ?? 0 > 0  }
+                    .sink { [weak self] notification in
+                        
+                        guard let sself = self,
+                              let notifications = notification.userInfo?[notificationsKey] as? [Notification],
+                              let ext = DBManager.shared.uiConnection.ext(dbFilteredViewName) as? YapDatabaseFilteredViewConnection,
+                              ext.hasChanges(for: notifications) else {
+                                return
+                              }
+                        
+                        let keys: Set<String> = Set(sself.articles.map { $0.identifier })
+                        
+                        guard DBManager.shared.uiConnection.hasMetadataChange(forAnyKeys: keys, inCollection: CollectionNames.articles.rawValue, in: notifications) else {
+                            return
+                        }
+                        
+                        var itemsToUpdate: [String] = []
+                        
+                        if let set = (notifications[0].userInfo!["metadataChanges"] as? YapSet) {
+                            
+                            set.enumerateObjects { i, stop in
+                                
+                                if let ck = i as? YapCollectionKey,
+                                   ck.collection == CollectionNames.articles.rawValue {
+                                    
+                                    #if DEBUG
+                                    print("articles:\(ck.key) updated.")
+                                    #endif
+                                    
+                                    itemsToUpdate.append(ck.key)
+                                    
+                                }
+                                
+                            }
+                            
+                        }
+                        
+                        guard itemsToUpdate.count > 0 else {
+                            return
+                        }
+                        
+                        var articlesToUpdate: [Article] = []
+                        
+                        // update our local state with the state from the DB.
+                        DBManager.shared.uiConnection.read { t in
+                            
+                            for key in itemsToUpdate {
+                                
+                                if let metadata: ArticleMeta = t.metadata(forKey: key, inCollection: CollectionNames.articles.rawValue) as? ArticleMeta,
+                                   let article:Article = sself.articles.first(where: { $0.identifier == key }) {
+                                    
+                                    article.read = metadata.read
+                                    article.bookmarked = metadata.bookmarked
+                                    
+                                    articlesToUpdate.append(article)
+                                    
+                                }
+                                
+                            }
+                            
+                        }
+                        
+                        guard articlesToUpdate.count > 0 else {
+                            return
+                        }
+                        
+                        // tell the snapshot to update the cells
+                        var snapshot = sself.DS.snapshot()
+                        snapshot.reloadItems(articlesToUpdate)
+                        
+                        DispatchQueue.main.async {
+                            sself.DS.apply(snapshot, animatingDifferences: false, completion: nil)
+                        }
+                        
+                    }
+                    .store(in: &cancellables)
+                
             }
             
             if let image = feed.faviconImage {

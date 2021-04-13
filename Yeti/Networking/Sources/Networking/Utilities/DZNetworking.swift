@@ -98,7 +98,7 @@ extension DZURLSession {
     
     @discardableResult public func POST<R: Decodable>(path: String, query: [String: String]?, body: [String: AnyHashable]?, resultTransformer: @escaping resultTransformer<R>, completion: @escaping successTypedBlock<R>) -> URLSessionTask? {
         
-        return performRequest(withURI: path, method: "POST", query: query, body: body) { [weak self] (data, response, _) in
+        return performRequest(withURI: path, method: "POST", query: query, body: body) { (data, response, _) in
             
             guard let data = data as? Data else {
                 completion(.success((response, nil)))
