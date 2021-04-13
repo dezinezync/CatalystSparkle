@@ -41,7 +41,7 @@ import OrderedCollections
             }
             
             feedsUnread = Publishers.MergeMany(feeds.map { $0.$unread })
-                .receive(on: Folder.countersQueue)
+                .debounce(for: 0.3, scheduler: Folder.countersQueue)
                 .sink { [weak self] _ in
                     
                     guard let sself = self else {
@@ -52,7 +52,7 @@ import OrderedCollections
                         return
                     }
                     
-                    sself.updateCounters()
+                    sself.updatingCounters = true
                     
                 }
             
