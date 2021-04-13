@@ -1135,32 +1135,24 @@ enum SidebarItem: Hashable, Identifiable {
             return
         }
         
-        if initialSyncCompleted == false {
-            updateCounters()
-            initialSyncCompleted = true
+        guard FeedsManager.shared.user?.subscription != nil,
+              FeedsManager.shared.user!.subscription?.hasExpired == false else {
             
-            NotificationCenter.default.publisher(for: .feedsUpdated)
-                .receive(on: DispatchQueue.main)
-                .sink { [weak self] (_) in
+            // fetch the subscription just in case.
+            coordinator?.getSubscription(completion: { [weak self] error in
                 
-                    guard let sself = self else { return }
-                    
-                    sself.coalescingQueue.add(sself, #selector(SidebarVC.setupData))
+                guard let sself = self else { return }
                 
-            }.store(in: &cancellables)
-            
-            NotificationCenter.default.publisher(for: .foldersUpdated)
-                .receive(on: DispatchQueue.main)
-                .sink { [weak self] (_) in
+                if let error = error {
+                    AlertManager.showGenericAlert(withTitle: "No Subscription", message: error.localizedDescription)
+                    return
+                }
                 
-                    guard let sself = self else { return }
-                    
-                    sself.coalescingQueue.add(sself, #selector(SidebarVC.setupData))
+                sself.coalescingQueue.add(sself, #selector(SidebarVC.sync))
                 
-            }.store(in: &cancellables)
+            })
             
-            
-            
+            return
         }
         
         if (needsUpdateOfStructs == true)
@@ -1216,6 +1208,33 @@ enum SidebarItem: Hashable, Identifiable {
         }
         
         refreshFeedsCount = 0
+        
+        if initialSyncCompleted == false {
+            
+            updateCounters()
+            initialSyncCompleted = true
+            
+            NotificationCenter.default.publisher(for: .feedsUpdated)
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] (_) in
+                
+                    guard let sself = self else { return }
+                    
+                    sself.coalescingQueue.add(sself, #selector(SidebarVC.setupData))
+                
+                }.store(in: &cancellables)
+            
+            NotificationCenter.default.publisher(for: .foldersUpdated)
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] (_) in
+                
+                    guard let sself = self else { return }
+                    
+                    sself.coalescingQueue.add(sself, #selector(SidebarVC.setupData))
+                
+                }.store(in: &cancellables)
+            
+        }
         
         if isRefreshing == true {
             return

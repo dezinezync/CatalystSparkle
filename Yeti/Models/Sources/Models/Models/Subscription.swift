@@ -83,7 +83,7 @@ public enum SubscriptionEnv: String, Codable {
             if self.lifetime == true {
                 return false
             }
-            else if self.status == .expired {
+            else if self.netStatus == .expired {
                 return true
             }
             else {
@@ -150,6 +150,7 @@ public enum SubscriptionEnv: String, Codable {
         else if key == "status", let value = value as? Int {
             
             status = SubscriptionStatus(rawValue: value)!
+            netStatus = SubscriptionStatus(rawValue: value)!
             
         }
         else if key == "environment", let value = value as? String {
@@ -206,6 +207,7 @@ public enum SubscriptionEnv: String, Codable {
                 expiry = endDate
                 
                 status = timeSinceNow < 0 ? .expired : .active
+                netStatus = status
                 
             }
             
@@ -236,7 +238,7 @@ extension Subscription {
             
             dict["expiry"] = Subscription.dateFormatter.string(from: expiry)
             dict["created"] = Subscription.dateFormatter.string(from: created)
-            dict["status"] = status.rawValue
+            dict["status"] = netStatus.rawValue
             dict["lifetime"] = lifetime
             dict["external"] = external
                         

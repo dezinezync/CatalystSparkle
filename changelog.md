@@ -1,5 +1,11 @@
 # v2.3.0
 
+### Build 205
+
+- Fixed sync not working correctly upon Signing Up for the first time. 
+
+- Fixed folder feeds not filtering content based on Filters. 
+
 ### Build 204
 
 - Fixed an issue with counters not updating in certain cases. 

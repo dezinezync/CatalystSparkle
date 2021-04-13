@@ -14,16 +14,6 @@
 
 @implementation AppDelegate (BackgroundRefresh)
 
-- (dispatch_queue_t)bgTaskDispatchQueue {
-    
-    if (_bgTaskDispatchQueue == nil) {
-        _bgTaskDispatchQueue = dispatch_queue_create("BGTaskScheduler", DISPATCH_QUEUE_SERIAL);
-    }
-    
-    return _bgTaskDispatchQueue;
-    
-}
-
 - (void)application:(UIApplication *)application handleEventsForBackgroundURLSession:(nonnull NSString *)identifier completionHandler:(nonnull void (^)(void))completionHandler {
     
     NSLogDebug(@"Got a fresh background completion handler");

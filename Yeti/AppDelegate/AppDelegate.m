@@ -239,6 +239,16 @@ AppDelegate *MyAppDelegate = nil;
 
 #pragma mark -
 
+- (dispatch_queue_t)bgTaskDispatchQueue {
+    
+    if (_bgTaskDispatchQueue == nil) {
+        _bgTaskDispatchQueue = dispatch_queue_create("BGTaskScheduler", DISPATCH_QUEUE_SERIAL);
+    }
+    
+    return _bgTaskDispatchQueue;
+    
+}
+
 // logs all fonts loaded by the app
 - (void)yt_log_fontnames {
     

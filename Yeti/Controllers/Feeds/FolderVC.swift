@@ -111,6 +111,9 @@ class FolderVC: FeedVC {
         
         let baseViewName = dbAutoViewName
         
+        let filters: [String] = DBManager.shared.user?.filters ?? []
+        let filtersSet: Set<String> = Set(filters)
+        
         let filtering = YapDatabaseViewFiltering.withMetadataBlock { [weak self] (t, g, c, k, m) -> Bool in
             
             guard let sself = self,
@@ -120,6 +123,22 @@ class FolderVC: FeedVC {
             
             if sself.folder.feedIDs.contains(metadata.feedID) == false {
                 return false
+            }
+            
+            // Filters of the user
+            if filters.count > 0 {
+                
+                // compare the title to each item in the filters
+                let wordCloud = metadata.titleWordCloud ?? []
+                
+                let set1 = Set(wordCloud)
+                
+                let intersects = set1.intersection(filtersSet).count == 0
+                
+                guard intersects == true else {
+                    return false
+                }
+                
             }
             
             guard sself.sorting.isUnread == true else {

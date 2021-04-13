@@ -32,23 +32,11 @@
 
 @end
 
-@interface SceneDelegate () {
-    dispatch_queue_t _bgTaskDispatchQueue;
-}
+@interface SceneDelegate ()
 
 @end
 
 @implementation SceneDelegate
-
-- (dispatch_queue_t)bgTaskDispatchQueue {
-    
-    if (_bgTaskDispatchQueue == nil) {
-        _bgTaskDispatchQueue = dispatch_queue_create("BGTaskScheduler", DISPATCH_QUEUE_SERIAL);
-    }
-    
-    return _bgTaskDispatchQueue;
-    
-}
 
 - (void)scene:(UIScene *)scene willConnectToSession:(UISceneSession *)session options:(UISceneConnectionOptions *)connectionOptions {
     
@@ -58,7 +46,7 @@
     
     UIWindowScene *windowScene = (UIWindowScene *)scene;
 
-    NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject ?: session.stateRestorationActivity;
+//    NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject ?: session.stateRestorationActivity;
     
 #if TARGET_OS_MACCATALYST
     NSSet *DEFAULT_ACTIVITIES = [NSSet setWithObjects:@"main", @"restoration", nil];
@@ -192,7 +180,7 @@
 //#pragma clang diagnostic push
 //#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
 //
-//            dispatch_async(self.bgTaskDispatchQueue, ^{
+//            dispatch_async(MyAppDelegate.bgTaskDispatchQueue, ^{
 //                [[BGTaskScheduler sharedScheduler] performSelector:NSSelectorFromString(@"_simulateLaunchForTaskWithIdentifier:") withObject:backgroundRefreshIdentifier];
 //            });
 //
@@ -267,7 +255,7 @@
     // Note from NetNewsWire code
     // We send this to a dedicated serial queue because as of 11/05/19 on iOS 13.2 the call to the
     // task scheduler can hang indefinitely.
-    dispatch_async(self.bgTaskDispatchQueue, ^{
+    dispatch_async(MyAppDelegate.bgTaskDispatchQueue, ^{
        
         BGProcessingTaskRequest *request = [[BGProcessingTaskRequest alloc] initWithIdentifier:backgroundCleanupIdentifier];
         request.requiresNetworkConnectivity = NO;
@@ -305,7 +293,7 @@
     // Note from NetNewsWire code
     // We send this to a dedicated serial queue because as of 11/05/19 on iOS 13.2 the call to the
     // task scheduler can hang indefinitely.
-    dispatch_async(self.bgTaskDispatchQueue, ^{
+    dispatch_async(MyAppDelegate.bgTaskDispatchQueue, ^{
         
         BGAppRefreshTaskRequest *request = [[BGAppRefreshTaskRequest alloc] initWithIdentifier:backgroundRefreshIdentifier];
 //    request.requiresExternalPower = NO;
