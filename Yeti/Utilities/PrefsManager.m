@@ -303,9 +303,8 @@ PrefsManager * SharedPrefs = nil;
 
 - (void)setupNotifications {
     
-    NSUserDefaults *defaults = self.defaults;
-    
 #if TARGET_OS_MACCATALYST
+    NSUserDefaults *defaults = self.defaults;
     
     [defaults addObserver:self forKeyPath:propSel(fontSize) options:NSKeyValueObservingOptionNew context:NULL];
     [defaults addObserver:self forKeyPath:kDefaultsArticleFont options:NSKeyValueObservingOptionNew context:NULL];
