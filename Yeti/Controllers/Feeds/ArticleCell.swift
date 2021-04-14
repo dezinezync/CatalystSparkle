@@ -54,6 +54,10 @@ class ArticleCell: UITableViewCell {
         selectedBackgroundView?.backgroundColor = .systemFill
         selectedBackgroundView?.layer.cornerRadius = 6
         selectedBackgroundView?.layer.masksToBounds = true
+        
+        separatorInset = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
+        preservesSuperviewLayoutMargins = true
+        
         #else
         selectedBackgroundView?.backgroundColor = tintColor.withAlphaComponent(0.3)
         #endif

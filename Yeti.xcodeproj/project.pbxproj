@@ -2213,6 +2213,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = F070C3051FBABC3600912CCF /* Build configuration list for PBXNativeTarget "Elytra" */;
 			buildPhases = (
+				F052DBDD2626A47A00622CD3 /* ShellScript */,
 				F070C2D51FBABC3500912CCF /* Sources */,
 				F070C2D61FBABC3500912CCF /* Frameworks */,
 				F070C2D71FBABC3500912CCF /* Resources */,
@@ -2719,6 +2720,23 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		F052DBDD2626A47A00622CD3 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif [ \"${IS_MACCATALYST}\" = \"YES\" ]; then\n    ENTITLEMENTS_FILE=\"${TARGET_TEMP_DIR}/${FULL_PRODUCT_NAME}.xcent\"\n    \n    echo \"Removing com.apple.developer.user-fonts entitlement on Mac Catalyst from ${ENTITLEMENTS_FILE}\"\n    plutil -remove \"com\\.apple\\.developer\\.user-fonts\" \"${ENTITLEMENTS_FILE}\"\n    \n    echo \"Removing com.apple.developer.applesignin entitlement on Mac Catalyst from ${ENTITLEMENTS_FILE}\"\n    plutil -remove \"com\\.apple\\.developer\\.applesignin\" \"${ENTITLEMENTS_FILE}\"\nfi\n";
+		};
 		F0A589F2205A569C00488015 /* Carthage */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
