@@ -70,6 +70,8 @@ extension Defaults.Keys {
     
     static let badgeAppIcon = Key<Bool>("badgeAppIconPreference", default: false)
     
+    static let useToolbar = Key<Bool>("com.dezinezync.elytra.useToolbar", default: false)
+    
     // Mark: - macOS
     static let refreshFeedsInterval = Key<String>("macKeyRefreshFeeds", default: RefreshIntervalKeys.manually.rawValue)
     

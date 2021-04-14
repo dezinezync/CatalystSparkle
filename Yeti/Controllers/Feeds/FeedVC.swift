@@ -216,6 +216,20 @@ enum MarkDirection: Int {
             #endif
         }
         
+        #if !targetEnvironment(macCatalyst)
+        guard Defaults[.useToolbar] == true else {
+            
+            if (navigationController?.isToolbarHidden == false) {
+                navigationController?.setToolbarHidden(true, animated: true)
+            }
+            
+            return
+        }
+        
+        toolbarItems = toolbarBarItems()
+        navigationController?.setToolbarHidden(false, animated: true)
+        #endif
+        
     }
     
     // MARK: - Setups
@@ -422,8 +436,11 @@ enum MarkDirection: Int {
         navigationController?.navigationBar.isHidden = true
         #else
         
-        navigationItem.rightBarButtonItems = self.rightBarButtonItems()
         navigationItem.largeTitleDisplayMode = .never
+        
+        if Defaults[.useToolbar] == false {
+            navigationItem.rightBarButtonItems = self.rightBarButtonItems()
+        }
         
         #endif
         
@@ -889,6 +906,35 @@ enum MarkDirection: Int {
         
         activityIndicator.isHidden = false
         activityIndicator.startAnimating()
+        
+    }
+    
+    public func toolbarBarItems() -> [UIBarButtonItem]? {
+        
+        guard Defaults[.useToolbar] == true else {
+            return nil
+        }
+        
+        let flex = UIBarButtonItem(systemItem: .flexibleSpace)
+        let fixed = UIBarButtonItem(systemItem: .fixedSpace)
+        fixed.width = 24
+        
+        guard let right = rightBarButtonItems() else {
+            return nil
+        }
+        
+        let items: [UIBarButtonItem] = right.enumerated()
+            .map { (index, item) -> [UIBarButtonItem] in
+            
+            if index == 0 {
+                return [item]
+            }
+            
+            return [flex, item]
+            
+        }.flatMap { $0 }
+        
+        return items
         
     }
 
@@ -1384,35 +1430,6 @@ extension FeedVC: BarPositioning {
         self.sortingBarItem = sortingItem
         
         return [allReadItem, sortingItem]
-        
-    }
-    
-    @nonobjc var toolbarBarItems: [UIBarButtonItem]? {
-        
-        guard SharedPrefs.useToolbar == true else {
-            return nil
-        }
-        
-        let flex = UIBarButtonItem(systemItem: .flexibleSpace)
-        let fixed = UIBarButtonItem(systemItem: .fixedSpace)
-        fixed.width = 24
-        
-        guard let right = rightBarButtonItems() else {
-            return nil
-        }
-        
-        let items: [UIBarButtonItem] = right.enumerated()
-            .map { (index, item) -> [UIBarButtonItem] in
-            
-            if index == 0 {
-                return [item]
-            }
-            
-            return [flex, item]
-            
-        }.flatMap { $0 }
-        
-        return items
         
     }
     
