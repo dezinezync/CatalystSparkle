@@ -15,6 +15,7 @@ import Networking
 import YapDatabase
 import Defaults
 import StoreKit
+import OrderedCollections
 
 class SidebarDS: UICollectionViewDiffableDataSource<Int, SidebarItem> {
        
@@ -647,8 +648,10 @@ enum SidebarItem: Hashable, Identifiable {
         var sectionSnapshot: NSDiffableDataSourceSectionSnapshot<SidebarItem>? = nil
 
         let s: NSDiffableDataSourceSnapshot = self.DS.snapshot()
-
-        DispatchQueue.global().async { [weak self] in
+        
+        // we dispatch on the serial queue (which is serial)
+        // so that only once instance per cycle runs. 
+        DBManager.shared.writeQueue.async { [weak self] in
             
             guard let sself = self else { return }
             
@@ -683,13 +686,9 @@ enum SidebarItem: Hashable, Identifiable {
 
                 if DBManager.shared.folders.count > 0 {
                     
-                    let folders: [Folder] = Array(Set(DBManager.shared.folders))
+                    let folders: OrderedSet<Folder> = DBManager.shared.folders
 
-                    let uniqueFolders: [SidebarItem] = folders
-                        .sorted(by: { (lhs, rhs) -> Bool in
-                            return lhs.title.localizedCompare(rhs.title) == .orderedAscending
-                        })
-                        .map { SidebarItem.folder($0) }
+                    let uniqueFolders: [SidebarItem] = folders.map { SidebarItem.folder($0) }
 
                     foldersSnapshot.append(uniqueFolders)
 
@@ -1175,7 +1174,7 @@ enum SidebarItem: Hashable, Identifiable {
                         let folders = result.folders
                         
                         DBManager.shared.feeds = feeds
-                        DBManager.shared.folders = folders
+                        DBManager.shared.folders = OrderedSet(folders)
                         
                         if sself.needsUpdateOfStructs == true {
                             sself.needsUpdateOfStructs = false
@@ -1205,6 +1204,9 @@ enum SidebarItem: Hashable, Identifiable {
             
             return
             
+        }
+        else {
+            coalescingQueue.add(self, #selector(updateCounters))
         }
         
         refreshFeedsCount = 0

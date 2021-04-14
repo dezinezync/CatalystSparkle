@@ -630,9 +630,9 @@ public let notificationsKey = "notifications"
     }
     
     // MARK: - Folders
-    fileprivate var _folders: [Folder] = []
+    fileprivate var _folders: OrderedSet<Folder> = []
     
-    public var folders: [Folder] {
+    public var folders: OrderedSet<Folder> {
         
         get {
             
@@ -676,7 +676,11 @@ public let notificationsKey = "notifications"
                 
             }
             
-            _folders = f
+            f = f.sorted(by: { (lhs, rhs) -> Bool in
+                return lhs.title.localizedCompare(rhs.title) == .orderedAscending
+            })
+            
+            _folders = OrderedSet(f)
             
             return _folders
             
@@ -793,7 +797,7 @@ public let notificationsKey = "notifications"
             
             t.removeObject(forKey: "\(folder.folderID!)", inCollection: .folders)
             
-            sself.folders = sself.folders.filter { $0.folderID != folder.folderID }
+            sself.folders = OrderedSet(sself.folders.filter { $0.folderID != folder.folderID })
             
         }
         

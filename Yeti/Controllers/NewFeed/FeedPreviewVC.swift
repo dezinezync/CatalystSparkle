@@ -149,7 +149,7 @@ class FeedPreviewVC: UICollectionViewController {
         
         snapshot.appendItems([noneFolder], toSection: FeedPreviewSection.none)
         
-        snapshot.appendItems(DBManager.shared.folders, toSection: FeedPreviewSection.folder)
+        snapshot.appendItems(Array(DBManager.shared.folders), toSection: FeedPreviewSection.folder)
         
         DS.apply(snapshot)
         

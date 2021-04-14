@@ -1,8 +1,16 @@
 # v2.3.0
 
+### Build 209
+
+- Fixed a rare issue where the folders would map the feeds but would display them outside the tree. 
+
+- Fixed toolbar not being setup for the articles list when using the Toolbar preference. 
+
 ### Build 208
 
 - Fixed an issue where Articles were not formatted correctly. Links, italics and bold formatting were stripped from the articles.
+
+- Fixed a rare crash during sync. 
 
 ### Build 205
 
