@@ -45,10 +45,10 @@
     }
     
     UIWindowScene *windowScene = (UIWindowScene *)scene;
-
-//    NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject ?: session.stateRestorationActivity;
     
 #if TARGET_OS_MACCATALYST
+    NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject ?: session.stateRestorationActivity;
+    
     NSSet *DEFAULT_ACTIVITIES = [NSSet setWithObjects:@"main", @"restoration", nil];
     
     if (activity != nil && [DEFAULT_ACTIVITIES containsObject:activity.activityType] == NO) {
