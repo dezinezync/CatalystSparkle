@@ -871,6 +871,11 @@ public let notificationsKey = "notifications"
             
             for a in articles {
                 
+                guard a.timestamp != nil,
+                      a.identifier != nil else {
+                    continue
+                }
+                
                 if a.read == false,
                    a.timestamp.timeIntervalSince(now) < -1209600 {
                     

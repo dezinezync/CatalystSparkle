@@ -1,5 +1,9 @@
 # v2.3.0
 
+### Build 208
+
+- Fixed an issue where Articles were not formatted correctly. Links, italics and bold formatting were stripped from the articles.
+
 ### Build 205
 
 - Fixed sync not working correctly upon Signing Up for the first time. 
