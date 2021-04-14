@@ -79,8 +79,8 @@
     UIBarButtonItem *nextArticle = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"arrow.down"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapNextArticle:)];
     nextArticle.accessibilityValue = @"Next article";
     
-    BOOL next = [self.providerDelegate hasPreviousArticleForArticle:self.item];
-    BOOL previous = [self.providerDelegate hasNextArticleForArticle:self.item];
+    BOOL previous = [self.providerDelegate hasPreviousArticleForArticle:self.item];
+    BOOL next = [self.providerDelegate hasNextArticleForArticle:self.item];
     
     prevArticle.enabled = previous;
     nextArticle.enabled = next;
@@ -172,7 +172,7 @@
 
 - (void)setupToolbar:(UITraitCollection *)newCollection {
     
-    if (PrefsManager.sharedInstance.useToolbar == NO) {
+    if (SharedPrefs.useToolbar == NO) {
         NSArray <UIBarButtonItem *> *items = [self.commonNavBarItems arrayByAddingObjectsFromArray:self.leftBarButtonItems];
         self.navigationItem.rightBarButtonItems = items;
         self.navigationController.toolbarHidden = YES;

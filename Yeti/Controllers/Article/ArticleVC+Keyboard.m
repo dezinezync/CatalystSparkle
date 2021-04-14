@@ -180,8 +180,8 @@
         return;
     }
     
-    BOOL next = [self.providerDelegate hasPreviousArticleForArticle:self.item];
-    BOOL previous = [self.providerDelegate hasNextArticleForArticle:self.item];
+    BOOL previous = [self.providerDelegate hasPreviousArticleForArticle:self.item];
+    BOOL next = [self.providerDelegate hasNextArticleForArticle:self.item];
     
     _prevButtonItem.enabled = previous;
     _nextButtonItem.enabled = next;
