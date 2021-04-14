@@ -46,9 +46,15 @@ import BetterCodable
 @objcMembers public final class ContentRange: NSObject, Codable {
     
     public var element: String?
-    @LossyOptional public var range: _Range!
+    
+    @FailableRange
+    public var range: NSRange!
+    
     public var type: String?
-    @LossyOptional public var url: URL?
+    
+    @FailableURL
+    public var url: URL?
+    
     public var level: UInt?
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
@@ -62,19 +68,14 @@ import BetterCodable
     public var nsRange: NSRange {
         get {
             if range != nil {
-                return range.range
+                return range
             }
             else {
                 return NSRange()
             }
         }
         set {
-            if self.range == nil {
-                self.range = _Range(range: newValue)
-            }
-            else {
-                range.range = newValue
-            }
+            self.range = newValue
         }
     }
     
@@ -95,10 +96,10 @@ import BetterCodable
         }
         else if key == "range" {
             if let value = value as? NSRange {
-                range = _Range(range: value)
+                range = value
             }
             else if let value = value as? String {
-                range = _Range(string: value)
+                range = NSRangeFromString(value)
             }
         }
         else if key == "type" {
