@@ -6,6 +6,8 @@
 
 - Fixed toolbar not being setup for the articles list when using the Toolbar preference. 
 
+- Fixed the previous/next buttons in the Article Reader toolbar being disabled incorrectly. 
+
 ### Build 208
 
 - Fixed an issue where Articles were not formatted correctly. Links, italics and bold formatting were stripped from the articles.
