@@ -91,9 +91,9 @@ AppDelegate *MyAppDelegate = nil;
         }
         
         self.coordinator = [Coordinator new];
-//#ifdef DEBUG
-//        [self.coordinator resetAccountWithCompletion:nil];
-//#endif
+#ifdef DEBUG
+        [self.coordinator resetAccountWithCompletion:nil];
+#endif
         
         [UNUserNotificationCenter currentNotificationCenter].delegate = (id <UNUserNotificationCenterDelegate>)self;
         

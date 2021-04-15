@@ -934,6 +934,66 @@ extension Coordinator {
         }
     }
     
+    public func processUUID(uuid: String, completion:((_ error: Error?, _ user: User?) -> Void)?) {
+    
+        print("Got \(uuid)")
+        
+        FeedsManager.shared.getUser(userID: uuid) { [weak self] (result) in
+            
+            guard let sself = self else {
+                completion?(nil, nil)
+                return
+            }
+            
+            switch result {
+            case .failure(let error as NSError):
+                
+                if error.code == 404 || error.localizedDescription.contains("User not found") {
+                    
+                    // create the user
+                    FeedsManager.shared.createUser(uuid: uuid) { (result) in
+                        
+                        switch result {
+                        case .failure(let error as NSError):
+                            completion?(error, nil)
+                            AlertManager.showGenericAlert(withTitle: "Creating Account Failed", message: error.localizedDescription)
+                            
+                        case .success(let u):
+                            sself.setupUser(u, existing: false)
+                            completion?(nil, u)
+                        }
+                        
+                    }
+                    
+                    return
+                    
+                }
+                
+                AlertManager.showGenericAlert(withTitle: "Error Logging In", message: error.localizedDescription)
+                
+            case .success(let u):
+                
+                sself.setupUser(u, existing: true)
+                completion?(nil, u)
+                
+            }
+            
+        }
+    
+    }
+    
+    func setupUser(_ u: User?, existing: Bool = false) {
+        
+        guard let user = u else {
+            AlertManager.showGenericAlert(withTitle: "Error Logging In", message: "No user information received for your account")
+            return
+        }
+        
+        DBManager.shared.user = user
+        FeedsManager.shared.user = DBManager.shared.user
+        
+    }
+    
     // MARK: - Account
     public func setPushToken(token: String) {
         FeedsManager.shared.pushToken = token

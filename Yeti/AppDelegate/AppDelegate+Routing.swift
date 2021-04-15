@@ -37,6 +37,63 @@ extension AppDelegate {
             
         }
         
+        JLRoutes.global().addRoute("/auth") { [weak self] params in
+            
+            guard let sself = self,
+                  let data: String = params["data"] as? String else { return true }
+            
+            // data is base64 encoded UUID
+            if let uuidData = Data(base64Encoded: data),
+               let uuid = String(data: uuidData, encoding: .utf8) {
+                
+                // authorize the user
+                sself.coordinator.processUUID(uuid: uuid) { (error, user) in
+                    
+                    if (error != nil) {
+                        AlertManager.showGenericAlert(withTitle: "Error Logging In", message: error?.localizedDescription ?? "An unknown error has occurred.")
+                        return
+                    }
+                    
+                    guard error == nil else { return }
+                    
+                    guard let user = user,
+                          let sself = self else { return }
+                    
+                    guard let navigationController: UINavigationController = sself.coordinator.splitVC.presentedViewController as? UINavigationController else {
+                        return
+                    }
+                    
+                    guard user.subscription == nil else {
+                        
+                        guard user.subscription.hasExpired == false else {
+                            
+                            let storeVC = StoreVC(style: .plain)
+                            storeVC.coordinator = sself.coordinator
+                            storeVC.fromIntro = true
+                            
+                            navigationController.pushViewController(storeVC, animated: true)
+                            return
+                        }
+                        
+                        Defaults[.hasShownIntro] = true
+                        
+                        navigationController.dismiss(animated: true, completion: nil)
+                        return
+                    }
+                    
+                    let trialVC = TrialVC(nibName: "TrialVC", bundle: Bundle.main)
+                    trialVC.coordinator = sself.coordinator;
+                    
+                    navigationController.pushViewController(trialVC, animated: true)
+                    
+                }
+                
+            }
+            
+            return true
+            
+        }
+        
         JLRoutes.global().addRoute("/addFeedConfirm") { [weak self] params in
             
             guard let path: String = params["URL"] as? String else {

@@ -185,14 +185,13 @@ enum MarkDirection: Int {
 
         tableView.tableFooterView = UIView()
         
-        #if targetEnvironment(macCatalyst)
         tableView.separatorStyle = .singleLine
+        
+        #if targetEnvironment(macCatalyst)
         tableView.separatorInsetReference = .fromCellEdges
         tableView.cellLayoutMarginsFollowReadableWidth = true
         tableView.separatorInset = .init(top: 0, left: 12, bottom: 0, right: 12)
         tableView.layoutMargins = .init(top: 0, left: 12, bottom: 0, right: 12)
-        #else
-        tableView.separatorStyle = .none
         #endif
         
         setupFeed()

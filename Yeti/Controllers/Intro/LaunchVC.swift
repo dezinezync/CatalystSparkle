@@ -91,6 +91,19 @@ import Defaults
             return
         }
         
+        // macOS Notarized
+        if ProcessInfo.processInfo.environment["IS_MACCATALYST"] == "YES" {
+        
+            let path = "https://elytra.app/u/login?redir=elytra://auth"
+            
+            if let url = URL(string: path) {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            }
+            
+            return
+            
+        }
+        
         #if targetEnvironment(simulator)
         // expired Store : 000768.e759fc828ab249ad98ceefc5f80279b3.1010
         // Testing account: 4800: 000768.e759fc828ab249ad98ceefc5f80279b3.1145
@@ -113,85 +126,37 @@ import Defaults
     
     func process(uuid: String) {
      
-        print("Got \(uuid)")
-        
-        let user = User()
-        user.uuid = uuid
-        
-//        FeedsManager.shared.user = user
-        
-        FeedsManager.shared.getUser(userID: uuid) { [weak self] (result) in
+        coordinator?.processUUID(uuid: uuid, completion: { [weak self] (error, user) in
             
-            guard let sself = self else {
-                return
-            }
+            guard error == nil else { return }
             
-            switch result {
-            case .failure(let error as NSError):
+            guard let user = user,
+                  let sself = self else { return }
+            
+            guard user.subscription == nil else {
                 
-                if error.code == 404 || error.localizedDescription.contains("User not found") {
+                guard user.subscription.hasExpired == false else {
                     
-                    // create the user
-                    FeedsManager.shared.createUser(uuid: uuid) { (result) in
-                        
-                        switch result {
-                        case .failure(let error as NSError):
-                            AlertManager.showGenericAlert(withTitle: "Creating Account Failed", message: error.localizedDescription)
-                            
-                        case .success(let u):
-                            sself.setupUser(u, existing: false)
-                        }
-                        
-                    }
+                    let storeVC = StoreVC(style: .plain)
+                    storeVC.coordinator = sself.coordinator
+                    storeVC.fromIntro = true
                     
+                    sself.navigationController?.pushViewController(storeVC, animated: true)
                     return
-                    
                 }
                 
-                AlertManager.showGenericAlert(withTitle: "Error Logging In", message: error.localizedDescription)
+                Defaults[.hasShownIntro] = true
                 
-            case .success(let u):
-                
-                sself.setupUser(u, existing: true)
-                
-            }
-            
-        }
-        
-    }
-    
-    func setupUser(_ u: User?, existing: Bool = false) {
-        
-        guard let user = u else {
-            AlertManager.showGenericAlert(withTitle: "Error Logging In", message: "No user information received for your account")
-            return
-        }
-        
-        DBManager.shared.user = user
-        FeedsManager.shared.user = DBManager.shared.user
-        
-        guard user.subscription == nil else {
-            
-            guard user.subscription.hasExpired == false else {
-                
-                let storeVC = StoreVC(style: .plain)
-                storeVC.coordinator = self.coordinator
-                storeVC.fromIntro = true
-                
-                navigationController?.pushViewController(storeVC, animated: true)
+                sself.navigationController?.dismiss(animated: true, completion: nil)
                 return
             }
             
-            Defaults[.hasShownIntro] = true
+            let trialVC = TrialVC(nibName: "TrialVC", bundle: Bundle.main)
+            trialVC.coordinator = sself.coordinator;
             
-            navigationController?.dismiss(animated: true, completion: nil)
-            return
-        }
-        
-        let trialVC = TrialVC(nibName: "TrialVC", bundle: Bundle.main)
-        trialVC.coordinator = self.coordinator;
-        
-        navigationController?.pushViewController(trialVC, animated: true)
+            sself.navigationController?.pushViewController(trialVC, animated: true)
+            
+        })
         
     }
     
