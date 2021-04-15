@@ -1,5 +1,13 @@
 # v2.3.0
 
+### Build 210
+
+- Fixes a bug where the summary would contain incomplete text or html. 
+
+- Fixed a regression from Build 208/209 where separators would not show between articles. 
+
+- Fixed a bug where counters would not update on folders. 
+
 ### Build 209
 
 - Fixed a rare issue where the folders would map the feeds but would display them outside the tree. 

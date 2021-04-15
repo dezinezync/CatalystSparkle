@@ -11,6 +11,7 @@ import Models
 import SDWebImage
 import DBManager
 import Combine
+import Defaults
 
 class ArticleCell: UITableViewCell {
     
@@ -409,17 +410,44 @@ class ArticleCell: UITableViewCell {
     
     func configureSummary() {
         
-        let previewLines = SharedPrefs.previewLines
+        let previewLines = Defaults[.previewLines]
         
-        guard previewLines > 0 else {
+        guard previewLines > 0,
+              var summary = article?.summary else {
             summaryLabel.isHidden = true
             summaryLabel.text = nil
             return
         }
         
+        if (summary.hasPrefix("<img") == true || summary == "<..."),
+           summary.hasSuffix("...") == true {
+            
+            if let content = DBManager.shared.content(for: article!.identifier) {
+                
+                article!.content = content
+                
+                if let text = article?.textFromContent {
+                    
+                    if (text.count > 197) {
+                        summary = (text as NSString).substring(to: 197) + "..."
+                    }
+                    else {
+                        summary = text
+                    }
+                    
+                }
+                
+                article!.summary = summary
+                
+                DBManager.shared.add(article: article!, strip: true)
+                
+            }
+            
+        }
+        
         summaryLabel.isHidden = false
         summaryLabel.numberOfLines = previewLines
-        summaryLabel.text = article?.summary
+        summaryLabel.text = summary
         
     }
     

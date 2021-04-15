@@ -72,6 +72,8 @@ extension Defaults.Keys {
     
     static let useToolbar = Key<Bool>("com.dezinezync.elytra.useToolbar", default: false)
     
+    static let previewLines = Key<Int>("com.dezinezync.elytra.summaryPreviewLines", default: 0)
+    
     // Mark: - macOS
     static let refreshFeedsInterval = Key<String>("macKeyRefreshFeeds", default: RefreshIntervalKeys.manually.rawValue)
     

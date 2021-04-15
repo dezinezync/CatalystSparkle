@@ -498,7 +498,7 @@ enum SidebarItem: Hashable, Identifiable {
             .store(in: &cancellables)
         
         NotificationCenter.default.publisher(for: .DBManagerDidUpdate)
-            .debounce(for: 0.1, scheduler: DispatchQueue.main)
+            .debounce(for: 0.1, scheduler: DispatchQueue.global())
             .sink { [weak self] note in
                 
                 guard let sself = self,
@@ -1168,19 +1168,19 @@ enum SidebarItem: Hashable, Identifiable {
                 switch result {
                 case .success(let result):
                     
+                    let feeds = result.feeds
+                    let folders = result.folders
+                    
+                    DBManager.shared.feeds = feeds
+                    DBManager.shared.folders = OrderedSet(folders)
+                    
+                    if sself.needsUpdateOfStructs == true {
+                        sself.needsUpdateOfStructs = false
+                    }
+                    
+                    sself.setupData()
+                    
                     DispatchQueue.main.async {
-                        
-                        let feeds = result.feeds
-                        let folders = result.folders
-                        
-                        DBManager.shared.feeds = feeds
-                        DBManager.shared.folders = OrderedSet(folders)
-                        
-                        if sself.needsUpdateOfStructs == true {
-                            sself.needsUpdateOfStructs = false
-                        }
-                        
-                        sself.setupData()
                         
                         sself.backgroundFetchHandler?(.newData)
                         
@@ -1206,7 +1206,7 @@ enum SidebarItem: Hashable, Identifiable {
             
         }
         else {
-            coalescingQueue.add(self, #selector(updateCounters))
+            updateCounters()
         }
         
         refreshFeedsCount = 0
