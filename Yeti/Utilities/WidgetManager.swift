@@ -27,6 +27,20 @@ import BackgroundTasks
         
         print("Reloaded \(name) widget")
         
+        WidgetCenter.shared.getCurrentConfigurations { result in
+            
+            switch result {
+            case .failure(let error):
+                print(error)
+                
+            case .success(let configs):
+                for config in configs {
+                    print(config)
+                }
+            }
+            
+        }
+        
     }
     
 }

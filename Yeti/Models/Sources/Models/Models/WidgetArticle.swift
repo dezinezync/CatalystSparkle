@@ -11,6 +11,8 @@ public final class WidgetArticle: Article {
  
     public var blog: String?
     public var favicon: URL?
+    public var showFavicon: Bool = true
+    public var showCover: Bool = true
     
     public enum CodingKeys: String, CodingKey {
         case blog, favicon

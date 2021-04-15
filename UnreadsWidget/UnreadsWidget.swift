@@ -115,14 +115,20 @@ struct UnreadsProvider: IntentTimelineProvider {
                         
                         if (configuration.showFavicons?.boolValue == false) {
                                 
-                            entries[index].favicon = nil
+                            entries[index].showFavicon = false
                             
+                        }
+                        else {
+                            entries[index].favicon = nil
                         }
                         
                         if (configuration.showCovers?.boolValue == false) {
                                 
-                            entries[index].coverImage = nil
+                            entries[index].showCover = false
                             
+                        }
+                        else {
+                            entries[index].coverImage = nil
                         }
                         
                     }
@@ -261,7 +267,7 @@ struct WidgetArticleView : View {
                             .alignmentGuide(VerticalAlignment.top) { _ in -4 }
                         
                     }
-                    else {
+                    else if entry.showFavicon == true {
                         
                         Image(systemName: "square.dashed")
                             .frame(maxWidth: 24, maxHeight: 24, alignment: .center)
