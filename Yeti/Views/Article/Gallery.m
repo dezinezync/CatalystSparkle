@@ -13,8 +13,7 @@
 
 #import "Elytra-Swift.h"
 
-#import <SDWebImage/UIImageView+WebCache.h>
-#import <SDWebImage/SDWebImagePrefetcher.h>
+#import <SDWebImage/SDWebImage.h>
 
 @interface GalleryImage : Image
 

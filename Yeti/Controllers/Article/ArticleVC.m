@@ -51,6 +51,8 @@
 #import "Tweet.h"
 #import "TweetImage.h"
 
+#import <SDWebImage/SDWebImage.h>
+
 #import <LinkPresentation/LinkPresentation.h>
 
 static void *KVO_PlayerRate = &KVO_PlayerRate;

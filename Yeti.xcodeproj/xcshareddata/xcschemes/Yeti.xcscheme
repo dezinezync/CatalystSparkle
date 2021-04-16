@@ -60,6 +60,13 @@
             ReferencedContainer = "container:Yeti.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "IS_MAC_NOTARIZED"
+            value = "YES"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
       <StoreKitConfigurationFileReference
          identifier = "../../Yeti/SupportingFiles/Configuration.storekit">
       </StoreKitConfigurationFileReference>

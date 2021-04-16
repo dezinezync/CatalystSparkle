@@ -1,4 +1,8 @@
 {
+  "identifier" : "6E3960FB",
+  "nonRenewingSubscriptions" : [
+
+  ],
   "products" : [
     {
       "displayPrice" : "39.99",
@@ -121,6 +125,6 @@
   ],
   "version" : {
     "major" : 1,
-    "minor" : 0
+    "minor" : 1
   }
 }

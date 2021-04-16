@@ -1130,6 +1130,10 @@ enum SidebarItem: Hashable, Identifiable {
     
     @objc func sync() {
         
+        if Environment.isMacNotarized == true {
+            print("Running in notarized environment.")
+        }
+        
         guard FeedsManager.shared.user != nil else {
             return
         }

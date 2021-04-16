@@ -405,5 +405,7 @@
 			</dict>
 		</dict>
 	</array>
+	<key>Notarized</key>
+	<string>$(IS_MAC_NOTARIZED)</string>
 </dict>
 </plist>

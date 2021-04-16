@@ -92,7 +92,7 @@ import Defaults
         }
         
         // macOS Notarized
-        if ProcessInfo.processInfo.environment["IS_MACCATALYST"] == "YES" {
+        if Environment.isMacNotarized == true {
         
             let path = "https://elytra.app/u/login?redir=elytra://auth"
             
