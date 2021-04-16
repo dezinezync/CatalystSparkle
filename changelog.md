@@ -1,5 +1,11 @@
 # v2.3.0
 
+### Build 211
+
+- Fixed an issue with the Unreads Widget not updating correctly. 
+
+- Fixed an issue with the Unreads Widget preferences not functioning correctly. 
+
 ### Build 210
 
 - Fixes a bug where the summary would contain incomplete text or html. 

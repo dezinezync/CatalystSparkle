@@ -61,7 +61,7 @@ private func loadImagesDataFromPackage (package: SimpleEntries, completion: Load
     
     for entry in package.entries {
         
-        if (entry.favicon != nil && entry.favicon?.absoluteString != "") {
+        if (entry.showFavicon == true && entry.favicon != nil && entry.favicon?.absoluteString != "") {
             
             imageRequestGroup.enter()
             
@@ -73,7 +73,7 @@ private func loadImagesDataFromPackage (package: SimpleEntries, completion: Load
             
         }
         
-        if (entry.coverImage != nil) {
+        if (entry.showCover == true && entry.coverImage != nil) {
             
             imageRequestGroup.enter()
             
@@ -111,24 +111,21 @@ struct UnreadsProvider: IntentTimelineProvider {
                     
                     let entries: [WidgetArticle] = try decoder.decode([WidgetArticle].self, from: data)
                     
+                    let showFavicons: Bool = configuration.showFavicons?.boolValue ?? true
+                    let showCovers: Bool = configuration.showCovers?.boolValue ?? true
+                    
                     for index in 0..<entries.count {
                         
-                        if (configuration.showFavicons?.boolValue == false) {
+                        if showFavicons == false {
                                 
                             entries[index].showFavicon = false
                             
                         }
-                        else {
-                            entries[index].favicon = nil
-                        }
                         
-                        if (configuration.showCovers?.boolValue == false) {
+                        if showCovers == false {
                                 
                             entries[index].showCover = false
                             
-                        }
-                        else {
-                            entries[index].coverImage = nil
                         }
                         
                     }
@@ -255,25 +252,27 @@ struct WidgetArticleView : View {
             
                 HStack(alignment: .top, spacing: 12) {
                     
-                    if entry.favicon != nil {
+                    if entry.showFavicon == true {
                         
-                        WebImage(url: entry.favicon!)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(maxWidth: 24, maxHeight: 24, alignment: .center)
-                            .clipped()
-                            .cornerRadius(3.0)
-                            .background(Color(.systemBackground))
-                            .alignmentGuide(VerticalAlignment.top) { _ in -4 }
-                        
-                    }
-                    else if entry.showFavicon == true {
-                        
-                        Image(systemName: "square.dashed")
-                            .frame(maxWidth: 24, maxHeight: 24, alignment: .center)
-                            .background(Color(.systemBackground))
-                            .alignmentGuide(VerticalAlignment.top) { _ in -4 }
-                        
+                        if entry.favicon != nil {
+                            WebImage(url: entry.favicon!)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(maxWidth: 24, maxHeight: 24, alignment: .center)
+                                .clipped()
+                                .cornerRadius(3.0)
+                                .background(Color(.systemBackground))
+                                .alignmentGuide(VerticalAlignment.top) { _ in -4 }
+                            
+                        }
+                        else {
+                            
+                            Image(systemName: "square.dashed")
+                                .frame(maxWidth: 24, maxHeight: 24, alignment: .center)
+                                .background(Color(.systemBackground))
+                                .alignmentGuide(VerticalAlignment.top) { _ in -4 }
+                            
+                        }
                     }
                     
                     VStack(alignment: .leading, spacing: 2) {
@@ -320,7 +319,7 @@ struct WidgetArticleView : View {
                     
                     Spacer(minLength: 4)
                     
-                    if entry.coverImage != nil {
+                    if entry.showCover == true && entry.coverImage != nil {
                         
                         WebImage(url: entry.coverImage!)
                             .resizable()

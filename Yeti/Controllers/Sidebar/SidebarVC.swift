@@ -1704,6 +1704,12 @@ extension SidebarVC {
                 
                 let total = Int(txn.numberOfItems(inGroup: group))
                 
+                let folders = DBManager.shared.folders
+                
+                for folder in folders {
+                    folder.updatingCounters = true
+                }
+                
                 guard total > 0 else {
                     
                     DBManager.shared.feeds.forEach { $0.unread = 0 }
@@ -1711,13 +1717,13 @@ extension SidebarVC {
                     sself.coordinator?.totalUnread = 0
                     sself.coordinator?.totalToday = 0
                     
+                    sself.coalescingQueue.add(sself, #selector(SidebarVC.updateSharedUnreadsData))
+                    
+                    for folder in folders {
+                        folder.updatingCounters = false
+                    }
+                    
                     return
-                }
-                
-                let folders = DBManager.shared.folders
-                
-                for folder in folders {
-                    folder.updatingCounters = true
                 }
                 
                 // feedID : Unread Count
