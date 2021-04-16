@@ -254,9 +254,7 @@ public var deviceName: String {
             articleVC.providerDelegate = fvc
         }
         
-        let nav = UINavigationController(rootViewController: articleVC)
-        
-        splitVC.setViewController(nav, for: .secondary)
+        showDetailController(articleVC)
         
         if let splitVC = splitVC,
            splitVC.traitCollection.userInterfaceIdiom == .pad {
@@ -646,7 +644,7 @@ public var deviceName: String {
             
         }
         
-        if splitVC.traitCollection.userInterfaceIdiom == .pad {
+        if (controller is ArticleVC) == false, splitVC.traitCollection.userInterfaceIdiom == .pad {
             
             if splitVC.isCollapsed == false,
                splitVC.displayMode == .twoDisplaceSecondary {
