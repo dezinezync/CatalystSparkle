@@ -47,7 +47,7 @@ import Defaults
         
         DispatchQueue.main.async { [weak self] in
             self?.preferredSplitBehavior = .tile
-            self?.preferredDisplayMode = .twoBesideSecondary
+            self?.preferredDisplayMode = .oneBesideSecondary
         }
         #else
         minimumPrimaryColumnWidth = 298
@@ -85,7 +85,15 @@ import Defaults
         
         super.viewWillTransition(to: size, with: coordinator)
         
-        setupDisplayModes(size: size)
+        if traitCollection.userInterfaceIdiom == .phone {
+            return
+        }
+        
+        coordinator.animate { [weak self] _ in
+            self?.setupDisplayModes(size: size)
+        } completion: { _ in
+            
+        }
         
     }
     
@@ -98,23 +106,41 @@ import Defaults
             return
         }
         
-        DispatchQueue.main.async { [weak self] in
+        if size.width < 1024 {
+            // does not work with any other value
+            // for triple column layout.
             
-            if size.width < 1024 {
-                
-                self?.preferredDisplayMode = .twoBesideSecondary
-                self?.preferredSplitBehavior = .tile
-                
-            }
-            else if size.width > 1024 && size.width < 1180 {
-                self?.preferredDisplayMode = .twoOverSecondary
-                self?.preferredSplitBehavior = .tile
+            if (coordinator?.articleVC != nil) {
+                preferredDisplayMode = .secondaryOnly
             }
             else {
-                self?.preferredDisplayMode = .twoBesideSecondary
-                self?.preferredSplitBehavior = .tile
+                preferredDisplayMode = .twoOverSecondary
             }
             
+            preferredSplitBehavior = .overlay
+            
+        }
+        else if size.width > 1024 && size.width < 1180 {
+            
+            if (coordinator?.articleVC != nil) {
+                preferredDisplayMode = .oneBesideSecondary
+            }
+            else {
+                preferredDisplayMode = .twoOverSecondary
+            }
+            
+            preferredSplitBehavior = .tile
+        }
+        else {
+            
+            if (coordinator?.articleVC != nil) {
+                preferredDisplayMode = .oneBesideSecondary
+            }
+            else {
+                preferredDisplayMode = .twoBesideSecondary
+            }
+            
+            preferredSplitBehavior = .tile
         }
         
     }
@@ -135,14 +161,16 @@ extension SplitVC: UISplitViewControllerDelegate {
     
     public func splitViewController(_ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
         
-        print(displayMode)
+        print(displayMode.rawValue)
         
         if displayMode == .secondaryOnly,
            iPadOSShowSidebarInPortraitOnLaunch == false {
             
-            setupDisplayModes(size: svc.view.bounds.size)
-            
-            iPadOSShowSidebarInPortraitOnLaunch = true
+            DispatchQueue.main.async { [weak self] in
+                self?.setupDisplayModes(size: svc.view.bounds.size)
+                
+                self?.iPadOSShowSidebarInPortraitOnLaunch = true
+            }
             
         }
         

@@ -2,9 +2,13 @@
 
 ### Build 211
 
+- Improved overall rotation logic on iPadOS.
+
 - Fixed an issue with the Unreads Widget not updating correctly. 
 
 - Fixed an issue with the Unreads Widget preferences not functioning correctly. 
+
+- Fixed portrait orientation setups for iPadOS. 
 
 ### Build 210
 

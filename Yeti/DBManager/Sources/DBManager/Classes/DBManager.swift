@@ -370,29 +370,23 @@ public let notificationsKey = "notifications"
                 return
             }
             
-            writeQueue.sync { [weak self] in
+            bgConnection.readWrite({ [weak self] (t) in
                 
-                guard let sself = self else {
-                    return
+                guard let sself = self else { return }
+                
+                for f in newValue {
+                    
+                    let key = "\(f.feedID!)"
+                    
+                    let metadata = sself._metadataForFeed(f)
+                    
+                    t.setObject(f, forKey: key, inCollection: .feeds, withMetadata: metadata)
+                    
                 }
                 
-                self?.bgConnection.readWrite({ (t) in
-                    
-                    for f in newValue {
-                        
-                        let key = "\(f.feedID!)"
-                        
-                        let metadata = sself._metadataForFeed(f)
-                        
-                        t.setObject(f, forKey: key, inCollection: .feeds, withMetadata: metadata)
-                        
-                    }
-                    
-                })
-                
-                _preSyncFeedMetadata = [:]
-                
-            }
+            })
+            
+            _preSyncFeedMetadata = [:]
             
         }
         

@@ -124,8 +124,10 @@ extension Folder {
     }
     
     public func updateCounters () {
-        // @TODO: Check why this crashes sometimes with GPFLT
-        // Doesn't seem to crash with the new SortedSet
+        // Issue: Check why this crashes sometimes with GPFLT
+        //        Doesn't seem to crash with the new SortedSet
+        // Update: Crash fixed with using OrderedSet and checking
+        //         entries at bootup.
         let feeds = self.feeds
         
         let value = feeds.reduce(0) { counter, newValue in

@@ -254,14 +254,26 @@ public var deviceName: String {
             articleVC.providerDelegate = fvc
         }
         
-        showDetailController(articleVC)
+        let nav = UINavigationController(rootViewController: articleVC)
         
-        if let splitVC = self.splitVC, splitVC.traitCollection.userInterfaceIdiom != .mac,
-           splitVC.view.bounds.size.width < 1024 {
+        splitVC.setViewController(nav, for: .secondary)
+        
+        if let splitVC = splitVC,
+           splitVC.traitCollection.userInterfaceIdiom == .pad {
             
-            dispatchMainAsync {
+            runOnMainQueueWithoutDeadlocking {
                 
-                splitVC.preferredDisplayMode = .secondaryOnly
+                UIView.animate(withDuration: 0.2) {
+                    if splitVC.view.bounds.size.width < 1024 {
+                        splitVC.preferredDisplayMode = .secondaryOnly
+                    }
+                    else if splitVC.view.bounds.size.width >= 1024 && splitVC.view.bounds.size.width <= 1180 {
+                        splitVC.preferredDisplayMode = .oneBesideSecondary
+                    }
+                    else {
+                        splitVC.preferredDisplayMode = .twoBesideSecondary
+                    }
+                }
                 
             }
             
@@ -283,7 +295,7 @@ public var deviceName: String {
         
         let vc = EmptyVC(nibName: "EmptyVC", bundle: Bundle.main)
         
-        showDetailController(vc)
+        splitVC.setViewController(vc, for: .secondary)
         
     }
     
