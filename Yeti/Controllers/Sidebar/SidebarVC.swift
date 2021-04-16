@@ -1376,33 +1376,37 @@ enum SidebarItem: Hashable, Identifiable {
 //        }
 //
 //        unreadWidgetsTimer = Timer(timeInterval: interval, repeats: false, block: { (_) in
+        
+        guard WidgetManager.usingUnreadsWidget == true else {
+            return
+        }
             
-            DBManager.shared.uiConnection.asyncRead { [weak self] (t) in
+        DBManager.shared.uiConnection.asyncRead { [weak self] (t) in
+            
+            guard let sself = self else { return }
+            
+            guard let txn = t.ext(DBManagerViews.unreadsView.rawValue) as? YapDatabaseFilteredViewTransaction else {
+                return
+            }
+            
+            var items: [Article] = []
+            
+            txn.enumerateKeysAndObjects(inGroup: GroupNames.articles.rawValue, with: [], range: NSMakeRange(0, 10)) { (_, _) -> Bool in
+                return true
+            } using: { (c, key, object, index, stop) in
                 
-                guard let sself = self else { return }
-                
-                guard let txn = t.ext(DBManagerViews.unreadsView.rawValue) as? YapDatabaseFilteredViewTransaction else {
+                guard let item = object as? Article else {
                     return
                 }
                 
-                var items: [Article] = []
+                items.append(item)
                 
-                txn.enumerateKeysAndObjects(inGroup: GroupNames.articles.rawValue, with: [], range: NSMakeRange(0, 10)) { (_, _) -> Bool in
-                    return true
-                } using: { (c, key, object, index, stop) in
-                    
-                    guard let item = object as? Article else {
-                        return
-                    }
-                    
-                    items.append(item)
-                    
-                }
+            }
 
-                DBManager.shared.writeQueue.async {
-                    
-                    let usableItems: [Article] = items
-                    
+            DBManager.shared.writeQueue.async {
+                
+                let usableItems: [Article] = items
+                
 //                    let coverItems = items.filter { $0.coverImage != nil }
 //
 //                    if coverItems.count >= 4 {
@@ -1434,39 +1438,37 @@ enum SidebarItem: Hashable, Identifiable {
 //                        }
 //
 //                    }
+                
+                // Actually stores WidgetArticle before writing to disk.
+                var list: [Article] = []
+                
+                if usableItems.count > 0 {
                     
-                    // Actually stores WidgetArticle before writing to disk.
-                    var list: [Article] = []
+                    let upperBound = max(0, min(4, usableItems.count))
                     
-                    if usableItems.count > 0 {
+                    list = Array(usableItems[0..<upperBound])
+                    
+                    let widgetList: [WidgetArticle] = list.map { WidgetArticle.init(copyFrom: $0) }
+                    
+                    // get the feeds for these articles
+                    for article in widgetList {
                         
-                        let upperBound = max(0, min(4, usableItems.count))
+                        if let feed = DBManager.shared.feed(for: article.feedID) {
+                            article.blog = feed.displayTitle
+                            article.favicon = feed.faviconProxyURI(size: 32)
+                        }
                         
-                        list = Array(usableItems[0..<upperBound])
-                        
-                        let widgetList: [WidgetArticle] = list.map { WidgetArticle.init(copyFrom: $0) }
-                        
-                        // get the feeds for these articles
-                        for article in widgetList {
+                        if article.title == nil || (article.title != nil && article.title!.isEmpty) {
+                            // micro.blog post.
                             
-                            if let feed = DBManager.shared.feed(for: article.feedID) {
-                                article.blog = feed.displayTitle
-                                article.favicon = feed.faviconProxyURI(size: 32)
-                            }
-                            
-                            if article.title == nil || (article.title != nil && article.title!.isEmpty) {
-                                // micro.blog post.
+                            if article.summary == nil || article.summary?.isEmpty == true {
                                 
-                                if article.summary == nil || article.summary?.isEmpty == true {
+                                if let content = t.object(forKey: article.identifier, inCollection: CollectionNames.articlesContent.rawValue) as? [Content] {
                                     
-                                    if let content = t.object(forKey: article.identifier, inCollection: CollectionNames.articlesContent.rawValue) as? [Content] {
-                                        
-                                        article.content = content
-                                        article.summary = article.textFromContent
-                                        
-                                        article.content = []
-                                        
-                                    }
+                                    article.content = content
+                                    article.summary = article.textFromContent
+                                    
+                                    article.content = []
                                     
                                 }
                                 
@@ -1474,23 +1476,25 @@ enum SidebarItem: Hashable, Identifiable {
                             
                         }
                         
-                        list = widgetList
-                        
                     }
                     
-                    let encoder = JSONEncoder()
-                    if let data = try? encoder.encode(list) {
-                        
-                        sself.coordinator?.writeTo(sharedFile: "articles.json", data: data)
-                        WidgetManager.reloadTimeline(name: "UnreadsWidget")
-                        
-                    }
-                    
-                    sself.requiresUpdatingUnreadsSharedData = false
+                    list = widgetList
                     
                 }
                 
+                let encoder = JSONEncoder()
+                if let data = try? encoder.encode(list) {
+                    
+                    sself.coordinator?.writeTo(sharedFile: "articles.json", data: data)
+                    WidgetManager.reloadTimeline(name: "UnreadsWidget")
+                    
+                }
+                
+                sself.requiresUpdatingUnreadsSharedData = false
+                
             }
+            
+        }
             
 //        })
 //

@@ -15,6 +15,32 @@ import BackgroundTasks
 
 @objcMembers public class WidgetManager: NSObject {
     
+    static var usingUnreadsWidget: Bool = false
+    
+    public static func updateState() {
+        
+        // set all to false.
+        usingUnreadsWidget = false
+        
+        WidgetCenter.shared.getCurrentConfigurations { result in
+            
+            switch result {
+            case .failure(let error):
+                print(error)
+                
+            case .success(let configs):
+                for config in configs {
+                    // update if the config comes in. 
+                    if (config.kind == "UnreadsWidget") {
+                        usingUnreadsWidget = true
+                    }
+                }
+            }
+            
+        }
+        
+    }
+    
     public static func reloadAllTimelines() {
         
         WidgetCenter.shared.reloadAllTimelines();
@@ -26,20 +52,6 @@ import BackgroundTasks
         WidgetCenter.shared.reloadTimelines(ofKind: name)
         
         print("Reloaded \(name) widget")
-        
-        WidgetCenter.shared.getCurrentConfigurations { result in
-            
-            switch result {
-            case .failure(let error):
-                print(error)
-                
-            case .success(let configs):
-                for config in configs {
-                    print(config)
-                }
-            }
-            
-        }
         
     }
     
