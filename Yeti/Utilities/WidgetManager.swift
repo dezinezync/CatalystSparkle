@@ -16,11 +16,13 @@ import BackgroundTasks
 @objcMembers public class WidgetManager: NSObject {
     
     static var usingUnreadsWidget: Bool = false
+    static var usingBloccsWidget: Bool = false
     
     public static func updateState() {
         
         // set all to false.
         usingUnreadsWidget = false
+        usingBloccsWidget = false
         
         WidgetCenter.shared.getCurrentConfigurations { result in
             
@@ -29,12 +31,18 @@ import BackgroundTasks
                 print(error)
                 
             case .success(let configs):
+                
                 for config in configs {
                     // update if the config comes in. 
                     if (config.kind == "UnreadsWidget") {
                         usingUnreadsWidget = true
                     }
+                    else if (config.kind == "Bloccs Widget") {
+                        usingBloccsWidget = true
+                    }
+                    
                 }
+                
             }
             
         }

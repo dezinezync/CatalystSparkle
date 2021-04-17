@@ -228,6 +228,7 @@
 		F07DCA4420C51B550068ED51 /* ArticleVC+Keyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = F07DCA4320C51B550068ED51 /* ArticleVC+Keyboard.m */; };
 		F08011E42167345300F0CE81 /* OPMLDeckController.m in Sources */ = {isa = PBXBuildFile; fileRef = F08011E32167345300F0CE81 /* OPMLDeckController.m */; };
 		F085785521D1EAE200CC2B95 /* PreviewLinesVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F085785321D1EAE200CC2B95 /* PreviewLinesVC.m */; };
+		F08809FE262A9CDB002181EC /* BloccsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F08809F4262A9B9F002181EC /* BloccsProvider.swift */; };
 		F088CF6E248E72020010EBC0 /* AppDelegate+Catalyst.m in Sources */ = {isa = PBXBuildFile; fileRef = F088CF6D248E72020010EBC0 /* AppDelegate+Catalyst.m */; platformFilter = maccatalyst; };
 		F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F099465F20AD86BE00E5520F /* StoreKit.framework */; };
 		F099466520AD8A8B00E5520F /* AppDelegate+Store.m in Sources */ = {isa = PBXBuildFile; fileRef = F099466420AD8A8B00E5520F /* AppDelegate+Store.m */; };
@@ -305,6 +306,8 @@
 		F0BB0097262A7D5E00A0181A /* BloccsGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BB0096262A7D5E00A0181A /* BloccsGridView.swift */; };
 		F0BB0099262A7F4F00A0181A /* BloccView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BB0098262A7F4F00A0181A /* BloccView.swift */; };
 		F0BB009B262A964400A0181A /* EmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BB009A262A964400A0181A /* EmptyView.swift */; };
+		F0BB009D262A9AEC00A0181A /* BloccsIntent.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = F0BB009C262A9AEC00A0181A /* BloccsIntent.intentdefinition */; };
+		F0BB009E262A9AF300A0181A /* BloccsIntent.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = F0BB009C262A9AEC00A0181A /* BloccsIntent.intentdefinition */; };
 		F0BC8BF825205C4400FADCBB /* PreferencesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BF725205C4400FADCBB /* PreferencesController.swift */; };
 		F0BC8C0025205CF100FADCBB /* GeneralPreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BFE25205CF000FADCBB /* GeneralPreferenceViewController.swift */; };
 		F0BC8C0125205CF100FADCBB /* GeneralPreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0BC8BFF25205CF000FADCBB /* GeneralPreferenceViewController.xib */; };
@@ -897,6 +900,7 @@
 		F08011E32167345300F0CE81 /* OPMLDeckController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OPMLDeckController.m; sourceTree = "<group>"; };
 		F085785221D1EAE200CC2B95 /* PreviewLinesVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PreviewLinesVC.h; sourceTree = "<group>"; };
 		F085785321D1EAE200CC2B95 /* PreviewLinesVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PreviewLinesVC.m; sourceTree = "<group>"; };
+		F08809F4262A9B9F002181EC /* BloccsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BloccsProvider.swift; sourceTree = "<group>"; };
 		F088CF43248E6C800010EBC0 /* YetiShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = YetiShare.entitlements; sourceTree = "<group>"; };
 		F088CF6C248E72020010EBC0 /* AppDelegate+Catalyst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+Catalyst.h"; sourceTree = "<group>"; };
 		F088CF6D248E72020010EBC0 /* AppDelegate+Catalyst.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+Catalyst.m"; sourceTree = "<group>"; };
@@ -1001,6 +1005,7 @@
 		F0BB0096262A7D5E00A0181A /* BloccsGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BloccsGridView.swift; sourceTree = "<group>"; };
 		F0BB0098262A7F4F00A0181A /* BloccView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BloccView.swift; sourceTree = "<group>"; };
 		F0BB009A262A964400A0181A /* EmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyView.swift; sourceTree = "<group>"; };
+		F0BB009C262A9AEC00A0181A /* BloccsIntent.intentdefinition */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.intentdefinition; path = BloccsIntent.intentdefinition; sourceTree = "<group>"; };
 		F0BC8BF725205C4400FADCBB /* PreferencesController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesController.swift; sourceTree = "<group>"; };
 		F0BC8BFE25205CF000FADCBB /* GeneralPreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneralPreferenceViewController.swift; sourceTree = "<group>"; };
 		F0BC8BFF25205CF000FADCBB /* GeneralPreferenceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GeneralPreferenceViewController.xib; sourceTree = "<group>"; };
@@ -2130,8 +2135,10 @@
 		F0BB0083262A767F00A0181A /* Intents */ = {
 			isa = PBXGroup;
 			children = (
+				F0BB009C262A9AEC00A0181A /* BloccsIntent.intentdefinition */,
 				F0D98F5624EE4C8500B1F9F0 /* UnreadsIntent.intentdefinition */,
 				F0BB0089262A77F800A0181A /* UnreadsProvider.swift */,
+				F08809F4262A9B9F002181EC /* BloccsProvider.swift */,
 			);
 			path = Intents;
 			sourceTree = "<group>";
@@ -2951,6 +2958,7 @@
 				F0F13EB12609A10E007D1B3B /* Content+URL.swift in Sources */,
 				F0A589F5205A580300488015 /* LinguisticSearch.m in Sources */,
 				F02B705124EA7E5C00DD607F /* IDMZoomingScrollView.m in Sources */,
+				F0BB009E262A9AF300A0181A /* BloccsIntent.intentdefinition in Sources */,
 				F070C3591FBAE7A200912CCF /* ArticleVC.m in Sources */,
 				F047CB6F2579F98E00395DC2 /* UIControlSubscription.swift in Sources */,
 				F0D01CCB2118683B003A01DD /* MiscVC.m in Sources */,
@@ -3114,6 +3122,7 @@
 			files = (
 				F0D98F5524EE4C8500B1F9F0 /* UnreadsWidget.swift in Sources */,
 				F0BB0091262A790D00A0181A /* UnreadsListView.swift in Sources */,
+				F0BB009D262A9AEC00A0181A /* BloccsIntent.intentdefinition in Sources */,
 				F0BB0097262A7D5E00A0181A /* BloccsGridView.swift in Sources */,
 				F0D98F5A24EE4C8500B1F9F0 /* UnreadsIntent.intentdefinition in Sources */,
 				F0BB009B262A964400A0181A /* EmptyView.swift in Sources */,
@@ -3121,6 +3130,7 @@
 				F048E4C324EEB2D6009A46F4 /* CountersWidget.swift in Sources */,
 				F0BB008B262A77FB00A0181A /* UnreadsProvider.swift in Sources */,
 				F0BB0088262A77B700A0181A /* Text+Platform.swift in Sources */,
+				F08809FE262A9CDB002181EC /* BloccsProvider.swift in Sources */,
 				F0BB008F262A786900A0181A /* ArticleView.swift in Sources */,
 				F0BB0087262A77B400A0181A /* UnreadEntries.swift in Sources */,
 				F0BB0095262A79D000A0181A /* BloccsWidget.swift in Sources */,

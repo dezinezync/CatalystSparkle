@@ -18,8 +18,8 @@ struct BloccsWidget: Widget {
         
         IntentConfiguration(
             kind: kind,
-            intent: UnreadsIntent.self,
-            provider: UnreadsProvider()) { entries in
+            intent: BloccsIntent.self,
+            provider: BloccsProvider()) { entries in
             
             BloccsGridView(entries: entries)
                 .previewContext(WidgetPreviewContext(family: .systemMedium))

@@ -10,7 +10,7 @@ import Foundation
 import Models
 import WidgetKit
 
-struct UnreadEntries: TimelineEntry, Decodable {
+public struct UnreadEntries: TimelineEntry, Decodable {
     public let date: Date
     public var entries: [WidgetArticle]
 }

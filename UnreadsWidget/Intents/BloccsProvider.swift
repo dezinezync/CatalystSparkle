@@ -1,5 +1,5 @@
 //
-//  UnreadsProvider.swift
+//  BloccsProvider.swift
 //  Elytra
 //
 //  Created by Nikhil Nigade on 17/04/21.
@@ -11,49 +11,9 @@ import SDWebImage
 import WidgetKit
 import Models
 
-public typealias LoadImagesCompletionBlock = () -> Void
-
-public func loadImagesDataFromPackage (package: UnreadEntries, completion: LoadImagesCompletionBlock? = nil) {
-    
-    let imageRequestGroup = DispatchGroup()
-    
-    for entry in package.entries {
-        
-        if (entry.showFavicon == true && entry.favicon != nil && entry.favicon?.absoluteString != "") {
-            
-            imageRequestGroup.enter()
-            
-            SDWebImageManager.shared.loadImage(with: entry.favicon, options: .highPriority, progress: nil) { (image: UIImage?, _: Data?, error: Error?, _: SDImageCacheType, _: Bool, _: URL?) in
-                
-                imageRequestGroup.leave()
-                
-            }
-            
-        }
-        
-        if (entry.showCover == true && entry.coverImage != nil) {
-            
-            imageRequestGroup.enter()
-            
-            SDWebImageManager.shared.loadImage(with: entry.coverImage, options: .highPriority, progress: nil) { (image: UIImage?, _: Data?, error: Error?, _: SDImageCacheType, _: Bool, _: URL?) in
-                
-                imageRequestGroup.leave()
-                
-            }
-            
-        }
-        
-    }
-    
-    imageRequestGroup.notify(queue: .main) {
-        completion!()
-    }
-    
-}
-
-struct UnreadsProvider: IntentTimelineProvider {
+struct BloccsProvider: IntentTimelineProvider {
    
-    func loadData (name: String, configuration: UnreadsIntent) -> UnreadEntries? {
+    func loadData (name: String, configuration: BloccsIntent) -> UnreadEntries? {
         
         var json: UnreadEntries
         
@@ -70,7 +30,6 @@ struct UnreadsProvider: IntentTimelineProvider {
                     let entries: [WidgetArticle] = try decoder.decode([WidgetArticle].self, from: data)
                     
                     let showFavicons: Bool = configuration.showFavicons?.boolValue ?? true
-                    let showCovers: Bool = configuration.showCovers?.boolValue ?? true
                     
                     for index in 0..<entries.count {
                         
@@ -80,11 +39,7 @@ struct UnreadsProvider: IntentTimelineProvider {
                             
                         }
                         
-                        if showCovers == false {
-                                
-                            entries[index].showCover = false
-                            
-                        }
+                        entries[index].showCover = true
                         
                     }
                     
@@ -104,9 +59,9 @@ struct UnreadsProvider: IntentTimelineProvider {
         
     }
     
-    public func getSnapshot(for configuration: UnreadsIntent, in context: Context, completion: @escaping (UnreadEntries) -> Void) {
+    public func getSnapshot(for configuration: BloccsIntent, in context: Context, completion: @escaping (UnreadEntries) -> Void) {
     
-        if let jsonData: UnreadEntries = loadData(name: "articles.json", configuration: configuration) {
+        if let jsonData: UnreadEntries = loadData(name: "bloccs.json", configuration: configuration) {
             
             if (configuration.showFavicons?.boolValue == false) {
                     
@@ -114,18 +69,6 @@ struct UnreadsProvider: IntentTimelineProvider {
                     
                     if (item.favicon != nil) {
                         item.favicon = nil
-                    }
-                    
-                }
-                
-            }
-            
-            if (configuration.showCovers?.boolValue == false) {
-                    
-                for item in jsonData.entries {
-                    
-                    if (item.coverImage != nil) {
-                        item.coverImage = nil
                     }
                     
                 }
@@ -142,9 +85,9 @@ struct UnreadsProvider: IntentTimelineProvider {
         
     }
     
-    public func getTimeline(for configuration: UnreadsIntent, in context: Context, completion: @escaping (Timeline<UnreadEntries>) -> Void) {
+    public func getTimeline(for configuration: BloccsIntent, in context: Context, completion: @escaping (Timeline<UnreadEntries>) -> Void) {
         
-        if let jsonData = loadData(name: "articles.json", configuration: configuration) {
+        if let jsonData = loadData(name: "bloccs.json", configuration: configuration) {
         
             var entries: [UnreadEntries] = []
             
@@ -164,7 +107,7 @@ struct UnreadsProvider: IntentTimelineProvider {
     
     func placeholder(in context: Context) -> UnreadEntries {
         
-        if let jsonData = loadData(name: "articles.json", configuration: UnreadsIntent()) {
+        if let jsonData = loadData(name: "bloccs.json", configuration: BloccsIntent()) {
             
             return jsonData;
             
