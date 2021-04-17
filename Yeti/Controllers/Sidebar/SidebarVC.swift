@@ -1237,6 +1237,7 @@ enum SidebarItem: Hashable, Identifiable {
                     guard let sself = self else { return }
                     
                     sself.coalescingQueue.add(sself, #selector(SidebarVC.setupData))
+                    CoalescingQueue.standard.add(sself.coordinator!, #selector(Coordinator.updateSharedFoldersData))
                 
                 }.store(in: &cancellables)
             
@@ -1354,8 +1355,7 @@ enum SidebarItem: Hashable, Identifiable {
         
     }
     
-//    fileprivate var unreadWidgetsTimer: Timer?
-    
+    // MARK: - Widgets
     @objc func updateSharedUnreadsData() {
         
         guard (WidgetManager.usingUnreadsWidget == true || WidgetManager.usingBloccsWidget == true) else {
