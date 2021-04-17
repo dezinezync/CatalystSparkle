@@ -1866,7 +1866,7 @@ extension SidebarVC: UITextFieldDelegate {
             self?.alertTextField = t
             
             t.placeholder = "Feed Name"
-            t.text = feed.localName ?? ""
+            t.text = feed.localName ?? feed.title
             
             t.delegate = self
             
