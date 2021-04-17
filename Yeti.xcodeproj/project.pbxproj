@@ -301,6 +301,10 @@
 		F0BB008B262A77FB00A0181A /* UnreadsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BB0089262A77F800A0181A /* UnreadsProvider.swift */; };
 		F0BB008F262A786900A0181A /* ArticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BB008D262A786600A0181A /* ArticleView.swift */; };
 		F0BB0091262A790D00A0181A /* UnreadsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BB0090262A790D00A0181A /* UnreadsListView.swift */; };
+		F0BB0095262A79D000A0181A /* BloccsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BB0094262A79D000A0181A /* BloccsWidget.swift */; };
+		F0BB0097262A7D5E00A0181A /* BloccsGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BB0096262A7D5E00A0181A /* BloccsGridView.swift */; };
+		F0BB0099262A7F4F00A0181A /* BloccView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BB0098262A7F4F00A0181A /* BloccView.swift */; };
+		F0BB009B262A964400A0181A /* EmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BB009A262A964400A0181A /* EmptyView.swift */; };
 		F0BC8BF825205C4400FADCBB /* PreferencesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BF725205C4400FADCBB /* PreferencesController.swift */; };
 		F0BC8C0025205CF100FADCBB /* GeneralPreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BFE25205CF000FADCBB /* GeneralPreferenceViewController.swift */; };
 		F0BC8C0125205CF100FADCBB /* GeneralPreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0BC8BFF25205CF000FADCBB /* GeneralPreferenceViewController.xib */; };
@@ -993,6 +997,10 @@
 		F0BB0089262A77F800A0181A /* UnreadsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnreadsProvider.swift; sourceTree = "<group>"; };
 		F0BB008D262A786600A0181A /* ArticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleView.swift; sourceTree = "<group>"; };
 		F0BB0090262A790D00A0181A /* UnreadsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnreadsListView.swift; sourceTree = "<group>"; };
+		F0BB0094262A79D000A0181A /* BloccsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BloccsWidget.swift; sourceTree = "<group>"; };
+		F0BB0096262A7D5E00A0181A /* BloccsGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BloccsGridView.swift; sourceTree = "<group>"; };
+		F0BB0098262A7F4F00A0181A /* BloccView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BloccView.swift; sourceTree = "<group>"; };
+		F0BB009A262A964400A0181A /* EmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyView.swift; sourceTree = "<group>"; };
 		F0BC8BF725205C4400FADCBB /* PreferencesController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesController.swift; sourceTree = "<group>"; };
 		F0BC8BFE25205CF000FADCBB /* GeneralPreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneralPreferenceViewController.swift; sourceTree = "<group>"; };
 		F0BC8BFF25205CF000FADCBB /* GeneralPreferenceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GeneralPreferenceViewController.xib; sourceTree = "<group>"; };
@@ -2114,6 +2122,7 @@
 				F0BB0093262A793700A0181A /* Bloccs */,
 				F0BB008C262A785500A0181A /* Unreads */,
 				F0BB0092262A792C00A0181A /* CountersWidget */,
+				F0BB009A262A964400A0181A /* EmptyView.swift */,
 			);
 			path = Widgets;
 			sourceTree = "<group>";
@@ -2156,6 +2165,9 @@
 		F0BB0093262A793700A0181A /* Bloccs */ = {
 			isa = PBXGroup;
 			children = (
+				F0BB0094262A79D000A0181A /* BloccsWidget.swift */,
+				F0BB0096262A7D5E00A0181A /* BloccsGridView.swift */,
+				F0BB0098262A7F4F00A0181A /* BloccView.swift */,
 			);
 			path = Bloccs;
 			sourceTree = "<group>";
@@ -3102,12 +3114,16 @@
 			files = (
 				F0D98F5524EE4C8500B1F9F0 /* UnreadsWidget.swift in Sources */,
 				F0BB0091262A790D00A0181A /* UnreadsListView.swift in Sources */,
+				F0BB0097262A7D5E00A0181A /* BloccsGridView.swift in Sources */,
 				F0D98F5A24EE4C8500B1F9F0 /* UnreadsIntent.intentdefinition in Sources */,
+				F0BB009B262A964400A0181A /* EmptyView.swift in Sources */,
+				F0BB0099262A7F4F00A0181A /* BloccView.swift in Sources */,
 				F048E4C324EEB2D6009A46F4 /* CountersWidget.swift in Sources */,
 				F0BB008B262A77FB00A0181A /* UnreadsProvider.swift in Sources */,
 				F0BB0088262A77B700A0181A /* Text+Platform.swift in Sources */,
 				F0BB008F262A786900A0181A /* ArticleView.swift in Sources */,
 				F0BB0087262A77B400A0181A /* UnreadEntries.swift in Sources */,
+				F0BB0095262A79D000A0181A /* BloccsWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

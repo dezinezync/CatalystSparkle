@@ -28,14 +28,9 @@ struct UnreadsListView : View {
                 
                 if (entries.entries.count == 0) {
                     
-                    VStack(alignment: .leading, spacing: nil, content: {
-                        
-                        Text("No new unread articles")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-                        
-                    })
+                    EmptyView(title: "No new unread articles")
+                        .padding()
+                        .alignmentGuide(HorizontalAlignment.center) { _ in 0 }
                     
                 }
                 else {

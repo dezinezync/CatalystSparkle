@@ -37,7 +37,7 @@ struct UnreadsWidget: Widget {
                 UnreadsListView(entries: entries)
                 .previewContext(WidgetPreviewContext(family: .systemMedium))
         }
-        .configurationDisplayName("Unread WidgetArticles")
+        .configurationDisplayName("Unread Articles")
         .description("Latest unread articles from your account.")
         .supportedFamilies([.systemMedium, .systemLarge])
         
@@ -51,6 +51,7 @@ struct ElytraWidgets: WidgetBundle {
     @WidgetBundleBuilder
     var body: some Widget {
         UnreadsWidget()
+        BloccsWidget()
         CountersWidget()
     }
 }

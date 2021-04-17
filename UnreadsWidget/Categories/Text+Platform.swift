@@ -23,6 +23,18 @@ extension Text {
         
     }
     
+    func platformBoldTitleFont () -> Text {
+        
+        #if canImport(AppKit) || targetEnvironment(macCatalyst)
+        return self.font(.system(size: 14)).fontWeight(.bold)
+        #elseif canImport(UIKit)
+        return self.font(.system(size: 15)).fontWeight(.semibold)
+        #else
+        return self;
+        #endif
+        
+    }
+    
     func platformBodyFont () -> Text {
         
         #if canImport(AppKit) || targetEnvironment(macCatalyst)
