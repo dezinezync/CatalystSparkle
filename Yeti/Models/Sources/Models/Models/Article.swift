@@ -331,11 +331,8 @@ extension Article {
     
     public func copyFrom(article: Article) {
         
-        for k in Article.CodingKeys.allCases {
-            let key = k.rawValue
-            let val = article.value(for: key)
-            self.setValue(val, forKey: key)
-        }
+        let dict = article.dictionaryRepresentation
+        setValuesForKeys(dict)
         
     }
     

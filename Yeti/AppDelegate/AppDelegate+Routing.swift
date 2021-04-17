@@ -381,14 +381,14 @@ extension AppDelegate {
                 
             }
             
-            guard let feed = DBManager.shared.feedForID(id) else {
-                AlertManager.showGenericAlert(withTitle: "Invalid Feed", message: "This feed does not exist in your list.")
-                return
-            }
-            
-            coordinator.showFeedVC(feed)
-            
         }
+        
+        guard let feed = DBManager.shared.feedForID(id) else {
+            AlertManager.showGenericAlert(withTitle: "Invalid Feed", message: "This feed does not exist in your list.")
+            return
+        }
+        
+        coordinator.showFeedVC(feed)
         
         if article != nil {
             openArticle(article!)
