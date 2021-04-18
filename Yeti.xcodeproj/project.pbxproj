@@ -229,6 +229,14 @@
 		F08011E42167345300F0CE81 /* OPMLDeckController.m in Sources */ = {isa = PBXBuildFile; fileRef = F08011E32167345300F0CE81 /* OPMLDeckController.m */; };
 		F085785521D1EAE200CC2B95 /* PreviewLinesVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F085785321D1EAE200CC2B95 /* PreviewLinesVC.m */; };
 		F08809FE262A9CDB002181EC /* BloccsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F08809F4262A9B9F002181EC /* BloccsProvider.swift */; };
+		F0880A01262BD5EE002181EC /* FoldersIntent.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = F08809FF262BD5E0002181EC /* FoldersIntent.intentdefinition */; };
+		F0880A02262BD5EF002181EC /* FoldersIntent.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = F08809FF262BD5E0002181EC /* FoldersIntent.intentdefinition */; };
+		F0880A0B262BD7A8002181EC /* Intents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0880A0A262BD7A7002181EC /* Intents.framework */; };
+		F0880A0E262BD7A8002181EC /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0880A0D262BD7A8002181EC /* IntentHandler.swift */; };
+		F0880A12262BD7A8002181EC /* SelectFolderIntents.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F0880A09262BD7A7002181EC /* SelectFolderIntents.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		F0880A19262BD7ED002181EC /* FoldersIntent.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = F08809FF262BD5E0002181EC /* FoldersIntent.intentdefinition */; };
+		F0880A1E262BDB50002181EC /* FoldersWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0880A1B262BDB38002181EC /* FoldersWidget.swift */; };
+		F0880A1F262BDBBE002181EC /* FoldersProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0880A03262BD660002181EC /* FoldersProvider.swift */; };
 		F088CF6E248E72020010EBC0 /* AppDelegate+Catalyst.m in Sources */ = {isa = PBXBuildFile; fileRef = F088CF6D248E72020010EBC0 /* AppDelegate+Catalyst.m */; platformFilter = maccatalyst; };
 		F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F099465F20AD86BE00E5520F /* StoreKit.framework */; };
 		F099466520AD8A8B00E5520F /* AppDelegate+Store.m in Sources */ = {isa = PBXBuildFile; fileRef = F099466420AD8A8B00E5520F /* AppDelegate+Store.m */; };
@@ -436,6 +444,13 @@
 			remoteGlobalIDString = F070C2D81FBABC3500912CCF;
 			remoteInfo = Yeti;
 		};
+		F0880A10262BD7A8002181EC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F070C2D11FBABC3500912CCF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F0880A08262BD7A7002181EC;
+			remoteInfo = SelectFolderIntents;
+		};
 		F08C5DF7238656620055946F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F08C5DF0238656620055946F /* DZAppDelegate.xcodeproj */;
@@ -544,6 +559,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				F0D9AC9424EEC0B30023E11F /* UnreadsWidgetExtension.appex in Embed App Extensions */,
+				F0880A12262BD7A8002181EC /* SelectFolderIntents.appex in Embed App Extensions */,
 				F035A22020617EC3005A88EE /* YetiShare.appex in Embed App Extensions */,
 				F00685FE251F780E00239C80 /* elytramac.bundle in Embed App Extensions */,
 				F0B7C851240B7272008D8F4F /* notificationContext.appex in Embed App Extensions */,
@@ -901,6 +917,14 @@
 		F085785221D1EAE200CC2B95 /* PreviewLinesVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PreviewLinesVC.h; sourceTree = "<group>"; };
 		F085785321D1EAE200CC2B95 /* PreviewLinesVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PreviewLinesVC.m; sourceTree = "<group>"; };
 		F08809F4262A9B9F002181EC /* BloccsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BloccsProvider.swift; sourceTree = "<group>"; };
+		F08809FF262BD5E0002181EC /* FoldersIntent.intentdefinition */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; path = FoldersIntent.intentdefinition; sourceTree = "<group>"; };
+		F0880A03262BD660002181EC /* FoldersProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldersProvider.swift; sourceTree = "<group>"; };
+		F0880A09262BD7A7002181EC /* SelectFolderIntents.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SelectFolderIntents.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		F0880A0A262BD7A7002181EC /* Intents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Intents.framework; path = System/Library/Frameworks/Intents.framework; sourceTree = SDKROOT; };
+		F0880A0D262BD7A8002181EC /* IntentHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntentHandler.swift; sourceTree = "<group>"; };
+		F0880A0F262BD7A8002181EC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F0880A13262BD7A8002181EC /* SelectFolderIntents.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SelectFolderIntents.entitlements; sourceTree = "<group>"; };
+		F0880A1B262BDB38002181EC /* FoldersWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldersWidget.swift; sourceTree = "<group>"; };
 		F088CF43248E6C800010EBC0 /* YetiShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = YetiShare.entitlements; sourceTree = "<group>"; };
 		F088CF6C248E72020010EBC0 /* AppDelegate+Catalyst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+Catalyst.h"; sourceTree = "<group>"; };
 		F088CF6D248E72020010EBC0 /* AppDelegate+Catalyst.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+Catalyst.m"; sourceTree = "<group>"; };
@@ -1177,6 +1201,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F0880A06262BD7A7002181EC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F0880A0B262BD7A8002181EC /* Intents.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1573,6 +1605,7 @@
 				F0B7C847240B7272008D8F4F /* notificationContext */,
 				F0783C89248F685C00C7A280 /* elytramac */,
 				F0D98F5324EE4C8500B1F9F0 /* UnreadsWidget */,
+				F0880A0C262BD7A8002181EC /* SelectFolderIntents */,
 				F070C2DA1FBABC3500912CCF /* Products */,
 				F0919F631FD7C1A70098F48A /* Frameworks */,
 				F048E4A724EE84D0009A46F4 /* Elytra-Bridging-Header.h */,
@@ -1589,6 +1622,7 @@
 				F0B7C842240B7272008D8F4F /* notificationContext.appex */,
 				F0783C88248F685C00C7A280 /* elytramac.bundle */,
 				F0D98F4E24EE4C8500B1F9F0 /* UnreadsWidgetExtension.appex */,
+				F0880A09262BD7A7002181EC /* SelectFolderIntents.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1954,6 +1988,24 @@
 			path = OpenDyslexic;
 			sourceTree = "<group>";
 		};
+		F0880A0C262BD7A8002181EC /* SelectFolderIntents */ = {
+			isa = PBXGroup;
+			children = (
+				F0880A13262BD7A8002181EC /* SelectFolderIntents.entitlements */,
+				F0880A0D262BD7A8002181EC /* IntentHandler.swift */,
+				F0880A0F262BD7A8002181EC /* Info.plist */,
+			);
+			path = SelectFolderIntents;
+			sourceTree = "<group>";
+		};
+		F0880A1A262BDB29002181EC /* Folders */ = {
+			isa = PBXGroup;
+			children = (
+				F0880A1B262BDB38002181EC /* FoldersWidget.swift */,
+			);
+			path = Folders;
+			sourceTree = "<group>";
+		};
 		F08C5DF1238656620055946F /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1980,6 +2032,7 @@
 				F0B7C845240B7272008D8F4F /* UserNotificationsUI.framework */,
 				F0D98F4F24EE4C8500B1F9F0 /* WidgetKit.framework */,
 				F0D98F5124EE4C8500B1F9F0 /* SwiftUI.framework */,
+				F0880A0A262BD7A7002181EC /* Intents.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -2124,6 +2177,7 @@
 		F0BB0082262A767600A0181A /* Widgets */ = {
 			isa = PBXGroup;
 			children = (
+				F0880A1A262BDB29002181EC /* Folders */,
 				F0BB0093262A793700A0181A /* Bloccs */,
 				F0BB008C262A785500A0181A /* Unreads */,
 				F0BB0092262A792C00A0181A /* CountersWidget */,
@@ -2135,10 +2189,12 @@
 		F0BB0083262A767F00A0181A /* Intents */ = {
 			isa = PBXGroup;
 			children = (
-				F0BB009C262A9AEC00A0181A /* BloccsIntent.intentdefinition */,
 				F0D98F5624EE4C8500B1F9F0 /* UnreadsIntent.intentdefinition */,
 				F0BB0089262A77F800A0181A /* UnreadsProvider.swift */,
+				F0BB009C262A9AEC00A0181A /* BloccsIntent.intentdefinition */,
 				F08809F4262A9B9F002181EC /* BloccsProvider.swift */,
+				F08809FF262BD5E0002181EC /* FoldersIntent.intentdefinition */,
+				F0880A03262BD660002181EC /* FoldersProvider.swift */,
 			);
 			path = Intents;
 			sourceTree = "<group>";
@@ -2346,6 +2402,7 @@
 				F0B7C850240B7272008D8F4F /* PBXTargetDependency */,
 				F0D98F5D24EE4C8500B1F9F0 /* PBXTargetDependency */,
 				F0068600251F780E00239C80 /* PBXTargetDependency */,
+				F0880A11262BD7A8002181EC /* PBXTargetDependency */,
 			);
 			name = Elytra;
 			packageProductDependencies = (
@@ -2416,6 +2473,23 @@
 			productReference = F0783C88248F685C00C7A280 /* elytramac.bundle */;
 			productType = "com.apple.product-type.bundle";
 		};
+		F0880A08262BD7A7002181EC /* SelectFolderIntents */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F0880A14262BD7A8002181EC /* Build configuration list for PBXNativeTarget "SelectFolderIntents" */;
+			buildPhases = (
+				F0880A05262BD7A7002181EC /* Sources */,
+				F0880A06262BD7A7002181EC /* Frameworks */,
+				F0880A07262BD7A7002181EC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SelectFolderIntents;
+			productName = SelectFolderIntents;
+			productReference = F0880A09262BD7A7002181EC /* SelectFolderIntents.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		F0B7C841240B7272008D8F4F /* notificationContext */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F0B7C860240B7272008D8F4F /* Build configuration list for PBXNativeTarget "notificationContext" */;
@@ -2465,7 +2539,7 @@
 		F070C2D11FBABC3500912CCF /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1200;
+				LastSwiftUpdateCheck = 1250;
 				LastUpgradeCheck = 1200;
 				ORGANIZATIONNAME = "Dezine Zync Studios";
 				TargetAttributes = {
@@ -2503,6 +2577,9 @@
 					};
 					F0783C87248F685C00C7A280 = {
 						CreatedOnToolsVersion = 11.5;
+					};
+					F0880A08262BD7A7002181EC = {
+						CreatedOnToolsVersion = 12.5;
 					};
 					F0B7C841240B7272008D8F4F = {
 						CreatedOnToolsVersion = 11.3;
@@ -2554,6 +2631,7 @@
 				F0B7C841240B7272008D8F4F /* notificationContext */,
 				F0783C87248F685C00C7A280 /* elytramac */,
 				F0D98F4D24EE4C8500B1F9F0 /* UnreadsWidgetExtension */,
+				F0880A08262BD7A7002181EC /* SelectFolderIntents */,
 			);
 		};
 /* End PBXProject section */
@@ -2817,6 +2895,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F0880A07262BD7A7002181EC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F0B7C840240B7272008D8F4F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2914,6 +2999,7 @@
 				F0EDAC7625DE0C950074ED1E /* NewFeedReccomendationCell.swift in Sources */,
 				F050F30D2521FB980032328F /* SidebarSearchView.m in Sources */,
 				F085785521D1EAE200CC2B95 /* PreviewLinesVC.m in Sources */,
+				F0880A02262BD5EF002181EC /* FoldersIntent.intentdefinition in Sources */,
 				F0F10A9B244C8020009FC108 /* DTTimePeriodGroup.m in Sources */,
 				F03AC034205533D900FB111A /* CodeTheme.m in Sources */,
 				F02B705224EA7E5C00DD607F /* IDMPhotoBrowser.m in Sources */,
@@ -3108,6 +3194,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F0880A05262BD7A7002181EC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F0880A19262BD7ED002181EC /* FoldersIntent.intentdefinition in Sources */,
+				F0880A0E262BD7A8002181EC /* IntentHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F0B7C83E240B7272008D8F4F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3121,7 +3216,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				F0D98F5524EE4C8500B1F9F0 /* UnreadsWidget.swift in Sources */,
+				F0880A1E262BDB50002181EC /* FoldersWidget.swift in Sources */,
 				F0BB0091262A790D00A0181A /* UnreadsListView.swift in Sources */,
+				F0880A01262BD5EE002181EC /* FoldersIntent.intentdefinition in Sources */,
 				F0BB009D262A9AEC00A0181A /* BloccsIntent.intentdefinition in Sources */,
 				F0BB0097262A7D5E00A0181A /* BloccsGridView.swift in Sources */,
 				F0D98F5A24EE4C8500B1F9F0 /* UnreadsIntent.intentdefinition in Sources */,
@@ -3129,6 +3226,7 @@
 				F0BB0099262A7F4F00A0181A /* BloccView.swift in Sources */,
 				F048E4C324EEB2D6009A46F4 /* CountersWidget.swift in Sources */,
 				F0BB008B262A77FB00A0181A /* UnreadsProvider.swift in Sources */,
+				F0880A1F262BDBBE002181EC /* FoldersProvider.swift in Sources */,
 				F0BB0088262A77B700A0181A /* Text+Platform.swift in Sources */,
 				F08809FE262A9CDB002181EC /* BloccsProvider.swift in Sources */,
 				F0BB008F262A786900A0181A /* ArticleView.swift in Sources */,
@@ -3166,6 +3264,11 @@
 			isa = PBXTargetDependency;
 			target = F070C2D81FBABC3500912CCF /* Elytra */;
 			targetProxy = F070C2FD1FBABC3600912CCF /* PBXContainerItemProxy */;
+		};
+		F0880A11262BD7A8002181EC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F0880A08262BD7A7002181EC /* SelectFolderIntents */;
+			targetProxy = F0880A10262BD7A8002181EC /* PBXContainerItemProxy */;
 		};
 		F0B7C850240B7272008D8F4F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -4358,6 +4461,122 @@
 			};
 			name = Release;
 		};
+		F0880A15262BD7A8002181EC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_ENTITLEMENTS = SelectFolderIntents/SelectFolderIntents.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = XMJKJH96ZT;
+				INFOPLIST_FILE = SelectFolderIntents/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra.SelectFolderIntents;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F0880A16262BD7A8002181EC /* Debug-Notarized */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_ENTITLEMENTS = SelectFolderIntents/SelectFolderIntents.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = XMJKJH96ZT;
+				INFOPLIST_FILE = SelectFolderIntents/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra.SelectFolderIntents;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Debug-Notarized";
+		};
+		F0880A17262BD7A8002181EC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_ENTITLEMENTS = SelectFolderIntents/SelectFolderIntents.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = XMJKJH96ZT;
+				INFOPLIST_FILE = SelectFolderIntents/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra.SelectFolderIntents;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		F0880A18262BD7A8002181EC /* Release-Notarized */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_ENTITLEMENTS = SelectFolderIntents/SelectFolderIntents.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = XMJKJH96ZT;
+				INFOPLIST_FILE = SelectFolderIntents/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra.SelectFolderIntents;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Release-Notarized";
+		};
 		F0B7C852240B7272008D8F4F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -4562,6 +4781,17 @@
 				F02477992629522F0071C6A3 /* Debug-Notarized */,
 				F0783C8C248F685C00C7A280 /* Release */,
 				F02477A12629523B0071C6A3 /* Release-Notarized */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F0880A14262BD7A8002181EC /* Build configuration list for PBXNativeTarget "SelectFolderIntents" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F0880A15262BD7A8002181EC /* Debug */,
+				F0880A16262BD7A8002181EC /* Debug-Notarized */,
+				F0880A17262BD7A8002181EC /* Release */,
+				F0880A18262BD7A8002181EC /* Release-Notarized */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -80,7 +80,7 @@
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "_XCWidgetKind"
-            value = "Bloccs Widget"
+            value = "Folders Widget"
             isEnabled = "YES">
          </EnvironmentVariable>
          <EnvironmentVariable

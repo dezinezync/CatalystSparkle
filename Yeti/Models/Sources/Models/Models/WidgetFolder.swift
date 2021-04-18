@@ -9,12 +9,12 @@ import Foundation
 
 public struct WidgetFolder: Codable {
     
-    public var title: String
-    public var folderID: UInt
+    public var identifier: String
+    public var displayString: String
     
     public init(title: String, folderID: UInt) {
-        self.title = title
-        self.folderID = folderID
+        self.displayString = title
+        self.identifier = "\(folderID)"
     }
     
 }

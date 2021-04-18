@@ -53,6 +53,7 @@ struct ElytraWidgets: WidgetBundle {
         UnreadsWidget()
         BloccsWidget()
         CountersWidget()
+        FoldersWidget()
     }
 }
 

@@ -257,6 +257,7 @@
 	<key>NSUserActivityTypes</key>
 	<array>
 		<string>BloccsIntent</string>
+		<string>FoldersIntent</string>
 		<string>UnreadsIntentsIntent</string>
 	</array>
 	<key>Notarized</key>
