@@ -1211,6 +1211,7 @@ enum SidebarItem: Hashable, Identifiable {
         }
         else {
             updateCounters()
+            CoalescingQueue.standard.add(coordinator!, #selector(Coordinator.updateSharedFoldersData))
         }
         
         refreshFeedsCount = 0
@@ -1679,100 +1680,100 @@ extension SidebarVC {
         
         print("Updating counters")
         
-        DBManager.shared.writeQueue.async { [weak self] in 
+        DBManager.shared.countsConnection.asyncRead { [weak self] (t) in
             
-            DBManager.shared.countsConnection.asyncRead { (t) in
+            guard let sself = self,
+                  let txn = t.ext(DBManagerViews.unreadsView.rawValue) as? YapDatabaseFilteredViewTransaction,
+                  let btxn = t.ext(DBManagerViews.bookmarksView.rawValue) as? YapDatabaseFilteredViewTransaction else {
+                return
+            }
+            
+            let group = GroupNames.articles.rawValue
+            
+            sself.coordinator?.totalBookmarks = btxn.numberOfItems(inGroup: group)
+            
+            let total = Int(txn.numberOfItems(inGroup: group))
+            
+            let folders = DBManager.shared.folders
+            
+            for folder in folders {
+                folder.updatingCounters = true
+            }
+            
+            guard total > 0 else {
                 
-                guard let sself = self,
-                      let txn = t.ext(DBManagerViews.unreadsView.rawValue) as? YapDatabaseFilteredViewTransaction,
-                      let btxn = t.ext(DBManagerViews.bookmarksView.rawValue) as? YapDatabaseFilteredViewTransaction else {
-                    return
-                }
+                DBManager.shared.feeds.forEach { $0.unread = 0 }
                 
-                let group = GroupNames.articles.rawValue
+                sself.coordinator?.totalUnread = 0
+                sself.coordinator?.totalToday = 0
                 
-                self?.coordinator?.totalBookmarks = btxn.numberOfItems(inGroup: group)
-                
-                let total = Int(txn.numberOfItems(inGroup: group))
-                
-                let folders = DBManager.shared.folders
-                
-                for folder in folders {
-                    folder.updatingCounters = true
-                }
-                
-                guard total > 0 else {
-                    
-                    DBManager.shared.feeds.forEach { $0.unread = 0 }
-                    
-                    sself.coordinator?.totalUnread = 0
-                    sself.coordinator?.totalToday = 0
-                    
-                    sself.coalescingQueue.add(sself, #selector(SidebarVC.updateSharedUnreadsData))
-                    
-                    for folder in folders {
-                        folder.updatingCounters = false
-                    }
-                    
-                    return
-                }
-                
-                // feedID : Unread Count
-                var feedsMapping: [UInt: UInt] = [:]
-                
-                // Ensure 0 reads are also updated.
-                DBManager.shared.feeds.forEach { feedsMapping[$0.feedID] = 0 }
-                
-                var totalToday: UInt = 0
-                
-                let calendar = NSCalendar.current
-                
-                txn.enumerateKeysAndMetadata(inGroup: group, with: [], range: NSMakeRange(0, total)) { (c, k) -> Bool in
-                    return true
-                } using: { (c, k, metadata, index, stop) in
-                    
-                    guard let metadata = metadata as? ArticleMeta,
-                          metadata.read == false else {
-                        return
-                    }
-                    
-                    let feedID = metadata.feedID
-                    
-                    if feedsMapping[feedID] == nil {
-                        feedsMapping[feedID] = 0
-                    }
-                    
-                    if calendar.isDateInToday(Date(timeIntervalSince1970: metadata.timestamp)) {
-                        totalToday += 1
-                    }
-                    
-                    feedsMapping[feedID]! += 1
-                    
-                }
-                
-                let unread = feedsMapping.values.reduce(0) { (result, c) -> UInt in
-                    return result + c
-                }
-                
-                sself.coordinator?.totalUnread = unread
-                sself.coordinator?.totalToday = totalToday
-                
-                print(feedsMapping)
-                
-                for feedID in feedsMapping.keys {
-                    
-                    guard let feed = DBManager.shared.feedForID(feedID) else {
-                        continue
-                    }
-                    
-                    feed.unread = feedsMapping[feedID] ?? 0
-                    
-                }
+                sself.coalescingQueue.add(sself, #selector(SidebarVC.updateSharedUnreadsData))
                 
                 for folder in folders {
                     folder.updatingCounters = false
                 }
                 
+                return
+            }
+            
+            // feedID : Unread Count
+            var feedsMapping: [UInt: UInt] = [:]
+            
+            // Ensure 0 reads are also updated.
+            DBManager.shared.feeds.forEach { feedsMapping[$0.feedID] = 0 }
+            
+            var totalToday: UInt = 0
+            
+            let calendar = NSCalendar.current
+            
+            txn.enumerateKeysAndMetadata(inGroup: group, with: [], range: NSMakeRange(0, total)) { (c, k) -> Bool in
+                return true
+            } using: { (c, k, metadata, index, stop) in
+                
+                guard let metadata = metadata as? ArticleMeta,
+                      metadata.read == false else {
+                    return
+                }
+                
+                let feedID = metadata.feedID
+                
+                if feedsMapping[feedID] == nil {
+                    feedsMapping[feedID] = 0
+                }
+                
+                if calendar.isDateInToday(Date(timeIntervalSince1970: metadata.timestamp)) {
+                    totalToday += 1
+                }
+                
+                feedsMapping[feedID]! += 1
+                
+            }
+            
+            let unread = feedsMapping.values.reduce(0) { (result, c) -> UInt in
+                return result + c
+            }
+            
+            sself.coordinator?.totalUnread = unread
+            sself.coordinator?.totalToday = totalToday
+            
+            #if DEBUG
+            print(feedsMapping)
+            #endif
+            
+            for feedID in feedsMapping.keys {
+                
+                guard let feed = DBManager.shared.feedForID(feedID) else {
+                    continue
+                }
+                
+                feed.unread = feedsMapping[feedID] ?? 0
+                
+            }
+            
+            DispatchQueue.main.async {
+                for folder in folders {
+                    folder.updatingCounters = false
+                }
             }
             
         }
