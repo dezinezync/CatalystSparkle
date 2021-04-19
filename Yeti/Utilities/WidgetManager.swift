@@ -17,7 +17,17 @@ import Intents
     static var usingBloccsWidget: Bool = false
     
     static var usingFoldersWidget: Bool = false
-    static var selectedFolder: WidgetFolder?
+    static var selectedFolder: WidgetFolder? {
+        
+        didSet {
+            
+            if let _ = selectedFolder {
+                MyAppDelegate.coordinator.updateSharedFoldersData()
+            }
+            
+        }
+        
+    }
     
     public static func updateState() {
         

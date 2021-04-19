@@ -879,6 +879,9 @@ public var deviceName: String {
         if (data as NSData).write(toFile: path, atomically: true) == false {
             print("Failed to write data to \(path)")
         }
+        else {
+            print("Updated shared file \(sharedFile)")
+        }
         
     }
 
