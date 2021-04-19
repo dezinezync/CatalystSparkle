@@ -146,7 +146,6 @@
 		F047F4FC20C25FB900626968 /* Spectral-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4E120C25FB900626968 /* Spectral-LightItalic.ttf */; };
 		F04815FC245FD88200F8091E /* AppDelegate+BackgroundRefresh.m in Sources */ = {isa = PBXBuildFile; fileRef = F04815FB245FD88200F8091E /* AppDelegate+BackgroundRefresh.m */; };
 		F048E4A924EE84D1009A46F4 /* WidgetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F048E4A824EE84D1009A46F4 /* WidgetManager.swift */; };
-		F048E4C324EEB2D6009A46F4 /* CountersWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = F048E4C224EEB2D6009A46F4 /* CountersWidget.swift */; };
 		F04CFAC62154B57B00AA7B5E /* StoreVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F04CFAC52154B57B00AA7B5E /* StoreVC.m */; };
 		F04E92BC21B5427B00AD1FB2 /* YTExtractor.m in Sources */ = {isa = PBXBuildFile; fileRef = F04E92BB21B5427B00AD1FB2 /* YTExtractor.m */; };
 		F04E92BF21B5429300AD1FB2 /* NSString+Components.m in Sources */ = {isa = PBXBuildFile; fileRef = F04E92BE21B5429300AD1FB2 /* NSString+Components.m */; };
@@ -798,7 +797,6 @@
 		F04815FB245FD88200F8091E /* AppDelegate+BackgroundRefresh.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+BackgroundRefresh.m"; sourceTree = "<group>"; };
 		F048E4A724EE84D0009A46F4 /* Elytra-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Elytra-Bridging-Header.h"; sourceTree = "<group>"; };
 		F048E4A824EE84D1009A46F4 /* WidgetManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetManager.swift; sourceTree = "<group>"; };
-		F048E4C224EEB2D6009A46F4 /* CountersWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountersWidget.swift; sourceTree = "<group>"; };
 		F04CFAC42154B57B00AA7B5E /* StoreVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StoreVC.h; sourceTree = "<group>"; };
 		F04CFAC52154B57B00AA7B5E /* StoreVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = StoreVC.m; sourceTree = "<group>"; };
 		F04E92BA21B5427B00AD1FB2 /* YTExtractor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YTExtractor.h; sourceTree = "<group>"; };
@@ -2204,7 +2202,6 @@
 				F0880A1A262BDB29002181EC /* Folders */,
 				F0BB0093262A793700A0181A /* Bloccs */,
 				F0BB008C262A785500A0181A /* Unreads */,
-				F0BB0092262A792C00A0181A /* CountersWidget */,
 				F0BB009A262A964400A0181A /* EmptyView.swift */,
 			);
 			path = Widgets;
@@ -2240,14 +2237,6 @@
 				F0BB0090262A790D00A0181A /* UnreadsListView.swift */,
 			);
 			path = Unreads;
-			sourceTree = "<group>";
-		};
-		F0BB0092262A792C00A0181A /* CountersWidget */ = {
-			isa = PBXGroup;
-			children = (
-				F048E4C224EEB2D6009A46F4 /* CountersWidget.swift */,
-			);
-			path = CountersWidget;
 			sourceTree = "<group>";
 		};
 		F0BB0093262A793700A0181A /* Bloccs */ = {
@@ -3253,7 +3242,6 @@
 				F0D98F5A24EE4C8500B1F9F0 /* UnreadsIntent.intentdefinition in Sources */,
 				F0BB009B262A964400A0181A /* EmptyView.swift in Sources */,
 				F0BB0099262A7F4F00A0181A /* BloccView.swift in Sources */,
-				F048E4C324EEB2D6009A46F4 /* CountersWidget.swift in Sources */,
 				F0BB008B262A77FB00A0181A /* UnreadsProvider.swift in Sources */,
 				F0880A1F262BDBBE002181EC /* FoldersProvider.swift in Sources */,
 				F0BB0088262A77B700A0181A /* Text+Platform.swift in Sources */,

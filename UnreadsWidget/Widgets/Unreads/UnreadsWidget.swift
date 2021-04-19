@@ -52,7 +52,6 @@ struct ElytraWidgets: WidgetBundle {
     var body: some Widget {
         UnreadsWidget()
         BloccsWidget()
-        CountersWidget()
         FoldersWidget()
     }
 }

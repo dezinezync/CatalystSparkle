@@ -1472,7 +1472,7 @@ enum SidebarItem: Hashable, Identifiable {
                 if let data = try? encoder.encode(list) {
                     
                     sself.coordinator?.writeTo(sharedFile: "articles.json", data: data)
-                    WidgetManager.reloadTimeline(name: "Unreads Widget")
+                    WidgetManager.reloadAllTimelines()
                     
                 }
                 
@@ -1506,7 +1506,6 @@ enum SidebarItem: Hashable, Identifiable {
         if let data = try? encoder.encode(list) {
             
             coordinator?.writeTo(sharedFile: "bloccs.json", data: data)
-            WidgetManager.reloadTimeline(name: "Bloccs Widget")
             
         }
         
@@ -1558,6 +1557,7 @@ enum SidebarItem: Hashable, Identifiable {
                     
                     // covers are also important here.
                     if (hasOneCover == false && item.coverImage != nil) {
+                        hasOneCover = true
                         items.append(item)
                     }
                     else if (hasOneCover == true) {
@@ -1578,6 +1578,9 @@ enum SidebarItem: Hashable, Identifiable {
             if let data = try? encoder.encode(list) {
                 
                 sself.coordinator?.writeTo(sharedFile: "foldersW.json", data: data)
+                
+                print("Updated folder articles data")
+                
                 WidgetManager.reloadTimeline(name: "Folders Widget")
                 
             }
