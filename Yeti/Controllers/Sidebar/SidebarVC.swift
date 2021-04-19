@@ -624,6 +624,74 @@ enum SidebarItem: Hashable, Identifiable {
             }
             .store(in: &cancellables)
         
+        NotificationCenter.default.publisher(for: .DBManagerDidUpdate)
+            .debounce(for: 0.2, scheduler: DBManager.shared.writeQueue)
+            .filter { $0.userInfo?[notificationsKey] != nil && ($0.userInfo?[notificationsKey]! as? [Notification])?.count ?? 0 > 0  }
+            .sink { [weak self] notification in
+                
+                // we only check if a folder is selected for the Folders Widget
+                guard WidgetManager.usingFoldersWidget == true,
+                      let _ = WidgetManager.selectedFolder else {
+                    return
+                }
+                
+                guard let fIDString = WidgetManager.selectedFolder?.identifier as NSString? else {
+                    return
+                }
+                
+                let folderID = UInt(fIDString.integerValue)
+                
+                guard let sself = self,
+                      let notifications = notification.userInfo?[notificationsKey] as? [Notification],
+                      let ext = DBManager.shared.uiConnection.ext(dbFilteredViewName) as? YapDatabaseFilteredViewConnection,
+                      ext.hasChanges(for: notifications) else {
+                        return
+                      }
+                
+                guard DBManager.shared.countsConnection.hasMetadataChange(forCollection: CollectionNames.articles.rawValue, in: notifications) == true else {
+                    return
+                }
+                
+                guard let set = notifications[0].userInfo!["metadataChanges"] as? YapSet else {
+                    return
+                }
+                
+                var folderChanged: Bool = false
+                
+                DBManager.shared.countsConnection.read { t in
+                    
+                    set.enumerateObjects { i, stop in
+                        
+                        if let ck = i as? YapCollectionKey,
+                           ck.collection == CollectionNames.articles.rawValue {
+                            
+                            // check if this key is in our folder
+                            guard let metadata = t.metadata(forKey: ck.key, inCollection: ck.collection) as? ArticleMeta,
+                                  let feed = DBManager.shared.feed(for: metadata.feedID),
+                                  feed.folderID == folderID else {
+                                
+                                return
+                                
+                            }
+                            
+                            folderChanged = true
+                            stop.pointee = true
+                            
+                        }
+                        
+                    }
+                    
+                }
+                
+                if (folderChanged) {
+                    CoalescingQueue.standard.add(sself, #selector(SidebarVC.updateSharedFoldersData))
+                }
+                
+//                print(notifications)
+                
+            }
+            .store(in: &cancellables)
+        
         #if targetEnvironment(macCatalyst)
         
         Defaults.publisher(.refreshFeedsInterval)
@@ -1359,7 +1427,10 @@ enum SidebarItem: Hashable, Identifiable {
     // MARK: - Widgets
     @objc func updateSharedUnreadsData() {
         
-        guard (WidgetManager.usingUnreadsWidget == true || WidgetManager.usingBloccsWidget == true) else {
+        guard (
+                WidgetManager.usingUnreadsWidget == true
+                    || WidgetManager.usingBloccsWidget == true
+                    || WidgetManager.usingFoldersWidget == true) else {
             return
         }
             
@@ -1401,7 +1472,7 @@ enum SidebarItem: Hashable, Identifiable {
                 if let data = try? encoder.encode(list) {
                     
                     sself.coordinator?.writeTo(sharedFile: "articles.json", data: data)
-                    WidgetManager.reloadTimeline(name: "UnreadsWidget")
+                    WidgetManager.reloadTimeline(name: "Unreads Widget")
                     
                 }
                 
@@ -1436,6 +1507,76 @@ enum SidebarItem: Hashable, Identifiable {
             
             coordinator?.writeTo(sharedFile: "bloccs.json", data: data)
             WidgetManager.reloadTimeline(name: "Bloccs Widget")
+            
+        }
+        
+    }
+    
+    func updateSharedFoldersData () {
+        
+        guard WidgetManager.usingFoldersWidget == true,
+              WidgetManager.selectedFolder != nil else {
+            return
+        }
+        
+        guard let fIDString = WidgetManager.selectedFolder?.identifier as NSString? else {
+            return
+        }
+        
+        let folderID = UInt(fIDString.integerValue)
+        
+        DBManager.shared.countsConnection.asyncRead { [weak self] t in
+            
+            guard let sself = self else { return }
+            
+            // get all items from the specific folder
+            guard let txn = t.ext(DBManagerViews.unreadsView.rawValue) as? YapDatabaseFilteredViewTransaction else {
+                return
+            }
+            
+            var items: [Article] = []
+            
+            let end = txn.numberOfItems(inGroup: GroupNames.articles.rawValue)
+            
+            txn.enumerateKeysAndObjects(inGroup: GroupNames.articles.rawValue, with: [], range: NSMakeRange(0, Int(end))) { (_, _) -> Bool in
+                return true
+            } using: { (c, key, object, index, stop) in
+                
+                guard let item = object as? Article else {
+                    return
+                }
+                
+                guard let feed = DBManager.shared.feed(for: item.feedID),
+                      feed.folderID != nil else {
+                    return
+                }
+                
+//                print(folderID, feed.folderID ?? 0)
+                
+                if (feed.folderID! == folderID) {
+                    
+                    // covers are also important here.
+                    if (item.coverImage != nil) {
+                        items.append(item)
+                    }
+                    
+                    if (items.count == 6) {
+                        stop.pointee = true
+                    }
+                    
+                }
+                
+            }
+            
+            let list = sself.widgetItemsToList(items, t: t)
+            
+            let encoder = JSONEncoder()
+            if let data = try? encoder.encode(list) {
+                
+                sself.coordinator?.writeTo(sharedFile: "foldersW.json", data: data)
+                WidgetManager.reloadTimeline(name: "Folders Widget")
+                
+            }
             
         }
         

@@ -26,7 +26,7 @@ struct PlaceholderView : View {
 
 struct UnreadsWidget: Widget {
     
-    private let kind: String = "UnreadsWidget"
+    private let kind: String = "Unreads Widget"
 
     public var body: some WidgetConfiguration {
         

@@ -1490,7 +1490,7 @@ typedef NS_ENUM(NSInteger, ArticleVCState) {
         }
         
     }
-    else if ([content.type isEqualToString:@"heading"]) {
+    else if ([content.type isEqualToString:@"heading"] || [content.type isEqualToString:@"header"]) {
         
         if (content.content.length)
             [self addHeading:content];

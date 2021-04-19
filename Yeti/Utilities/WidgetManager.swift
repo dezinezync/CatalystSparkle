@@ -36,7 +36,7 @@ import Intents
                 
                 for config in configs {
                     // update if the config comes in. 
-                    if (config.kind == "UnreadsWidget") {
+                    if (config.kind == "Unreads Widget") {
                         usingUnreadsWidget = true
                     }
                     else if (config.kind == "Bloccs Widget") {

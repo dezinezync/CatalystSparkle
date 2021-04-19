@@ -146,15 +146,19 @@ class FolderCell: UICollectionViewListCell {
     
     @objc func updateUnreadCount () {
         
-        guard var content = contentConfiguration as? UIListContentConfiguration else {
-            return
+        runOnMainQueueWithoutDeadlocking { [weak self] in
+            
+            guard var content = self?.contentConfiguration as? UIListContentConfiguration else {
+                return
+            }
+            
+            let unread = self?.folder?.unread ?? 0
+            
+            content.secondaryText = unread > 0 ? "\(unread)" : ""
+            
+            self?.contentConfiguration = content
+            
         }
-        
-        let unread = self.folder?.unread ?? 0
-        
-        content.secondaryText = unread > 0 ? "\(unread)" : ""
-        
-        contentConfiguration = content
         
     }
     
