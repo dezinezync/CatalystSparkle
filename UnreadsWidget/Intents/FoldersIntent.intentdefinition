@@ -28,7 +28,7 @@
 			<key>INIntentIneligibleForSuggestions</key>
 			<true/>
 			<key>INIntentLastParameterTag</key>
-			<integer>6</integer>
+			<integer>10</integer>
 			<key>INIntentName</key>
 			<string>Folders</string>
 			<key>INIntentParameters</key>
@@ -69,6 +69,94 @@
 					<integer>6</integer>
 					<key>INIntentParameterType</key>
 					<string>Object</string>
+				</dict>
+				<dict>
+					<key>INIntentParameterConfigurable</key>
+					<true/>
+					<key>INIntentParameterDisplayName</key>
+					<string>Show Covers</string>
+					<key>INIntentParameterDisplayNameID</key>
+					<string>EEO3HF</string>
+					<key>INIntentParameterDisplayPriority</key>
+					<integer>2</integer>
+					<key>INIntentParameterMetadata</key>
+					<dict>
+						<key>INIntentParameterMetadataDefaultValue</key>
+						<true/>
+						<key>INIntentParameterMetadataFalseDisplayName</key>
+						<string>No</string>
+						<key>INIntentParameterMetadataFalseDisplayNameID</key>
+						<string>ACONC1</string>
+						<key>INIntentParameterMetadataTrueDisplayName</key>
+						<string>Yes</string>
+						<key>INIntentParameterMetadataTrueDisplayNameID</key>
+						<string>O2JmTj</string>
+					</dict>
+					<key>INIntentParameterName</key>
+					<string>showCovers</string>
+					<key>INIntentParameterPromptDialogs</key>
+					<array>
+						<dict>
+							<key>INIntentParameterPromptDialogCustom</key>
+							<true/>
+							<key>INIntentParameterPromptDialogType</key>
+							<string>Configuration</string>
+						</dict>
+						<dict>
+							<key>INIntentParameterPromptDialogCustom</key>
+							<true/>
+							<key>INIntentParameterPromptDialogType</key>
+							<string>Primary</string>
+						</dict>
+					</array>
+					<key>INIntentParameterTag</key>
+					<integer>8</integer>
+					<key>INIntentParameterType</key>
+					<string>Boolean</string>
+				</dict>
+				<dict>
+					<key>INIntentParameterConfigurable</key>
+					<true/>
+					<key>INIntentParameterDisplayName</key>
+					<string>Show Favicons</string>
+					<key>INIntentParameterDisplayNameID</key>
+					<string>zxa57D</string>
+					<key>INIntentParameterDisplayPriority</key>
+					<integer>3</integer>
+					<key>INIntentParameterMetadata</key>
+					<dict>
+						<key>INIntentParameterMetadataDefaultValue</key>
+						<true/>
+						<key>INIntentParameterMetadataFalseDisplayName</key>
+						<string>No</string>
+						<key>INIntentParameterMetadataFalseDisplayNameID</key>
+						<string>WaAjkN</string>
+						<key>INIntentParameterMetadataTrueDisplayName</key>
+						<string>Yes</string>
+						<key>INIntentParameterMetadataTrueDisplayNameID</key>
+						<string>H7OzW0</string>
+					</dict>
+					<key>INIntentParameterName</key>
+					<string>showFavicons</string>
+					<key>INIntentParameterPromptDialogs</key>
+					<array>
+						<dict>
+							<key>INIntentParameterPromptDialogCustom</key>
+							<true/>
+							<key>INIntentParameterPromptDialogType</key>
+							<string>Configuration</string>
+						</dict>
+						<dict>
+							<key>INIntentParameterPromptDialogCustom</key>
+							<true/>
+							<key>INIntentParameterPromptDialogType</key>
+							<string>Primary</string>
+						</dict>
+					</array>
+					<key>INIntentParameterTag</key>
+					<integer>10</integer>
+					<key>INIntentParameterType</key>
+					<string>Boolean</string>
 				</dict>
 			</array>
 			<key>INIntentResponse</key>

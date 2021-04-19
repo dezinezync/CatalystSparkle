@@ -1534,6 +1534,7 @@ enum SidebarItem: Hashable, Identifiable {
                 return
             }
             
+            var hasOneCover: Bool = false
             var items: [Article] = []
             
             let end = txn.numberOfItems(inGroup: GroupNames.articles.rawValue)
@@ -1556,7 +1557,10 @@ enum SidebarItem: Hashable, Identifiable {
                 if (feed.folderID! == folderID) {
                     
                     // covers are also important here.
-                    if (item.coverImage != nil) {
+                    if (hasOneCover == false && item.coverImage != nil) {
+                        items.append(item)
+                    }
+                    else if (hasOneCover == true) {
                         items.append(item)
                     }
                     

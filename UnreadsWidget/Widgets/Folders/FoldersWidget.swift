@@ -21,7 +21,7 @@ struct FoldersWidget: Widget {
             intent: FoldersIntent.self,
             provider: FoldersProvider()) { entries in
             
-            BloccsGridView(entries: entries)
+            FoldersView(entries: entries)
                 .previewContext(WidgetPreviewContext(family: .systemMedium))
             
         }

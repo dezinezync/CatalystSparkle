@@ -29,19 +29,24 @@ struct FoldersProvider: IntentTimelineProvider {
                     
                     let entries: [WidgetArticle] = try decoder.decode([WidgetArticle].self, from: data)
                     
-//                    let showFavicons: Bool = configuration.showFavicons?.boolValue ?? true
-//
-//                    for index in 0..<entries.count {
-//
-//                        if showFavicons == false {
-//
-//                            entries[index].showFavicon = false
-//
-//                        }
-//
-//                        entries[index].showCover = true
-//
-//                    }
+                    let showFavicons: Bool = configuration.showFavicons?.boolValue ?? true
+                    let showCovers: Bool = configuration.showCovers?.boolValue ?? true
+
+                    for index in 0..<entries.count {
+
+                        if showFavicons == false {
+
+                            entries[index].showFavicon = false
+
+                        }
+
+                        if showCovers == false {
+                                
+                            entries[index].showCover = false
+                            
+                        }
+
+                    }
                     
                     json = UnreadEntries(date: Date(), entries: entries)
                     
@@ -61,19 +66,31 @@ struct FoldersProvider: IntentTimelineProvider {
  
     public func getSnapshot(for configuration: FoldersIntent, in context: Context, completion: @escaping (UnreadEntries) -> Void) {
     
-        if let jsonData: UnreadEntries = loadData(name: "bloccs.json", configuration: configuration) {
+        if let jsonData: UnreadEntries = loadData(name: "foldersW.json", configuration: configuration) {
             
-//            if (configuration.showFavicons?.boolValue == false) {
-//
-//                for item in jsonData.entries {
-//
-//                    if (item.favicon != nil) {
-//                        item.favicon = nil
-//                    }
-//
-//                }
-//
-//            }
+            if (configuration.showFavicons?.boolValue == false) {
+
+                for item in jsonData.entries {
+
+                    if (item.favicon != nil) {
+                        item.favicon = nil
+                    }
+
+                }
+
+            }
+            
+            if (configuration.showCovers?.boolValue == false) {
+                    
+                for item in jsonData.entries {
+                    
+                    if (item.coverImage != nil) {
+                        item.coverImage = nil
+                    }
+                    
+                }
+                
+            }
             
             loadImagesDataFromPackage(package: jsonData) {
                 
@@ -87,7 +104,7 @@ struct FoldersProvider: IntentTimelineProvider {
     
     public func getTimeline(for configuration: FoldersIntent, in context: Context, completion: @escaping (Timeline<UnreadEntries>) -> Void) {
         
-        if let jsonData = loadData(name: "bloccs.json", configuration: configuration) {
+        if let jsonData = loadData(name: "foldersW.json", configuration: configuration) {
         
             var entries: [UnreadEntries] = []
             
@@ -107,7 +124,7 @@ struct FoldersProvider: IntentTimelineProvider {
     
     func placeholder(in context: Context) -> UnreadEntries {
         
-        if let jsonData = loadData(name: "bloccs.json", configuration: FoldersIntent()) {
+        if let jsonData = loadData(name: "foldersW.json", configuration: FoldersIntent()) {
             
             return jsonData;
             

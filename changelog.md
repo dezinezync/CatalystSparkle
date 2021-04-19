@@ -1,5 +1,17 @@
 # v2.3.0
 
+### Build 212
+
+- Added two new widgets: Bloccs & Folders. 
+
+    Folders Widget lets you select a specific folder from your list and will show all unread articles from that folder. Please launch the app once before selecting a folder and then run the app once to update the data for the widget.
+    
+- Fixed an underlying issue where Headers would not be rendered. 
+
+- Fixed an issue where opening an article from a widget would not mark it as read and additionally render is incompletely if it's a Youtube video. 
+
+- Rename feed should show original title if no custom name is set. 
+
 ### Build 211
 
 - Improved overall rotation logic on iPadOS.

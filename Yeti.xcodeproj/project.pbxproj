@@ -316,6 +316,8 @@
 		F0BB009B262A964400A0181A /* EmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BB009A262A964400A0181A /* EmptyView.swift */; };
 		F0BB009D262A9AEC00A0181A /* BloccsIntent.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = F0BB009C262A9AEC00A0181A /* BloccsIntent.intentdefinition */; };
 		F0BB009E262A9AF300A0181A /* BloccsIntent.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = F0BB009C262A9AEC00A0181A /* BloccsIntent.intentdefinition */; };
+		F0BB3B4C262D2D64000F7209 /* FoldersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BB3B4B262D2D64000F7209 /* FoldersView.swift */; };
+		F0BB3B56262D2DF1000F7209 /* FolderItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BB3B55262D2DF1000F7209 /* FolderItemView.swift */; };
 		F0BC8BF825205C4400FADCBB /* PreferencesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BF725205C4400FADCBB /* PreferencesController.swift */; };
 		F0BC8C0025205CF100FADCBB /* GeneralPreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BFE25205CF000FADCBB /* GeneralPreferenceViewController.swift */; };
 		F0BC8C0125205CF100FADCBB /* GeneralPreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0BC8BFF25205CF000FADCBB /* GeneralPreferenceViewController.xib */; };
@@ -1030,6 +1032,8 @@
 		F0BB0098262A7F4F00A0181A /* BloccView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BloccView.swift; sourceTree = "<group>"; };
 		F0BB009A262A964400A0181A /* EmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyView.swift; sourceTree = "<group>"; };
 		F0BB009C262A9AEC00A0181A /* BloccsIntent.intentdefinition */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.intentdefinition; path = BloccsIntent.intentdefinition; sourceTree = "<group>"; };
+		F0BB3B4B262D2D64000F7209 /* FoldersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldersView.swift; sourceTree = "<group>"; };
+		F0BB3B55262D2DF1000F7209 /* FolderItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderItemView.swift; sourceTree = "<group>"; };
 		F0BC8BF725205C4400FADCBB /* PreferencesController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesController.swift; sourceTree = "<group>"; };
 		F0BC8BFE25205CF000FADCBB /* GeneralPreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneralPreferenceViewController.swift; sourceTree = "<group>"; };
 		F0BC8BFF25205CF000FADCBB /* GeneralPreferenceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GeneralPreferenceViewController.xib; sourceTree = "<group>"; };
@@ -2002,6 +2006,8 @@
 			isa = PBXGroup;
 			children = (
 				F0880A1B262BDB38002181EC /* FoldersWidget.swift */,
+				F0BB3B4B262D2D64000F7209 /* FoldersView.swift */,
+				F0BB3B55262D2DF1000F7209 /* FolderItemView.swift */,
 			);
 			path = Folders;
 			sourceTree = "<group>";
@@ -3229,9 +3235,11 @@
 				F0880A1F262BDBBE002181EC /* FoldersProvider.swift in Sources */,
 				F0BB0088262A77B700A0181A /* Text+Platform.swift in Sources */,
 				F08809FE262A9CDB002181EC /* BloccsProvider.swift in Sources */,
+				F0BB3B4C262D2D64000F7209 /* FoldersView.swift in Sources */,
 				F0BB008F262A786900A0181A /* ArticleView.swift in Sources */,
 				F0BB0087262A77B400A0181A /* UnreadEntries.swift in Sources */,
 				F0BB0095262A79D000A0181A /* BloccsWidget.swift in Sources */,
+				F0BB3B56262D2DF1000F7209 /* FolderItemView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
