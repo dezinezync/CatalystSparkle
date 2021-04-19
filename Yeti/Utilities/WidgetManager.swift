@@ -9,18 +9,32 @@
 import Foundation
 import WidgetKit
 import Models
-import Networking
-import DBManager
-import BackgroundTasks
+import Intents
 
 @objcMembers public class WidgetManager: NSObject {
     
     static var usingUnreadsWidget: Bool = false
+    static var usingBloccsWidget: Bool = false
+    
+    static var usingFoldersWidget: Bool = false
+    static var selectedFolder: WidgetFolder? {
+        
+        didSet {
+            
+            if let _ = selectedFolder {
+                MyAppDelegate.coordinator.updateSharedFoldersData()
+            }
+            
+        }
+        
+    }
     
     public static func updateState() {
         
         // set all to false.
         usingUnreadsWidget = false
+        usingBloccsWidget = false
+        usingFoldersWidget = false
         
         WidgetCenter.shared.getCurrentConfigurations { result in
             
@@ -29,12 +43,34 @@ import BackgroundTasks
                 print(error)
                 
             case .success(let configs):
+                
                 for config in configs {
                     // update if the config comes in. 
-                    if (config.kind == "UnreadsWidget") {
+                    if (config.kind == "Unreads Widget") {
                         usingUnreadsWidget = true
                     }
+                    else if (config.kind == "Bloccs Widget") {
+                        usingBloccsWidget = true
+                    }
+                    else if (config.kind == "Folders Widget") {
+                        usingFoldersWidget = true
+                        
+                        if let foldersIntent: INIntent = config.configuration,
+                           let folder = foldersIntent.value(forKey: "folders") as? INObject,
+                           let identifer = folder.identifier as NSString? {
+                            
+                            let displayString = folder.displayString
+                            
+                            let widgetFolder = WidgetFolder(title: displayString, folderID: UInt(identifer.integerValue))
+                            
+                            self.selectedFolder = widgetFolder
+                            
+                        }
+                        
+                    }
+                    
                 }
+                
             }
             
         }

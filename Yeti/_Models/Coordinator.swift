@@ -879,6 +879,9 @@ public var deviceName: String {
         if (data as NSData).write(toFile: path, atomically: true) == false {
             print("Failed to write data to \(path)")
         }
+        else {
+            print("Updated shared file \(sharedFile)")
+        }
         
     }
 
@@ -1769,6 +1772,24 @@ extension Coordinator {
         
     }
     
+    // MARK: - Widgets
+    public func updateSharedFoldersData() {
+        
+        let folders = DBManager.shared.folders
+        
+        guard folders.count > 0 else {
+            return
+        }
+        
+        let structs: [WidgetFolder] = folders.map { WidgetFolder(title: $0.title, folderID: $0.folderID) }
+        
+        if let data = try? JSONEncoder().encode(structs) {
+            
+            writeTo(sharedFile: "folders.json", data: data)
+            
+        }
+        
+    }
     
     // MARK: - MacOS
     public func showPanel() {

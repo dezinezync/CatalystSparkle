@@ -224,7 +224,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>212</string>
+	<string>216</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSApplicationCategoryType</key>
@@ -256,9 +256,12 @@
 	<string>Save images you select from articles to your photos.  </string>
 	<key>NSUserActivityTypes</key>
 	<array>
-		<string>UnreadsIntent</string>
+		<string>BloccsIntent</string>
+		<string>FoldersIntent</string>
 		<string>UnreadsIntentsIntent</string>
 	</array>
+	<key>Notarized</key>
+	<string>$(IS_MAC_NOTARIZED)</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Merriweather-Black.ttf</string>
@@ -405,7 +408,5 @@
 			</dict>
 		</dict>
 	</array>
-	<key>Notarized</key>
-	<string>$(IS_MAC_NOTARIZED)</string>
 </dict>
 </plist>

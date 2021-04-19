@@ -126,13 +126,17 @@ class CustomFeedCell: UICollectionViewListCell {
     
     func updateUnreadCount (_ unread: UInt) {
         
-        guard var content = contentConfiguration as? UIListContentConfiguration else {
-            return
+        runOnMainQueueWithoutDeadlocking {  [weak self] in
+            
+            guard var content = self?.contentConfiguration as? UIListContentConfiguration else {
+                return
+            }
+            
+            content.secondaryText = unread > 0 ? "\(unread)" : ""
+            
+            self?.contentConfiguration = content
+            
         }
-        
-        content.secondaryText = unread > 0 ? "\(unread)" : ""
-        
-        contentConfiguration = content
         
     }
     
