@@ -50,9 +50,11 @@ struct BloccView: View {
     
 }
 
+#if DEBUG
 struct BloccView_Previews: PreviewProvider {
     static var previews: some View {
         BloccView(entry: previewData.entries[0])
             .previewContext(WidgetPreviewContext(family: .systemSmall))
     }
 }
+#endif

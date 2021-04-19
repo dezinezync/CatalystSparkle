@@ -54,6 +54,7 @@ struct BloccsGridView: View {
     }
 }
 
+#if DEBUG
 struct BloccsGridView_Previews: PreviewProvider {
     static var previews: some View {
         
@@ -65,3 +66,4 @@ struct BloccsGridView_Previews: PreviewProvider {
             .environment(\.colorScheme, .dark)
     }
 }
+#endif

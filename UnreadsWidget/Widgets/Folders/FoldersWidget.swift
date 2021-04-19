@@ -27,7 +27,7 @@ struct FoldersWidget: Widget {
         }
         .configurationDisplayName("Folders - Unreads")
         .description("Latest unread articles from a folder")
-        .supportedFamilies([.systemMedium, .systemLarge])
+        .supportedFamilies([.systemLarge])
         
     }
     

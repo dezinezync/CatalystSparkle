@@ -31,6 +31,7 @@ struct FolderItemView: View {
     }
 }
 
+#if DEBUG
 struct FolderItemView_Previews: PreviewProvider {
     static var previews: some View {
         FolderItemView(entry: previewData.entries[0])
@@ -41,3 +42,4 @@ struct FolderItemView_Previews: PreviewProvider {
             .environment(\.colorScheme, .dark)
     }
 }
+#endif
