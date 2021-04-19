@@ -18,6 +18,8 @@ import DeviceCheck
 import Combine
 import OrderedCollections
 import BackgroundTasks
+import SwiftYapDatabase
+import YapDatabase
 
 public var deviceName: String {
     var systemInfo = utsname()
@@ -185,6 +187,74 @@ public var deviceName: String {
     }
     
     func setupNotifications() {
+        
+        NotificationCenter.default.publisher(for: .DBManagerDidUpdate)
+            .debounce(for: 0.2, scheduler: DBManager.shared.writeQueue)
+            .filter { $0.userInfo?[notificationsKey] != nil && ($0.userInfo?[notificationsKey]! as? [Notification])?.count ?? 0 > 0  }
+            .sink { [weak self] notification in
+                
+                // we only check if a folder is selected for the Folders Widget
+                guard WidgetManager.usingFoldersWidget == true,
+                      let _ = WidgetManager.selectedFolder else {
+                    return
+                }
+                
+                guard let fIDString = WidgetManager.selectedFolder?.identifier as NSString? else {
+                    return
+                }
+                
+                let folderID = UInt(fIDString.integerValue)
+                
+                guard let sself = self,
+                      let notifications = notification.userInfo?[notificationsKey] as? [Notification],
+                      let ext = DBManager.shared.uiConnection.ext(dbFilteredViewName) as? YapDatabaseFilteredViewConnection,
+                      ext.hasChanges(for: notifications) else {
+                        return
+                      }
+                
+                guard DBManager.shared.countsConnection.hasMetadataChange(forCollection: CollectionNames.articles.rawValue, in: notifications) == true else {
+                    return
+                }
+                
+                guard let set = notifications[0].userInfo!["metadataChanges"] as? YapSet else {
+                    return
+                }
+                
+                var folderChanged: Bool = false
+                
+                DBManager.shared.countsConnection.read { t in
+                    
+                    set.enumerateObjects { i, stop in
+                        
+                        if let ck = i as? YapCollectionKey,
+                           ck.collection == CollectionNames.articles.rawValue {
+                            
+                            // check if this key is in our folder
+                            guard let metadata = t.metadata(forKey: ck.key, inCollection: ck.collection) as? ArticleMeta,
+                                  let feed = DBManager.shared.feed(for: metadata.feedID),
+                                  feed.folderID == folderID else {
+                                
+                                return
+                                
+                            }
+                            
+                            folderChanged = true
+                            stop.pointee = true
+                            
+                        }
+                        
+                    }
+                    
+                }
+                
+                if (folderChanged) {
+                    CoalescingQueue.standard.add(sself, #selector(Coordinator.updateSharedFoldersArticles))
+                }
+                
+//                print(notifications)
+                
+            }
+            .store(in: &cancellables)
         
     }
     
@@ -1773,6 +1843,214 @@ extension Coordinator {
     }
     
     // MARK: - Widgets
+    @objc func updateSharedUnreadsData() {
+        
+        guard (
+                WidgetManager.usingUnreadsWidget == true
+                    || WidgetManager.usingBloccsWidget == true
+                    || WidgetManager.usingFoldersWidget == true) else {
+            return
+        }
+            
+        DBManager.shared.uiConnection.asyncRead { [weak self] (t) in
+            
+            guard let sself = self else { return }
+            
+            guard let txn = t.ext(DBManagerViews.unreadsView.rawValue) as? YapDatabaseFilteredViewTransaction else {
+                return
+            }
+            
+            var items: [Article] = []
+            
+            txn.enumerateKeysAndObjects(inGroup: GroupNames.articles.rawValue, with: [], range: NSMakeRange(0, 20)) { (_, _) -> Bool in
+                return true
+            } using: { (c, key, object, index, stop) in
+                
+                guard let item = object as? Article else {
+                    return
+                }
+                
+                items.append(item)
+                
+            }
+
+            DBManager.shared.writeQueue.async { [weak self] in
+                
+                var usableItems: [Article] = items
+                
+                self?.updateSharedBloccsData(items: usableItems, t: t)
+                
+                let upperBound = max(0, min(4, usableItems.count))
+                usableItems = Array(usableItems[0..<upperBound])
+                
+                let list = self?.widgetItemsToList(usableItems, t: t)
+                
+                let encoder = JSONEncoder()
+                if let data = try? encoder.encode(list) {
+                    
+                    sself.writeTo(sharedFile: "articles.json", data: data)
+                    WidgetManager.reloadTimeline(name: "Unreads Widget")
+                    
+                }
+                
+            }
+            
+        }
+        
+    }
+    
+    func updateSharedBloccsData (items: [Article], t: YapDatabaseReadTransaction) {
+        
+        guard WidgetManager.usingBloccsWidget == true else {
+            return
+        }
+        
+        var usableItems: [Article] = items
+        
+        let coverItems = items.filter { $0.coverImage != nil }
+        let max: Int = 6
+        let total = coverItems.count
+        
+        let upperLimit = min(max, total)
+        
+        usableItems = Array(coverItems[0..<upperLimit])
+        
+        let list = widgetItemsToList(usableItems, t: t)
+        
+        let encoder = JSONEncoder()
+        if let data = try? encoder.encode(list) {
+            
+            writeTo(sharedFile: "bloccs.json", data: data)
+            
+            WidgetManager.reloadTimeline(name: "Bloccs Widget")
+            
+        }
+        
+    }
+    
+    func updateSharedFoldersArticles () {
+        
+        guard WidgetManager.usingFoldersWidget == true,
+              WidgetManager.selectedFolder != nil else {
+            return
+        }
+        
+        guard let fIDString = WidgetManager.selectedFolder?.identifier as NSString? else {
+            return
+        }
+        
+        let folderID = UInt(fIDString.integerValue)
+        
+        DBManager.shared.countsConnection.asyncRead { [weak self] t in
+            
+            guard let sself = self else { return }
+            
+            // get all items from the specific folder
+            guard let txn = t.ext(DBManagerViews.articlesView.rawValue) as? YapDatabaseFilteredViewTransaction else {
+                return
+            }
+            
+            var hasOneCover: Bool = false
+            var items: [Article] = []
+            
+            let end = txn.numberOfItems(inGroup: GroupNames.articles.rawValue)
+            
+            txn.enumerateKeysAndObjects(inGroup: GroupNames.articles.rawValue, with: [], range: NSMakeRange(0, Int(end))) { (_, _) -> Bool in
+                return true
+            } using: { (c, key, object, index, stop) in
+                
+                guard let item = object as? Article else {
+                    return
+                }
+                
+                guard let feed = DBManager.shared.feed(for: item.feedID),
+                      feed.folderID != nil else {
+                    return
+                }
+                
+//                print(folderID, feed.folderID ?? 0)
+                
+                if (feed.folderID! == folderID) {
+                    
+                    // covers are also important here.
+                    if (hasOneCover == false && item.coverImage != nil) {
+                        hasOneCover = true
+                        items.append(item)
+                    }
+                    else {
+                        items.append(item)
+                    }
+                    
+                    if (items.count == 6) {
+                        stop.pointee = true
+                    }
+                    
+                }
+                
+            }
+            
+            let list = sself.widgetItemsToList(items, t: t)
+            
+            let encoder = JSONEncoder()
+            if let data = try? encoder.encode(list) {
+                
+                sself.writeTo(sharedFile: "foldersW.json", data: data)
+                
+                print("Updated folder articles data")
+                
+                WidgetManager.reloadTimeline(name: "Folders Widget")
+                
+            }
+            
+        }
+        
+    }
+    
+    func widgetItemsToList(_ usableItems: [Article], t: YapDatabaseReadTransaction) -> [WidgetArticle] {
+        
+        // Actually stores WidgetArticle before writing to disk.
+        var widgetList: [WidgetArticle] = []
+        
+        if usableItems.count > 0 {
+            
+            let list: [Article] = usableItems
+            
+            widgetList = list.map { WidgetArticle.init(copyFrom: $0) }
+            
+            // get the feeds for these articles
+            for article in widgetList {
+                
+                if let feed = DBManager.shared.feed(for: article.feedID) {
+                    article.blog = feed.displayTitle
+                    article.favicon = feed.faviconProxyURI(size: 32)
+                }
+                
+                if article.title == nil || (article.title != nil && article.title!.isEmpty) {
+                    // micro.blog post.
+                    
+                    if article.summary == nil || article.summary?.isEmpty == true {
+                        
+                        if let content = t.object(forKey: article.identifier, inCollection: CollectionNames.articlesContent.rawValue) as? [Content] {
+                            
+                            article.content = content
+                            article.summary = article.textFromContent
+                            
+                            article.content = []
+                            
+                        }
+                        
+                    }
+                    
+                }
+                
+            }
+            
+        }
+        
+        return widgetList
+        
+    }
+    
     public func updateSharedFoldersData() {
         
         let folders = DBManager.shared.folders
@@ -1786,6 +2064,8 @@ extension Coordinator {
         if let data = try? JSONEncoder().encode(structs) {
             
             writeTo(sharedFile: "folders.json", data: data)
+            
+            WidgetManager.reloadTimeline(name: "Folders Widget")
             
         }
         

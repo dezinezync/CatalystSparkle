@@ -25,9 +25,9 @@ import OrderedCollections
     }
     
     public var updatingCounters: Bool = false {
-        willSet {
-            if updatingCounters == true,
-               newValue == false {
+        didSet {
+            if updatingCounters == false,
+               oldValue == true {
                 updateCounters()
             }
         }
@@ -124,14 +124,22 @@ extension Folder {
         //        Doesn't seem to crash with the new SortedSet
         // Update: Crash fixed with using OrderedSet and checking
         //         entries at bootup.
-        let feeds = self.feeds
-        
-        let value = feeds.reduce(0) { counter, newValue in
-            counter + newValue.unread
-        }
-        
         DispatchQueue.main.async { [weak self] in
-            self?.unread = value
+            
+            guard let sself = self else { return }
+
+            let feeds = sself.feeds
+            
+            let value = feeds.reduce(0) { counter, newValue in
+                counter + newValue.unread
+            }
+            
+            sself.unread = value
+            
+            if (value > 0) {
+                print("Updated folder: \(sself.title!) counter to \(value)")
+            }
+            
         }
         
     }

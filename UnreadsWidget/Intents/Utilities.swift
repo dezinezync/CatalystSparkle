@@ -47,7 +47,7 @@ public func loadImagesDataFromPackage (package: UnreadEntries, completion: LoadI
     }
     
     imageRequestGroup.notify(queue: .main) {
-        completion!()
+        completion?()
     }
     
 }

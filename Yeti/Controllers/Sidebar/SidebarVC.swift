@@ -277,7 +277,11 @@ enum SidebarItem: Hashable, Identifiable {
         
         didSet {
             if requiresUpdatingUnreadsSharedData == true {
-                coalescingQueue.add(self, #selector(SidebarVC.updateSharedUnreadsData))
+                
+                coalescingQueue.add(coordinator!, #selector(Coordinator.updateSharedUnreadsData))
+                
+                requiresUpdatingUnreadsSharedData = false
+                
             }
         }
         
@@ -620,74 +624,6 @@ enum SidebarItem: Hashable, Identifiable {
                 else {
                     UIApplication.shared.applicationIconBadgeNumber = 0
                 }
-                
-            }
-            .store(in: &cancellables)
-        
-        NotificationCenter.default.publisher(for: .DBManagerDidUpdate)
-            .debounce(for: 0.2, scheduler: DBManager.shared.writeQueue)
-            .filter { $0.userInfo?[notificationsKey] != nil && ($0.userInfo?[notificationsKey]! as? [Notification])?.count ?? 0 > 0  }
-            .sink { [weak self] notification in
-                
-                // we only check if a folder is selected for the Folders Widget
-                guard WidgetManager.usingFoldersWidget == true,
-                      let _ = WidgetManager.selectedFolder else {
-                    return
-                }
-                
-                guard let fIDString = WidgetManager.selectedFolder?.identifier as NSString? else {
-                    return
-                }
-                
-                let folderID = UInt(fIDString.integerValue)
-                
-                guard let sself = self,
-                      let notifications = notification.userInfo?[notificationsKey] as? [Notification],
-                      let ext = DBManager.shared.uiConnection.ext(dbFilteredViewName) as? YapDatabaseFilteredViewConnection,
-                      ext.hasChanges(for: notifications) else {
-                        return
-                      }
-                
-                guard DBManager.shared.countsConnection.hasMetadataChange(forCollection: CollectionNames.articles.rawValue, in: notifications) == true else {
-                    return
-                }
-                
-                guard let set = notifications[0].userInfo!["metadataChanges"] as? YapSet else {
-                    return
-                }
-                
-                var folderChanged: Bool = false
-                
-                DBManager.shared.countsConnection.read { t in
-                    
-                    set.enumerateObjects { i, stop in
-                        
-                        if let ck = i as? YapCollectionKey,
-                           ck.collection == CollectionNames.articles.rawValue {
-                            
-                            // check if this key is in our folder
-                            guard let metadata = t.metadata(forKey: ck.key, inCollection: ck.collection) as? ArticleMeta,
-                                  let feed = DBManager.shared.feed(for: metadata.feedID),
-                                  feed.folderID == folderID else {
-                                
-                                return
-                                
-                            }
-                            
-                            folderChanged = true
-                            stop.pointee = true
-                            
-                        }
-                        
-                    }
-                    
-                }
-                
-                if (folderChanged) {
-                    CoalescingQueue.standard.add(sself, #selector(SidebarVC.updateSharedFoldersData))
-                }
-                
-//                print(notifications)
                 
             }
             .store(in: &cancellables)
@@ -1370,6 +1306,8 @@ enum SidebarItem: Hashable, Identifiable {
                     
                 }
                 
+                CoalescingQueue.standard.add(sself.coordinator!, #selector(Coordinator.updateSharedFoldersArticles))
+                
                 if DBManager.shared.user != nil {
                     DBManager.shared.bookmarksCoordinator = BookmarksCoordinator(user: DBManager.shared.user!)
                     DBManager.shared.bookmarksCoordinator!.start()
@@ -1423,217 +1361,7 @@ enum SidebarItem: Hashable, Identifiable {
         syncCoordinator.setupSync()
         
     }
-    
-    // MARK: - Widgets
-    @objc func updateSharedUnreadsData() {
-        
-        guard (
-                WidgetManager.usingUnreadsWidget == true
-                    || WidgetManager.usingBloccsWidget == true
-                    || WidgetManager.usingFoldersWidget == true) else {
-            return
-        }
             
-        DBManager.shared.uiConnection.asyncRead { [weak self] (t) in
-            
-            guard let sself = self else { return }
-            
-            guard let txn = t.ext(DBManagerViews.unreadsView.rawValue) as? YapDatabaseFilteredViewTransaction else {
-                sself.requiresUpdatingUnreadsSharedData = false
-                return
-            }
-            
-            var items: [Article] = []
-            
-            txn.enumerateKeysAndObjects(inGroup: GroupNames.articles.rawValue, with: [], range: NSMakeRange(0, 20)) { (_, _) -> Bool in
-                return true
-            } using: { (c, key, object, index, stop) in
-                
-                guard let item = object as? Article else {
-                    return
-                }
-                
-                items.append(item)
-                
-            }
-
-            DBManager.shared.writeQueue.async { [weak self] in
-                
-                var usableItems: [Article] = items
-                
-                self?.updateSharedBloccsData(items: usableItems, t: t)
-                
-                let upperBound = max(0, min(4, usableItems.count))
-                usableItems = Array(usableItems[0..<upperBound])
-                
-                let list = self?.widgetItemsToList(usableItems, t: t)
-                
-                let encoder = JSONEncoder()
-                if let data = try? encoder.encode(list) {
-                    
-                    sself.coordinator?.writeTo(sharedFile: "articles.json", data: data)
-                    WidgetManager.reloadAllTimelines()
-                    
-                }
-                
-                sself.requiresUpdatingUnreadsSharedData = false
-                
-            }
-            
-        }
-        
-    }
-    
-    func updateSharedBloccsData (items: [Article], t: YapDatabaseReadTransaction) {
-        
-        guard WidgetManager.usingBloccsWidget == true else {
-            return
-        }
-        
-        var usableItems: [Article] = items
-        
-        let coverItems = items.filter { $0.coverImage != nil }
-        let max: Int = 6
-        let total = coverItems.count
-        
-        let upperLimit = min(max, total)
-        
-        usableItems = Array(coverItems[0..<upperLimit])
-        
-        let list = widgetItemsToList(usableItems, t: t)
-        
-        let encoder = JSONEncoder()
-        if let data = try? encoder.encode(list) {
-            
-            coordinator?.writeTo(sharedFile: "bloccs.json", data: data)
-            
-        }
-        
-    }
-    
-    func updateSharedFoldersData () {
-        
-        guard WidgetManager.usingFoldersWidget == true,
-              WidgetManager.selectedFolder != nil else {
-            return
-        }
-        
-        guard let fIDString = WidgetManager.selectedFolder?.identifier as NSString? else {
-            return
-        }
-        
-        let folderID = UInt(fIDString.integerValue)
-        
-        DBManager.shared.countsConnection.asyncRead { [weak self] t in
-            
-            guard let sself = self else { return }
-            
-            // get all items from the specific folder
-            guard let txn = t.ext(DBManagerViews.unreadsView.rawValue) as? YapDatabaseFilteredViewTransaction else {
-                return
-            }
-            
-            var hasOneCover: Bool = false
-            var items: [Article] = []
-            
-            let end = txn.numberOfItems(inGroup: GroupNames.articles.rawValue)
-            
-            txn.enumerateKeysAndObjects(inGroup: GroupNames.articles.rawValue, with: [], range: NSMakeRange(0, Int(end))) { (_, _) -> Bool in
-                return true
-            } using: { (c, key, object, index, stop) in
-                
-                guard let item = object as? Article else {
-                    return
-                }
-                
-                guard let feed = DBManager.shared.feed(for: item.feedID),
-                      feed.folderID != nil else {
-                    return
-                }
-                
-//                print(folderID, feed.folderID ?? 0)
-                
-                if (feed.folderID! == folderID) {
-                    
-                    // covers are also important here.
-                    if (hasOneCover == false && item.coverImage != nil) {
-                        hasOneCover = true
-                        items.append(item)
-                    }
-                    else if (hasOneCover == true) {
-                        items.append(item)
-                    }
-                    
-                    if (items.count == 6) {
-                        stop.pointee = true
-                    }
-                    
-                }
-                
-            }
-            
-            let list = sself.widgetItemsToList(items, t: t)
-            
-            let encoder = JSONEncoder()
-            if let data = try? encoder.encode(list) {
-                
-                sself.coordinator?.writeTo(sharedFile: "foldersW.json", data: data)
-                
-                print("Updated folder articles data")
-                
-                WidgetManager.reloadTimeline(name: "Folders Widget")
-                
-            }
-            
-        }
-        
-    }
-    
-    func widgetItemsToList(_ usableItems: [Article], t: YapDatabaseReadTransaction) -> [WidgetArticle] {
-        
-        // Actually stores WidgetArticle before writing to disk.
-        var widgetList: [WidgetArticle] = []
-        
-        if usableItems.count > 0 {
-            
-            let list: [Article] = usableItems
-            
-            widgetList = list.map { WidgetArticle.init(copyFrom: $0) }
-            
-            // get the feeds for these articles
-            for article in widgetList {
-                
-                if let feed = DBManager.shared.feed(for: article.feedID) {
-                    article.blog = feed.displayTitle
-                    article.favicon = feed.faviconProxyURI(size: 32)
-                }
-                
-                if article.title == nil || (article.title != nil && article.title!.isEmpty) {
-                    // micro.blog post.
-                    
-                    if article.summary == nil || article.summary?.isEmpty == true {
-                        
-                        if let content = t.object(forKey: article.identifier, inCollection: CollectionNames.articlesContent.rawValue) as? [Content] {
-                            
-                            article.content = content
-                            article.summary = article.textFromContent
-                            
-                            article.content = []
-                            
-                        }
-                        
-                    }
-                    
-                }
-                
-            }
-            
-        }
-        
-        return widgetList
-        
-    }
-    
     // Mark: - Mac
     #if targetEnvironment(macCatalyst)
     
@@ -1855,7 +1583,7 @@ extension SidebarVC {
                 sself.coordinator?.totalUnread = 0
                 sself.coordinator?.totalToday = 0
                 
-                sself.coalescingQueue.add(sself, #selector(SidebarVC.updateSharedUnreadsData))
+                sself.coalescingQueue.add(sself.coordinator!, #selector(Coordinator.updateSharedUnreadsData))
                 
                 for folder in folders {
                     folder.updatingCounters = false

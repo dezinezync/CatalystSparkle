@@ -21,8 +21,10 @@ import Intents
         
         didSet {
             
-            if let _ = selectedFolder {
-                MyAppDelegate.coordinator.updateSharedFoldersData()
+            MyAppDelegate.coordinator.updateSharedFoldersData()
+            
+            if selectedFolder != oldValue, let _ = selectedFolder {
+                MyAppDelegate.coordinator.updateSharedFoldersArticles()
             }
             
         }

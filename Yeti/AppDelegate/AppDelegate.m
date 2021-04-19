@@ -91,6 +91,7 @@ AppDelegate *MyAppDelegate = nil;
         }
         
         self.coordinator = [Coordinator new];
+        
 //#ifdef DEBUG
 //        [self.coordinator resetAccountWithCompletion:nil];
 //#endif

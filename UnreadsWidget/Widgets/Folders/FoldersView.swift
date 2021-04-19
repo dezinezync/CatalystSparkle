@@ -39,15 +39,24 @@ struct FoldersView: View {
                     BloccView(entry: entry)
                 }
                 
-                ZStack {
-                    LazyVStack(alignment: .leading, spacing: 8, pinnedViews: [], content: {
-                        ForEach((usedCover ? 1 : 0)...[entries.entries.count - (usedCover ? 1 : 0), 3].min()!, id: \.self) { count in
-                            ArticleView(entry: entries.entries[count])
-                        }
-                    })
-                    .alignmentGuide(.top) { _ in 0 }
+                if entries.entries.count > 0 {
+                    
+                    ZStack {
+                        LazyVStack(alignment: .leading, spacing: 8, pinnedViews: [], content: {
+                            ForEach((usedCover ? 1 : 0)...[entries.entries.count - (usedCover ? 1 : 0), 2].min()!, id: \.self) { count in
+                                ArticleView(entry: entries.entries[count])
+                            }
+                        })
+                        .alignmentGuide(.top) { _ in 0 }
+                    }
+                    .padding()
+                    
                 }
-                .padding()
+                else {
+                    
+                    EmptyView(title: "No unreads in this folder")
+                    
+                }
                 
             }
         }

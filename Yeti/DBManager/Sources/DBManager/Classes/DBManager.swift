@@ -648,17 +648,21 @@ public let notificationsKey = "notifications"
                     
                         if folder.feedIDs.count > 0 {
                             
+                            var feeds: OrderedSet<Feed> = []
+                            
                             for id in folder.feedIDs {
                                 
                                 if let feed = self?.feedForID(id) {
                                     
-                                    folder.feeds.append(feed)
-                                    
                                     feed.folderID = folder.folderID
+                                    
+                                    feeds.append(feed)
                                     
                                 }
                                 
                             }
+                            
+                            folder.feeds = feeds
                             
                         }
                         

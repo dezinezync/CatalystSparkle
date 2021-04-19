@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct WidgetFolder: Codable {
+public struct WidgetFolder: Codable, Equatable {
     
     public var identifier: String
     public var displayString: String
@@ -15,6 +15,10 @@ public struct WidgetFolder: Codable {
     public init(title: String, folderID: UInt) {
         self.displayString = title
         self.identifier = "\(folderID)"
+    }
+    
+    static public func == (lhs: WidgetFolder, rhs: WidgetFolder) -> Bool {
+        return lhs.identifier == rhs.identifier
     }
     
 }

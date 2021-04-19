@@ -1,6 +1,16 @@
 # v2.3.0
 
-### Build 212
+### Build 217
+
+- Fixed an issue with the widgets not updating correctly. 
+
+- Fixed an issue with the Folders widget not updating currently when the app is resumed from the background. 
+
+- Fixed an issue with the Folders widget crashing when no articles were present. 
+
+- Improved layout for Folders widget. 
+
+### Build 216
 
 - Added two new widgets: Bloccs & Folders. 
 
