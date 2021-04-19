@@ -42,7 +42,7 @@ struct CountersProvider: TimelineProvider {
     }
     
     func placeholder(in context: Context) -> CountersEntry {
-        CountersEntry(date: Date(), unread: 0, today: 0, bookmarks: 0)
+        CountersEntry(date: Date(), unread: 25, today: 12, bookmarks: 8)
     }
 
     func getSnapshot(in context: Context, completion: @escaping (CountersEntry) -> ()) {
@@ -173,11 +173,11 @@ struct CountersWidget: Widget {
 struct CountersWidget_Previews: PreviewProvider {
     static var previews: some View {
         
-        CountersWidgetEntryView(entry: CountersEntry(date: Date(), unread: 10, today: 5, bookmarks: 5))
+        CountersWidgetEntryView(entry: CountersEntry(date: Date(), unread: 25, today: 12, bookmarks: 8))
             .previewContext(WidgetPreviewContext(family: .systemSmall))
             .environment(\.colorScheme, .light)
         
-        CountersWidgetEntryView(entry: CountersEntry(date: Date(), unread: 10, today: 5, bookmarks: 5))
+        CountersWidgetEntryView(entry: CountersEntry(date: Date(), unread: 25, today: 12, bookmarks: 8))
             .previewContext(WidgetPreviewContext(family: .systemSmall))
             .environment(\.colorScheme, .dark)
         

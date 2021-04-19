@@ -124,7 +124,7 @@ struct FoldersProvider: IntentTimelineProvider {
     
     func placeholder(in context: Context) -> UnreadEntries {
         
-        if let jsonData = loadData(name: "foldersW.json", configuration: FoldersIntent()) {
+        if let jsonData = loadSampleData(name: "foldersW.json", configuration: FoldersIntent()) {
             
             return jsonData;
             

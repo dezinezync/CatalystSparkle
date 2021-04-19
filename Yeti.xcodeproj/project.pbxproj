@@ -50,6 +50,10 @@
 		F018A2CF205D0F0B001E682B /* SettingsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F018A2CD205D0F0B001E682B /* SettingsVC.m */; };
 		F018A2D0205D0F0B001E682B /* SettingsVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F018A2CE205D0F0B001E682B /* SettingsVC.xib */; };
 		F01A34BC219C556C00D020F3 /* TwoFingerPanGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = F01A34BB219C556C00D020F3 /* TwoFingerPanGestureRecognizer.m */; };
+		F01CBEFB262D43300019E7E8 /* foldersW.json in Resources */ = {isa = PBXBuildFile; fileRef = F01CBEF8262D43300019E7E8 /* foldersW.json */; };
+		F01CBEFC262D43300019E7E8 /* bloccs.json in Resources */ = {isa = PBXBuildFile; fileRef = F01CBEF9262D43300019E7E8 /* bloccs.json */; };
+		F01CBEFD262D43300019E7E8 /* articles.json in Resources */ = {isa = PBXBuildFile; fileRef = F01CBEFA262D43300019E7E8 /* articles.json */; };
+		F01CBEFF262D435F0019E7E8 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = F01CBEFE262D435F0019E7E8 /* Utilities.swift */; };
 		F01D71521FBC1A2500DF84B9 /* NSAttributedString+Trimming.m in Sources */ = {isa = PBXBuildFile; fileRef = F01D71511FBC1A2500DF84B9 /* NSAttributedString+Trimming.m */; };
 		F01E6E1024AC6C2500D1BD6E /* red~ipad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F01E6DF324AC6C2500D1BD6E /* red~ipad@2x.png */; };
 		F01E6E1124AC6C2500D1BD6E /* red@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = F01E6DF424AC6C2500D1BD6E /* red@3x.png */; };
@@ -663,6 +667,10 @@
 		F018A2CE205D0F0B001E682B /* SettingsVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SettingsVC.xib; sourceTree = "<group>"; };
 		F01A34BA219C556C00D020F3 /* TwoFingerPanGestureRecognizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TwoFingerPanGestureRecognizer.h; sourceTree = "<group>"; };
 		F01A34BB219C556C00D020F3 /* TwoFingerPanGestureRecognizer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TwoFingerPanGestureRecognizer.m; sourceTree = "<group>"; };
+		F01CBEF8262D43300019E7E8 /* foldersW.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = foldersW.json; sourceTree = "<group>"; };
+		F01CBEF9262D43300019E7E8 /* bloccs.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = bloccs.json; sourceTree = "<group>"; };
+		F01CBEFA262D43300019E7E8 /* articles.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = articles.json; sourceTree = "<group>"; };
+		F01CBEFE262D435F0019E7E8 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		F01D71501FBC1A2500DF84B9 /* NSAttributedString+Trimming.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSAttributedString+Trimming.h"; sourceTree = "<group>"; };
 		F01D71511FBC1A2500DF84B9 /* NSAttributedString+Trimming.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSAttributedString+Trimming.m"; sourceTree = "<group>"; };
 		F01E6DF324AC6C2500D1BD6E /* red~ipad@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "red~ipad@2x.png"; sourceTree = "<group>"; };
@@ -1352,6 +1360,16 @@
 				F0650656236036A90015F2C4 /* PushVC.m */,
 			);
 			path = Settings;
+			sourceTree = "<group>";
+		};
+		F01CBEF7262D43300019E7E8 /* SampleData */ = {
+			isa = PBXGroup;
+			children = (
+				F01CBEF8262D43300019E7E8 /* foldersW.json */,
+				F01CBEF9262D43300019E7E8 /* bloccs.json */,
+				F01CBEFA262D43300019E7E8 /* articles.json */,
+			);
+			path = SampleData;
 			sourceTree = "<group>";
 		};
 		F01D714C1FBBF51B00DF84B9 /* Article */ = {
@@ -2201,6 +2219,7 @@
 				F08809F4262A9B9F002181EC /* BloccsProvider.swift */,
 				F08809FF262BD5E0002181EC /* FoldersIntent.intentdefinition */,
 				F0880A03262BD660002181EC /* FoldersProvider.swift */,
+				F01CBEFE262D435F0019E7E8 /* Utilities.swift */,
 			);
 			path = Intents;
 			sourceTree = "<group>";
@@ -2284,6 +2303,7 @@
 		F0D98F5324EE4C8500B1F9F0 /* UnreadsWidget */ = {
 			isa = PBXGroup;
 			children = (
+				F01CBEF7262D43300019E7E8 /* SampleData */,
 				F0BB0084262A76A000A0181A /* Models */,
 				F0BB0081262A766A00A0181A /* Categories */,
 				F0BB0082262A767600A0181A /* Widgets */,
@@ -2920,7 +2940,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F01CBEFD262D43300019E7E8 /* articles.json in Resources */,
 				F0D98F5824EE4C8500B1F9F0 /* Assets.xcassets in Resources */,
+				F01CBEFC262D43300019E7E8 /* bloccs.json in Resources */,
+				F01CBEFB262D43300019E7E8 /* foldersW.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3239,6 +3262,7 @@
 				F0BB008F262A786900A0181A /* ArticleView.swift in Sources */,
 				F0BB0087262A77B400A0181A /* UnreadEntries.swift in Sources */,
 				F0BB0095262A79D000A0181A /* BloccsWidget.swift in Sources */,
+				F01CBEFF262D435F0019E7E8 /* Utilities.swift in Sources */,
 				F0BB3B56262D2DF1000F7209 /* FolderItemView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

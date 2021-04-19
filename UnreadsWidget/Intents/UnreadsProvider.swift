@@ -11,46 +11,6 @@ import SDWebImage
 import WidgetKit
 import Models
 
-public typealias LoadImagesCompletionBlock = () -> Void
-
-public func loadImagesDataFromPackage (package: UnreadEntries, completion: LoadImagesCompletionBlock? = nil) {
-    
-    let imageRequestGroup = DispatchGroup()
-    
-    for entry in package.entries {
-        
-        if (entry.showFavicon == true && entry.favicon != nil && entry.favicon?.absoluteString != "") {
-            
-            imageRequestGroup.enter()
-            
-            SDWebImageManager.shared.loadImage(with: entry.favicon, options: .highPriority, progress: nil) { (image: UIImage?, _: Data?, error: Error?, _: SDImageCacheType, _: Bool, _: URL?) in
-                
-                imageRequestGroup.leave()
-                
-            }
-            
-        }
-        
-        if (entry.showCover == true && entry.coverImage != nil) {
-            
-            imageRequestGroup.enter()
-            
-            SDWebImageManager.shared.loadImage(with: entry.coverImage, options: .highPriority, progress: nil) { (image: UIImage?, _: Data?, error: Error?, _: SDImageCacheType, _: Bool, _: URL?) in
-                
-                imageRequestGroup.leave()
-                
-            }
-            
-        }
-        
-    }
-    
-    imageRequestGroup.notify(queue: .main) {
-        completion!()
-    }
-    
-}
-
 struct UnreadsProvider: IntentTimelineProvider {
    
     func loadData (name: String, configuration: UnreadsIntent) -> UnreadEntries? {
@@ -164,8 +124,8 @@ struct UnreadsProvider: IntentTimelineProvider {
     
     func placeholder(in context: Context) -> UnreadEntries {
         
-        if let jsonData = loadData(name: "articles.json", configuration: UnreadsIntent()) {
-            
+        if let jsonData = loadSampleData(name: "articles.json", configuration: UnreadsIntent()) {
+        
             return jsonData;
             
         }
