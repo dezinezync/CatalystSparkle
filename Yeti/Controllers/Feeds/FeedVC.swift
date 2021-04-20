@@ -96,8 +96,11 @@ enum MarkDirection: Int {
     
     var state: FeedVCState = .empty {
         didSet {
-            runOnMainQueueWithoutDeadlocking { [weak self] in
-                self?.setupState()
+            if state != oldValue {
+                runOnMainQueueWithoutDeadlocking { [weak self] in
+                    guard let self = self else { return }
+                    CoalescingQueue.standard.add(self, #selector(FeedVC.setupState))
+                }
             }
         }
     }
