@@ -2010,6 +2010,43 @@ typedef NS_ENUM(NSInteger, ArticleVCState) {
         
     }
     
+    // Substack routes images through its own proxy, possibly for tracking,
+    // but from the looks of it, for resizing, progressive JPEG, etc.
+    // Sample: https://cdn.substack.com/image/fetch/h_600,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fbucketeer-e05bbc84-baa3-437e-9518-adb32be77984.s3.amazonaws.com%2Fpublic%2Fimages%2F22c3bb63-1378-40a7-a57c-c0d891513e09_724x483.png
+    if (content.url != nil && [content.url.absoluteString containsString:@"cdn.substack.com"]) {
+        
+        NSString *path = content.url.absoluteString;
+        
+        NSString *actual = nil;
+        
+        NSScanner *scanner = [NSScanner scannerWithString:path];
+        
+        // scan up to the domain so we skip the first http
+        [scanner scanUpToString:@"substack.com" intoString:nil];
+        [scanner scanUpToString:@"http" intoString:nil];
+        
+        if (scanner.isAtEnd == NO) {
+            
+            NSRange range = NSMakeRange(scanner.scanLocation, scanner.string.length - scanner.scanLocation);
+            
+            actual = [scanner.string substringWithRange:range];
+            
+        }
+        
+        if (actual != nil) {
+            
+            actual = [actual stringByRemovingPercentEncoding];
+            
+            // sometimes they are double encoded like our example.
+            if ([actual containsString:@"%2F"]) {
+                actual = [actual stringByRemovingPercentEncoding];
+            }
+            
+            content.url = [NSURL URLWithString:actual];
+        }
+        
+    }
+    
     if ([_last isMemberOfClass:Heading.class] || !_last || [_last isMemberOfClass:Paragraph.class])
         [self addLinebreak];
     

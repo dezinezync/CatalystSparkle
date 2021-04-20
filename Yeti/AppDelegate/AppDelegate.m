@@ -142,7 +142,7 @@ AppDelegate *MyAppDelegate = nil;
 ////                [self openFeed:@(11139) article:@(11288965)]; //webp image
 ////                [self showArticle:@(1831527)]; // crashing article
 ////                [self showArticle:@(22316737)]; // breaklines article (patched on 15/02/2021 10:29AM)
-////                [self showArticle:@(22589308)];
+//                [self openArticle:@"25497727"];
 ////                [self openFeed:@(11750) article:@(11311036)]; // youtube video
 ////                [self openFeed:@(18) article:@(17754118)]; // Elytra
 ////                [self openFeed:@(1) article:nil];

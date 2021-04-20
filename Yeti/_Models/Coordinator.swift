@@ -2053,19 +2053,25 @@ extension Coordinator {
     
     public func updateSharedFoldersData() {
         
-        let folders = DBManager.shared.folders
-        
-        guard folders.count > 0 else {
-            return
-        }
-        
-        let structs: [WidgetFolder] = folders.map { WidgetFolder(title: $0.title, folderID: $0.folderID) }
-        
-        if let data = try? JSONEncoder().encode(structs) {
+        DispatchQueue.global().async { [weak self] in
             
-            writeTo(sharedFile: "folders.json", data: data)
+            guard let self = self else { return }
             
-            WidgetManager.reloadTimeline(name: "Folders Widget")
+            let folders = DBManager.shared.folders
+            
+            guard folders.count > 0 else {
+                return
+            }
+            
+            let structs: [WidgetFolder] = folders.map { WidgetFolder(title: $0.title, folderID: $0.folderID) }
+            
+            if let data = try? JSONEncoder().encode(structs) {
+                
+                self.writeTo(sharedFile: "folders.json", data: data)
+                
+                WidgetManager.reloadTimeline(name: "Folders Widget")
+                
+            }
             
         }
         

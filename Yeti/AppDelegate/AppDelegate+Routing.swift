@@ -396,7 +396,7 @@ extension AppDelegate {
         
     }
     
-    func openArticle(_ articleID: String) {
+    @objc func openArticle(_ articleID: String) {
         
         if coordinator.articleVC != nil {
             

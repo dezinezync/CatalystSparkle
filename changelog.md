@@ -1,5 +1,9 @@
 # v2.3.0
 
+### Build 219
+
+- Fixed loading of images from Substack posts ( encased by cdn.substack.com in their newsletter posts). 
+
 ### Build 218
 
 - Minor QoL improvements. 
