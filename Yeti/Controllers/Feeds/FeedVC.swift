@@ -72,6 +72,9 @@ enum MarkDirection: Int {
     @objc var feed: Feed? = nil
     var cancellables: [AnyCancellable] = []
     
+    // used for scroll loading
+    var allLoaded: Bool = false
+    
     #if targetEnvironment(macCatalyst)
     var totalUnread: UInt = 0
     #endif
@@ -946,7 +949,13 @@ extension FeedVC: ScrollLoading {
     }
     
     public func canLoadNext() -> Bool {
+        
+        if allLoaded == true {
+            return false
+        }
+        
         return total == -1 || articles.count < total
+        
     }
     
     public func loadNextPage() {
@@ -1049,14 +1058,15 @@ extension FeedVC: ScrollLoading {
             
             if context < 20 {
                 // we expected 20. so check.
+                allLoaded = true
                 
-                if sself.articles.count != sself.total {
-                    
-                    // some articles could not be fetched.
-                    // so lets correct our total
-                    sself.total -= (20 - Int(context))
-                    
-                }
+//                if sself.articles.count != sself.total {
+//
+//                    // some articles could not be fetched.
+//                    // so lets correct our total
+//                    sself.total -= (20 - Int(context))
+//
+//                }
                 
             }
             

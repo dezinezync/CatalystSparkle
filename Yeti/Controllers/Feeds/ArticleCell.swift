@@ -546,7 +546,7 @@ extension ArticleCell {
             url = a
         }
         
-        DispatchQueue.global(qos: .userInteractive).async { [weak self, weak attachment] in
+        DispatchQueue.global().async { [weak self, weak attachment] in
             
             self?.faviconTask = SDWebImageManager.shared.loadImage(with: url, options: [], progress: nil, completed: { (image, data, error, cacheType, finished, imageURL) in
                 
