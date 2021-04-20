@@ -74,6 +74,8 @@ extension Defaults.Keys {
     
     static let previewLines = Key<Int>("com.dezinezync.elytra.summaryPreviewLines", default: 0)
     
+    static let hideBookmarks = Key<Bool>("com.dezinezync.elytra.hideBookmarksTab", default: false)
+    
     // Mark: - macOS
     static let refreshFeedsInterval = Key<String>("macKeyRefreshFeeds", default: RefreshIntervalKeys.manually.rawValue)
     

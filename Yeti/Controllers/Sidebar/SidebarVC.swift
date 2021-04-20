@@ -524,13 +524,15 @@ enum SidebarItem: Hashable, Identifiable {
             }
             .store(in: &cancellables)
         
-        SharedPrefs.publisher(for: \.hideBookmarks)
+        Defaults.publisher(.hideBookmarks)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] (_) in
             
-            self?.setupData()
+                guard let sself = self else { return }
+                
+                sself.coalescingQueue.add(sself, #selector(SidebarVC.setupData))
             
-        }.store(in: &cancellables)
+            }.store(in: &cancellables)
         
         NotificationCenter.default.publisher(for: NSNotification.Name.YTSubscriptionHasExpiredOrIsInvalid)
             .receive(on: DispatchQueue.main)
