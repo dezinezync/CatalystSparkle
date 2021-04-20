@@ -4,6 +4,8 @@
 
 - Minor QoL improvements. 
 
+- Fixed text alignment in the Push Notifications interface under Settings. 
+
 ### Build 217
 
 - Fixed an issue with the widgets not updating correctly. 

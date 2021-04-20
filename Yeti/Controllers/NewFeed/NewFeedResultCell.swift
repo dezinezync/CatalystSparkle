@@ -52,6 +52,17 @@ import Models
             frame.size = CGSize(width: 32, height: 32)
             frame.origin.y = (contentView.frame.height - 32)/2
             imageView?.frame = frame
+            
+            if var tframe = textLabel?.frame {
+                tframe.origin.x = frame.maxX + 12
+                textLabel?.frame = tframe
+            }
+            
+            if var tframe = detailTextLabel?.frame {
+                tframe.origin.x = frame.maxX + 12
+                detailTextLabel?.frame = tframe
+            }
+            
         }
         
     }
