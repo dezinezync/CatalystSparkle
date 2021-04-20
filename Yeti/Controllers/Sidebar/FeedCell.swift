@@ -176,6 +176,11 @@ class FeedCell: UICollectionViewListCell {
             return
         }
         
+        let unread: UInt = feed?.unread ?? 0
+        content.secondaryText = unread > 0 ? "\(unread)" : ""
+        
+        content.image = feed?.faviconImage ?? UIImage(systemName: "square.dashed")
+        
         var background = UIBackgroundConfiguration.listSidebarCell().updated(for: state)
         
         if state.isSelected == true {
@@ -196,15 +201,9 @@ class FeedCell: UICollectionViewListCell {
     
     func updateUnreadCount (_ unread: UInt) {
         
-        runOnMainQueueWithoutDeadlocking { [weak self] in
+        DispatchQueue.main.async { [weak self] in
             
-            guard var content = self?.contentConfiguration as? UIListContentConfiguration else {
-                return
-            }
-            
-            content.secondaryText = unread > 0 ? "\(unread)" : ""
-            
-            self?.contentConfiguration = content
+            self?.setNeedsUpdateConfiguration()
             
         }
         
@@ -214,17 +213,7 @@ class FeedCell: UICollectionViewListCell {
         
         DispatchQueue.main.async { [weak self] in
             
-            if self?.feed.faviconImage == nil {
-                
-                guard var content = self?.contentConfiguration as? UIListContentConfiguration else {
-                    return
-                }
-                
-                content.image = UIImage(systemName: "square.dashed")
-                
-                self?.contentConfiguration = content
-                
-            }
+            self?.setNeedsUpdateConfiguration()
             
         }
         
@@ -266,6 +255,10 @@ class FeedCell: UICollectionViewListCell {
             }
             
             sfeed.faviconImage = image
+            
+            DispatchQueue.main.async {
+                sself.setNeedsUpdateConfiguration()
+            }
             
         }
         

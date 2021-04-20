@@ -16,6 +16,7 @@ class CustomFeedCell: UICollectionViewListCell {
     weak var feed: CustomFeed!
     weak var coordinator: Coordinator?
     var cancellables: [AnyCancellable] = []
+    var unread: UInt = 0
     
     func configure(item: SidebarItem, indexPath: IndexPath) {
         
@@ -106,6 +107,8 @@ class CustomFeedCell: UICollectionViewListCell {
             return
         }
         
+        content.secondaryText = unread > 0 ? "\(unread)" : ""
+        
         var background = UIBackgroundConfiguration.listSidebarCell().updated(for: state)
         
         if state.isSelected == true {
@@ -126,15 +129,13 @@ class CustomFeedCell: UICollectionViewListCell {
     
     func updateUnreadCount (_ unread: UInt) {
         
-        runOnMainQueueWithoutDeadlocking {  [weak self] in
+        DispatchQueue.main.async { [weak self] in
             
-            guard var content = self?.contentConfiguration as? UIListContentConfiguration else {
-                return
-            }
+            guard let self = self else { return }
             
-            content.secondaryText = unread > 0 ? "\(unread)" : ""
+            self.unread = unread
             
-            self?.contentConfiguration = content
+            self.setNeedsUpdateConfiguration()
             
         }
         

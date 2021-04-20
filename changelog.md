@@ -1,5 +1,9 @@
 # v2.3.0
 
+### Build 218
+
+- Minor QoL improvements. 
+
 ### Build 217
 
 - Fixed an issue with the widgets not updating correctly. 

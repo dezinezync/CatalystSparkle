@@ -48,16 +48,18 @@ class FolderCell: UICollectionViewListCell {
         
         if SharedPrefs.showUnreadCounts == true {
             
+            content.secondaryText = "\(folder.unread)"
+            
             folder.$unread
                 .receive(on: DispatchQueue.main)
                 .sink { [weak self] (unread) in
-                    
+
                     guard let sself = self else {
                         return
                     }
-                
+
                     CoalescingQueue.standard.add(sself, #selector(sself.updateUnreadCount))
-                
+
             }
             .store(in: &cancellables)
             
@@ -108,10 +110,16 @@ class FolderCell: UICollectionViewListCell {
     
     override func updateConfiguration(using state: UICellConfigurationState) {
         
-        guard var updatedContent = self.contentConfiguration as? UIListContentConfiguration,
+        guard var content = self.contentConfiguration as? UIListContentConfiguration,
               var background = self.backgroundConfiguration else {
             return
         }
+        
+        content.text = folder!.title
+        
+        let unread = folder?.unread ?? 0
+        
+        content.secondaryText = unread > 0 ? "\(unread)" : ""
         
         if traitCollection.userInterfaceIdiom == .phone {
             
@@ -121,12 +129,12 @@ class FolderCell: UICollectionViewListCell {
         
         if state.isExpanded == true {
             
-            updatedContent.image = UIImage(systemName: "folder")
+            content.image = UIImage(systemName: "folder")
             
         }
         else {
             
-            updatedContent.image = UIImage(systemName: "folder.fill")
+            content.image = UIImage(systemName: "folder.fill")
             
         }
         
@@ -140,23 +148,17 @@ class FolderCell: UICollectionViewListCell {
         }
         
         backgroundConfiguration = background
-        contentConfiguration = updatedContent
+        contentConfiguration = content
         
     }
     
     @objc func updateUnreadCount () {
         
-        runOnMainQueueWithoutDeadlocking { [weak self] in
+        DispatchQueue.main.async { [weak self] in
             
-            guard var content = self?.contentConfiguration as? UIListContentConfiguration else {
-                return
-            }
+            guard let self = self else { return }
             
-            let unread = self?.folder?.unread ?? 0
-            
-            content.secondaryText = unread > 0 ? "\(unread)" : ""
-            
-            self?.contentConfiguration = content
+            CoalescingQueue.standard.add(self, #selector(self.setNeedsUpdateConfiguration))
             
         }
         
@@ -164,14 +166,12 @@ class FolderCell: UICollectionViewListCell {
     
     @objc func updateTitle() {
         
-        guard var content = contentConfiguration as? UIListContentConfiguration else {
-            return
-        }
-        
-        content.text = folder!.title
-        
-        runOnMainQueueWithoutDeadlocking { [weak self] in
-            self?.contentConfiguration = content
+        DispatchQueue.main.async { [weak self] in
+            
+            guard let self = self else { return }
+            
+            CoalescingQueue.standard.add(self, #selector(self.setNeedsUpdateConfiguration))
+            
         }
         
     }
