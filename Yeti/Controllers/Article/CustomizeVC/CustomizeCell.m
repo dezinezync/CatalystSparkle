@@ -43,7 +43,7 @@ NSString * _Nonnull const kCustomizeCell = @"com.dezinezync.elytra.cell.customiz
     
     for (UILabel *label in @[self.valueLabel, self.valueTitleLabel]) {
         label.text = nil;
-        label.hidden = nil;
+        label.hidden = NO;
     }
     
     self.accessoryView = nil;

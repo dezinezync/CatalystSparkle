@@ -127,13 +127,13 @@
 
         UIAction *newFeedAction = [UIAction actionWithTitle:@"New Feed" image:[UIImage systemImageNamed:@"plus"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
 
-            [self.coordinator showNewFeedVC];
+            [coordinator showNewFeedVC];
 
         }];
 
         UIAction *newFolderAction = [UIAction actionWithTitle:@"New Folder" image:[UIImage systemImageNamed:@"folder.badge.plus"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
 
-            [self.coordinator showNewFolderVC];
+            [coordinator showNewFolderVC];
 
         }];
 

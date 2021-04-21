@@ -4,6 +4,8 @@
 
 - Fixed loading of images from Substack posts ( encased by cdn.substack.com in their newsletter posts). 
 
+- Fixed a sync bug that would cause syncing to get stuck a particular position. 
+
 ### Build 218
 
 - Minor QoL improvements. 

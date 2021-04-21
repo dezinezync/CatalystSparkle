@@ -208,7 +208,7 @@ private let SYNC_TOKEN_ID = "syncTokenID-2.3.0"
                     sself.addArticles(articles: articles)
                     
                     if articles.count > 0 && page == 1 {
-                        sself.totalProgress += Double(changeSet.pages)
+                        sself.totalProgress = Double(changeSet.pages)
                         sself.currentProgress += 1
                     }
                     else {
@@ -226,7 +226,7 @@ private let SYNC_TOKEN_ID = "syncTokenID-2.3.0"
                         sself.syncNow(with: token, tokenID: tokenID, page: (page + 1))
                         
                     }
-                    else if articles.count < 40 {
+                    else {
                         
                         // syncing completed
                         DispatchQueue.main.async {
