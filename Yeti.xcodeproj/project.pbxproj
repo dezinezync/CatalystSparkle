@@ -50,6 +50,7 @@
 		F018A2CF205D0F0B001E682B /* SettingsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F018A2CD205D0F0B001E682B /* SettingsVC.m */; };
 		F018A2D0205D0F0B001E682B /* SettingsVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F018A2CE205D0F0B001E682B /* SettingsVC.xib */; };
 		F01A34BC219C556C00D020F3 /* TwoFingerPanGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = F01A34BB219C556C00D020F3 /* TwoFingerPanGestureRecognizer.m */; };
+		F01A7F95262FFE1100A53EEB /* UIScrollView+Overscroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = F01A7F94262FFE1100A53EEB /* UIScrollView+Overscroll.swift */; };
 		F01CBEFB262D43300019E7E8 /* foldersW.json in Resources */ = {isa = PBXBuildFile; fileRef = F01CBEF8262D43300019E7E8 /* foldersW.json */; };
 		F01CBEFC262D43300019E7E8 /* bloccs.json in Resources */ = {isa = PBXBuildFile; fileRef = F01CBEF9262D43300019E7E8 /* bloccs.json */; };
 		F01CBEFD262D43300019E7E8 /* articles.json in Resources */ = {isa = PBXBuildFile; fileRef = F01CBEFA262D43300019E7E8 /* articles.json */; };
@@ -665,6 +666,7 @@
 		F018A2CE205D0F0B001E682B /* SettingsVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SettingsVC.xib; sourceTree = "<group>"; };
 		F01A34BA219C556C00D020F3 /* TwoFingerPanGestureRecognizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TwoFingerPanGestureRecognizer.h; sourceTree = "<group>"; };
 		F01A34BB219C556C00D020F3 /* TwoFingerPanGestureRecognizer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TwoFingerPanGestureRecognizer.m; sourceTree = "<group>"; };
+		F01A7F94262FFE1100A53EEB /* UIScrollView+Overscroll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Overscroll.swift"; sourceTree = "<group>"; };
 		F01CBEF8262D43300019E7E8 /* foldersW.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = foldersW.json; sourceTree = "<group>"; };
 		F01CBEF9262D43300019E7E8 /* bloccs.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = bloccs.json; sourceTree = "<group>"; };
 		F01CBEFA262D43300019E7E8 /* articles.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = articles.json; sourceTree = "<group>"; };
@@ -1798,6 +1800,7 @@
 				F0F13EB02609A10E007D1B3B /* Content+URL.swift */,
 				F0FEE3FD2615E6EB007AB52C /* UIViewController+Coordinator.h */,
 				F0FEE3FE2615E6EB007AB52C /* UIViewController+Coordinator.m */,
+				F01A7F94262FFE1100A53EEB /* UIScrollView+Overscroll.swift */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -2992,6 +2995,7 @@
 				F048E4A924EE84D1009A46F4 /* WidgetManager.swift in Sources */,
 				F00F648024EC1E9F00E5727C /* UIColor+HEX.m in Sources */,
 				F0F049FC2532F0D4001CF7E1 /* UnreadsIntent.intentdefinition in Sources */,
+				F01A7F95262FFE1100A53EEB /* UIScrollView+Overscroll.swift in Sources */,
 				F055AC1D1FD2AEF4004B9C29 /* ArticleVC+Toolbar.m in Sources */,
 				F00F646D24EC1DE700E5727C /* Blockquote.m in Sources */,
 				F008943F261ABDDF006060A0 /* FolderInfoVC.swift in Sources */,

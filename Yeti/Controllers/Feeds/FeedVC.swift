@@ -193,6 +193,9 @@ enum MarkDirection: Int {
         
         tableView.separatorStyle = .singleLine
         
+        tableView.estimatedRowHeight = 105
+        tableView.rowHeight = UITableView.automaticDimension
+        
         #if targetEnvironment(macCatalyst)
         tableView.separatorInsetReference = .fromCellEdges
         tableView.cellLayoutMarginsFollowReadableWidth = true
@@ -942,6 +945,18 @@ enum MarkDirection: Int {
         return items
         
     }
+    
+    // Necessary to work around a `UIScrollView` behavior difference on Mac. See `scrollViewDidScroll`
+    // and `preventOverscrollIfNeeded` for more context.
+    private lazy var isRunningOnMac: Bool = {
+        if #available(iOS 13.0, *) {
+            if ProcessInfo.processInfo.isMacCatalystApp {
+                return true
+            }
+        }
+
+        return false
+    }()
 
 }
 
@@ -1079,6 +1094,107 @@ extension FeedVC: ScrollLoading {
                 sself.setupData()
             }
 
+        }
+        
+    }
+    
+}
+
+// MARK: - Overscrolling Bug
+
+/**
+ * There is an overscrolling bug on macOS which causes the FeedVC to behave oddly.
+ * Luckily, this issue has been experienced by others and a fix (hack/workaround)
+ * is available: https://github.com/airbnb/HorizonCalendar/pull/91
+ *
+ * Source: https://github.com/airbnb/HorizonCalendar/pull/91/commits/2e9826cf5bd58d13d66c61855195beed9e7c6f19
+ */
+extension FeedVC {
+    
+    @objc public func dz_scrollViewDidScroll(_ scrollView: UIScrollView!) {
+        
+        print("isOverscrolling: \(isOverscrolling)")
+        
+        preventLargeOverscrollIfNeeded()
+        
+    }
+    
+    public var isOverscrolling: Bool {
+        
+        let scrollAxis: ScrollAxis = .vertical
+        
+        let offset = tableView.offset(for: scrollAxis)
+        
+        return offset < tableView.minimumOffset(for: scrollAxis) ||
+                offset > tableView.maximumOffset(for: scrollAxis)
+        
+    }
+    
+    // This hack is needed to prevent the scroll view from overscrolling far past the content. This
+     // occurs in 2 scenarios:
+     // - On macOS if you scroll quickly toward a boundary
+     // - On iOS if you scroll quickly toward a boundary and targetContentOffset is mutated
+     //
+     // https://openradar.appspot.com/radar?id=4966130615582720 demonstrates this issue on macOS.
+    private func preventLargeOverscrollIfNeeded() {
+        
+        guard isRunningOnMac == true else { return }
+        
+        let isUserInitiatedScrolling = tableView.isDragging && tableView.isTracking
+        
+        guard isUserInitiatedScrolling == true else { return }
+        
+        let scrollAxis: ScrollAxis = .vertical
+        
+        let offset = tableView.offset(for: scrollAxis)
+        
+        let boundsSize: CGFloat
+        switch scrollAxis {
+        case .vertical: boundsSize = tableView.bounds.height * 0.7
+        case .horizontal: boundsSize = tableView.bounds.width * 0.7
+        }
+        print(boundsSize)
+        let newOffset: CGPoint?
+        if offset < tableView.minimumOffset(for: scrollAxis) - boundsSize {
+            switch scrollAxis {
+            case .vertical:
+                newOffset = CGPoint(
+                    x: tableView.contentOffset.x,
+                    y: tableView.minimumOffset(for: scrollAxis))
+                
+            case .horizontal:
+                newOffset = CGPoint(
+                    x: tableView.minimumOffset(for: scrollAxis),
+                    y: tableView.contentOffset.y)
+            }
+        }
+        else if offset > tableView.maximumOffset(for: scrollAxis) + boundsSize {
+            switch scrollAxis {
+            case .vertical:
+                newOffset = CGPoint(
+                    x: tableView.contentOffset.x,
+                    y: tableView.maximumOffset(for: scrollAxis))
+                
+            case .horizontal:
+                newOffset = CGPoint(
+                    x: tableView.maximumOffset(for: scrollAxis),
+                    y: tableView.contentOffset.y)
+            }
+        } else {
+            newOffset = nil
+        }
+        
+        #if DEBUG
+        print("newoffset: \(newOffset)")
+        #endif
+        
+        if let newOffset = newOffset {
+            tableView.performWithoutNotifyingDelegate {
+                // Passing `false` for `animated` is necessary to stop the in-flight deceleration animation
+                UIView.animate(withDuration: 0.4, delay: 0, options: [.curveEaseOut], animations: {
+                    self.tableView.setContentOffset(newOffset, animated: false)
+                })
+            }
         }
         
     }

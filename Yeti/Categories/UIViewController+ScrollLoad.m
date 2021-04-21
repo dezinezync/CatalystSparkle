@@ -10,15 +10,19 @@
 
 @implementation UIViewController (ScrollLoad)
 
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView
-{
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     
     if (scrollView == nil) {
         return;
     }
     
-    if (![scrollView.delegate conformsToProtocol:NSProtocolFromString(@"ScrollLoading")])
+    if (![scrollView.delegate conformsToProtocol:NSProtocolFromString(@"ScrollLoading")] == YES) {
         return;
+    }
+    
+    if ([scrollView.delegate respondsToSelector:@selector(dz_scrollViewDidScroll:)] == YES) {
+        [scrollView.delegate performSelector:@selector(dz_scrollViewDidScroll:)];
+    }
     
     CGFloat scrollPositionY = (scrollView.contentOffset.y + scrollView.frame.size.height) + 300.f;
     
@@ -32,7 +36,7 @@
         
         if (delegate && [scrollView.delegate respondsToSelector:@selector(loadNextPage)]) {
             
-            if (![delegate isLoading] && [delegate canLoadNext]) {
+            if ([delegate isLoading] == NO && [delegate canLoadNext]) {
                 
                 NSLog(@"Loading next page for: %@", self);
                 

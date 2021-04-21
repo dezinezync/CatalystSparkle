@@ -118,6 +118,10 @@ class ArticleCell: UITableViewCell {
         titleLabel.textAlignment = .left
         authorLabel.textAlignment = .left
         
+        titleLabel.text = ""
+        titleLabel.attributedText = nil
+        authorLabel.text = ""
+        
     }
     
     override func tintColorDidChange() {
@@ -193,9 +197,7 @@ class ArticleCell: UITableViewCell {
             return
         }
         
-        guard let feed = DBManager.shared.feedForID(article.feedID) else {
-            return
-        }
+        let feed = DBManager.shared.feedForID(article.feedID)
         
         configureTitle(feed: feed)
         
@@ -264,7 +266,7 @@ class ArticleCell: UITableViewCell {
         
     }
     
-    func configureTitle(feed: Feed) {
+    func configureTitle(feed: Feed?) {
         
         guard let article = self.article else {
             return
@@ -302,30 +304,37 @@ class ArticleCell: UITableViewCell {
         
         let attrs = NSMutableAttributedString(string: " \(titleLabel.text ?? "")", attributes: attributes)
         
-        var attachment = NSTextAttachment()
+        if let feed = feed {
         
-        configureTitleFavicon(attachment: attachment, url: feed.faviconURI, feed: feed)
-        
-        // positive offsets push it up, negative push it down
-        // this is similar to NSRect
-        let fontSize: Double = Double(titleLabel.font.pointSize)
-        let baseLine: Double = 17 // compute our expected using this
-        let expected: Double = 7 // from the above, A:B :: C:D
-        var yOffset: Double = (baseLine / fontSize) * expected * -1
-        
-        yOffset += 6
-        
-        #if targetEnvironment(macCatalyst)
-        attachment.bounds = CGRect(x: 0, y: yOffset, width: 16, height: 16)
-        #else
-        attachment.bounds = CGRect(x: 0, y: yOffset, width: 24, height: 24)
-        #endif
-        
-        let attachmentString = NSMutableAttributedString(attachment: attachment)
-        
-        attachmentString.append(attrs)
-        
-        titleLabel.attributedText = attachmentString
+            var attachment = NSTextAttachment()
+            
+            configureTitleFavicon(attachment: attachment, url: feed.faviconURI, feed: feed)
+            
+            // positive offsets push it up, negative push it down
+            // this is similar to NSRect
+            let fontSize: Double = Double(titleLabel.font.pointSize)
+            let baseLine: Double = 17 // compute our expected using this
+            let expected: Double = 7 // from the above, A:B :: C:D
+            var yOffset: Double = (baseLine / fontSize) * expected * -1
+            
+            yOffset += 6
+            
+            #if targetEnvironment(macCatalyst)
+            attachment.bounds = CGRect(x: 0, y: yOffset, width: 16, height: 16)
+            #else
+            attachment.bounds = CGRect(x: 0, y: yOffset, width: 24, height: 24)
+            #endif
+            
+            let attachmentString = NSMutableAttributedString(attachment: attachment)
+            
+            attachmentString.append(attrs)
+            
+            titleLabel.attributedText = attachmentString
+            
+        }
+        else {
+            titleLabel.attributedText = attrs
+        }
         
     }
     
@@ -451,7 +460,7 @@ class ArticleCell: UITableViewCell {
         
     }
     
-    func configureAuthor(feed: Feed) {
+    func configureAuthor(feed: Feed?) {
         
         authorLabel.isHidden = false
         
@@ -471,11 +480,11 @@ class ArticleCell: UITableViewCell {
         
         if feedType != .natural {
             
-            let feedTitle = feed.displayTitle
+            let feedTitle = feed?.displayTitle
             
-            if feedTitle != authorLabel.text {
+            if feedTitle != nil, feedTitle != authorLabel.text {
                 
-                let text = (authorLabel.text ?? "")?.appendingFormat(format, feedTitle).trimmingCharacters(in: .whitespacesAndNewlines)
+                let text = (authorLabel.text ?? "")?.appendingFormat(format, feedTitle!).trimmingCharacters(in: .whitespacesAndNewlines)
                 
                 authorLabel.text = text
                 
@@ -534,7 +543,7 @@ extension ArticleCell {
         
         attachment.image = UIImage(systemName: "square.dashed", withConfiguration: config)
         
-        titleLabel.setNeedsDisplay()
+//        titleLabel.setNeedsDisplay()
         
         guard var url = url else {
             return

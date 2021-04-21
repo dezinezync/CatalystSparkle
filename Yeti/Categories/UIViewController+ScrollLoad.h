@@ -16,6 +16,8 @@
 
 - (void)loadNextPage;
 
+- (void)dz_scrollViewDidScroll:(UIScrollView *)scrollView;
+
 @end
 
 @interface UIViewController (ScrollLoad) <UIScrollViewDelegate>

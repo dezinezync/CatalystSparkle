@@ -6,6 +6,10 @@
 
 - Fixed a sync bug that would cause syncing to get stuck a particular position. 
 
+- macOS: Fixed a nasty scrolling bug from macOS 11.2 onwards (against iOS 14.3).
+
+- Articles with no reference to a feed will no longer render as empty rows. 
+
 ### Build 218
 
 - Minor QoL improvements. 
