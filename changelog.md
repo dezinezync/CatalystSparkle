@@ -10,6 +10,10 @@
 
 - Articles with no reference to a feed will no longer render as empty rows. 
 
+- Fixed the folders widget showing the same article twice in some cases. 
+
+- Fixed widgets updating less aggressively. They would exhaust their updates quota and iOS would stop updating them until the next day. 
+
 ### Build 218
 
 - Minor QoL improvements. 

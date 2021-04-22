@@ -11,9 +11,15 @@ import WidgetKit
 import SwiftUI
 import Models
 
+public struct FoldersCollection: TimelineEntry {
+    public let mainItem: WidgetArticle
+    public let otherItems: [WidgetArticle]
+    public let date: Date = Date()
+}
+
 struct FoldersProvider: IntentTimelineProvider {
     
-    func loadData (name: String, configuration: FoldersIntent) -> UnreadEntries? {
+    func loadData (name: String, configuration: FoldersIntent) -> (FoldersCollection?, UnreadEntries?) {
         
         var json: UnreadEntries
         
@@ -50,7 +56,12 @@ struct FoldersProvider: IntentTimelineProvider {
                     
                     json = UnreadEntries(date: Date(), entries: entries)
                     
-                    return json
+                    let mainItem: WidgetArticle = json.entries.first(where: { $0.coverImage != nil })!
+                    let otherItems: [WidgetArticle] = json.entries.filter { $0.identifier != mainItem.identifier }
+                    
+                    let collection = FoldersCollection(mainItem: mainItem, otherItems: otherItems)
+                    
+                    return (collection, json)
                 }
                 catch {
                     print(error.localizedDescription)
@@ -60,41 +71,19 @@ struct FoldersProvider: IntentTimelineProvider {
             
         }
         
-        return nil
+        return (nil, nil)
         
     }
  
-    public func getSnapshot(for configuration: FoldersIntent, in context: Context, completion: @escaping (UnreadEntries) -> Void) {
+    public func getSnapshot(for configuration: FoldersIntent, in context: Context, completion: @escaping (FoldersCollection) -> Void) {
     
-        if let jsonData: UnreadEntries = loadData(name: "foldersW.json", configuration: configuration) {
-            
-            if (configuration.showFavicons?.boolValue == false) {
-
-                for item in jsonData.entries {
-
-                    if (item.favicon != nil) {
-                        item.favicon = nil
-                    }
-
-                }
-
-            }
-            
-            if (configuration.showCovers?.boolValue == false) {
-                    
-                for item in jsonData.entries {
-                    
-                    if (item.coverImage != nil) {
-                        item.coverImage = nil
-                    }
-                    
-                }
-                
-            }
+        let (collection, jsonData) = loadData(name: "foldersW.json", configuration: configuration)
+        
+        if let collection = collection, let jsonData = jsonData {
             
             loadImagesDataFromPackage(package: jsonData) {
                 
-                completion(jsonData)
+                completion(collection)
                 
             }
             
@@ -102,17 +91,15 @@ struct FoldersProvider: IntentTimelineProvider {
         
     }
     
-    public func getTimeline(for configuration: FoldersIntent, in context: Context, completion: @escaping (Timeline<UnreadEntries>) -> Void) {
+    public func getTimeline(for configuration: FoldersIntent, in context: Context, completion: @escaping (Timeline<FoldersCollection>) -> Void) {
         
-        if let jsonData = loadData(name: "foldersW.json", configuration: configuration) {
+        let (collection, jsonData) = loadData(name: "foldersW.json", configuration: configuration)
         
-            var entries: [UnreadEntries] = []
-            
-            entries.append(jsonData)
+        if let collection = collection, let jsonData = jsonData {
             
             loadImagesDataFromPackage(package: jsonData) {
                 
-                let timeline = Timeline(entries: entries, policy: .never)
+                let timeline = Timeline(entries: [collection], policy: .never)
                 
                 completion(timeline)
                 
@@ -122,15 +109,15 @@ struct FoldersProvider: IntentTimelineProvider {
 
     }
     
-    func placeholder(in context: Context) -> UnreadEntries {
+    func placeholder(in context: Context) -> FoldersCollection {
         
-        if let jsonData = loadSampleData(name: "foldersW.json", configuration: FoldersIntent()) {
+        if let collection = loadSampleFoldersData() {
             
-            return jsonData;
+            return collection;
             
         }
         
-        let entryCol = UnreadEntries(date: Date(), entries: []);
+        let entryCol = FoldersCollection(mainItem: previewData.entries[0], otherItems: Array(previewData.entries[1...3]));
         
         return entryCol
         

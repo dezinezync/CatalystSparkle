@@ -92,6 +92,23 @@ public func loadSampleData<T:INIntent> (name: String, configuration: T) -> Unrea
     
 }
 
+public func loadSampleFoldersData() -> FoldersCollection? {
+    
+    if let json = loadSampleData(name: "foldersW.json", configuration: FoldersIntent()) {
+     
+        let mainItem: WidgetArticle = json.entries.first(where: { $0.coverImage != nil })!
+        let otherItems: [WidgetArticle] = json.entries.filter { $0.identifier != mainItem.identifier }
+        
+        let collection = FoldersCollection(mainItem: mainItem, otherItems: otherItems)
+        
+        return collection
+        
+    }
+    
+    return nil
+    
+}
+
 fileprivate func checkForConfiguration(entries: [WidgetArticle], configuration: UnreadsIntent) {
     
     let showFavicons: Bool = configuration.showFavicons?.boolValue ?? true

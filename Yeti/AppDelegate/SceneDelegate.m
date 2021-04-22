@@ -161,6 +161,8 @@
     
 //    [MyDBManager setFeeds:ArticlesManager.shared.feeds];
     
+    [WidgetManager reloadAllTimelines];
+    
     [BGTaskScheduler.sharedScheduler getPendingTaskRequestsWithCompletionHandler:^(NSArray<BGTaskRequest *> * _Nonnull taskRequests) {
         
         BOOL cancelling = NO;

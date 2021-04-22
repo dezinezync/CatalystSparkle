@@ -13,19 +13,7 @@ struct FoldersView: View {
     
     @Environment(\.widgetFamily) private var widgetFamily
     
-    var entries: UnreadEntries
-    
-    var usedCover: Bool {
-        
-        if let _ = entries.entries.first(where: { i in
-            return i.coverImage != nil
-        }) {
-            return true
-        }
-        
-        return false
-        
-    }
+    var collection: FoldersCollection
     
     var body: some View {
         
@@ -33,19 +21,17 @@ struct FoldersView: View {
             
             VStack {
                 
-                if let entry = entries.entries.first(where: { i in
-                    return i.coverImage != nil
-                }) {
-                    BloccView(entry: entry)
-                }
+                BloccView(entry: collection.mainItem)
                 
-                if entries.entries.count > 0 {
+                if collection.otherItems.count > 0 {
                     
                     ZStack {
                         LazyVStack(alignment: .leading, spacing: 8, pinnedViews: [], content: {
-                            ForEach((usedCover ? 1 : 0)...[entries.entries.count - (usedCover ? 1 : 0), 2].min()!, id: \.self) { count in
-                                ArticleView(entry: entries.entries[count])
+                            
+                            ForEach(collection.otherItems[0..<min(3, collection.otherItems.count)], id: \.self) { item in
+                                ArticleView(entry: item)
                             }
+                            
                         })
                         .alignmentGuide(.top) { _ in 0 }
                     }
@@ -66,12 +52,26 @@ struct FoldersView: View {
 }
 
 #if DEBUG
+import Models
+
 struct FoldersView_Previews: PreviewProvider {
+    
+    static let collection: FoldersCollection = {
+       
+        let mainItem: WidgetArticle = previewData.entries.first(where: { $0.coverImage != nil })!
+        let otherItems: [WidgetArticle] = previewData.entries.filter { $0.identifier != mainItem.identifier }
+        
+        let collection = FoldersCollection(mainItem: mainItem, otherItems: otherItems)
+        
+        return collection
+        
+    }()
+    
     static var previews: some View {
-        FoldersView(entries: previewData)
+        FoldersView(collection: FoldersView_Previews.collection)
             .previewContext(WidgetPreviewContext(family: .systemLarge))
         
-        FoldersView(entries: previewData)
+        FoldersView(collection: FoldersView_Previews.collection)
             .previewContext(WidgetPreviewContext(family: .systemLarge))
             .environment(\.colorScheme, .dark)
     }

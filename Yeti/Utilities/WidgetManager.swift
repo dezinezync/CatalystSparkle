@@ -83,6 +83,8 @@ import Intents
         
         WidgetCenter.shared.reloadAllTimelines();
         
+        print("Reloaded all timelines")
+        
     } 
 
     public static func reloadTimeline(name: String) {

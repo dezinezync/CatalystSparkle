@@ -21,7 +21,7 @@ struct FoldersWidget: Widget {
             intent: FoldersIntent.self,
             provider: FoldersProvider()) { entries in
             
-            FoldersView(entries: entries)
+            FoldersView(collection: entries)
                 .previewContext(WidgetPreviewContext(family: .systemMedium))
             
         }

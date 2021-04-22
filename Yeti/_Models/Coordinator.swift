@@ -1889,7 +1889,6 @@ extension Coordinator {
                 if let data = try? encoder.encode(list) {
                     
                     sself.writeTo(sharedFile: "articles.json", data: data)
-                    WidgetManager.reloadTimeline(name: "Unreads Widget")
                     
                 }
                 
@@ -1921,8 +1920,6 @@ extension Coordinator {
         if let data = try? encoder.encode(list) {
             
             writeTo(sharedFile: "bloccs.json", data: data)
-            
-            WidgetManager.reloadTimeline(name: "Bloccs Widget")
             
         }
         
@@ -1998,8 +1995,6 @@ extension Coordinator {
                 
                 print("Updated folder articles data")
                 
-                WidgetManager.reloadTimeline(name: "Folders Widget")
-                
             }
             
         }
@@ -2068,8 +2063,6 @@ extension Coordinator {
             if let data = try? JSONEncoder().encode(structs) {
                 
                 self.writeTo(sharedFile: "folders.json", data: data)
-                
-                WidgetManager.reloadTimeline(name: "Folders Widget")
                 
             }
             
