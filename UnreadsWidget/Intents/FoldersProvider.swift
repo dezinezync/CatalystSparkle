@@ -12,7 +12,7 @@ import SwiftUI
 import Models
 
 public struct FoldersCollection: TimelineEntry {
-    public let mainItem: WidgetArticle
+    public let mainItem: WidgetArticle?
     public let otherItems: [WidgetArticle]
     public let date: Date = Date()
 }
@@ -117,7 +117,7 @@ struct FoldersProvider: IntentTimelineProvider {
             
         }
         
-        let entryCol = FoldersCollection(mainItem: previewData.entries[0], otherItems: Array(previewData.entries[1...3]));
+        let entryCol = FoldersCollection(mainItem: nil, otherItems: []);
         
         return entryCol
         

@@ -21,14 +21,16 @@ struct FoldersView: View {
             
             VStack {
                 
-                BloccView(entry: collection.mainItem)
+                if let mainItem = collection.mainItem {
+                    BloccView(entry: mainItem)
+                }
                 
                 if collection.otherItems.count > 0 {
                     
                     ZStack {
                         LazyVStack(alignment: .leading, spacing: 8, pinnedViews: [], content: {
                             
-                            ForEach(collection.otherItems[0..<min(3, collection.otherItems.count)], id: \.self) { item in
+                            ForEach(collection.otherItems[0..<min((collection.mainItem != nil ? 3 : 4), collection.otherItems.count)], id: \.self) { item in
                                 ArticleView(entry: item)
                             }
                             
@@ -58,8 +60,8 @@ struct FoldersView_Previews: PreviewProvider {
     
     static let collection: FoldersCollection = {
        
-        let mainItem: WidgetArticle = previewData.entries.first(where: { $0.coverImage != nil })!
-        let otherItems: [WidgetArticle] = previewData.entries.filter { $0.identifier != mainItem.identifier }
+        let mainItem: WidgetArticle? = previewData.entries.first(where: { $0.coverImage != nil })
+        let otherItems: [WidgetArticle] = mainItem != nil ? previewData.entries.filter { $0.identifier != mainItem!.identifier } : previewData.entries
         
         let collection = FoldersCollection(mainItem: mainItem, otherItems: otherItems)
         
