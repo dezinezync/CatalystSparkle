@@ -144,20 +144,19 @@ NSString *const kImportCell = @"importCell";
         cell.textLabel.textColor = UIColor.labelColor;
         cell.detailTextLabel.textColor = UIColor.secondaryLabelColor;
         
-        // @TODO
-//        if ([obj isKindOfClass:Feed.class]) {
-//
-//            cell.accessoryType = UITableViewCellAccessoryCheckmark;
-//            cell.textLabel.text = [(Feed *)obj title];
-//            cell.detailTextLabel.text = [(Feed *)obj url];
-//
-//        }
-//        else {
-//            cell.textLabel.text = [obj valueForKey:@"url"];
-//
-//            NSString *folder = [obj valueForKey:@"folder"];
-//            cell.detailTextLabel.text = folder;
-//        }
+        if ([obj isKindOfClass:Feed.class]) {
+
+            cell.accessoryType = UITableViewCellAccessoryCheckmark;
+            cell.textLabel.text = [(Feed *)obj title];
+            cell.detailTextLabel.text = [(Feed *)obj url].absoluteString;
+
+        }
+        else {
+            cell.textLabel.text = [obj valueForKey:@"url"];
+
+            NSString *folder = [obj valueForKey:@"folder"];
+            cell.detailTextLabel.text = folder;
+        }
         
         cell.selectedBackgroundView.backgroundColor = [tableView.tintColor colorWithAlphaComponent:0.3f];
         
@@ -200,17 +199,17 @@ NSString *const kImportCell = @"importCell";
 - (void)setExistingFolders:(NSArray<Folder *> *)existingFolders {
     
     if (existingFolders != nil) {
-        // @TODO
-//        existingFolders = [existingFolders rz_map:^id(Folder *obj, NSUInteger idx, NSArray *array) {
-//
-//            if ([obj isKindOfClass:NSDictionary.class]) {
-//                Folder *instance = [Folder instanceFromDictionary:(NSDictionary *)obj];
-//                return instance;
-//            }
-//
-//            return obj;
-//
-//        }];
+        
+        existingFolders = [existingFolders rz_map:^id(Folder *obj, NSUInteger idx, NSArray *array) {
+
+            if ([obj isKindOfClass:NSDictionary.class]) {
+                Folder *instance = [[Folder alloc] initFrom:(NSDictionary *)obj];
+                return instance;
+            }
+
+            return obj;
+
+        }];
         
     }
     
@@ -235,30 +234,31 @@ NSString *const kImportCell = @"importCell";
         return;
     }
     
+    self.coordinator.importingInProgress = YES;
+    
     if (self.unmappedFolders != nil && self.unmappedFolders.count > 0) {
         
         // filter out exisiting folders
         if (self.existingFolders != nil && self.existingFolders.count) {
             
-            // @TODO
-//            NSArray <NSString *> *knownFolders = [self.existingFolders rz_map:^id(Folder *obj, NSUInteger idx, NSArray *array) {
-//                return obj.title;
-//            }];
-//
-//            NSArray *unmapped = [self.unmappedFolders rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
-//
-//                return [knownFolders indexOfObject:obj] == NSNotFound;
-//
-//            }];
-//
-//            self.unmappedFolders = unmapped;
-//
-//            if ([unmapped count] == 0) {
-//                // this ensures the next step in folder creation does not occur.
-//                // this then skips to importing the feeds.
-//                [self processImportData];
-//                return;
-//            }
+            NSArray <NSString *> *knownFolders = [self.existingFolders rz_map:^id(Folder *obj, NSUInteger idx, NSArray *array) {
+                return obj.title;
+            }];
+
+            NSArray *unmapped = [self.unmappedFolders rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+
+                return [knownFolders indexOfObject:obj] == NSNotFound;
+
+            }];
+
+            self.unmappedFolders = unmapped;
+
+            if ([unmapped count] == 0) {
+                // this ensures the next step in folder creation does not occur.
+                // this then skips to importing the feeds.
+                [self processImportData];
+                return;
+            }
             
         }
         
@@ -271,24 +271,25 @@ NSString *const kImportCell = @"importCell";
         dispatch_queue_t queue = dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0);
         NSUInteger idx = 0;
         
+        weakify(self);
+        
         for (NSString *obj in self.unmappedFolders) {
             
             dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
             
             dispatch_async(queue, ^{
-               // @TODO
-//                [MyFeedsManager addFolder:obj success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//                    dispatch_semaphore_signal(semaphore);
-//
-//                } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//                    NSLog(@"Error creating folder: %@", obj);
-//
-//                    dispatch_semaphore_signal(semaphore);
-//
-//                }];
-
+                
+                strongify(self);
+               
+                [self.coordinator addFolderWithTitle:obj completion:^(Folder * _Nullable folder, NSError * _Nullable error) {
+                    
+                    if (error != nil) {
+                        NSLog(@"Error creating folder: %@", obj);
+                    }
+                    
+                    dispatch_semaphore_signal(semaphore);
+                    
+                }];
                 
             });
 
@@ -316,6 +317,11 @@ NSString *const kImportCell = @"importCell";
     NSDictionary *nextObj = [self.unmappedFeeds safeObjectAtIndex:imported];
     
     if (nextObj == nil) {
+        
+        self.coordinator.importingInProgress = NO;
+        
+        [self.coordinator.sidebarVC setupData];
+        
         return;
     }
     
@@ -374,11 +380,40 @@ NSString *const kImportCell = @"importCell";
     path = [path gtm_stringByEscapingForHTML];
     
     NSString *folderName = [data valueForKey:@"folder"];
+    
+    Folder *folder = [self.coordinator folderWith:folderName];
+    
     NSURL *url = [NSURL URLWithString:path];
     
     weakify(self);
     
-    // @TODO
+    [self.coordinator getFeedLibsDataWithUrl:url completion:^(NSDictionary<NSString *,id> * _Nullable json, NSError * _Nullable error) {
+        
+        strongify(self);
+       
+        if (error != nil) {
+            
+            NSLog(@"Error importing url %@: %@", url, error);
+
+            strongify(self);
+
+            [self resumeFeedsImport];
+            
+            return;
+            
+        }
+        
+        NSLog(@"JSON: %@", json);
+        
+        [self.coordinator addFeed:json folderID:(folder ? folder.id : 0) completion:^(Feed * _Nullable feed, NSError * _Nullable error) {
+            
+            [self resumeFeedsImport];
+            
+        }];
+        
+    }];
+    
+//    [self.coordinator addFeedWithUrl:url];
     
 //    [MyFeedsManager addFeed:url success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
 //

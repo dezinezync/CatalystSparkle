@@ -648,6 +648,10 @@ enum SidebarItem: Hashable, Identifiable {
     
     @objc func setupData () {
         
+        guard coordinator?.importingInProgress == false else {
+            return
+        }
+        
         // since we only allow single selection in this collection, we get the first item. Can be nil.
         var selected: IndexPath? = collectionView.indexPathsForSelectedItems?.first
         

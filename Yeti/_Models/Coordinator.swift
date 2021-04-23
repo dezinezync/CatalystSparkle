@@ -10,6 +10,7 @@ import Foundation
 import Defaults
 import UserNotifications
 import Networking
+import DZNetworking
 import Dynamic
 import Models
 import DBManager
@@ -20,6 +21,7 @@ import OrderedCollections
 import BackgroundTasks
 import SwiftYapDatabase
 import YapDatabase
+import FeedsLib
 
 public var deviceName: String {
     var systemInfo = utsname()
@@ -50,6 +52,8 @@ public var deviceName: String {
     weak public var feedVC: FeedVC?
     weak public var articleVC: ArticleVC?
     weak public var emptyVC: EmptyVC?
+    
+    public var importingInProgress: Bool = false
     
     weak public var activityDialog: UIAlertController?
     
@@ -1174,6 +1178,22 @@ extension Coordinator {
         
     }
     
+    public func addFeed(_ djson: [String: AnyHashable], folderID: UInt, completion:((_ feed: Feed?, _ error: Error?) -> Void)?) {
+        
+        addFeed(json: djson, folderID: folderID) { result in
+            
+            switch result {
+            case .failure(let error):
+                completion?(nil, error)
+                
+            case .success(let feed):
+                completion?(feed, nil)
+            }
+            
+        }
+        
+    }
+    
     public func addFeed(json: [String: AnyHashable], folderID: UInt?, completion: ((Result<Feed, Error>) -> Void)?) {
         
         guard var feedID: String = (json["feedId"] ?? json["id"]) as? String else {
@@ -1197,7 +1217,9 @@ extension Coordinator {
             
         }
         
-        showAddingFeedDialog()
+        if importingInProgress == false {
+            showAddingFeedDialog()
+        }
         
         if url.absoluteString.contains("youtube.com") == true,
            url.absoluteString.contains("videos.xml") == false {
@@ -1270,7 +1292,7 @@ extension Coordinator {
                     AlertManager.showGenericAlert(withTitle: "Feed Exists", message: "This feed already exists in your list.")
                 }
                 
-                if let folderID = folderID {
+                if let folderID = folderID, folderID != 0 {
                     
                     // check if the folder exists
                     if let folder = DBManager.shared.folder(for: folderID) {
@@ -1443,6 +1465,12 @@ extension Coordinator {
     }
     
     // MARK: - Folders
+    public func folder(with title:String) -> Folder? {
+        
+        return DBManager.shared.folders.first(where: { $0.title == title })
+        
+    }
+    
     public func removeFromFolder(_ feed: Feed, folder: Folder, completion: ((Result<Bool, Error>) -> Void)?) {
         
         FeedsManager.shared.update(folder: folder.folderID, title: nil, add: nil, delete: [feed.feedID]) { result in
@@ -2064,6 +2092,51 @@ extension Coordinator {
                 
                 self.writeTo(sharedFile: "folders.json", data: data)
                 
+            }
+            
+        }
+        
+    }
+    
+    // MARK: - Accessors
+    @objc var session: DZURLSession {
+        return FeedsManager.shared.session
+    }
+    
+    @objc public func getOPML(completion:@escaping ((_ xmlData: String?, _ error: Error?) -> Void)) {
+     
+        FeedsManager.shared.getOPML(completion: completion)
+        
+    }
+    
+    @objc public func getFeedLibsData(url: URL, completion: @escaping ((_ result: [String: Any]?, _ error: Error?) -> Void)) {
+        
+        FeedsLib.shared.getFeedInfo(url: url) { error, response in
+            
+            if let error = error {
+                completion(nil, error)
+                return
+            }
+            
+            if let results = response?.results,
+               results.count > 0 {
+                
+                let result: FeedRecommendation = results.first!
+                
+                let encoder = JSONEncoder()
+                guard let data = try? encoder.encode(result),
+                      let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: AnyHashable] else {
+                 
+                    completion(nil, FeedsManagerError.from(description: "No feeds were found for this URL", statusCode: 500))
+                    return
+                    
+                }
+                
+                completion(json, nil)
+                
+            }
+            else {
+                completion(nil, FeedsManagerError.from(description: "No feeds were found for this URL", statusCode: 500))
             }
             
         }

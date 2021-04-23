@@ -13,29 +13,10 @@ import WebKit
     
     public static let shared = FeedsLib()
     
-    internal let uaString: String? = {
-        
-        let webView = WKWebView(frame: .zero, configuration: WKWebViewConfiguration())
-        
-        var value: String? = nil
-        
-        let semaphore = DispatchSemaphore(value: 1)
-        
-        webView.evaluateJavaScript("navigator.userAgent") { result, _ in
-            value = result as? String
-            semaphore.signal()
-        }
-        
-        semaphore.wait()
-        
-        return value
-        
-    }()
-    
     internal lazy var session: URLSession = {
        
         let config = URLSessionConfiguration.default
-        config.httpAdditionalHeaders = ["User-Agent": self.uaString ?? "Mozilla/5.0 (iPhone; CPU iPhone OS 14_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1"]
+        config.httpAdditionalHeaders = ["User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 14_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1"]
         
         let s = URLSession(configuration: config)
         

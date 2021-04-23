@@ -20,8 +20,8 @@
         return;
     }
     
-    if ([scrollView.delegate respondsToSelector:@selector(dz_scrollViewDidScroll:)] == YES) {
-        [scrollView.delegate performSelector:@selector(dz_scrollViewDidScroll:)];
+    if (scrollView.delegate != nil && [scrollView.delegate respondsToSelector:@selector(dz_scrollViewDidScroll:)] == YES) {
+        [scrollView.delegate performSelector:@selector(dz_scrollViewDidScroll:) withObject:scrollView];
     }
     
     CGFloat scrollPositionY = (scrollView.contentOffset.y + scrollView.frame.size.height) + 300.f;

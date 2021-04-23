@@ -18,6 +18,10 @@ import OrderedCollections
     public var folderID: UInt!
     public var feedIDs: [UInt] = [UInt]()
     
+    public var id: UInt {
+        return folderID
+    }
+    
     public enum CodingKeys: String, CodingKey {
         case title
         case folderID = "id"

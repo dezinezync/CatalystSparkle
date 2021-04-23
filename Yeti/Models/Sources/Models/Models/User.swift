@@ -13,6 +13,10 @@ import Foundation
     public var userID: UInt!
     public var subscription: Subscription!
     
+    public var id: UInt {
+        return userID
+    }
+    
     var userFilters: [String]? = []
     
     public var filters: [String] {

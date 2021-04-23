@@ -7,6 +7,15 @@
 
 import Foundation
 
+extension Encodable {
+    public func hasKey(for path: String) -> Bool {
+        return Mirror(reflecting: self).children.contains { $0.label == path }
+    }
+    public func value(for path: String) -> Any? {
+        return Mirror(reflecting: self).children.first { $0.label == path }?.value
+    }
+}
+
 @objc public class FeedRecommendation: NSObject, Codable {
     public var relevanceScore: Double? = 0
     public var id: String? = nil
@@ -61,5 +70,34 @@ import Foundation
     public var bestFeedId: String? = nil
     public var language: String? = nil
     public var topic: String? = nil
+    
+}
+
+extension FeedRecommendation {
+    
+    public override var description: String {
+        let desc = super.description
+        return "\(desc)\n\(dictionaryRepresentation)"
+    }
+    
+    public var dictionaryRepresentation: [String: Any] {
+        
+        var dict: [String: Any] = [:]
+        
+        for name in FeedRecommendation.CodingKeys.allCases {
+            
+            let key = name.rawValue
+            
+            if let val = value(for: key) {
+                
+                dict[key] = val
+                
+            }
+            
+        }
+        
+        return dict
+        
+    }
     
 }
