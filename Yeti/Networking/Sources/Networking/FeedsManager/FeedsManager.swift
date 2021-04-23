@@ -1414,6 +1414,33 @@ extension FeedsManager {
     
 }
 
+// MARK: - OPML
+extension FeedsManager {
+    
+    public func getOPML(completion:@escaping ((_ xmlData: String?, _ error: Error?) -> Void)) {
+        
+        session.GET(path: "/user/opml", query: ["userID": "\(user!.userID!)"], resultType: [String: String].self) { result in
+            
+            switch result {
+            case .failure(let error):
+                completion(nil, error)
+                
+            case .success(let (_, responseObject)):
+                if let xmlData = responseObject?["file"] {
+                    completion(xmlData, nil)
+                }
+                else {
+                    completion(nil, FeedsManagerError.from(description: "No file was received when exporting your subscriptions.", statusCode: 500))
+                }
+                
+            }
+            
+        }
+        
+    }
+    
+}
+
 // MARK: - Helpers
 extension FeedsManager {
     

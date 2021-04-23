@@ -11,6 +11,7 @@
 #import "YTNavigationController.h"
 #import "Elytra-Swift.h"
 #import "StoreVC.h"
+#import "DZNetworking.h"
 
 #import "ImportVC.h"
 
@@ -200,73 +201,65 @@
 
 - (IBAction)didTapImport:(UIButton *)sender {
     
-    // @TODO
+    if (self.coordinator.user.subscription == nil || [self.coordinator.user.subscription hasExpired] == YES) {
+        
+        // A subscription is required to import Feeds from an OPML file.
+        NSString * const error = @"An active subscription is required to import Subscriptions files in to Elytra.";
+
+        UIViewController *presenting = self.presentingViewController;
+
+        StoreVC *storeVC = [[StoreVC alloc] initWithStyle:UITableViewStylePlain];
+        storeVC.coordinator = self.coordinator;
+//        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:storeVC];
+//        storeVC.checkAndShowError = YES;
+
+        weakify(presenting);
+
+        [self dismissViewControllerAnimated:YES completion:^{
+
+            strongify(presenting);
+
+            if ([presenting isKindOfClass:UINavigationController.class] == NO) {
+                presenting = presenting.navigationController;
+            }
+
+            if (presenting == nil) {
+                [AlertManager showGenericAlertWithTitle:@"No Subscription" message:error];
+            }
+            else {
+                [(UINavigationController *)presenting pushViewController:storeVC animated:YES];
+            }
+
+        }];
+        
+        return;
+        
+    }
     
-//    if (MyFeedsManager.subscription == nil || [MyFeedsManager.subscription hasExpired]) {
-//        // A subscription is required to import Feeds from an OPML file.
-//        if (MyFeedsManager.subscription == nil) {
-//            [MyFeedsManager setValue:[YTSubscription new] forKey:@"subscription"];
-//        }
-//
-//        NSString * const error = @"An active subscription is required to import Subscriptions files in to Elytra.";
-//
-//        MyFeedsManager.subscription.error = [NSError errorWithDomain:@"Yeti" code:402 userInfo:@{NSLocalizedDescriptionKey: error}];
-//
-//        UIViewController *presenting = self.presentingViewController;
-//
-//        StoreVC *storeVC = [[StoreVC alloc] initWithStyle:UITableViewStylePlain];
-////        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:storeVC];
-////        storeVC.checkAndShowError = YES;
-//
-//        weakify(presenting);
-//
-//        [self dismissViewControllerAnimated:YES completion:^{
-//
-//            strongify(presenting);
-//
-//            if ([presenting isKindOfClass:UINavigationController.class] == NO) {
-//                presenting = presenting.navigationController;
-//            }
-//
-//            if (presenting == nil) {
-//                [AlertManager showGenericAlertWithTitle:@"No Subscription" message:error];
-//            }
-//            else {
-//                [(UINavigationController *)presenting pushViewController:storeVC animated:YES];
-//            }
-//
-//        }];
-//        return;
-//    }
-//
-//    // get the UTI for an extension
-//    NSString *typeForExt = (__bridge NSString *)UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, CFSTR("opml"), NULL);
-//
-//    UTType *xmlTypeIdentifier = [UTType typeWithIdentifier:(__bridge NSString *)kUTTypeXML];
-//    UTType *opmlTypeIdentifier = [UTType typeWithIdentifier:typeForExt];
-//
-//    NSMutableArray <UTType *> *documentTypes = @[].mutableCopy;
-//
-//    if (xmlTypeIdentifier) {
-//        [documentTypes addObject:xmlTypeIdentifier];
-//    }
-//
-//    if (opmlTypeIdentifier) {
-//        [documentTypes addObject:opmlTypeIdentifier];
-//    }
-//
-//    /**
-//     * Proposed new method crashes on Beta 6
-//     */
-////    UIDocumentPickerViewController *importVC = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:documentTypes inMode:UIDocumentPickerModeImport];
-//
-//    UIDocumentPickerViewController *importVC = [[UIDocumentPickerViewController alloc] initForOpeningContentTypes:documentTypes asCopy:YES];
-//
-//    importVC.delegate = self;
-//
-//    _navigationControllerFrame = self.navigationController.view.frame;
-//
-//    [self.navigationController presentViewController:importVC animated:YES completion:nil];
+    // get the UTI for an extension
+    NSString *typeForExt = (__bridge NSString *)UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, CFSTR("opml"), NULL);
+
+    UTType *xmlTypeIdentifier = [UTType typeWithIdentifier:(__bridge NSString *)kUTTypeXML];
+    UTType *opmlTypeIdentifier = [UTType typeWithIdentifier:typeForExt];
+
+    NSMutableArray <UTType *> *documentTypes = @[].mutableCopy;
+
+    if (xmlTypeIdentifier) {
+        [documentTypes addObject:xmlTypeIdentifier];
+    }
+
+    if (opmlTypeIdentifier) {
+        [documentTypes addObject:opmlTypeIdentifier];
+    }
+
+    UIDocumentPickerViewController *importVC = [[UIDocumentPickerViewController alloc] initForOpeningContentTypes:documentTypes asCopy:YES];
+
+    importVC.delegate = self;
+    importVC.coordinator = self.coordinator;
+
+    _navigationControllerFrame = self.navigationController.view.frame;
+
+    [self.navigationController presentViewController:importVC animated:YES completion:nil];
     
 }
 
@@ -328,65 +321,66 @@
     
     weakify(self);
     
-    // @TODO
-//    [MyFeedsManager getOPMLWithSuccess:^(NSString *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//        strongify(self);
-//
-//        asyncMain(^{
-//            self.ioProgressView.progress = 0.5f;
-//        });
-//
-//        NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:@"elytra-opml.xml"];
-//
-//        NSURL *fileURL = [NSURL fileURLWithPath:path];
-//
-//        NSError *error = nil;
-//
-//        if (![responseObject writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&error]) {
-//            [AlertManager showGenericAlertWithTitle:@"Write Error" message:error.localizedDescription fromVC:self];
-//            return;
-//        }
-//
-//        asyncMain(^{
-//            self.ioProgressView.progress = 0.75f;
-//        });
-//
-//        weakify(self);
-//
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//
-//            strongify(self);
-//
-//            self.ioProgressView.progress = 1.f;
-//            self.ioSubtitleLabel.text = @"File exported successfully.";
-//
-//            self->_navigationControllerFrame = self.navigationController.view.frame;
-//
-//            UIDocumentPickerViewController *exportVC = [[UIDocumentPickerViewController alloc] initForExportingURLs:@[fileURL]];
-//
-//            exportVC.delegate = (id <UIDocumentPickerDelegate>)self;
-//
-//            [self presentViewController:exportVC animated:YES completion:nil];
-//
-//            self.ioDoneButton.enabled = YES;
-//        });
-//
-//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//        strongify(self);
-//
-//        [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription fromVC:self];
-//
-//        weakify(self);
-//
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            strongify(self);
-//
-//            self.ioDoneButton.enabled = YES;
-//        });
-//
-//    }];
+    [self.coordinator getOPMLWithCompletion:^(NSString * _Nullable xmlData, NSError * _Nullable error) {
+        
+        strongify(self);
+        
+        if (error != nil) {
+            
+            [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription fromVC:self];
+
+            weakify(self);
+
+            dispatch_async(dispatch_get_main_queue(), ^{
+                strongify(self);
+
+                self.ioDoneButton.enabled = YES;
+            });
+            
+            return;
+            
+        }
+
+        asyncMain(^{
+            self.ioProgressView.progress = 0.5f;
+        });
+
+        NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:@"elytra-opml.xml"];
+
+        NSURL *fileURL = [NSURL fileURLWithPath:path];
+
+        NSError *ierror = nil;
+
+        if (![xmlData writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&ierror]) {
+            [AlertManager showGenericAlertWithTitle:@"Write Error" message:error.localizedDescription fromVC:self];
+            return;
+        }
+
+        asyncMain(^{
+            self.ioProgressView.progress = 0.75f;
+        });
+
+        weakify(self);
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+
+            strongify(self);
+
+            self.ioProgressView.progress = 1.f;
+            self.ioSubtitleLabel.text = @"File exported successfully.";
+
+            self->_navigationControllerFrame = self.navigationController.view.frame;
+
+            UIDocumentPickerViewController *exportVC = [[UIDocumentPickerViewController alloc] initForExportingURLs:@[fileURL]];
+
+            exportVC.delegate = (id <UIDocumentPickerDelegate>)self;
+
+            [self presentViewController:exportVC animated:YES completion:nil];
+
+            self.ioDoneButton.enabled = YES;
+        });
+
+    }];
     
 }
 
@@ -400,44 +394,41 @@
     
     weakify(self);
     
-    // @TODO
-//    NSString *url = [MyFeedsManager.session.baseURL.absoluteString stringByAppendingString:@"/user/opml"];
-//
-//    url = [url stringByAppendingFormat:@"?userID=%@", MyFeedsManager.userID];
-//
-//    DZUploadSession *session = [DZUploadSession shared];
-//    session.session.responseParser = [DZLoggingJSONResponseParser new];
-//
-//    __unused NSURLSessionTask *task = [session UPLOAD:self.importURL.path fieldName:@"file" URL:url parameters:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//        strongify(self);
-//
-//        [self handleOPMLData:responseObject];
-//
-//    } progress:^(double completed, NSProgress *progress) {
-//
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            strongify(self);
-//            self.ioProgressView.progress = completed;
-//        });
-//
-//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//        strongify(self);
-//
-//        error = [MyFeedsManager errorFromResponse:error.userInfo];
-//
-//        [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription fromVC:self];
-//
-//        weakify(self);
-//
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            strongify(self);
-//            self.state = OPMLStateDefault;
-//            self.ioDoneButton.enabled = YES;
-//        });
-//
-//    }];
+    NSString *url = [self.coordinator.session.baseURL.absoluteString stringByAppendingString:@"/user/opml"];
+
+    url = [url stringByAppendingFormat:@"?userID=%@", @(self.coordinator.user.id)];
+
+    DZUploadSession *session = [DZUploadSession shared];
+    session.session.responseParser = [DZJSONResponseParser new];
+
+    __unused NSURLSessionTask *task = [session UPLOAD:self.importURL.path fieldName:@"file" URL:url parameters:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+
+        strongify(self);
+
+        [self handleOPMLData:responseObject];
+
+    } progress:^(double completed, NSProgress *progress) {
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
+            self.ioProgressView.progress = completed;
+        });
+
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+
+        strongify(self);
+
+        [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription fromVC:self];
+
+        weakify(self);
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
+            self.state = OPMLStateDefault;
+            self.ioDoneButton.enabled = YES;
+        });
+
+    }];
     
 }
 
@@ -465,6 +456,7 @@
     importVC.unmappedFeeds = feeds;
     importVC.unmappedFolders = folders;
     importVC.existingFolders = (existingFolders != nil && [existingFolders isKindOfClass:NSDictionary.class]) ? [existingFolders valueForKey:@"folders"] : @[];
+    importVC.coordinator = self.coordinator;
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         
