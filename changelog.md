@@ -1,5 +1,11 @@
 # v2.3.0
 
+### Build 220
+
+- Import/Export OPML is now enabled and functional. 
+
+- Fixes crash on tap.
+
 ### Build 219
 
 - Fixed loading of images from Substack posts ( encased by cdn.substack.com in their newsletter posts). 
