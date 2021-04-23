@@ -236,6 +236,9 @@ extension AppDelegate {
                 
                 if path.contains("&shift=1") {
                     path = path.replacingOccurrences(of: "&shift=1", with: "")
+                    
+                    openInBackground = !openInBackground
+                    
                 }
                 
                 if let url = URL(string: path) {
