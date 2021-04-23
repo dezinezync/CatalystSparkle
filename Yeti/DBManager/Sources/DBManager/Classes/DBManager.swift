@@ -36,7 +36,7 @@ public extension Notification.Name {
     static let foldersUpdated = Notification.Name(rawValue: "foldersUpdated")
 }
 
-private let DB_VERSION_TAG = "2021-03-29 09:30AM IST"
+let DB_VERSION_TAG = "2021-03-29 09:30AM IST"
 
 extension NSNotification.Name {
 //    static let YapDatabaseModifiedNotification = NSNotification.Name("YapDatabaseModifiedNotification")
