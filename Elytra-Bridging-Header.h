@@ -41,3 +41,4 @@
 #import "PhotosController.h"
 #import "DZWebViewController.h"
 #import "UIColor+HEX.h"
+#import "SortingMenuToolbarItem.h"

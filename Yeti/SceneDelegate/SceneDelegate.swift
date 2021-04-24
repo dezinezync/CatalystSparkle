@@ -35,7 +35,9 @@ let DEFAULT_ACTIVITIES: Set<String> = Set(["main"])
     
     weak var toolbar: NSToolbar?
     
-    weak var sortingItem: NSMenuToolbarItem?
+    weak var sortingItem: SortingMenuToolbarItem?
+    
+    var toolbarDelegate: SceneToolbarDelegate?
     
     #endif
     
@@ -80,14 +82,14 @@ let DEFAULT_ACTIVITIES: Set<String> = Set(["main"])
         
         splitVC.loadViewIfNeeded()
         
-        #if TARGET_OS_MACCATALYST
+        MyAppDelegate.mainScene = windowScene
+        
+        #if targetEnvironment(macCatalyst)
         ct_setupToolbar(scene: windowScene)
         
         windowScene.titlebar?.titleVisibility = .visible
         windowScene.titlebar?.toolbarStyle = .unifiedCompact
         #endif
-        
-        MyAppDelegate.mainScene = windowScene
         
         window!.makeKeyAndVisible()
         
@@ -509,6 +511,29 @@ let DEFAULT_ACTIVITIES: Set<String> = Set(["main"])
                 }
                 
             }
+            
+        }
+        
+    }
+    
+}
+
+// MARK: - Toolbar Support
+extension SceneDelegate {
+    
+    func ct_setupToolbar(scene: UIWindowScene) {
+        
+        if scene == MyAppDelegate.mainScene {
+            
+            let toolbar = NSToolbar(identifier: "elytra-main-toolbar")
+            toolbar.displayMode = .iconOnly
+            toolbarDelegate = SceneToolbarDelegate(scene: scene)
+            
+            toolbar.delegate = toolbarDelegate
+            
+            scene.titlebar?.toolbar = toolbar
+            
+            self.toolbar = toolbar
             
         }
         

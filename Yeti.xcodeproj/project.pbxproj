@@ -249,7 +249,6 @@
 		F09CB6A921637DE200F47036 /* elytraProcessor.js in Resources */ = {isa = PBXBuildFile; fileRef = F09CB6A821637DE200F47036 /* elytraProcessor.js */; };
 		F09CEA952508B2E6007941AD /* FeedHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F09CEA942508B2E6007941AD /* FeedHeaderView.m */; };
 		F09CEAB02508B2F4007941AD /* FeedHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F09CEAAF2508B2F4007941AD /* FeedHeaderView.xib */; };
-		F09D3D5F250649110037E3B4 /* SceneDelegate+Catalyst.m in Sources */ = {isa = PBXBuildFile; fileRef = F09D3D5E250649110037E3B4 /* SceneDelegate+Catalyst.m */; platformFilter = maccatalyst; };
 		F09E96472055342000E61681 /* hljs.js in Resources */ = {isa = PBXBuildFile; fileRef = F09E96432055342000E61681 /* hljs.js */; };
 		F09E96492055342000E61681 /* light.css in Resources */ = {isa = PBXBuildFile; fileRef = F09E96452055342000E61681 /* light.css */; };
 		F09FD74C250915AF004BD60E /* auto.css in Resources */ = {isa = PBXBuildFile; fileRef = F09FD732250915AF004BD60E /* auto.css */; };
@@ -350,6 +349,7 @@
 		F0D071FB205E88AC00A042CD /* ImageLoadingVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D071F9205E88AC00A042CD /* ImageLoadingVC.m */; };
 		F0D07201205E960900A042CD /* ExternalAppsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D071FF205E960900A042CD /* ExternalAppsVC.m */; };
 		F0D07206205E9EC500A042CD /* DZWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D07204205E9EC400A042CD /* DZWebViewController.m */; };
+		F0D3F904263477770080B1E5 /* SceneToolbarDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D3F903263477770080B1E5 /* SceneToolbarDelegate.swift */; };
 		F0D424232526557C00837194 /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = F0D424222526557C00837194 /* SDWebImage */; };
 		F0D98F5224EE4C8500B1F9F0 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0D98F5124EE4C8500B1F9F0 /* SwiftUI.framework */; };
 		F0D98F5524EE4C8500B1F9F0 /* UnreadsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D98F5424EE4C8500B1F9F0 /* UnreadsWidget.swift */; };
@@ -1081,6 +1081,7 @@
 		F0D07204205E9EC400A042CD /* DZWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DZWebViewController.m; sourceTree = "<group>"; };
 		F0D07205205E9EC400A042CD /* DZWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DZWebViewController.h; sourceTree = "<group>"; };
 		F0D07207205E9F6700A042CD /* attributions.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = attributions.html; sourceTree = "<group>"; };
+		F0D3F903263477770080B1E5 /* SceneToolbarDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneToolbarDelegate.swift; sourceTree = "<group>"; };
 		F0D98F4E24EE4C8500B1F9F0 /* UnreadsWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = UnreadsWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0D98F4F24EE4C8500B1F9F0 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		F0D98F5124EE4C8500B1F9F0 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -1321,6 +1322,7 @@
 				F01041E9263448DF006A0CF0 /* SceneDelegate.swift */,
 				F09D3D5D250649110037E3B4 /* SceneDelegate+Catalyst.h */,
 				F09D3D5E250649110037E3B4 /* SceneDelegate+Catalyst.m */,
+				F0D3F903263477770080B1E5 /* SceneToolbarDelegate.swift */,
 			);
 			path = SceneDelegate;
 			sourceTree = "<group>";
@@ -3140,6 +3142,7 @@
 				F0533CB4240D463C00BB69CF /* UIRefreshControl+Manual.m in Sources */,
 				F00A02E8262956FB0092F7D5 /* Environment.swift in Sources */,
 				F032A75A244D7D680024AC63 /* YetiThemeKit.m in Sources */,
+				F0D3F904263477770080B1E5 /* SceneToolbarDelegate.swift in Sources */,
 				F042ACB7252445F000AA440A /* UISlider+MacCatalyst.m in Sources */,
 				F04CFAC62154B57B00AA7B5E /* StoreVC.m in Sources */,
 				F0E86494234796B80089F9EF /* ArticlePhoto.m in Sources */,
@@ -3148,7 +3151,6 @@
 				F0B0EA4024EC20D800D675B4 /* NSString+GTMNSStringHTMLAdditions.m in Sources */,
 				F0F8DBBB21516EE80076156D /* NSPointerArray+AbstractionHelpers.m in Sources */,
 				F0C49C70260048F3009B8E34 /* ArticleCell.swift in Sources */,
-				F09D3D5F250649110037E3B4 /* SceneDelegate+Catalyst.m in Sources */,
 				F067D35D23F43B350034B968 /* Customization.m in Sources */,
 				F07889C125035E65007F3C55 /* UITableView+Sugar.m in Sources */,
 				F050E0B22154C16600225C6A /* StoreFooter.m in Sources */,
