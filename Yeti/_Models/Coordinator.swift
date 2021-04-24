@@ -69,17 +69,13 @@ public var deviceName: String {
         let sidebar = SidebarVC()
         sidebar.coordinator = self
         
-//        if splitVC?.traitCollection.userInterfaceIdiom == .phone {
-//
-//            let nav = UINavigationController(rootViewController: sidebar)
-//            sidebar.navigationController?.navigationBar.prefersLargeTitles = true
-//            sidebar.navigationItem.largeTitleDisplayMode = .automatic
-//
-//            splitVC?.setViewController(nav, for: .compact)
-//
-//        }
+        let nav = UINavigationController(rootViewController: sidebar)
+        nav.navigationBar.prefersLargeTitles = true
+        sidebar.navigationItem.largeTitleDisplayMode = .automatic
+
+        splitVC.setViewController(nav, for: .compact)
         
-        splitVC.setViewController(sidebar, for: .primary)
+        splitVC.setViewController(nav, for: .primary)
         
         self.sidebarVC = sidebar
         
@@ -106,14 +102,11 @@ public var deviceName: String {
             guard let sself = self else { return }
             
             if showUnread {
-                
-                let f = CustomFeed(title: "Unread", image: "largecircle.fill.circle", color: .systemBlue, type: .unread)
-                
-                sself.showCustomVC(f)
+                sself.showUnreadVC()
             }
             
             if showEmpty {
-                self?.showEmptyVC()
+                sself.showEmptyVC()
             }
             
             sself.checkConstraintsForRequestingReview()
@@ -263,6 +256,12 @@ public var deviceName: String {
     }
     
     // MARK: - Feeds
+    public func showUnreadVC() {
+        let f = CustomFeed(title: "Unread", image: "largecircle.fill.circle", color: .systemBlue, type: .unread)
+        
+        showCustomVC(f)
+    }
+    
     public func showCustomVC(_ feed: CustomFeed) {
         
         if feed.feedType == .unread && (self.feedVC == nil || (self.feedVC != nil && self.feedVC!.type != .unread)) {

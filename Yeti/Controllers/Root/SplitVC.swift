@@ -178,14 +178,106 @@ extension SplitVC: UISplitViewControllerDelegate {
     
     public func splitViewController(_ svc: UISplitViewController, topColumnForCollapsingToProposedTopColumn proposedTopColumn: UISplitViewController.Column) -> UISplitViewController.Column {
         
-        if let _ = coordinator?.articleVC {
-            return .secondary
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.swap(svc, collapsing: true)
         }
-        else if let _ = coordinator?.feedVC {
-            return .supplementary
+        
+        return proposedTopColumn
+        
+//        if let _ = coordinator?.articleVC {
+//            return .secondary
+//        }
+//        else if let _ = coordinator?.feedVC {
+//            return .supplementary
+//        }
+//        else {
+//            return .primary
+//        }
+        
+    }
+    
+    public func splitViewController(_ svc: UISplitViewController, displayModeForExpandingToProposedDisplayMode proposedDisplayMode: UISplitViewController.DisplayMode) -> UISplitViewController.DisplayMode {
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            self.swap(svc, collapsing: false)
+        }
+        
+        // this will still crash UISplitViewController's internal implementation.
+        if coordinator?.feedVC == nil,
+           proposedDisplayMode == .twoOverSecondary {
+            
+           return .oneOverSecondary
+            
+        }
+        
+        return proposedDisplayMode
+        
+    }
+    
+    func swap(_ svc: UISplitViewController, collapsing: Bool) {
+        if collapsing {
+            
+            if let nav = svc.viewController(for: .compact) as? UINavigationController {
+                
+                // pop each controller and push it on to the compact stack
+                if let feedVC = coordinator?.feedVC {
+                    
+                    if let fnav = feedVC.navigationController {
+                        
+                        if let vc = fnav.popViewController(animated: false) {
+                            
+                            nav.pushViewController(vc, animated: false)
+                            
+                        }
+                        else {
+                            
+                            nav.pushViewController(coordinator!.feedVC!, animated: false)
+                            
+                        }
+                                                
+                    }
+                    
+                }
+                
+                if let articleVC = coordinator?.articleVC {
+                    
+                    if let anav = articleVC.navigationController {
+                        
+                        if let vc = anav.popViewController(animated: false) {
+                            
+                            nav.pushViewController(vc, animated: false)
+                            
+                        }
+                        else {
+                            
+                            nav.pushViewController(coordinator!.articleVC!, animated: false)
+                            
+                        }
+                                                
+                    }
+                    
+                }
+                
+            }
+            
         }
         else {
-            return .primary
+                
+            if let nav = svc.viewController(for: .compact) as? UINavigationController {
+                
+                let articleVC: ArticleVC? = coordinator?.articleVC != nil ? nav.popViewController(animated: true) as? ArticleVC : nil
+                let feedVC: FeedVC? = coordinator?.feedVC != nil ? nav.popViewController(animated: false) as? FeedVC : nil
+                
+                if let fvc = feedVC {
+                    svc.setViewController(UINavigationController(rootViewController: fvc), for: .supplementary)
+                }
+                
+                if let avc = articleVC {
+                    svc.setViewController(UINavigationController(rootViewController: avc), for: .secondary)
+                }
+                
+            }
+            
         }
         
     }
