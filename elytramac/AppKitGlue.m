@@ -92,6 +92,7 @@ static AppKitGlue * SharedAppKitGlue = nil;
     
 }
 
+/// https://developer.apple.com/forums/thread/127382
 - (void)disableFullscreenButton:(NSWindow *)window {
     
     [window setCollectionBehavior:NSWindowCollectionBehaviorFullScreenAuxiliary|NSWindowCollectionBehaviorFullScreenNone|NSWindowCollectionBehaviorFullScreenDisallowsTiling];
