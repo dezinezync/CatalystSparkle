@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="mac" appearance="light" renderMode="macOS"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17502"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -29,7 +29,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <view clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HgH-Zt-EPD">
-                    <rect key="frame" x="16" y="93" width="768" height="414"/>
+                    <rect key="frame" x="16" y="107" width="768" height="386"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Subscriptions" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eS7-Y6-80B">
                             <rect key="frame" x="8" y="8" width="752" height="30"/>
@@ -38,21 +38,21 @@
                             <nil key="highlightedColor"/>
                         </label>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bb0-NQ-QA5">
-                            <rect key="frame" x="64" y="54" width="640" height="65"/>
+                            <rect key="frame" x="64" y="54" width="640" height="36"/>
                             <string key="text">Import your RSS Feed Subscriptions, Folders and other meta data from another service. Alternatively, export your Subscriptions and Folders from Elytra to an OPML file.</string>
                             <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.53534881160000003" colorSpace="calibratedRGB"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="opml" translatesAutoresizingMaskIntoConstraints="NO" id="ddF-G2-bFb">
-                            <rect key="frame" x="264" y="135" width="240" height="180"/>
+                            <rect key="frame" x="264" y="106" width="240" height="180"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="240" id="Qtc-qi-FTA"/>
                                 <constraint firstAttribute="width" secondItem="ddF-G2-bFb" secondAttribute="height" multiplier="4:3" id="jcN-tD-ePi"/>
                             </constraints>
                         </imageView>
                         <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" alignment="center" spacing="24" translatesAutoresizingMaskIntoConstraints="NO" id="9UE-VV-tvz">
-                            <rect key="frame" x="160" y="338" width="448" height="20"/>
+                            <rect key="frame" x="160" y="310" width="448" height="20"/>
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4YE-eg-wal">
                                     <rect key="frame" x="-7" y="-5" width="226" height="32"/>
@@ -91,8 +91,9 @@
                             </subviews>
                         </stackView>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ufd-vS-T2U">
-                            <rect key="frame" x="346" y="377" width="76" height="32"/>
+                            <rect key="frame" x="346" y="349" width="76" height="32"/>
                             <state key="normal" title="Cancel"/>
+                            <variation key="userInterfaceIdiom=mac" hidden="YES"/>
                             <connections>
                                 <action selector="didTapCancel:" destination="-1" eventType="touchUpInside" id="ZuW-T0-lXP"/>
                             </connections>
@@ -127,7 +128,7 @@
                     </constraints>
                 </view>
                 <view hidden="YES" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mNA-Mi-OFC">
-                    <rect key="frame" x="16" y="218" width="768" height="165"/>
+                    <rect key="frame" x="16" y="220" width="768" height="161"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Importing your OPML" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t0d-Bj-zBP">
                             <rect key="frame" x="8" y="8" width="752" height="30"/>
@@ -136,18 +137,18 @@
                             <nil key="highlightedColor"/>
                         </label>
                         <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="acc-pq-fzN">
-                            <rect key="frame" x="351" y="128" width="66" height="32"/>
+                            <rect key="frame" x="351" y="124" width="66" height="32"/>
                             <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                             <state key="normal" title="Done"/>
                         </button>
                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="wfx-PW-AcJ">
-                            <rect key="frame" x="160" y="62" width="448" height="47"/>
+                            <rect key="frame" x="160" y="62" width="448" height="43"/>
                             <subviews>
                                 <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.20000000298023224" translatesAutoresizingMaskIntoConstraints="NO" id="AQr-hr-Lfp">
                                     <rect key="frame" x="0.0" y="0.0" width="448" height="20"/>
                                 </progressView>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Uploading your file" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aWc-TP-zmS">
-                                    <rect key="frame" x="160" y="28" width="129" height="19"/>
+                                    <rect key="frame" x="171" y="28" width="106.5" height="15"/>
                                     <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.54000000000000004" colorSpace="calibratedRGB"/>
                                     <nil key="highlightedColor"/>

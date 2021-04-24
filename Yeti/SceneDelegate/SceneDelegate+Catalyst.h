@@ -6,7 +6,7 @@
 //  Copyright © 2020 Dezine Zync Studios. All rights reserved.
 //
 
-#import "SceneDelegate.h"
+#import "Elytra-Swift.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

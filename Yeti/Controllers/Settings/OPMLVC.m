@@ -273,7 +273,23 @@
 
 - (IBAction)didTapCancel:(UIButton *)sender {
     
+#if TARGET_OS_MACCATALYST
+    
+    UISceneSession *session = self.view.window.windowScene.session;
+    
+    [UIApplication.sharedApplication requestSceneSessionDestruction:session options:nil errorHandler:^(NSError * _Nonnull error) {
+       
+        if (error != nil) {
+            NSLog(@"Error closing OPML Scene: %@", error.localizedDescription);
+        }
+        
+    }];
+    
+#else
+    
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+    
+#endif
     
 }
 

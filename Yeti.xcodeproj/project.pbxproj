@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F001A8422505E8F0006175B9 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F001A8272505E8F0006175B9 /* SceneDelegate.m */; };
 		F003C20C2539685E00312913 /* Atkinson-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F003C2082539685D00312913 /* Atkinson-Bold.ttf */; };
 		F003C20D2539685E00312913 /* Atkinson-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F003C2092539685D00312913 /* Atkinson-Italic.ttf */; };
 		F003C20E2539685E00312913 /* Atkinson-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F003C20A2539685E00312913 /* Atkinson-Regular.ttf */; };
@@ -44,6 +43,7 @@
 		F00F647C24EC1E4B00E5727C /* PaddedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = F00F647B24EC1E4B00E5727C /* PaddedLabel.m */; };
 		F00F648024EC1E9F00E5727C /* UIColor+HEX.m in Sources */ = {isa = PBXBuildFile; fileRef = F00F647E24EC1E9F00E5727C /* UIColor+HEX.m */; };
 		F00F648324EC1EAB00E5727C /* UIImage+Sizing.m in Sources */ = {isa = PBXBuildFile; fileRef = F00F648224EC1EAB00E5727C /* UIImage+Sizing.m */; };
+		F01041EA263448DF006A0CF0 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F01041E9263448DF006A0CF0 /* SceneDelegate.swift */; };
 		F0123C4C224D216300EDFF92 /* ArticleAuthorView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0123C4B224D216300EDFF92 /* ArticleAuthorView.m */; };
 		F0123C59224D217300EDFF92 /* ArticleAuthorView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0123C58224D217300EDFF92 /* ArticleAuthorView.xib */; };
 		F01285C323436D8D00B8C277 /* Keychain.m in Sources */ = {isa = PBXBuildFile; fileRef = F01285C123436D8D00B8C277 /* Keychain.m */; };
@@ -598,8 +598,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		F001A8272505E8F0006175B9 /* SceneDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SceneDelegate.m; sourceTree = "<group>"; };
-		F001A8412505E8F0006175B9 /* SceneDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SceneDelegate.h; sourceTree = "<group>"; };
 		F003C2082539685D00312913 /* Atkinson-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Atkinson-Bold.ttf"; sourceTree = "<group>"; };
 		F003C2092539685D00312913 /* Atkinson-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Atkinson-Italic.ttf"; sourceTree = "<group>"; };
 		F003C20A2539685E00312913 /* Atkinson-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Atkinson-Regular.ttf"; sourceTree = "<group>"; };
@@ -656,6 +654,7 @@
 		F00F647F24EC1E9F00E5727C /* UIColor+HEX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+HEX.h"; sourceTree = "<group>"; };
 		F00F648124EC1EAB00E5727C /* UIImage+Sizing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Sizing.h"; sourceTree = "<group>"; };
 		F00F648224EC1EAB00E5727C /* UIImage+Sizing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Sizing.m"; sourceTree = "<group>"; };
+		F01041E9263448DF006A0CF0 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		F0123C4A224D216300EDFF92 /* ArticleAuthorView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticleAuthorView.h; sourceTree = "<group>"; };
 		F0123C4B224D216300EDFF92 /* ArticleAuthorView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArticleAuthorView.m; sourceTree = "<group>"; };
 		F0123C58224D217300EDFF92 /* ArticleAuthorView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ArticleAuthorView.xib; sourceTree = "<group>"; };
@@ -1316,6 +1315,16 @@
 			path = Article;
 			sourceTree = "<group>";
 		};
+		F01041E0263448AD006A0CF0 /* SceneDelegate */ = {
+			isa = PBXGroup;
+			children = (
+				F01041E9263448DF006A0CF0 /* SceneDelegate.swift */,
+				F09D3D5D250649110037E3B4 /* SceneDelegate+Catalyst.h */,
+				F09D3D5E250649110037E3B4 /* SceneDelegate+Catalyst.m */,
+			);
+			path = SceneDelegate;
+			sourceTree = "<group>";
+		};
 		F01285BE23436D8D00B8C277 /* Keychain */ = {
 			isa = PBXGroup;
 			children = (
@@ -1652,6 +1661,7 @@
 			children = (
 				F0E71E731FD6FF7100408CFF /* Yeti.entitlements */,
 				F070C31F1FBAC0C800912CCF /* AppDelegate */,
+				F01041E0263448AD006A0CF0 /* SceneDelegate */,
 				F070C3101FBABC8500912CCF /* Categories */,
 				F070C30E1FBABC7500912CCF /* Controllers */,
 				F070C3111FBABC8A00912CCF /* _Models */,
@@ -1894,10 +1904,6 @@
 				F088CF6D248E72020010EBC0 /* AppDelegate+Catalyst.m */,
 				F07CA623249BA03500EA4212 /* AppDelegate+CatalystActions.h */,
 				F07CA624249BA03500EA4212 /* AppDelegate+CatalystActions.m */,
-				F001A8412505E8F0006175B9 /* SceneDelegate.h */,
-				F001A8272505E8F0006175B9 /* SceneDelegate.m */,
-				F09D3D5D250649110037E3B4 /* SceneDelegate+Catalyst.h */,
-				F09D3D5E250649110037E3B4 /* SceneDelegate+Catalyst.m */,
 			);
 			path = AppDelegate;
 			sourceTree = "<group>";
@@ -3083,6 +3089,7 @@
 				F06B766420C27CD000FBCDE7 /* YTNavigationController.m in Sources */,
 				F022B0D820DC2D9500030185 /* AccentCell.m in Sources */,
 				F0B573C824FCB61F00364BC3 /* RMStore.m in Sources */,
+				F01041EA263448DF006A0CF0 /* SceneDelegate.swift in Sources */,
 				F06C666522B2ABBA00D425E9 /* UIViewController+Stateful.m in Sources */,
 				F00F647224EC1DE700E5727C /* Aside.m in Sources */,
 				F0C49D0C26004B26009B8E34 /* UIImage+Proxy.m in Sources */,
@@ -3114,7 +3121,6 @@
 				F03AC035205533D900FB111A /* CodeParser.m in Sources */,
 				F032A760244D7F470024AC63 /* TypeFactory.m in Sources */,
 				F031A7B225FF1B870046467A /* FeedVC.swift in Sources */,
-				F001A8422505E8F0006175B9 /* SceneDelegate.m in Sources */,
 				F04E92BC21B5427B00AD1FB2 /* YTExtractor.m in Sources */,
 				F0EF6EB7261C9A9200C07B85 /* BookmarksCoordinator+Impl.swift in Sources */,
 				F0E5F50824CEC854007E6D1E /* PhotosController.m in Sources */,

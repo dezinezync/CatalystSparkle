@@ -21,10 +21,6 @@
 
 #import <DZAppdelegate/UIApplication+KeyWindow.h>
 
-#if TARGET_OS_MACCATALYST
-#import "SceneDelegate.h"
-#endif
-
 @interface Image () <UIContextMenuInteractionDelegate>
 
 @property (nonatomic, assign, getter=isAnimatable, readwrite) BOOL animatable;
@@ -558,9 +554,7 @@
     UIDocumentPickerViewController *controller = [[UIDocumentPickerViewController alloc] initForExportingURLs:@[tempURL]];
     controller.delegate = (id<UIDocumentPickerDelegate>)self;
     
-    SceneDelegate *delegate = (SceneDelegate *)(UIApplication.sharedApplication.connectedScenes.allObjects.firstObject.delegate);
-    
-    [delegate.coordinator.splitVC presentViewController:controller animated:YES completion:nil];
+    [MyAppDelegate.coordinator.splitVC presentViewController:controller animated:YES completion:nil];
     
 }
 

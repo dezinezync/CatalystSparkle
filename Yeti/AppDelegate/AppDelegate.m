@@ -234,7 +234,7 @@ AppDelegate *MyAppDelegate = nil;
     
     SceneDelegate * scene = (id)[[UIApplication.sharedApplication.connectedScenes.allObjects firstObject] delegate];
     
-    return scene.coordinator.splitVC;
+    return self.coordinator.splitVC;
     
 }
 

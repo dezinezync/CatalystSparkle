@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+
 #import "Keychain.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -26,6 +27,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)showPreferencesController;
 
 - (void)deactivateAccount:(void(^)(BOOL success, NSError *error))completionBlock;
+
+- (void)disableFullscreenButton:(id)window;
 
 @end
 

@@ -1,5 +1,9 @@
 # v2.3.0
 
+### Build 222
+
+- Moved OPML Import/Export to its window on macOS.
+
 ### Build 220
 
 - Import/Export OPML is now enabled and functional. 

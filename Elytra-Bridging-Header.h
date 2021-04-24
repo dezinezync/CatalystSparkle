@@ -11,7 +11,7 @@
 
 #import "AppDelegate+CatalystActions.h"
 
-#import <DZKit/DZKit.h>
+#import <DZKIT/DZKit.h>
 
 #import "Keychain.h"
 #import "ElytraMacBridgingHeader.h"
@@ -38,3 +38,6 @@
 #import "EmptyVC.h"
 #import "NewFolderController.h"
 #import "StoreVC.h"
+#import "PhotosController.h"
+#import "DZWebViewController.h"
+#import "UIColor+HEX.h"

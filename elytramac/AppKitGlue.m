@@ -92,6 +92,15 @@ static AppKitGlue * SharedAppKitGlue = nil;
     
 }
 
+- (void)disableFullscreenButton:(NSWindow *)window {
+    
+    [window setCollectionBehavior:NSWindowCollectionBehaviorFullScreenAuxiliary|NSWindowCollectionBehaviorFullScreenNone|NSWindowCollectionBehaviorFullScreenDisallowsTiling];
+           
+    NSButton *button = [window standardWindowButton:NSWindowZoomButton];
+    [button setEnabled: NO];
+    
+}
+
 // https://github.com/thekarladam/fluidium/blob/4e4b7c7cf742a368d8f6a651ee149f1aec20d0a5/Fluidium/lib/OmniGroup/Frameworks/OmniAppKit/OpenStepExtensions.subproj/NSImage-OAExtensions.m#L150
 - (CGImageRef)imageForFileType:(NSString *)fileType {
     

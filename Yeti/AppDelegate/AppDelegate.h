@@ -10,8 +10,9 @@
 #import <DZAppdelegate/DZAppdelegate.h>
 
 #import "RMStore.h"
-#import "SceneDelegate.h"
 #import "ElytraMacBridgingHeader.h"
+
+@class Coordinator;
 
 @class RMStoreKeychainPersistence;
 

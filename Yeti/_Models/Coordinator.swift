@@ -479,7 +479,13 @@ public var deviceName: String {
     
     public func showOPMLInterface(from sender: Any?, type: ShowOPMLType) {
         
+        #if targetEnvironment(macCatalyst)
+        openScene(name: "opmlScene:\(type.rawValue)")
+        #else
+        
         let vc = OPMLVC(nibName: "OPMLVC", bundle: Bundle.main)
+        vc.coordinator = self
+        
         let nav = UINavigationController(rootViewController: vc)
         nav.modalPresentationStyle = .automatic
         
@@ -495,6 +501,7 @@ public var deviceName: String {
             }
             
         }
+        #endif
         
     }
     
@@ -1855,7 +1862,7 @@ extension Coordinator {
         
     }
     
-    public func setupBGCleanup(task: BGAppRefreshTask) {
+    public func setupBGCleanup(task: BGProcessingTask) {
         
         DBManager.shared.cleanupDatabase(completion: {
             task.setTaskCompleted(success: true)

@@ -76,6 +76,8 @@ extension Defaults.Keys {
     
     static let hideBookmarks = Key<Bool>("com.dezinezync.elytra.hideBookmarksTab", default: false)
     
+    static let resetAccount = Key<Bool>("reset_account_preference", default: false)
+    
     // Mark: - macOS
     static let refreshFeedsInterval = Key<String>("macKeyRefreshFeeds", default: RefreshIntervalKeys.manually.rawValue)
     
