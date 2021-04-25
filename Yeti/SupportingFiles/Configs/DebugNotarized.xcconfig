@@ -9,3 +9,6 @@
 // Configuration settings file format documentation can be found at:
 // https://help.apple.com/xcode/#/dev745c5c974
 IS_MAC_NOTARIZED = YES
+// OTHER_LIBTOOLFLAGS = $(inherited) -framework Sparkle.framework
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) IS_MAC_NOTARIZED=1
+OTHER_SWIFT_FLAGS = $(inherited) -D IS_MAC_NOTARIZED

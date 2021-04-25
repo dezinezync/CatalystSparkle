@@ -60,6 +60,17 @@ AppDelegate *MyAppDelegate = nil;
     // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
 }
 
+- (void)applicationWillTerminate:(UIApplication *)application {
+    
+#if TARGET_OS_MACCATALYST
+    if (self.coordinator.sidebarVC.refreshTimer != nil && [self.coordinator.sidebarVC.refreshTimer isValid]) {
+        [self.coordinator.sidebarVC.refreshTimer invalidate];
+    }
+        
+#endif
+    
+}
+
 - (BOOL)commonInit:(UIApplication *)application {
     
     __block BOOL retval;

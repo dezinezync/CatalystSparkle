@@ -231,6 +231,7 @@
 		F07DCA3B20C517D20068ED51 /* UITableViewController+KeyboardScroll.m in Sources */ = {isa = PBXBuildFile; fileRef = F07DCA3A20C517D20068ED51 /* UITableViewController+KeyboardScroll.m */; };
 		F07DCA4420C51B550068ED51 /* ArticleVC+Keyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = F07DCA4320C51B550068ED51 /* ArticleVC+Keyboard.m */; };
 		F08011E42167345300F0CE81 /* OPMLDeckController.m in Sources */ = {isa = PBXBuildFile; fileRef = F08011E32167345300F0CE81 /* OPMLDeckController.m */; };
+		F080415326357D1A001ECAD9 /* NSTimer+Old.swift in Sources */ = {isa = PBXBuildFile; fileRef = F080415226357D1A001ECAD9 /* NSTimer+Old.swift */; };
 		F085785521D1EAE200CC2B95 /* PreviewLinesVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F085785321D1EAE200CC2B95 /* PreviewLinesVC.m */; };
 		F08809FE262A9CDB002181EC /* BloccsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F08809F4262A9B9F002181EC /* BloccsProvider.swift */; };
 		F0880A01262BD5EE002181EC /* FoldersIntent.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = F08809FF262BD5E0002181EC /* FoldersIntent.intentdefinition */; };
@@ -242,6 +243,7 @@
 		F0880A1E262BDB50002181EC /* FoldersWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0880A1B262BDB38002181EC /* FoldersWidget.swift */; };
 		F0880A1F262BDBBE002181EC /* FoldersProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0880A03262BD660002181EC /* FoldersProvider.swift */; };
 		F088CF6E248E72020010EBC0 /* AppDelegate+Catalyst.m in Sources */ = {isa = PBXBuildFile; fileRef = F088CF6D248E72020010EBC0 /* AppDelegate+Catalyst.m */; platformFilter = maccatalyst; };
+		F08A49A9263549170078729D /* AppDelegate+Updater.swift in Sources */ = {isa = PBXBuildFile; fileRef = F08A49A8263549170078729D /* AppDelegate+Updater.swift */; };
 		F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F099465F20AD86BE00E5520F /* StoreKit.framework */; };
 		F099466520AD8A8B00E5520F /* AppDelegate+Store.m in Sources */ = {isa = PBXBuildFile; fileRef = F099466420AD8A8B00E5520F /* AppDelegate+Store.m */; };
 		F09B3B351FBCB348001D4B09 /* UIViewController+ScrollLoad.m in Sources */ = {isa = PBXBuildFile; fileRef = F09B3B341FBCB348001D4B09 /* UIViewController+ScrollLoad.m */; };
@@ -570,6 +572,16 @@
 				F0B7C851240B7272008D8F4F /* notificationContext.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F0804177263583BB001ECAD9 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F0847F0224EE4E210038DC5A /* Embed Frameworks */ = {
@@ -922,6 +934,7 @@
 		F07DCA4320C51B550068ED51 /* ArticleVC+Keyboard.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "ArticleVC+Keyboard.m"; sourceTree = "<group>"; };
 		F08011E22167345300F0CE81 /* OPMLDeckController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OPMLDeckController.h; sourceTree = "<group>"; };
 		F08011E32167345300F0CE81 /* OPMLDeckController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OPMLDeckController.m; sourceTree = "<group>"; };
+		F080415226357D1A001ECAD9 /* NSTimer+Old.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSTimer+Old.swift"; sourceTree = "<group>"; };
 		F085785221D1EAE200CC2B95 /* PreviewLinesVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PreviewLinesVC.h; sourceTree = "<group>"; };
 		F085785321D1EAE200CC2B95 /* PreviewLinesVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PreviewLinesVC.m; sourceTree = "<group>"; };
 		F08809F4262A9B9F002181EC /* BloccsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BloccsProvider.swift; sourceTree = "<group>"; };
@@ -937,6 +950,7 @@
 		F088CF6C248E72020010EBC0 /* AppDelegate+Catalyst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+Catalyst.h"; sourceTree = "<group>"; };
 		F088CF6D248E72020010EBC0 /* AppDelegate+Catalyst.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+Catalyst.m"; sourceTree = "<group>"; };
 		F08993C1210883E200A9978E /* FolderDrop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FolderDrop.h; sourceTree = "<group>"; };
+		F08A49A8263549170078729D /* AppDelegate+Updater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Updater.swift"; sourceTree = "<group>"; };
 		F08C5DF0238656620055946F /* DZAppDelegate.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZAppDelegate.xcodeproj; path = Vendors/DZAppDelegate/DZAppDelegate.xcodeproj; sourceTree = "<group>"; };
 		F0919F641FD7C1A70098F48A /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		F093318B24EC14A90066FA41 /* UnreadCountObservor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnreadCountObservor.h; sourceTree = "<group>"; };
@@ -1809,6 +1823,7 @@
 				F0FEE3FD2615E6EB007AB52C /* UIViewController+Coordinator.h */,
 				F0FEE3FE2615E6EB007AB52C /* UIViewController+Coordinator.m */,
 				F01A7F94262FFE1100A53EEB /* UIScrollView+Overscroll.swift */,
+				F080415226357D1A001ECAD9 /* NSTimer+Old.swift */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -1892,6 +1907,7 @@
 				F070C2DC1FBABC3500912CCF /* AppDelegate.h */,
 				F070C2DD1FBABC3600912CCF /* AppDelegate.m */,
 				F01F41AE2616CC6A00F51813 /* AppDelegate+Routing.swift */,
+				F08A49A8263549170078729D /* AppDelegate+Updater.swift */,
 				F0213E792085E525000DDD4A /* AppDelegate+Push.h */,
 				F0213E7A2085E525000DDD4A /* AppDelegate+Push.m */,
 				F099466320AD8A8A00E5520F /* AppDelegate+Store.h */,
@@ -2480,6 +2496,7 @@
 				F0783C84248F685C00C7A280 /* Sources */,
 				F0783C85248F685C00C7A280 /* Frameworks */,
 				F0783C86248F685C00C7A280 /* Resources */,
+				F0804177263583BB001ECAD9 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -3108,6 +3125,7 @@
 				F070C2DE1FBABC3600912CCF /* AppDelegate.m in Sources */,
 				F0DFBBF42570A36400246D8A /* CoalescingQueue.swift in Sources */,
 				F02B704D24EA7E5C00DD607F /* IDMTapDetectingImageView.m in Sources */,
+				F08A49A9263549170078729D /* AppDelegate+Updater.swift in Sources */,
 				F0EFA63A205FDC5A00815ED7 /* ArticleHelperView.m in Sources */,
 				F00F647124EC1DE700E5727C /* Gallery.m in Sources */,
 				F0EE7F0B2608C56600931FA2 /* TodayVC.swift in Sources */,
@@ -3118,6 +3136,7 @@
 				F03C6040251F702200F442C7 /* DZStepper.m in Sources */,
 				F03AC035205533D900FB111A /* CodeParser.m in Sources */,
 				F032A760244D7F470024AC63 /* TypeFactory.m in Sources */,
+				F080415326357D1A001ECAD9 /* NSTimer+Old.swift in Sources */,
 				F031A7B225FF1B870046467A /* FeedVC.swift in Sources */,
 				F04E92BC21B5427B00AD1FB2 /* YTExtractor.m in Sources */,
 				F0EF6EB7261C9A9200C07B85 /* BookmarksCoordinator+Impl.swift in Sources */,
@@ -3387,6 +3406,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
+					"IS_MAC_NOTARIZED=1",
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -3598,6 +3618,7 @@
 		};
 		F02477992629522F0071C6A3 /* Debug-Notarized */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F02477862629521C0071C6A3 /* DebugNotarized.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -3608,6 +3629,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Yeti/Vendors",
 				);
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				INFOPLIST_FILE = elytramac/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -3710,6 +3732,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "IS_MAC_NOTARIZED=1";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -3913,6 +3936,7 @@
 		};
 		F02477A12629523B0071C6A3 /* Release-Notarized */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F02477862629521C0071C6A3 /* DebugNotarized.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -3923,6 +3947,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Yeti/Vendors",
 				);
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				INFOPLIST_FILE = elytramac/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;

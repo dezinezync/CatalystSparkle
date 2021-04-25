@@ -12,6 +12,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol AppKitGlueDelegate <NSObject>
+
+@optional
+- (void)didWake:(NSNotification *)notification;
+
+@end
+
 @interface AppKitGlue : NSObject
 
 + (instancetype _Nonnull)shared;
@@ -19,6 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak) NSUserDefaults *appUserDefaults;
 
 @property (nonatomic, weak) id feedsManager;
+
+@property (nonatomic, weak) id<AppKitGlueDelegate> delegate;
 
 - (void)openURL:(NSURL * _Nonnull)url inBackground:(BOOL)inBackground;
 

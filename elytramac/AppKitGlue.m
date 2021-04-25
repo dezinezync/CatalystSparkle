@@ -71,6 +71,8 @@ static AppKitGlue * SharedAppKitGlue = nil;
             
         }
         
+        [NSWorkspace.sharedWorkspace.notificationCenter addObserver:self selector:@selector(didWakeNotification:) name:NSWorkspaceDidWakeNotification object:nil];
+        
     }
     
     return self;
@@ -102,7 +104,19 @@ static AppKitGlue * SharedAppKitGlue = nil;
     
 }
 
-// https://github.com/thekarladam/fluidium/blob/4e4b7c7cf742a368d8f6a651ee149f1aec20d0a5/Fluidium/lib/OmniGroup/Frameworks/OmniAppKit/OpenStepExtensions.subproj/NSImage-OAExtensions.m#L150
+- (void)didWakeNotification:(NSNotification *)note {
+    
+    if (self.delegate != nil && [self.delegate respondsToSelector:@selector(didWake:)]) {
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.delegate didWake:note];
+        });
+        
+    }
+    
+}
+
+/// https://github.com/thekarladam/fluidium/blob/4e4b7c7cf742a368d8f6a651ee149f1aec20d0a5/Fluidium/lib/OmniGroup/Frameworks/OmniAppKit/OpenStepExtensions.subproj/NSImage-OAExtensions.m#L150
 - (CGImageRef)imageForFileType:(NSString *)fileType {
     
     static NSMutableDictionary *imageDictionary = nil;

@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <DZAppdelegate/DZAppdelegate.h>
+#import <DZAppDelegate/DZAppDelegate.h>
 
 #import "RMStore.h"
 #import "ElytraMacBridgingHeader.h"
