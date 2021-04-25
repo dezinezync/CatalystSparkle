@@ -413,7 +413,7 @@ let DEFAULT_ACTIVITIES: Set<String> = Set(["main"])
             return
         }
         
-        let registered = BGTaskScheduler.shared.register(forTaskWithIdentifier: backgroundCleanupIdentifier, using: nil) { [weak self] task in
+        let registered = BGTaskScheduler.shared.register(forTaskWithIdentifier: backgroundRefreshIdentifier, using: nil) { [weak self] task in
             
             guard let sself = self,
                   let task = task as? BGAppRefreshTask else { return }
