@@ -2,6 +2,8 @@
 
 ### Build 223
 
+- Fixed a bug causing the app to crash on launch. 
+
 - Fixed marking items read. There was a bug introduced in v2.2 which sometimes caused marking articles as read to fail on the API but still marked it locally on your device. Moving forward, all your devices should be in sync. It is recommended you do a Force-Resync after installing the app to get the latest states from the API.
 
 ### Build 222
