@@ -2,68 +2,67 @@ The Winter 2020 build is finally ready in 2021! This is the first release of Ely
 
 If you feel generous and have a couple of minutes, please leave a review on the App Store. It makes a huge difference for me. Thank you in advance.  
 
+### Build 209
+
+- Fixed a rare issue where the folders would map the feeds but would display them outside the tree. 
+
+- Fixed toolbar not being setup for the articles list when using the Toolbar preference. 
+
+- Fixed the previous/next buttons in the Article Reader toolbar being disabled incorrectly. 
+
+### Build 208
+
+- Fixed an issue where Articles were not formatted correctly. Links, italics and bold formatting were stripped from the articles.
+
+- Fixed a rare crash during sync. 
+
+### Build 205
+
+- Fixed sync not working correctly upon Signing Up for the first time. 
+
+- Fixed folder feeds not filtering content based on Filters. 
+
+- Fixed a crash on launch when counting unread items a in folder.
+
+### Build 204
+
+- Fixed an issue with counters not updating in certain cases. 
+
+- Fixed an issue with the "Start Trial" button not doing anything. 
+
+- Fixed an issue with read articles appearing when the Unread Sorting is applied. This would happen when no filters are set up.  
+
+### Build 203
+
+- Fixes sorting for Folders and Author Feeds.
+
+- Fixes updating titles for Unread & Today Feeds. 
+
+- Fixes an issue with some articles not being downloaded correctly. 
+
+- New interaction: You can now long tap (on iOS/iPadOS, or right click on macOS ) on the article title inside the reader to reload the article. Use this sparingly and only when needed. 
+
+Additional bug fixes will come in a following build. 
+
+### Build 201
+
+- iPadOS: Shows sidebar on launch in portrait mode. 
+
+- Updated licenses.
+
+The app will do a full resync on first launch. If the app crashes for you, please reset the app from the Settings app (or delete and install again) and setup again.  
+
 ## New 
 
-- Local Sync. All feeds are now synced to your device locally, so you can continue reading even when your device is offline. 
+- New Flow for adding new feeds. 
 
-- Add a new "Title View" to individual feeds. Open a feed and tap on its title. This shows the Feed Info and two preferences at the moment: Push/Local Notifications & Safari Reader Mode. These are per feed settings. 
+- New Flow for exploring topics and recommendations. Recommendations has been removed from the app. 
 
-- Push Notifications Request Form. If you already have push notifications enabled, you won't see this. This is per device. 
+- Improved adding feeds from the share extension. 
 
-- Added support for background push notifications to keep all your devices in sync without needing manual refreshing. 
+- Improved the underlying engine for improved efficiency and resilency. 
 
-- Push Notifications for new articles now download and cache the article for immediate use.  
+- Improved performance on devices like the iPhone 7, iPad Air 2, iPad 5 and others. 
 
-- Added the "Contact Support" menu item under Help. 
-
-## Improvements
-
-- Tapping on a folder now opens the folder's feed. 
-
-- Tapping on the disclosure icon on a folder now toggles its expanded state. 
-
-- Filtering is now stricter. It'll match "sponsor" but will not match "sponsored". 
-
-- Added Feeds to the iOS Search Index. You can now directly open feeds by their names (or custom names if you have one set).
-
-- Added Force-Resync menu option for macOS. Hold option key before clicking on the Elytra Menu item in the menu bar. 
-
-## Fixes 
-
-- Fixed the tint colour for the blog name when opening a micro-blog article. 
-
-- Fixed adding feed by URL where the feed presents multiple options.
-
-- Fixed an issue when searching by title for 3-letter sites like CNN or BBC. 
-
-- Fixed articles not loading for certain feeds. 
-
-- Fixed Today View not updating when opened after an app launch. 
-
-- Fixed an issue with the iPadOS app showing different widths for the columns in different orientations or environments (split view).
-
-- Fixed an issue with the apps not correctly download bookmarks from the API. 
-
-- Fixed an issue where toggling folders in the sidebar interface would show empty folders. 
-
-- Fixed an issue with certain CJK paragraph blocks rendering incorrectly when certain linebreak characters are used in the paragraph text.  
-
-- Fixed an issue with filters incorrectly hiding articles when matching against CJK based filters. 
-
-- Fixed an issue with line-heights in the articles list for multi-lined article titles with favicons. 
-
-- Fixed an issue where the "no articles" label would appear over the articles. 
-
-- Fixed an issue for adding Streaming Video Channel feeds. They recently changed their format which was causing issues. 
-
-- Fixed a crash when writing the widgets data to disk when the app has just been sent to the background. 
-
-- Fixed Navigation Bar buttons not appearing in some contexts. 
-
-- Fixed the activity indicator not being visible when opening a feed. 
-
-- Fixed an issue where if your account had an expired subscription, it would multiple windows for the Subscriptions interface and eventually fill up the screen.
-
-- Fixed a long standing issue where the article's list would not draw a separator between two articles. 
-
+- Improved power efficiency over the previous v2.x builds. 
 Thank you for reading. 

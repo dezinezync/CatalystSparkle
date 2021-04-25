@@ -1290,9 +1290,13 @@ extension FeedVC {
             
             print("Marking \(items.count) items as read")
             
-            sself.markRead(items) { [weak self] in
+            sself.markRead(items) { [weak self] completed in
                 
-                self?.articles.forEach { $0.read = true }
+                if completed == true {
+                    DispatchQueue.global().async {
+                        self?.articles.forEach { $0.read = true }
+                    }
+                }
                 
             }
             
@@ -1300,7 +1304,7 @@ extension FeedVC {
         
     }
     
-    func markRead(_ inItems: [String: Article], completion:(() -> Void)?) {
+    func markRead(_ inItems: [String: Article], completion:((_ completed: Bool) -> Void)?) {
         
         let items = inItems
         
@@ -1313,6 +1317,12 @@ extension FeedVC {
                 let error = (err as NSError)
                 
                 AlertManager.showAlert(title: "An Error Occurred", message: error.localizedDescription, confirm: nil, cancel: "Okay")
+                
+                DispatchQueue.main.async {
+                    
+                    completion?(false)
+                    
+                }
                 
                 return
                 
@@ -1345,7 +1355,7 @@ extension FeedVC {
                 
                 DispatchQueue.main.async {
                     
-                    completion?()
+                    completion?(true)
                     
                 }
             
@@ -1402,91 +1412,91 @@ extension FeedVC {
         // can use this as a control to stop enumerating.
         let grandTotal = coordinator?.totalUnread ?? 0
         
-        DBManager.shared.readQueue.async { [weak self] in
+        DBManager.shared.uiConnection.asyncRead { [weak self] (t) in
             
-            DBManager.shared.uiConnection.asyncRead { (t) in
+            guard let txn = t.ext(dbFilteredViewName) as? YapDatabaseFilteredViewTransaction else {
+                return
+            }
+            
+            guard let sself = self else {
+                return
+            }
+            
+            let localIdentifier = item.identifier!
+            let localID = (localIdentifier as NSString).integerValue
+            
+            let localTimestamp = item.timestamp.timeIntervalSince1970
+            
+            let total = Int(txn.numberOfItems(inGroup: GroupNames.articles.rawValue))
+        
+            var unreads: [String: Article] = [:]
+            
+            txn.enumerateKeysAndMetadata(inGroup: GroupNames.articles.rawValue, with: options, range: NSMakeRange(0, total)) { (_, _) -> Bool in
+                return true
+            } using: { (c, k, meta, index, stop) in
                 
-                guard let txn = t.ext(dbFilteredViewName) as? YapDatabaseFilteredViewTransaction else {
+                guard let metadata = meta as? ArticleMeta,
+                      metadata.read == false else {
                     return
                 }
                 
-                guard let sself = self else {
-                    return
-                }
+                let keyID = UInt((k as NSString).integerValue)
+                let keyTimestamp = metadata.timestamp
                 
-                let localIdentifier = item.identifier!
-                let localID = (localIdentifier as NSString).integerValue
-                
-                let localTimestamp = item.timestamp.timeIntervalSince1970
-                
-                let total = Int(txn.numberOfItems(inGroup: GroupNames.articles.rawValue))
-            
-                var unreads: [String: Article] = [:]
-                
-                txn.enumerateKeysAndMetadata(inGroup: GroupNames.articles.rawValue, with: options, range: NSMakeRange(0, total)) { (_, _) -> Bool in
-                    return true
-                } using: { (c, k, meta, index, stop) in
+                if direction == .newer {
                     
-                    guard let metadata = meta as? ArticleMeta,
-                          metadata.read == false else {
+                    // the item's time cannot be higher than
+                    // the reference item's time.
+                    if keyTimestamp < localTimestamp {
+                        return
+                    }
+                    else if keyTimestamp == localTimestamp,
+                            keyID < localID {
+                        
+                        // if the times are the same, we compare by
+                        // the identifier of the two items.
+                        return
+                        
+                    }
+                    
+                }
+                else {
+                    
+                    if keyTimestamp > localTimestamp {
+                        return
+                    }
+                    else if keyTimestamp == localTimestamp,
+                            keyID > localID {
                         return
                     }
                     
-                    let keyID = UInt((k as NSString).integerValue)
-                    let keyTimestamp = metadata.timestamp
+                }
+                
+                if let item = t.object(forKey: k, inCollection: c) as? Article {
                     
-                    if direction == .newer {
-                        
-                        // the item's time cannot be higher than
-                        // the reference item's time.
-                        if keyTimestamp < localTimestamp {
-                            return
-                        }
-                        else if keyTimestamp == localTimestamp,
-                                keyID < localID {
-                            
-                            // if the times are the same, we compare by
-                            // the identifier of the two items.
-                            return
-                            
-                        }
-                        
-                    }
-                    else {
-                        
-                        if keyTimestamp > localTimestamp {
-                            return
-                        }
-                        else if keyTimestamp == localTimestamp,
-                                keyID > localID {
-                            return
-                        }
-                        
-                    }
-                    
-                    if let item = t.object(forKey: k, inCollection: c) as? Article {
-                        
-                        unreads[k] = item
-                        
-                    }
-                    
-                    if grandTotal == unreads.count {
-                        stop.pointee = true
-                    }
+                    unreads[k] = item
                     
                 }
                 
-                guard unreads.count > 0 else {
-                    return
+                if grandTotal == unreads.count {
+                    stop.pointee = true
                 }
                 
-                let unreadKeys = unreads.map { $0.key };
+            }
+            
+            guard unreads.count > 0 else {
+                return
+            }
+            
+            let unreadKeys = unreads.map { $0.key };
+            
+            #if DEBUG
+            print("IDs: ", unreadKeys)
+            #endif
+            
+            sself.markRead(unreads) { completed in
                 
-                #if DEBUG
-                print("IDs: ", unreadKeys)
-                #endif
-                
-                sself.markRead(unreads) {
+                if completed == true {
                     
                     var toUpdate: [Article] = []
                     

@@ -214,6 +214,7 @@ extension SplitVC: UISplitViewControllerDelegate {
         
     }
     
+    /// https://www.biteinteractive.com/split-view-controllers-done-right-in-ios-14/
     func swap(_ svc: UISplitViewController, collapsing: Bool) {
         if collapsing {
             

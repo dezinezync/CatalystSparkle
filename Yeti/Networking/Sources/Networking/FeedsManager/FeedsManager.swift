@@ -1013,6 +1013,7 @@ extension FeedsManager {
     public func markRead(_ read: Bool, items: [Article], completion:((Result<[MarkReadItem], Error>) -> Void)?) {
         
         let limit: UInt = 100
+        var anyError: Error?
         
         // mark in batches of 100
         guard items.count <= limit else {
@@ -1050,7 +1051,23 @@ extension FeedsManager {
                 
             }
             
-            completion?(.success(retval))
+            if retval.count == 0 && total > 0 {
+                
+                DispatchQueue.main.async {
+                    if let error = anyError {
+                        completion?(.failure(error))
+                    }
+                    else {
+                        completion?(.failure(FeedsManagerError.from(description: "An error occurred when marking read", statusCode: 500)))
+                    }
+                }
+                
+                return
+            }
+            
+            DispatchQueue.main.async {
+                completion?(.success(retval))
+            }
             
             return
         }
@@ -1071,7 +1088,11 @@ extension FeedsManager {
             switch result {
             
             case .failure(let error):
-                completion?(.failure(error))
+                anyError = error
+                
+                DispatchQueue.main.async {
+                    completion?(.failure(error))
+                }
             
             case .success((_, let result)):
                 
@@ -1083,7 +1104,9 @@ extension FeedsManager {
                     return
                 }
                 
-                completion?(.success(r))
+                DispatchQueue.main.async {
+                    completion?(.success(r))
+                }
                 
             }
             
