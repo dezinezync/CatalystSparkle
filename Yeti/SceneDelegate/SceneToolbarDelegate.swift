@@ -8,6 +8,7 @@
 
 import Foundation
 
+#if targetEnvironment(macCatalyst)
 extension NSToolbarItem.Identifier  {
     
     static let newItemToolbarIdentifier = NSToolbarItem.Identifier(rawValue:"toolbar.newItem")
@@ -177,3 +178,5 @@ class SceneToolbarDelegate: NSObject, NSToolbarDelegate {
     }
     
 }
+
+#endif

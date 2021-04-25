@@ -208,6 +208,8 @@ let DEFAULT_ACTIVITIES: Set<String> = Set(["main"])
         
         var window: UIWindow?
         
+        #if targetEnvironment(macCatalyst)
+        
         if activity.activityType == viewImageActivity {
             
             window = UIWindow(windowScene: scene)
@@ -348,6 +350,8 @@ let DEFAULT_ACTIVITIES: Set<String> = Set(["main"])
             
         }
         
+        #endif
+        
         if (window != nil && window!.rootViewController != nil) {
             
             self.window = window
@@ -364,11 +368,15 @@ let DEFAULT_ACTIVITIES: Set<String> = Set(["main"])
     
     func _disableFullScreenOnWindow(_ window: UIWindow) {
         
+        #if targetEnvironment(macCatalyst)
+        
         guard let nsWindow = window.nsWindow else {
             return
         }
         
         MyAppDelegate.sharedGlue.disableFullscreenButton(nsWindow)
+        
+        #endif
         
     }
     
@@ -523,6 +531,8 @@ extension SceneDelegate {
     
     func ct_setupToolbar(scene: UIWindowScene) {
         
+        #if targetEnvironment(macCatalyst)
+        
         if scene == MyAppDelegate.mainScene {
             
             let toolbar = NSToolbar(identifier: "elytra-main-toolbar")
@@ -536,6 +546,8 @@ extension SceneDelegate {
             self.toolbar = toolbar
             
         }
+        
+        #endif
         
     }
     
