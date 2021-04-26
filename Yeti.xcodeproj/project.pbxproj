@@ -243,7 +243,6 @@
 		F0880A1E262BDB50002181EC /* FoldersWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0880A1B262BDB38002181EC /* FoldersWidget.swift */; };
 		F0880A1F262BDBBE002181EC /* FoldersProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0880A03262BD660002181EC /* FoldersProvider.swift */; };
 		F088CF6E248E72020010EBC0 /* AppDelegate+Catalyst.m in Sources */ = {isa = PBXBuildFile; fileRef = F088CF6D248E72020010EBC0 /* AppDelegate+Catalyst.m */; platformFilter = maccatalyst; };
-		F08A49A9263549170078729D /* AppDelegate+Updater.swift in Sources */ = {isa = PBXBuildFile; fileRef = F08A49A8263549170078729D /* AppDelegate+Updater.swift */; };
 		F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F099465F20AD86BE00E5520F /* StoreKit.framework */; };
 		F099466520AD8A8B00E5520F /* AppDelegate+Store.m in Sources */ = {isa = PBXBuildFile; fileRef = F099466420AD8A8B00E5520F /* AppDelegate+Store.m */; };
 		F09B3B351FBCB348001D4B09 /* UIViewController+ScrollLoad.m in Sources */ = {isa = PBXBuildFile; fileRef = F09B3B341FBCB348001D4B09 /* UIViewController+ScrollLoad.m */; };
@@ -950,7 +949,6 @@
 		F088CF6C248E72020010EBC0 /* AppDelegate+Catalyst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+Catalyst.h"; sourceTree = "<group>"; };
 		F088CF6D248E72020010EBC0 /* AppDelegate+Catalyst.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+Catalyst.m"; sourceTree = "<group>"; };
 		F08993C1210883E200A9978E /* FolderDrop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FolderDrop.h; sourceTree = "<group>"; };
-		F08A49A8263549170078729D /* AppDelegate+Updater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Updater.swift"; sourceTree = "<group>"; };
 		F08C5DF0238656620055946F /* DZAppDelegate.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZAppDelegate.xcodeproj; path = Vendors/DZAppDelegate/DZAppDelegate.xcodeproj; sourceTree = "<group>"; };
 		F0919F641FD7C1A70098F48A /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		F093318B24EC14A90066FA41 /* UnreadCountObservor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnreadCountObservor.h; sourceTree = "<group>"; };
@@ -1907,7 +1905,6 @@
 				F070C2DC1FBABC3500912CCF /* AppDelegate.h */,
 				F070C2DD1FBABC3600912CCF /* AppDelegate.m */,
 				F01F41AE2616CC6A00F51813 /* AppDelegate+Routing.swift */,
-				F08A49A8263549170078729D /* AppDelegate+Updater.swift */,
 				F0213E792085E525000DDD4A /* AppDelegate+Push.h */,
 				F0213E7A2085E525000DDD4A /* AppDelegate+Push.m */,
 				F099466320AD8A8A00E5520F /* AppDelegate+Store.h */,
@@ -2975,7 +2972,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif [ \"${IS_MAC_NOTARIZED}\" = \"YES\" ]; then\n    ENTITLEMENTS_FILE=\"${TARGET_TEMP_DIR}/${FULL_PRODUCT_NAME}.xcent\"\n    \n    echo \"Removing com.apple.developer.user-fonts entitlement on Mac Catalyst from ${ENTITLEMENTS_FILE}\"\n    plutil -remove \"com\\.apple\\.developer\\.user-fonts\" \"${ENTITLEMENTS_FILE}\"\n    \n    echo \"Removing com.apple.developer.applesignin entitlement on Mac Catalyst from ${ENTITLEMENTS_FILE}\"\n    plutil -remove \"com\\.apple\\.developer\\.applesignin\" \"${ENTITLEMENTS_FILE}\"\nfi\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif [ \"${IS_MAC_NOTARIZED}\" = \"YES\" ]; then\n    ENTITLEMENTS_FILE=\"${TARGET_TEMP_DIR}/${FULL_PRODUCT_NAME}.xcent\"\n    \n    val=$(/usr/libexec/PlistBuddy -c 'print \":com.apple.developer.user-fonts\"' ${ENTITLEMENTS_FILE} 2>/dev/null)\n\n    # Save the exit code, which indicates success v. failure\n    exitCode=$? \n    \n    echo $exitCode\n    \n    if (( exitCode == 0 )); then # OK\n    \n        echo \"Removing com.apple.developer.user-fonts entitlement on Mac Catalyst from ${ENTITLEMENTS_FILE}\"\n        \n        plutil -remove \"com.apple.developer.user-fonts\" \"${ENTITLEMENTS_FILE}\"\n        \n    fi\n    \n    val=$(/usr/libexec/PlistBuddy -c 'print \":com.apple.developer.user-fonts\"' ${ENTITLEMENTS_FILE} 2>/dev/null)\n    \n    # Save the exit code, which indicates success v. failure\n    exitCode=$? \n    \n    if (( exitCode == 0 )); then # OK\n        echo \"Removing com.apple.developer.applesignin entitlement on Mac Catalyst from ${ENTITLEMENTS_FILE}\"\n        plutil -remove \"com.apple.developer.applesignin\" \"${ENTITLEMENTS_FILE}\"\n    fi\n    \nfi\n";
 		};
 		F0A589F2205A569C00488015 /* Carthage */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3125,7 +3122,6 @@
 				F070C2DE1FBABC3600912CCF /* AppDelegate.m in Sources */,
 				F0DFBBF42570A36400246D8A /* CoalescingQueue.swift in Sources */,
 				F02B704D24EA7E5C00DD607F /* IDMTapDetectingImageView.m in Sources */,
-				F08A49A9263549170078729D /* AppDelegate+Updater.swift in Sources */,
 				F0EFA63A205FDC5A00815ED7 /* ArticleHelperView.m in Sources */,
 				F00F647124EC1DE700E5727C /* Gallery.m in Sources */,
 				F0EE7F0B2608C56600931FA2 /* TodayVC.swift in Sources */,
