@@ -39,6 +39,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)disableFullscreenButton:(id)window;
 
+//- (id _Nullable)searchResultsViewForResults:(NSArray * _Nullable)results;
+
+- (void)update:(id _Nonnull)view searchResults:(NSArray * _Nullable)results;
+
 @end
 
 NS_ASSUME_NONNULL_END

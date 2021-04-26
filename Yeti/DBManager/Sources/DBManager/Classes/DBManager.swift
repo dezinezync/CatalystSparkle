@@ -686,11 +686,14 @@ public let notificationsKey = "notifications"
         
         set {
             
-            _folders = newValue
-            
-            NotificationCenter.default.post(name: .foldersUpdated, object: self)
+            _folders = OrderedSet(newValue.sorted(by: { (lhs, rhs) -> Bool in
+                return lhs.title.localizedCompare(rhs.title) == .orderedAscending
+            }))
             
             guard newValue.count > 0 else {
+                
+                NotificationCenter.default.post(name: .foldersUpdated, object: self)
+                
                 return
             }
             
@@ -714,6 +717,8 @@ public let notificationsKey = "notifications"
                 }
                 
             }
+            
+            NotificationCenter.default.post(name: .foldersUpdated, object: self)
             
             writeQueue.async { [weak self] in
                 

@@ -245,6 +245,8 @@
 		F088CF6E248E72020010EBC0 /* AppDelegate+Catalyst.m in Sources */ = {isa = PBXBuildFile; fileRef = F088CF6D248E72020010EBC0 /* AppDelegate+Catalyst.m */; platformFilter = maccatalyst; };
 		F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F099465F20AD86BE00E5520F /* StoreKit.framework */; };
 		F099466520AD8A8B00E5520F /* AppDelegate+Store.m in Sources */ = {isa = PBXBuildFile; fileRef = F099466420AD8A8B00E5520F /* AppDelegate+Store.m */; };
+		F09959CD2636EB7000AC5C68 /* CatalystHeaders.m in Sources */ = {isa = PBXBuildFile; fileRef = F09959CC2636EB7000AC5C68 /* CatalystHeaders.m */; };
+		F09959D42636F5C700AC5C68 /* SearchResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09959D32636F5C700AC5C68 /* SearchResultsController.swift */; };
 		F09B3B351FBCB348001D4B09 /* UIViewController+ScrollLoad.m in Sources */ = {isa = PBXBuildFile; fileRef = F09B3B341FBCB348001D4B09 /* UIViewController+ScrollLoad.m */; };
 		F09BE12820F1C370000D1EB9 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F09BE12720F1C370000D1EB9 /* Settings.bundle */; };
 		F09CB6A921637DE200F47036 /* elytraProcessor.js in Resources */ = {isa = PBXBuildFile; fileRef = F09CB6A821637DE200F47036 /* elytraProcessor.js */; };
@@ -956,6 +958,9 @@
 		F099465F20AD86BE00E5520F /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		F099466320AD8A8A00E5520F /* AppDelegate+Store.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+Store.h"; sourceTree = "<group>"; };
 		F099466420AD8A8B00E5520F /* AppDelegate+Store.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+Store.m"; sourceTree = "<group>"; };
+		F09959CB2636EB0A00AC5C68 /* CatalystHeaders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CatalystHeaders.h; sourceTree = "<group>"; };
+		F09959CC2636EB7000AC5C68 /* CatalystHeaders.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CatalystHeaders.m; sourceTree = "<group>"; };
+		F09959D32636F5C700AC5C68 /* SearchResultsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultsController.swift; sourceTree = "<group>"; };
 		F09B3B331FBCB348001D4B09 /* UIViewController+ScrollLoad.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIViewController+ScrollLoad.h"; sourceTree = "<group>"; };
 		F09B3B341FBCB348001D4B09 /* UIViewController+ScrollLoad.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+ScrollLoad.m"; sourceTree = "<group>"; };
 		F09BE12720F1C370000D1EB9 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
@@ -1763,6 +1768,8 @@
 				F047CB6E2579F98E00395DC2 /* UIControlSubscription.swift */,
 				F0CF4F3525DF68BB00E12411 /* MoveFoldersDelegate.h */,
 				F01F41B02616F27200F51813 /* Haptic.swift */,
+				F09959CB2636EB0A00AC5C68 /* CatalystHeaders.h */,
+				F09959CC2636EB7000AC5C68 /* CatalystHeaders.m */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -1987,6 +1994,7 @@
 				F0783C8A248F685C00C7A280 /* Info.plist */,
 				F0783CAD248F6A5800C7A280 /* AppKitGlue.h */,
 				F0783CAE248F6A5800C7A280 /* AppKitGlue.m */,
+				F09959D02636F59A00AC5C68 /* SearchResults */,
 				F03C609B251F719700F442C7 /* PreferencesController */,
 				F03C6088251F70D000F442C7 /* Vendors */,
 				F03C60CF251F72F700F442C7 /* ElytraMacBridgingHeader.h */,
@@ -2074,6 +2082,14 @@
 				F0880A0A262BD7A7002181EC /* Intents.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F09959D02636F59A00AC5C68 /* SearchResults */ = {
+			isa = PBXGroup;
+			children = (
+				F09959D32636F5C700AC5C68 /* SearchResultsController.swift */,
+			);
+			path = SearchResults;
 			sourceTree = "<group>";
 		};
 		F09E96412055340C00E61681 /* HLJS */ = {
@@ -2972,7 +2988,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif [ \"${IS_MAC_NOTARIZED}\" = \"YES\" ]; then\n    ENTITLEMENTS_FILE=\"${TARGET_TEMP_DIR}/${FULL_PRODUCT_NAME}.xcent\"\n    \n    val=$(/usr/libexec/PlistBuddy -c 'print \":com.apple.developer.user-fonts\"' ${ENTITLEMENTS_FILE} 2>/dev/null)\n\n    # Save the exit code, which indicates success v. failure\n    exitCode=$? \n    \n    echo $exitCode\n    \n    if (( exitCode == 0 )); then # OK\n    \n        echo \"Removing com.apple.developer.user-fonts entitlement on Mac Catalyst from ${ENTITLEMENTS_FILE}\"\n        \n        plutil -remove \"com.apple.developer.user-fonts\" \"${ENTITLEMENTS_FILE}\"\n        \n    fi\n    \n    val=$(/usr/libexec/PlistBuddy -c 'print \":com.apple.developer.user-fonts\"' ${ENTITLEMENTS_FILE} 2>/dev/null)\n    \n    # Save the exit code, which indicates success v. failure\n    exitCode=$? \n    \n    if (( exitCode == 0 )); then # OK\n        echo \"Removing com.apple.developer.applesignin entitlement on Mac Catalyst from ${ENTITLEMENTS_FILE}\"\n        plutil -remove \"com.apple.developer.applesignin\" \"${ENTITLEMENTS_FILE}\"\n    fi\n    \nfi\n";
+			shellScript = "# # Type a script or drag a script file from your workspace to insert its path.\n# if [ \"${IS_MAC_NOTARIZED}\" = \"YES\" ]; then\n#     ENTITLEMENTS_FILE=\"${TARGET_TEMP_DIR}/${FULL_PRODUCT_NAME}.xcent\"\n    \n#     val=$(/usr/libexec/PlistBuddy -c 'print \":com.apple.developer.user-fonts\"' ${ENTITLEMENTS_FILE} 2>/dev/null)\n\n#     # Save the exit code, which indicates success v. failure\n#     exitCode=$? \n    \n#     echo $exitCode\n    \n#     if (( exitCode == 0 )); then # OK\n    \n#         echo \"Removing com.apple.developer.user-fonts entitlement on Mac Catalyst from ${ENTITLEMENTS_FILE}\"\n        \n#         plutil -remove \"com.apple.developer.user-fonts\" \"${ENTITLEMENTS_FILE}\"\n        \n#     fi\n    \n#     val=$(/usr/libexec/PlistBuddy -c 'print \":com.apple.developer.user-fonts\"' ${ENTITLEMENTS_FILE} 2>/dev/null)\n    \n#     # Save the exit code, which indicates success v. failure\n#     exitCode=$? \n    \n#     if (( exitCode == 0 )); then # OK\n#         echo \"Removing com.apple.developer.applesignin entitlement on Mac Catalyst from ${ENTITLEMENTS_FILE}\"\n#         plutil -remove \"com.apple.developer.applesignin\" \"${ENTITLEMENTS_FILE}\"\n#     fi\n    \n# fi\n";
 		};
 		F0A589F2205A569C00488015 /* Carthage */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3066,6 +3082,7 @@
 				F0519D4F20849EE400EB3FE0 /* FilterInputCell.m in Sources */,
 				F03AC036205533D900FB111A /* HTMLUtils.m in Sources */,
 				F08011E42167345300F0CE81 /* OPMLDeckController.m in Sources */,
+				F09959CD2636EB7000AC5C68 /* CatalystHeaders.m in Sources */,
 				F0FEE3FF2615E6EB007AB52C /* UIViewController+Coordinator.m in Sources */,
 				F0F10A9F244C8020009FC108 /* DTTimePeriodChain.m in Sources */,
 				F0695B2020CE6B7600517AF8 /* UIViewController+Hairline.m in Sources */,
@@ -3219,6 +3236,7 @@
 				F0A031BB2520F7B900076718 /* ArticlePreferenceViewController.swift in Sources */,
 				F079F41A255BA32800121637 /* PreferencesWindowController.swift in Sources */,
 				F0783CAF248F6A5800C7A280 /* AppKitGlue.m in Sources */,
+				F09959D42636F5C700AC5C68 /* SearchResultsController.swift in Sources */,
 				F079F411255BA32800121637 /* Pane.swift in Sources */,
 				F079F412255BA32800121637 /* Localization.swift in Sources */,
 				F0BC8C0025205CF100FADCBB /* GeneralPreferenceViewController.swift in Sources */,
@@ -3469,7 +3487,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SUPPORTS_MACCATALYST = YES;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Elytra-Bridging-Header.h";
@@ -3793,7 +3811,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SUPPORTS_MACCATALYST = YES;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = RELEASE;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Elytra-Bridging-Header.h";
@@ -4267,7 +4285,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SUPPORTS_MACCATALYST = YES;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Elytra-Bridging-Header.h";
@@ -4334,7 +4352,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SUPPORTS_MACCATALYST = YES;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = RELEASE;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Elytra-Bridging-Header.h";

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Dynamic
 
 #if targetEnvironment(macCatalyst)
 extension NSToolbarItem.Identifier  {
@@ -19,6 +20,7 @@ extension NSToolbarItem.Identifier  {
     static let markItemsMenuToolbarIdentifier = NSToolbarItem.Identifier(rawValue:"toolbar.markItems")
     static let refreshAllToolbarIdentifier = NSToolbarItem.Identifier(rawValue:"toolbar.refreshAll")
     static let shareArticleToolbarIdentifier = NSToolbarItem.Identifier(rawValue:"toolbar.shareArticle")
+    static let searchToolbarIdentifier = NSToolbarItem.Identifier(rawValue: "toolbar.search")
     
 }
 
@@ -31,6 +33,9 @@ class SceneToolbarDelegate: NSObject, NSToolbarDelegate {
     
     weak var scene: UIWindowScene!
     let sceneType: SceneType = .main
+    
+    weak var searchItem: NSToolbarItem_Catalyst?
+    var popover: Dynamic?
     
     init(scene: UIWindowScene) {
         self.scene = scene
@@ -54,7 +59,8 @@ class SceneToolbarDelegate: NSObject, NSToolbarDelegate {
                 .openInNewWindowToolbarIdentifier,
                 .openInBrowserToolbarIdentifier,
                 .appearanceToolbarIdentifier,
-                .shareArticleToolbarIdentifier
+                .shareArticleToolbarIdentifier,
+                .searchToolbarIdentifier
             ]
             
         }
@@ -134,6 +140,23 @@ class SceneToolbarDelegate: NSObject, NSToolbarDelegate {
             return toolbarItem(itemIdentifier, title: "Mark All Read", buttonImageName: "checkmark", target: nil, selector: NSSelectorFromString("didTapMarkAll:"))
             
         }
+        else if itemIdentifier == .searchToolbarIdentifier {
+            
+//            let cls: NSObject.Type = NSClassFromString("NSSearchField") as! NSObject.Type
+//            let searchField: NSSearchField_Catalyst = cls.init() as! NSSearchField_Catalyst
+//            searchField.delegate =
+            
+            let item = NSToolbarItem_Catalyst.searchItem(withItemIdentifier: NSToolbarItem.Identifier.searchToolbarIdentifier.rawValue) { [weak self] text in
+                
+                self?.didSearch(text: text)
+                
+            }
+            
+            searchItem = item
+            
+            return item
+            
+        }
         else {
             fatalError("Item should be non-nil")
             return nil
@@ -174,6 +197,59 @@ class SceneToolbarDelegate: NSObject, NSToolbarDelegate {
         }
              
         return item
+        
+    }
+    
+    func didSearch(text: String?) {
+        
+        guard let text = text,
+              text.count > 0 else {
+            
+            if let popover = popover {
+                if popover.isShown == true {
+                    popover.close()
+                }
+            }
+            
+            return
+        }
+        
+        if self.popover == nil {
+            
+            let popover = Dynamic.NSPopover()
+            popover.contentViewController = Dynamic.NSViewController()
+            popover.contentViewController.view = Dynamic.NSView()
+//            popover.permittedArrowDirections = 0
+//            popover.behaviour = 1
+            
+            let view = Dynamic(searchItem!).view
+            let bounds = view.bounds
+            
+            popover.showRelativeToRect(bounds, ofView: view, preferredEdge: 1)
+            
+            self.popover = popover
+            
+        }
+        else if self.popover!.isShown == false {
+            
+            let view = Dynamic(searchItem!).view
+            let bounds = view.bounds
+            
+            self.popover!.showRelativeToRect(bounds, ofView: view, preferredEdge: 1)
+            
+        }
+        
+        updatePopoverResults(text)
+        
+    }
+    
+    func updatePopoverResults(_ text: String) {
+        
+        guard let popover = self.popover else {
+            return
+        }
+        
+        MyAppDelegate.sharedGlue.update(popover.contentViewController.view.asObject as Any, searchResults: ["A", "B", "C"])
         
     }
     

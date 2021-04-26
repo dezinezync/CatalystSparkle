@@ -116,6 +116,33 @@ static AppKitGlue * SharedAppKitGlue = nil;
     
 }
 
+- (id)searchResultsViewForResults:(NSArray *)results {
+    
+    SearchResultsController *controller = [[SearchResultsController alloc] initWithSearchResults:results];
+    
+    return controller.hostedView;
+    
+}
+
+- (void)update:(NSView * _Nonnull)view searchResults:(NSArray * _Nullable)results {
+    
+    for (NSView *subview in view.subviews) {
+        [subview removeFromSuperview];
+    }
+    
+    if (results == nil || [results count] == 0) {
+        return;
+    }
+    
+    NSTextField *field = [[NSTextField alloc] initWithFrame:NSRectFromCGRect(CGRectMake(0, 0, 120, 24))];
+    field.stringValue = [NSString stringWithFormat:@"%@ Results", @(results.count)];
+    
+    [field sizeToFit];
+    
+    [view addSubview:field];
+    
+}
+
 /// https://github.com/thekarladam/fluidium/blob/4e4b7c7cf742a368d8f6a651ee149f1aec20d0a5/Fluidium/lib/OmniGroup/Frameworks/OmniAppKit/OpenStepExtensions.subproj/NSImage-OAExtensions.m#L150
 - (CGImageRef)imageForFileType:(NSString *)fileType {
     
