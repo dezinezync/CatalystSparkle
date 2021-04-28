@@ -54,7 +54,7 @@ extension Defaults.Keys {
     
     static let unreadFeedSorting = Key<FeedSorting.RawValue>("unreadFeedSorting", default: FeedSorting.unreadDescending.rawValue)
     
-    static let pushRequest = Key<Bool>("pushRequest", default: false)
+    static let pushRequest = Key<Bool>("pushRequest-2.3.0", default: false)
     
     static let hasShownIntro = Key<Bool>("hasShownIntro", default: false)
     
