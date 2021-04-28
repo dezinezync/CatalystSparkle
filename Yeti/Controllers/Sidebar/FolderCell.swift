@@ -154,11 +154,10 @@ class FolderCell: UICollectionViewListCell {
     
     @objc func updateUnreadCount () {
         
-        DispatchQueue.main.async { [weak self] in
+        DispatchQueue.main.async {
             
-            guard let self = self else { return }
-            
-            CoalescingQueue.standard.add(self, #selector(self.setNeedsUpdateConfiguration))
+            self.setNeedsUpdateConfiguration()
+            self.setNeedsLayout()
             
         }
         
@@ -166,11 +165,10 @@ class FolderCell: UICollectionViewListCell {
     
     @objc func updateTitle() {
         
-        DispatchQueue.main.async { [weak self] in
+        DispatchQueue.main.async {
             
-            guard let self = self else { return }
-            
-            CoalescingQueue.standard.add(self, #selector(self.setNeedsUpdateConfiguration))
+            self.setNeedsUpdateConfiguration()
+            self.setNeedsLayout()
             
         }
         

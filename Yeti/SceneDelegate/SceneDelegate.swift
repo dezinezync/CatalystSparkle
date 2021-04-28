@@ -19,7 +19,7 @@ let backgroundRefreshIdentifier: String = "com.yeti.refresh"
 
 let viewImageActivity = "viewImage"
 let openArticleActivity = "openArticle"
-let subscriptionsActivity = "subscriptionsInterface"
+let subscriptionsActivity = "subscriptionInterface"
 let attributionsActivity = "attributionsScene"
 let newFeedActivity = "newFeedScene"
 let opmlImportActivity = "opmlScene:0"

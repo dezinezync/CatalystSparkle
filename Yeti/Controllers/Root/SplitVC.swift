@@ -76,7 +76,7 @@ import Defaults
         }
         #endif
         
-        if traitCollection.userInterfaceIdiom == .pad,
+        if traitCollection.userInterfaceIdiom != .phone,
            iPadOSShowSidebarInPortraitOnLaunch == false {
             
             show(.primary)

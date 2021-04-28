@@ -201,9 +201,10 @@ class FeedCell: UICollectionViewListCell {
     
     func updateUnreadCount (_ unread: UInt) {
         
-        DispatchQueue.main.async { [weak self] in
+        DispatchQueue.main.async {
             
-            self?.setNeedsUpdateConfiguration()
+            self.setNeedsUpdateConfiguration()
+            self.setNeedsLayout()
             
         }
         
@@ -211,9 +212,10 @@ class FeedCell: UICollectionViewListCell {
     
     func setupDefaultIcon() {
         
-        DispatchQueue.main.async { [weak self] in
+        DispatchQueue.main.async {
             
-            self?.setNeedsUpdateConfiguration()
+            self.setNeedsUpdateConfiguration()
+            self.setNeedsLayout()
             
         }
         
@@ -257,7 +259,10 @@ class FeedCell: UICollectionViewListCell {
             sfeed.faviconImage = image
             
             DispatchQueue.main.async {
+                
                 sself.setNeedsUpdateConfiguration()
+                sself.setNeedsLayout()
+                
             }
             
         }

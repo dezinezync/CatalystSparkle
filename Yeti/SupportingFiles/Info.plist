@@ -327,7 +327,7 @@
 					<key>UISceneConfigurationName</key>
 					<string>Default Configuration</string>
 					<key>UISceneDelegateClassName</key>
-					<string>SceneDelegate</string>
+					<string>Elytra.SceneDelegate</string>
 				</dict>
 			</array>
 		</dict>
