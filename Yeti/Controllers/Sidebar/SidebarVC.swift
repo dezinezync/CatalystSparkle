@@ -331,8 +331,9 @@ enum SidebarItem: Hashable, Identifiable {
         
         #if !targetEnvironment(macCatalyst)
         
-//        navigationController?.navigationBar.prefersLargeTitles = true
-//        navigationItem.largeTitleDisplayMode = .always;
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .automatic;
+//        navigationController?.navigationBar.isTranslucent = false
         
         if SharedPrefs.useToolbar == true {
 
@@ -348,6 +349,18 @@ enum SidebarItem: Hashable, Identifiable {
         #endif
         
     }
+    
+//    public override func viewWillDisappear(_ animated: Bool) {
+//
+//        super.viewWillDisappear(animated)
+//
+//        #if !targetEnvironment(macCatalyst)
+//
+//        navigationController?.navigationBar.isTranslucent = true
+//
+//        #endif
+//
+//    }
     
     public override func viewDidAppear(_ animated: Bool) {
         
