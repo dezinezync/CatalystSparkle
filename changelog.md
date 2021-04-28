@@ -1,5 +1,15 @@
 # v2.3.0
 
+### Build 224
+
+- Fixed html markup showing in summary lines. 
+
+- Fixed Push Notifications permissions not being requested or updated under some conditions. 
+
+- Fixed the summary lines causing the title to get clipped to a single line or incomplete titles. 
+
+- Fixed a crash that would sometimes occur when the Folders Widget is configured. 
+
 ### Build 220
 
 - Import/Export OPML is now enabled and functional. 

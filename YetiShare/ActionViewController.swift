@@ -55,7 +55,12 @@ class ActionViewController: UIViewController {
     
     //MARK: - Internal
     
-    func showError(error: Error) {
+    @objc func showError(error: Error) {
+        
+        guard Thread.isMainThread else {
+            performSelector(onMainThread: #selector(showError(error:)), with: error, waitUntilDone: false)
+            return
+        }
         
         let avc = UIAlertController.init(title: "An Error Occurred", message: error.localizedDescription, preferredStyle: .alert)
         
