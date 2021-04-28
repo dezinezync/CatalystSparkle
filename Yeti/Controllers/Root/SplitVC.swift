@@ -76,6 +76,14 @@ import Defaults
         }
         #endif
         
+        if traitCollection.userInterfaceIdiom == .pad,
+           iPadOSShowSidebarInPortraitOnLaunch == false {
+            
+            show(.primary)
+            iPadOSShowSidebarInPortraitOnLaunch = true
+            
+        }
+        
     }
     
     // MARK: - Size Changes
@@ -159,22 +167,22 @@ import Defaults
 
 extension SplitVC: UISplitViewControllerDelegate {
     
-    public func splitViewController(_ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
-        
-        print(displayMode.rawValue)
-        
-        if displayMode == .secondaryOnly,
-           iPadOSShowSidebarInPortraitOnLaunch == false {
-            
-            DispatchQueue.main.async { [weak self] in
-                self?.setupDisplayModes(size: svc.view.bounds.size)
-                
-                self?.iPadOSShowSidebarInPortraitOnLaunch = true
-            }
-            
-        }
-        
-    }
+//    public func splitViewController(_ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
+//
+//        print(displayMode.rawValue)
+//
+//        if displayMode == .secondaryOnly,
+//           iPadOSShowSidebarInPortraitOnLaunch == false {
+//
+//            DispatchQueue.main.async { [weak self] in
+//                self?.setupDisplayModes(size: svc.view.bounds.size)
+//
+//                self?.iPadOSShowSidebarInPortraitOnLaunch = true
+//            }
+//
+//        }
+//
+//    }
     
     public func splitViewController(_ svc: UISplitViewController, topColumnForCollapsingToProposedTopColumn proposedTopColumn: UISplitViewController.Column) -> UISplitViewController.Column {
         

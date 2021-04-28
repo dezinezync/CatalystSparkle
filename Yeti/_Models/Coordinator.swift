@@ -330,20 +330,13 @@ public var deviceName: String {
         showDetailController(articleVC)
         
         if let splitVC = splitVC,
-           splitVC.traitCollection.userInterfaceIdiom == .pad {
+           splitVC.traitCollection.userInterfaceIdiom == .pad,
+           splitVC.view.bounds.width < splitVC.view.bounds.height {
             
             runOnMainQueueWithoutDeadlocking {
                 
-                UIView.animate(withDuration: 0.2) {
-                    if splitVC.view.bounds.size.width < 1024 {
-                        splitVC.preferredDisplayMode = .secondaryOnly
-                    }
-                    else if splitVC.view.bounds.size.width >= 1024 && splitVC.view.bounds.size.width <= 1180 {
-                        splitVC.preferredDisplayMode = .oneBesideSecondary
-                    }
-                    else {
-                        splitVC.preferredDisplayMode = .twoBesideSecondary
-                    }
+                UIView.animate(withDuration: 0.125) {
+                    splitVC.preferredDisplayMode = .secondaryOnly
                 }
                 
             }
@@ -658,6 +651,14 @@ public var deviceName: String {
                 let nav = UINavigationController(rootViewController: controller)
                 
                 splitVC.setViewController(nav, for: .supplementary)
+                
+            }
+            
+            if splitVC.traitCollection.userInterfaceIdiom == .pad,
+               splitVC.view.bounds.width < splitVC.view.bounds.height {
+                
+                splitVC.show(.primary)
+                splitVC.show(.supplementary)
                 
             }
             

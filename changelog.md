@@ -6,6 +6,8 @@
 
 - Fixed an issue with syncing read states across devices. 
 
+- Fixed some quirks on iPadOS for handling sidebar states. 
+
 ### Build 224
 
 - Fixed html markup showing in summary lines. 
