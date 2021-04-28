@@ -428,7 +428,7 @@ class ArticleCell: UITableViewCell {
             return
         }
         
-        if (summary.hasPrefix("<img") == true || summary == "<..."),
+        if (summary.hasPrefix("<") == true || summary == "<..."),
            summary.hasSuffix("...") == true {
             
             if let content = DBManager.shared.content(for: article!.identifier) {
