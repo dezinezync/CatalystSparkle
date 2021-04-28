@@ -1,5 +1,11 @@
 # v2.3.0
 
+### Build 225
+
+** Please do a full force re-sync before after installing this build.**
+
+- Fixed an issue with syncing read states across devices. 
+
 ### Build 224
 
 - Fixed html markup showing in summary lines. 

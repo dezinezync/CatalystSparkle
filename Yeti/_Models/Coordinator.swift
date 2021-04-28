@@ -786,6 +786,7 @@ public var deviceName: String {
         }
         
         guard UIApplication.shared.isRegisteredForRemoteNotifications == false else {
+            registerForNotifications(completion: nil)
             return
         }
         

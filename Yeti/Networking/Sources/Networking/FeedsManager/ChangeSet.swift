@@ -15,7 +15,7 @@ public struct ChangeSet: Codable {
     public var changeTokenID: String!
     public var customFeeds: [SyncChange]?
     public var articles: [Article]?
-    public var reads: [Int: Bool]?
+    public var reads: [String: Bool]?
     @LosslessValue public var pages: UInt = 0
     
     public enum CodingKeys: String, CodingKey {
@@ -33,14 +33,10 @@ public struct ChangeSet: Codable {
             return
         }
         
-        #if DEBUG
-        print(from)
-        #endif
-        
         changeToken = from["changeToken"] as? String
         changeTokenID = from["changeIDToken"] as? String
         pages = from["pages"] as? UInt ?? 0
-        reads = from["reads"] as? [Int: Bool]
+        reads = from["reads"] as? [String: Bool]
         
         if let customF = from["customFeeds"] as? [[String: Any]] {
             

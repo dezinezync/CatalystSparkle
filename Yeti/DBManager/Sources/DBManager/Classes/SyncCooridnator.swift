@@ -191,7 +191,7 @@ private let SYNC_TOKEN_ID = "syncTokenID-2.3.0"
                 sself.inProgressSyncToken = changeSet.changeToken
                 sself.inProgressSyncTokenID = changeSet.changeTokenID
                 
-                if let reads = changeSet.reads {
+                if let reads = changeSet.reads, reads.count > 0 {
                     
                     sself.updateReads(reads: reads)
                     
@@ -272,7 +272,7 @@ private let SYNC_TOKEN_ID = "syncTokenID-2.3.0"
             sself.inProgressChangeSet = changeSet
         }
         
-        if progress >= 0.99 {
+        if progress == 1.0 {
             
             DBManager.shared.writeQueue.async {
                 
@@ -322,7 +322,7 @@ private let SYNC_TOKEN_ID = "syncTokenID-2.3.0"
         
     } }()
     
-    private func updateReads(reads: [Int: Bool]) {
+    private func updateReads(reads: [String: Bool]) {
         
         guard reads.count > 0 else {
             return
@@ -334,13 +334,13 @@ private let SYNC_TOKEN_ID = "syncTokenID-2.3.0"
                 
                 let (key, state) = tuple
                 
-                if let a = t.object(forKey: "\(key)", inCollection: .articles) as? Article,
-                   var m = t.metadata(forKey: "\(key)", inCollection: .articles) as? ArticleMeta {
+                if let a = t.object(forKey: key, inCollection: .articles) as? Article,
+                   var m = t.metadata(forKey: key, inCollection: .articles) as? ArticleMeta {
                     
                     a.read = state
                     m.read = state
                     
-                    t.setObject(a, forKey: "\(key)", inCollection: .articles, withMetadata: m)
+                    t.setObject(a, forKey: key, inCollection: .articles, withMetadata: m)
                     
                 }
                 
