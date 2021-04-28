@@ -56,8 +56,8 @@ struct FoldersProvider: IntentTimelineProvider {
                     
                     json = UnreadEntries(date: Date(), entries: entries)
                     
-                    let mainItem: WidgetArticle = json.entries.first(where: { $0.coverImage != nil })!
-                    let otherItems: [WidgetArticle] = json.entries.filter { $0.identifier != mainItem.identifier }
+                    let mainItem: WidgetArticle? = json.entries.first(where: { $0.coverImage != nil })
+                    let otherItems: [WidgetArticle] = json.entries.filter { $0.identifier != mainItem?.identifier }
                     
                     let collection = FoldersCollection(mainItem: mainItem, otherItems: otherItems)
                     

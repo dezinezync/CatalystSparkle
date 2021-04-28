@@ -1,5 +1,15 @@
 # v2.3.0
 
+### Build 224
+
+- Fixed html markup showing in summary lines. 
+
+- Fixed Push Notifications permissions not being requested or updated under some conditions. 
+
+- Fixed the summary lines causing the title to get clipped to a single line or incomplete titles. 
+
+- Fixed a crash that would sometimes occur when the Folders Widget is configured. 
+
 ### Build 223
 
 - Fixed a bug causing the app to crash on launch. 
@@ -9,6 +19,7 @@
 ### Build 222
 
 - Moved OPML Import/Export to its window on macOS.
+
 
 ### Build 220
 

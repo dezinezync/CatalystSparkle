@@ -225,7 +225,6 @@ class ArticleCell: UITableViewCell {
             configureCoverImage(url: coverImageURL)
         }
         
-        configureSummary()
         configureAuthor(feed: feed)
         
         titleLabel.accessibilityValue = titleLabel.text?.replacingOccurrences(of: " | ", with: " by ")
@@ -275,14 +274,20 @@ class ArticleCell: UITableViewCell {
         if isMicroblogPost == true {
             
             titleLabel.text = article.textFromContent
-            titleLabel.numberOfLines = max(3, SharedPrefs.previewLines)
+            titleLabel.numberOfLines = max(3, SharedPrefs.previewLines) + 2
             titleLabel.font = .preferredFont(forTextStyle: .body)
+            
+            // summary will show the same content if its enabled.
+            summaryLabel.isHidden = true
             
         }
         else {
             
             titleLabel.text = article.title
             titleLabel.font = .preferredFont(forTextStyle: .headline)
+            titleLabel.numberOfLines = 0
+            
+            configureSummary()
             
         }
         
@@ -428,7 +433,7 @@ class ArticleCell: UITableViewCell {
             return
         }
         
-        if (summary.hasPrefix("<img") == true || summary == "<..."),
+        if (summary.hasPrefix("<") == true || summary == "<..."),
            summary.hasSuffix("...") == true {
             
             if let content = DBManager.shared.content(for: article!.identifier) {

@@ -791,6 +791,8 @@ public var deviceName: String {
         
         UNUserNotificationCenter.current().getNotificationSettings { [weak self] (settings) in
             
+            guard let sself = self else { return }
+            
             if settings.authorizationStatus == .denied {
                 // no permission, ignore.
             }
@@ -802,12 +804,13 @@ public var deviceName: String {
                     vc.coordinator = self
                     vc.modalPresentationStyle = .overFullScreen
                     
-                    guard let sself = self else { return }
-                    
                     sself.splitVC?.present(vc, animated: true, completion: nil)
                     
                 }
                 
+            }
+            else {
+                sself.registerForNotifications(completion: nil)
             }
             
         }
