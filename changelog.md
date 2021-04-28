@@ -1,5 +1,13 @@
 # v2.3.0
 
+### Build 226
+
+- Fixed counters not updating reliably.
+
+- Fixed sidebar not appearing on macOS by default.
+
+- Fixed subscriptions interface not appearing on macOS.
+
 ### Build 225
 
 ** Please do a full force re-sync before after installing this build.**
