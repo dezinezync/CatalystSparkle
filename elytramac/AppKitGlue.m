@@ -116,30 +116,17 @@ static AppKitGlue * SharedAppKitGlue = nil;
     
 }
 
-- (id)searchResultsViewForResults:(NSArray *)results {
+- (id)searchResultsController:(NSPopover *)popover field:(NSTextField *)field {
     
-    SearchResultsController *controller = [[SearchResultsController alloc] initWithSearchResults:results];
+    SearchResultsController *controller = [[SearchResultsController alloc] initWithPopover:popover field:field];
     
-    return controller.hostedView;
+    return controller;
     
 }
 
-- (void)update:(NSView * _Nonnull)view searchResults:(NSArray * _Nullable)results {
+- (void)update:(SearchResultsController * _Nonnull)controller searchResults:(NSArray * _Nullable)results {
     
-    for (NSView *subview in view.subviews) {
-        [subview removeFromSuperview];
-    }
-    
-    if (results == nil || [results count] == 0) {
-        return;
-    }
-    
-    NSTextField *field = [[NSTextField alloc] initWithFrame:NSRectFromCGRect(CGRectMake(0, 0, 120, 24))];
-    field.stringValue = [NSString stringWithFormat:@"%@ Results", @(results.count)];
-    
-    [field sizeToFit];
-    
-    [view addSubview:field];
+    [controller updateSearchResults:results];
     
 }
 

@@ -39,9 +39,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)disableFullscreenButton:(id)window;
 
-//- (id _Nullable)searchResultsViewForResults:(NSArray * _Nullable)results;
+#pragma mark - Search Controller
 
-- (void)update:(id _Nonnull)view searchResults:(NSArray * _Nullable)results;
+- (id _Nonnull)searchResultsController:(id)popover field:(id)field;
+
+- (void)update:(id _Nonnull)searchResultsController searchResults:(NSArray * _Nullable)results;
 
 @end
 

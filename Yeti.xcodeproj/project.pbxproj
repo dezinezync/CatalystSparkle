@@ -246,7 +246,12 @@
 		F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F099465F20AD86BE00E5520F /* StoreKit.framework */; };
 		F099466520AD8A8B00E5520F /* AppDelegate+Store.m in Sources */ = {isa = PBXBuildFile; fileRef = F099466420AD8A8B00E5520F /* AppDelegate+Store.m */; };
 		F09959CD2636EB7000AC5C68 /* CatalystHeaders.m in Sources */ = {isa = PBXBuildFile; fileRef = F09959CC2636EB7000AC5C68 /* CatalystHeaders.m */; };
-		F09959D42636F5C700AC5C68 /* SearchResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09959D32636F5C700AC5C68 /* SearchResultsController.swift */; };
+		F09959D92637A7CE00AC5C68 /* SuggestionPrototype.xib in Resources */ = {isa = PBXBuildFile; fileRef = F09959D82637A7CE00AC5C68 /* SuggestionPrototype.xib */; };
+		F09959DC2637AA7500AC5C68 /* SearchResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09959D32636F5C700AC5C68 /* SearchResultsController.swift */; };
+		F09959DE2637AB3500AC5C68 /* HighlightingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09959DD2637AB3400AC5C68 /* HighlightingView.swift */; };
+		F09959E02637B3DD00AC5C68 /* SuggestibleTextFieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09959DF2637B3DD00AC5C68 /* SuggestibleTextFieldCell.swift */; };
+		F09959E72637BAFD00AC5C68 /* SearchItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09959E62637BAFD00AC5C68 /* SearchItem.swift */; };
+		F09959E92637BD3000AC5C68 /* DBManager+Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09959E82637BD3000AC5C68 /* DBManager+Search.swift */; };
 		F09B3B351FBCB348001D4B09 /* UIViewController+ScrollLoad.m in Sources */ = {isa = PBXBuildFile; fileRef = F09B3B341FBCB348001D4B09 /* UIViewController+ScrollLoad.m */; };
 		F09BE12820F1C370000D1EB9 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F09BE12720F1C370000D1EB9 /* Settings.bundle */; };
 		F09CB6A921637DE200F47036 /* elytraProcessor.js in Resources */ = {isa = PBXBuildFile; fileRef = F09CB6A821637DE200F47036 /* elytraProcessor.js */; };
@@ -257,6 +262,9 @@
 		F09FD74C250915AF004BD60E /* auto.css in Resources */ = {isa = PBXBuildFile; fileRef = F09FD732250915AF004BD60E /* auto.css */; };
 		F0A031BB2520F7B900076718 /* ArticlePreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0A031A02520F7B900076718 /* ArticlePreferenceViewController.swift */; };
 		F0A031BC2520F7B900076718 /* ArticlePreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0A031BA2520F7B900076718 /* ArticlePreferenceViewController.xib */; };
+		F0A18C1226382DF000DD816C /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = F0A18C1126382DF000DD816C /* SDWebImage */; };
+		F0A18C1C2638F5AD00DD816C /* SuggestionsWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0A18C1B2638F5AD00DD816C /* SuggestionsWindow.swift */; };
+		F0A18C1E2638F62200DD816C /* RoundedCornersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0A18C1D2638F62200DD816C /* RoundedCornersView.swift */; };
 		F0A589F5205A580300488015 /* LinguisticSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A589F4205A580300488015 /* LinguisticSearch.m */; };
 		F0A589F6205A580800488015 /* LinguisticSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A589F4205A580300488015 /* LinguisticSearch.m */; };
 		F0A5AE6420C197EF00CFA1D2 /* Merriweather-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0A5AE5C20C197EE00CFA1D2 /* Merriweather-Bold.ttf */; };
@@ -961,6 +969,11 @@
 		F09959CB2636EB0A00AC5C68 /* CatalystHeaders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CatalystHeaders.h; sourceTree = "<group>"; };
 		F09959CC2636EB7000AC5C68 /* CatalystHeaders.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CatalystHeaders.m; sourceTree = "<group>"; };
 		F09959D32636F5C700AC5C68 /* SearchResultsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultsController.swift; sourceTree = "<group>"; };
+		F09959D82637A7CE00AC5C68 /* SuggestionPrototype.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SuggestionPrototype.xib; sourceTree = "<group>"; };
+		F09959DD2637AB3400AC5C68 /* HighlightingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HighlightingView.swift; sourceTree = "<group>"; };
+		F09959DF2637B3DD00AC5C68 /* SuggestibleTextFieldCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SuggestibleTextFieldCell.swift; sourceTree = "<group>"; };
+		F09959E62637BAFD00AC5C68 /* SearchItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchItem.swift; sourceTree = "<group>"; };
+		F09959E82637BD3000AC5C68 /* DBManager+Search.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DBManager+Search.swift"; sourceTree = "<group>"; };
 		F09B3B331FBCB348001D4B09 /* UIViewController+ScrollLoad.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIViewController+ScrollLoad.h"; sourceTree = "<group>"; };
 		F09B3B341FBCB348001D4B09 /* UIViewController+ScrollLoad.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+ScrollLoad.m"; sourceTree = "<group>"; };
 		F09BE12720F1C370000D1EB9 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
@@ -973,6 +986,8 @@
 		F09FD732250915AF004BD60E /* auto.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = auto.css; sourceTree = "<group>"; };
 		F0A031A02520F7B900076718 /* ArticlePreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArticlePreferenceViewController.swift; sourceTree = "<group>"; };
 		F0A031BA2520F7B900076718 /* ArticlePreferenceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ArticlePreferenceViewController.xib; sourceTree = "<group>"; };
+		F0A18C1B2638F5AD00DD816C /* SuggestionsWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestionsWindow.swift; sourceTree = "<group>"; };
+		F0A18C1D2638F62200DD816C /* RoundedCornersView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundedCornersView.swift; sourceTree = "<group>"; };
 		F0A4798020639EB000A20195 /* ArticleHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticleHandler.h; sourceTree = "<group>"; };
 		F0A589EF205A4E7E00488015 /* LinguisticSearch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LinguisticSearch.m; sourceTree = "<group>"; };
 		F0A589F3205A580300488015 /* LinguisticSearch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LinguisticSearch.h; sourceTree = "<group>"; };
@@ -1226,6 +1241,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0A18C1226382DF000DD816C /* SDWebImage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1838,6 +1854,7 @@
 			children = (
 				F073D5CD260C9D6C009447EC /* Coordinator.swift */,
 				F0EF6EB6261C9A9200C07B85 /* BookmarksCoordinator+Impl.swift */,
+				F09959E82637BD3000AC5C68 /* DBManager+Search.swift */,
 				F032A75C244D7D8C0024AC63 /* YetiTheme.h */,
 				F032A75B244D7D8C0024AC63 /* YetiTheme.m */,
 				F093318B24EC14A90066FA41 /* UnreadCountObservor.h */,
@@ -2087,7 +2104,13 @@
 		F09959D02636F59A00AC5C68 /* SearchResults */ = {
 			isa = PBXGroup;
 			children = (
+				F09959E62637BAFD00AC5C68 /* SearchItem.swift */,
 				F09959D32636F5C700AC5C68 /* SearchResultsController.swift */,
+				F0A18C1D2638F62200DD816C /* RoundedCornersView.swift */,
+				F09959DF2637B3DD00AC5C68 /* SuggestibleTextFieldCell.swift */,
+				F0A18C1B2638F5AD00DD816C /* SuggestionsWindow.swift */,
+				F09959DD2637AB3400AC5C68 /* HighlightingView.swift */,
+				F09959D82637A7CE00AC5C68 /* SuggestionPrototype.xib */,
 			);
 			path = SearchResults;
 			sourceTree = "<group>";
@@ -2517,6 +2540,7 @@
 			);
 			name = elytramac;
 			packageProductDependencies = (
+				F0A18C1126382DF000DD816C /* SDWebImage */,
 			);
 			productName = elytramac;
 			productReference = F0783C88248F685C00C7A280 /* elytramac.bundle */;
@@ -2646,6 +2670,7 @@
 			knownRegions = (
 				en,
 				Base,
+				English,
 			);
 			mainGroup = F070C2D01FBABC3500912CCF;
 			packageReferences = (
@@ -2938,6 +2963,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F0A031BC2520F7B900076718 /* ArticlePreferenceViewController.xib in Resources */,
+				F09959D92637A7CE00AC5C68 /* SuggestionPrototype.xib in Resources */,
 				F0BC8C0125205CF100FADCBB /* GeneralPreferenceViewController.xib in Resources */,
 				F01F87582521AA1600518CF1 /* MiscPreferenceViewController.xib in Resources */,
 				F0E0D51525208C3700A9E654 /* ImagesPreferenceViewController.xib in Resources */,
@@ -3132,6 +3158,7 @@
 				F0673B0120C6A1EB00C42062 /* OPMLVC.m in Sources */,
 				F073101525FCE6FD0087658C /* CustomFeedCell.swift in Sources */,
 				F0F35B0A257779CD0043982C /* FeedInfoController.swift in Sources */,
+				F09959E92637BD3000AC5C68 /* DBManager+Search.swift in Sources */,
 				F064A53B21576E7200A385AD /* UIImage+Color.m in Sources */,
 				F0C1705425DD4CFE005BAA9E /* NewFeedResultsVC.swift in Sources */,
 				F06EAA1325F9DB2D00A4C855 /* FeedProxy.swift in Sources */,
@@ -3226,6 +3253,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F09959E72637BAFD00AC5C68 /* SearchItem.swift in Sources */,
 				F079F413255BA32800121637 /* PreferencesStyle.swift in Sources */,
 				F079F419255BA32800121637 /* PreferencesStyleController.swift in Sources */,
 				F01F87592521AA1600518CF1 /* MiscPreferenceViewController.swift in Sources */,
@@ -3236,7 +3264,8 @@
 				F0A031BB2520F7B900076718 /* ArticlePreferenceViewController.swift in Sources */,
 				F079F41A255BA32800121637 /* PreferencesWindowController.swift in Sources */,
 				F0783CAF248F6A5800C7A280 /* AppKitGlue.m in Sources */,
-				F09959D42636F5C700AC5C68 /* SearchResultsController.swift in Sources */,
+				F09959DE2637AB3500AC5C68 /* HighlightingView.swift in Sources */,
+				F09959DC2637AA7500AC5C68 /* SearchResultsController.swift in Sources */,
 				F079F411255BA32800121637 /* Pane.swift in Sources */,
 				F079F412255BA32800121637 /* Localization.swift in Sources */,
 				F0BC8C0025205CF100FADCBB /* GeneralPreferenceViewController.swift in Sources */,
@@ -3244,9 +3273,12 @@
 				F079F410255BA32800121637 /* Utilities.swift in Sources */,
 				F079F417255BA32800121637 /* ToolbarItemStyleViewController.swift in Sources */,
 				F079F414255BA32800121637 /* PreferencePane.swift in Sources */,
+				F09959E02637B3DD00AC5C68 /* SuggestibleTextFieldCell.swift in Sources */,
+				F0A18C1E2638F62200DD816C /* RoundedCornersView.swift in Sources */,
 				F079F418255BA32800121637 /* Container.swift in Sources */,
 				F0BC8BF825205C4400FADCBB /* PreferencesController.swift in Sources */,
 				F079F416255BA32800121637 /* SegmentedControlStyleViewController.swift in Sources */,
+				F0A18C1C2638F5AD00DD816C /* SuggestionsWindow.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3660,6 +3692,7 @@
 				STRIP_SWIFT_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OBJC_BRIDGING_HEADER = elytramac/ElytraMacBridgingHeader.h;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = bundle;
 			};
@@ -4487,6 +4520,7 @@
 				STRIP_SWIFT_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OBJC_BRIDGING_HEADER = elytramac/ElytraMacBridgingHeader.h;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = bundle;
 			};
@@ -4978,6 +5012,11 @@
 		F06EA86725F9C02B00A4C855 /* Networking */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Networking;
+		};
+		F0A18C1126382DF000DD816C /* SDWebImage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F02A4892252653C7001063E9 /* XCRemoteSwiftPackageReference "SDWebImage" */;
+			productName = SDWebImage;
 		};
 		F0B0347325484D8E00B7884B /* SDWebImage */ = {
 			isa = XCSwiftPackageProductDependency;

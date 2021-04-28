@@ -17,6 +17,14 @@ extension BookmarksCoordinator {
     
     public func start() {
         
+        DispatchQueue.global().async {
+            self.setup()
+        }
+        
+    }
+    
+    func setup() {
+        
         guard let userID = user.userID else {
             print("Error starting bookmarks coordinator. No userID on user.")
             return
@@ -78,8 +86,13 @@ extension BookmarksCoordinator {
                 let bookmarked: [String] = (result["bookmarks"] ?? []).map { "\($0)" }
                 let deleted: [String] = (result["deleted"] ?? []).map { "\($0)" }
                 
-                self?.deleteBookmarks(deleted: deleted)
-                self?.addBookmarks(added: bookmarked)
+                DispatchQueue.main.async {
+                    self?.deleteBookmarks(deleted: deleted)
+                }
+                
+                DispatchQueue.main.async {
+                    self?.addBookmarks(added: bookmarked)
+                }
                 
             }
             

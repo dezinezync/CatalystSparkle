@@ -8,6 +8,9 @@
 
 import Foundation
 import Dynamic
+import DBManager
+import YapDatabase
+import Models
 
 #if targetEnvironment(macCatalyst)
 extension NSToolbarItem.Identifier  {
@@ -36,6 +39,7 @@ class SceneToolbarDelegate: NSObject, NSToolbarDelegate {
     
     weak var searchItem: NSToolbarItem_Catalyst?
     var popover: Dynamic?
+    var searchResultsController: NSObject?
     
     init(scene: UIWindowScene) {
         self.scene = scene
@@ -152,6 +156,9 @@ class SceneToolbarDelegate: NSObject, NSToolbarDelegate {
                 
             }
             
+            Dynamic(item!.view).target = self
+            Dynamic(item!.view).action = #selector(didSelectSearch(item:))
+            
             searchItem = item
             
             return item
@@ -200,6 +207,23 @@ class SceneToolbarDelegate: NSObject, NSToolbarDelegate {
         
     }
     
+    // MARK: - Search
+    @objc func didSelectSearch(item: Any?) {
+        
+        guard let item = item as? NSObject,
+              searchItem!.view as! NSObject != item else {
+            return
+        }
+        
+        guard let identifier = item.value(forKey: "identifier") as? String,
+              let url = URL(string: "elytra://article/\(identifier)") else {
+            return
+        }
+        
+        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        
+    }
+    
     func didSearch(text: String?) {
         
         guard let text = text,
@@ -219,8 +243,6 @@ class SceneToolbarDelegate: NSObject, NSToolbarDelegate {
             let popover = Dynamic.NSPopover()
             popover.contentViewController = Dynamic.NSViewController()
             popover.contentViewController.view = Dynamic.NSView()
-//            popover.permittedArrowDirections = 0
-//            popover.behaviour = 1
             
             let view = Dynamic(searchItem!).view
             let bounds = view.bounds
@@ -249,7 +271,83 @@ class SceneToolbarDelegate: NSObject, NSToolbarDelegate {
             return
         }
         
-        MyAppDelegate.sharedGlue.update(popover.contentViewController.view.asObject as Any, searchResults: ["A", "B", "C"])
+        var _results: [String] = []
+        let searchText = text.lowercased()
+        
+        if searchResultsController == nil {
+            searchResultsController = MyAppDelegate.sharedGlue.searchResultsController(popover.asObject!, field: searchItem!.view!) as! NSObject
+        }
+        
+        let maxSearchResults: Int = 20
+        
+        let selector = NSSelectorFromString("updateSearchResults:")
+              
+        DBManager.shared.uiConnection.asyncRead { [weak self] t in
+            
+            guard let self = self,
+                  let txn = t.ext(DBManagerViews.articlesView.rawValue) as? YapDatabaseFilteredViewTransaction else {
+                DispatchQueue.main.async { self?.searchResultsController?.perform(selector, with: []) }
+                return
+            }
+            
+            let count = txn.numberOfItems(inGroup: GroupNames.articles.rawValue)
+            
+            txn.enumerateKeysAndMetadata(inGroup: GroupNames.articles.rawValue, range: NSMakeRange(0, Int(count))) { _, _ in
+                return true
+            } using: { c, k, meta, index, stop in
+                
+                guard let metadata = meta as? ArticleMeta else {
+                    return
+                }
+                
+                let hasAny = (metadata.titleWordCloud ?? []).filter { $0.contains(searchText) }
+                
+                if hasAny.count > 0 {
+                    
+                    _results.append(k)
+                    if _results.count == maxSearchResults {
+                        stop.pointee = true
+                    }
+                    
+                }
+                
+            }
+
+            
+            guard _results.count > 0 else {
+                DispatchQueue.main.async { self.searchResultsController?.perform(selector, with: []) }
+                return
+            }
+            
+            // grab the items from the list
+            let collection: [Article] = _results.compactMap { key in
+                return t.object(forKey: key, inCollection: CollectionNames.articles.rawValue) as? Article
+            }
+            
+            // because collection is a compact map, validate its count again.
+            guard collection.count > 0 else {
+                DispatchQueue.main.async { self.searchResultsController?.perform(selector, with: []) }
+                return
+            }
+            
+            let searchResults: [[String?]] = collection.map {
+                
+                var item = [
+                    $0.identifier,
+                    nil,
+                    $0.title ?? "Untitled",
+                    $0.author
+                ]
+                
+                if let feed = t.object(forKey: "\($0.feedID)", inCollection: CollectionNames.feeds.rawValue) as? Feed {
+                    item[1] = feed.faviconProxyURI(size: 32)?.absoluteString
+                }
+                return item
+            }
+                
+            DispatchQueue.main.async { self.searchResultsController?.perform(selector, with: searchResults) }
+            
+        }
         
     }
     

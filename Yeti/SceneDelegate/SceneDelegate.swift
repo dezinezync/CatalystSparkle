@@ -13,6 +13,7 @@ import JLRoutes
 import Defaults
 import Dynamic
 import Models
+import DBManager
 
 let backgroundCleanupIdentifier: String = "com.yeti.cleanup"
 let backgroundRefreshIdentifier: String = "com.yeti.refresh"
@@ -93,6 +94,8 @@ let DEFAULT_ACTIVITIES: Set<String> = Set(["main"])
         
         window!.makeKeyAndVisible()
         
+        DBManager.shared.initSearch()
+        
         if connectionOptions.urlContexts.count > 0 {
             
             self.scene(scene, openURLContexts: connectionOptions.urlContexts)
@@ -103,6 +106,10 @@ let DEFAULT_ACTIVITIES: Set<String> = Set(["main"])
     
     func sceneWillEnterForeground(_ scene: UIScene) {
     
+        guard scene == MyAppDelegate.mainScene else {
+            return
+        }
+        
         WidgetManager.updateState()
         
     }
@@ -113,13 +120,21 @@ let DEFAULT_ACTIVITIES: Set<String> = Set(["main"])
         
     }
     
-    func sceneDidEnterBackground(_ scene: UIScene) {
+    func sceneWillResignActive(_ scene: UIScene) {
         
         guard scene == MyAppDelegate.mainScene else {
             return
         }
         
         WidgetManager.reloadAllTimelines()
+        
+    }
+    
+    func sceneDidEnterBackground(_ scene: UIScene) {
+        
+        guard scene == MyAppDelegate.mainScene else {
+            return
+        }
         
         BGTaskScheduler.shared.getPendingTaskRequests { requests in
             
