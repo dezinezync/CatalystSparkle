@@ -136,12 +136,12 @@ private let SYNC_TOKEN_ID = "syncTokenID-2.3.0"
             }
             else {
                 
-                // subtract an hour from our previous token
+                // subtract half an hour from our previous token
                 if let t = token,
                    let decoded = t.base64Decoded(),
                    var date = formatter.date(from: decoded) {
                     
-                    date.addTimeInterval(3600 * -1)
+                    date.addTimeInterval(3600 * -0.5)
                     
                     token = formatter.string(from: date).base64Encoded()
                     
