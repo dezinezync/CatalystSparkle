@@ -11,6 +11,8 @@
 
 #import <Foundation/Foundation.h>
 
+#if TARGET_OS_MACCATALYST
+
 @interface NSToolbarItem_Catalyst : NSToolbarItem
 
 @property id view;
@@ -34,5 +36,7 @@
 @interface IPDFToolbarHelper : NSObject
 
 @end
+
+#endif
 
 #endif /* CatalystHeaders_h */

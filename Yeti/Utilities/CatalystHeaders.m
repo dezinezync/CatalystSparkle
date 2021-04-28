@@ -8,6 +8,8 @@
 
 #import "CatalystHeaders.h"
 
+#if TARGET_OS_MACCATALYST
+
 @class NSSearchField_Catalyst;
 
 @protocol NSSearchFieldDelegate_Catalyst
@@ -101,3 +103,5 @@
 @implementation IPDFToolbarHelper
 
 @end
+
+#endif

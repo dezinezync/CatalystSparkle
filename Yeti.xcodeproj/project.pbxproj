@@ -251,7 +251,6 @@
 		F09959DE2637AB3500AC5C68 /* HighlightingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09959DD2637AB3400AC5C68 /* HighlightingView.swift */; };
 		F09959E02637B3DD00AC5C68 /* SuggestibleTextFieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09959DF2637B3DD00AC5C68 /* SuggestibleTextFieldCell.swift */; };
 		F09959E72637BAFD00AC5C68 /* SearchItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09959E62637BAFD00AC5C68 /* SearchItem.swift */; };
-		F09959E92637BD3000AC5C68 /* DBManager+Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09959E82637BD3000AC5C68 /* DBManager+Search.swift */; };
 		F09B3B351FBCB348001D4B09 /* UIViewController+ScrollLoad.m in Sources */ = {isa = PBXBuildFile; fileRef = F09B3B341FBCB348001D4B09 /* UIViewController+ScrollLoad.m */; };
 		F09BE12820F1C370000D1EB9 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F09BE12720F1C370000D1EB9 /* Settings.bundle */; };
 		F09CB6A921637DE200F47036 /* elytraProcessor.js in Resources */ = {isa = PBXBuildFile; fileRef = F09CB6A821637DE200F47036 /* elytraProcessor.js */; };
@@ -973,7 +972,6 @@
 		F09959DD2637AB3400AC5C68 /* HighlightingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HighlightingView.swift; sourceTree = "<group>"; };
 		F09959DF2637B3DD00AC5C68 /* SuggestibleTextFieldCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SuggestibleTextFieldCell.swift; sourceTree = "<group>"; };
 		F09959E62637BAFD00AC5C68 /* SearchItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchItem.swift; sourceTree = "<group>"; };
-		F09959E82637BD3000AC5C68 /* DBManager+Search.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DBManager+Search.swift"; sourceTree = "<group>"; };
 		F09B3B331FBCB348001D4B09 /* UIViewController+ScrollLoad.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIViewController+ScrollLoad.h"; sourceTree = "<group>"; };
 		F09B3B341FBCB348001D4B09 /* UIViewController+ScrollLoad.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+ScrollLoad.m"; sourceTree = "<group>"; };
 		F09BE12720F1C370000D1EB9 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
@@ -1854,7 +1852,6 @@
 			children = (
 				F073D5CD260C9D6C009447EC /* Coordinator.swift */,
 				F0EF6EB6261C9A9200C07B85 /* BookmarksCoordinator+Impl.swift */,
-				F09959E82637BD3000AC5C68 /* DBManager+Search.swift */,
 				F032A75C244D7D8C0024AC63 /* YetiTheme.h */,
 				F032A75B244D7D8C0024AC63 /* YetiTheme.m */,
 				F093318B24EC14A90066FA41 /* UnreadCountObservor.h */,
@@ -3158,7 +3155,6 @@
 				F0673B0120C6A1EB00C42062 /* OPMLVC.m in Sources */,
 				F073101525FCE6FD0087658C /* CustomFeedCell.swift in Sources */,
 				F0F35B0A257779CD0043982C /* FeedInfoController.swift in Sources */,
-				F09959E92637BD3000AC5C68 /* DBManager+Search.swift in Sources */,
 				F064A53B21576E7200A385AD /* UIImage+Color.m in Sources */,
 				F0C1705425DD4CFE005BAA9E /* NewFeedResultsVC.swift in Sources */,
 				F06EAA1325F9DB2D00A4C855 /* FeedProxy.swift in Sources */,

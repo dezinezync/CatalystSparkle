@@ -13,7 +13,6 @@ import JLRoutes
 import Defaults
 import Dynamic
 import Models
-import DBManager
 
 let backgroundCleanupIdentifier: String = "com.yeti.cleanup"
 let backgroundRefreshIdentifier: String = "com.yeti.refresh"
@@ -93,8 +92,6 @@ let DEFAULT_ACTIVITIES: Set<String> = Set(["main"])
         #endif
         
         window!.makeKeyAndVisible()
-        
-        DBManager.shared.initSearch()
         
         if connectionOptions.urlContexts.count > 0 {
             
