@@ -16,11 +16,6 @@ import Sparkle
         driver = SPUStandardUserDriver(hostBundle: hostBundle, delegate: self)
         updater = SPUUpdater(hostBundle: hostBundle, applicationBundle: hostBundle, userDriver: driver, delegate: self)
         try updater.start()
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            self.checkForUpdates()
-        }
-        
     }
     
     func checkForUpdates() {
