@@ -212,6 +212,7 @@ enum MarkDirection: Int {
     fileprivate var _hasSetup: Bool = false
     
     public override func viewWillAppear(_ animated: Bool) {
+        
         super.viewWillAppear(animated)
         
         if _hasSetup == false {
@@ -240,6 +241,15 @@ enum MarkDirection: Int {
         
     }
     
+    public override func viewDidAppear(_ animated: Bool) {
+        
+        super.viewDidAppear(animated)
+        
+        self.titleView?.shouldBeVisible = true
+        self.titleView?.alpha = 0
+        
+    }
+    
     // MARK: - Setups
     weak var titleView: FeedTitleView?
     
@@ -248,6 +258,8 @@ enum MarkDirection: Int {
         ArticleCell.register(tableView)
         
         let titleView = FeedTitleView()
+        titleView.alpha = 0
+        titleView.shouldBeVisible = false
         
         switch type {
         case .natural, .author:
@@ -444,7 +456,10 @@ enum MarkDirection: Int {
         navigationController?.navigationBar.isHidden = true
         #else
         
-        navigationItem.largeTitleDisplayMode = .never
+        extendedLayoutIncludesOpaqueBars = true
+        
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .automatic;
         
         if Defaults[.useToolbar] == false {
             navigationItem.rightBarButtonItems = self.rightBarButtonItems()
@@ -1113,7 +1128,36 @@ extension FeedVC {
     
     @objc public func dz_scrollViewDidScroll(_ scrollView: UIScrollView!) {
         
-        print("isOverscrolling: \(isOverscrolling)")
+//        print("isOverscrolling: \(isOverscrolling)")
+        
+        #if !targetEnvironment(macCatalyst)
+        
+        if let navBar = navigationController?.navigationBar {
+          
+            let height = navBar.frame.height
+            let maxY: CGFloat = 68
+            let minY: CGFloat = 44
+            
+            // large title
+            if height > minY {
+                
+                // for a height of greater than 60, the large title is still visible
+                if height > maxY, titleView?.alpha != 0 {
+                    titleView?.alpha = 0
+                }
+                
+                if height < maxY {
+                    // extrapolate the opacity in 0.0 - 1.0 for height range 44 - 60
+                    // 44:1 :: 60 : 0
+                    let alpha = 1 - ((height - minY)/(maxY - minY))
+                    titleView?.alpha = alpha
+                }
+                
+            }
+            
+        }
+        
+        #endif
         
         preventLargeOverscrollIfNeeded()
         

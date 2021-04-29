@@ -14,6 +14,8 @@ import UIKit
     @objc public let faviconView: UIImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 16, height: 16))
     @objc public let titleLabel: UILabel = UILabel.init()
     
+    public var shouldBeVisible: Bool = false
+    
     convenience init () {
         self.init(frame: CGRect.zero)
         setup()
@@ -27,6 +29,22 @@ import UIKit
     public required init?(coder: NSCoder) {
         super.init(coder: coder)
         setup()
+    }
+    
+    /**
+     * When the navigation sets up its context and subviews
+     * it expects all subviews to be visible during its animation
+     * and after that animation is fully committed.
+     *
+     * We control the newValue here.
+     */
+    public override var alpha: CGFloat {
+        get {
+            super.alpha
+        }
+        set {
+            super.alpha = shouldBeVisible ? newValue : 0
+        }
     }
     
     func setup () {

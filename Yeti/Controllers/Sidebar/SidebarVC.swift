@@ -301,7 +301,7 @@ enum SidebarItem: Hashable, Identifiable {
         
         definesPresentationContext = true
         
-        additionalSafeAreaInsets = UIEdgeInsets(top: 12, left: 0, bottom: 0, right: 0)
+        additionalSafeAreaInsets = UIEdgeInsets(top: 1, left: 0, bottom: 0, right: 0)
         
         collectionView.setCollectionViewLayout(layout, animated: false)
         
@@ -329,11 +329,14 @@ enum SidebarItem: Hashable, Identifiable {
         
         super.viewWillAppear(animated)
         
+        collectionView.contentInsetAdjustmentBehavior = .automatic
+        
         #if !targetEnvironment(macCatalyst)
+        
+        extendedLayoutIncludesOpaqueBars = true
         
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .automatic;
-//        navigationController?.navigationBar.isTranslucent = false
         
         if SharedPrefs.useToolbar == true {
 
@@ -1313,7 +1316,6 @@ enum SidebarItem: Hashable, Identifiable {
                 
                 if sself.refreshControl?.isRefreshing == true {
                     DispatchQueue.main.async {
-                        sself.additionalSafeAreaInsets = .zero
                         sself.refreshControl?.endRefreshing()
                         DBManager.shared.lastUpdated = Date()
                     }
@@ -1348,7 +1350,7 @@ enum SidebarItem: Hashable, Identifiable {
                 sself.navigationController?.setToolbarHidden(false, animated: animated)
                 sself.progressLabel?.text = "Syncing..."
                 sself.progressLabel?.sizeToFit()
-                sself.additionalSafeAreaInsets = UIEdgeInsets(top: 0, left: 0, bottom: sself.navigationController?.toolbar?.bounds.size.height ?? 44, right: 0)
+                sself.additionalSafeAreaInsets = UIEdgeInsets(top: sself.additionalSafeAreaInsets.top, left: 0, bottom: sself.navigationController?.toolbar?.bounds.size.height ?? 44, right: 0)
             }
             else if progress >= 0.99 {
              
