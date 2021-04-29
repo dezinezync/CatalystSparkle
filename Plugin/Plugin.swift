@@ -7,13 +7,13 @@ import Foundation
 import AppKit
 import Sparkle
 
-@objc class Plugin: NSResponder, SparkleBridgePlugin, SPUUpdaterDelegate {
-    var driver: BridgingDriver!
+@objc class Plugin: NSResponder, SparkleBridgePlugin, SPUStandardUserDriverDelegate, SPUUpdaterDelegate {
+    var driver: SPUStandardUserDriver!
     var updater: SPUUpdater!
     
-    func setup(with bridge: SparkleBridge) throws {
+    func setup(_ bridge: SparkleBridge?) throws {
         let hostBundle = Bundle.main
-        driver = BridgingDriver(wrapping: bridge)
+        driver = SPUStandardUserDriver(hostBundle: hostBundle, delegate: self)
         updater = SPUUpdater(hostBundle: hostBundle, applicationBundle: hostBundle, userDriver: driver, delegate: self)
         try updater.start()
     }

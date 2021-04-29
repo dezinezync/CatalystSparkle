@@ -19,6 +19,47 @@ import Sparkle
 /// of the fence.
 
 internal class BridgingDriver: NSObject, SPUUserDriver {
+    
+    func showUserInitiatedUpdateCheck(cancellation: @escaping () -> Void) {
+        driver.showUserInitiatedUpdateCheck { _ in
+            
+        }
+    }
+    
+    func showUpdateFound(with appcastItem: SUAppcastItem, userInitiated: Bool, state: SPUUserUpdateState, reply: @escaping (SPUUserUpdateChoice) -> Void) {
+        driver.showUpdateFound(withAppcastItem: appcastItem.propertiesDictionary, userInitiated: userInitiated) { retval in
+            reply(SPUUserUpdateChoice(rawValue: retval)!)
+        }
+    }
+    
+    func showUpdateNotFoundWithError(_ error: Error, acknowledgement: @escaping () -> Void) {
+        driver.showUpdateNotFound {
+            acknowledgement()
+        }
+    }
+    
+    func showDownloadInitiated(cancellation: @escaping () -> Void) {
+        driver.showDownloadInitiated { _ in
+            
+        }
+    }
+    
+    func showUpdateInstalledAndRelaunched(_ relaunched: Bool, acknowledgement: @escaping () -> Void) {
+        
+    }
+    
+    func showUpdateInFocus() {
+        
+    }
+    
+    // MARK: - Old
+    
+    func showReady(toInstallAndRelaunch reply: @escaping (SPUUserUpdateChoice) -> Void) {
+        driver.showReady { retval in
+            reply(SPUUserUpdateChoice(rawValue: Int(retval))!)
+        }
+    }
+    
     let driver: SparkleBridge
 
     init(wrapping driver: SparkleBridge) {
