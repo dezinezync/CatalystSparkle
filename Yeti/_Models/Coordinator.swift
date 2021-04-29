@@ -70,11 +70,8 @@ public var deviceName: String {
         sidebar.coordinator = self
         
         let nav = UINavigationController(rootViewController: sidebar)
-        nav.navigationBar.prefersLargeTitles = true
-        sidebar.navigationItem.largeTitleDisplayMode = .automatic
 
-        splitVC.setViewController(nav, for: .compact)
-        
+        splitVC.setViewController(nav, for: .compact) // only used on iPads :/
         splitVC.setViewController(nav, for: .primary)
         
         self.sidebarVC = sidebar
