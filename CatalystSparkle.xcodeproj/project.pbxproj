@@ -434,7 +434,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.elegantchaos.SparkleBridgeFramework;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.SparkleBridgeFramework;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = Shared/BridgingHeader.h;
@@ -463,7 +463,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.elegantchaos.SparkleBridgeFramework;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.SparkleBridgeFramework;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = Shared/BridgingHeader.h;
@@ -488,7 +488,7 @@
 					"@loader_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				PRODUCT_BUNDLE_IDENTIFIER = com.elegantchaos.sparklebridge;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.sparklebridge;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
@@ -512,7 +512,7 @@
 					"@loader_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				PRODUCT_BUNDLE_IDENTIFIER = com.elegantchaos.sparklebridge;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.sparklebridge;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
