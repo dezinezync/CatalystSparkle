@@ -15,7 +15,7 @@ public class SparkleBridgeClient {
             if let cls = bundle.principalClass as? NSObject.Type {
                 if let instance = cls.init() as? SparkleBridgePlugin {
                     do {
-                        try instance.setup(nil)
+                        try instance.setup(bridge)
                         return .success(instance)
                     } catch {
                         return .failure(error as NSError)
