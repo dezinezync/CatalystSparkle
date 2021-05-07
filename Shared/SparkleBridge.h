@@ -44,6 +44,7 @@ typedef struct {
 @protocol SparkleBridgePlugin <NSObject>
 - (BOOL)setup: (id<SparkleBridge> _Nullable)bridge error:(NSError **)error;
 - (void)checkForUpdates;
+- (void)checkForUpdatesInBackground;
 @end
 
 NS_ASSUME_NONNULL_END
