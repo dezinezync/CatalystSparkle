@@ -76,39 +76,39 @@ internal class BridgingDriver: NSObject, SPUUserDriver {
         }
     }
     
-    func showUserInitiatedUpdateCheck(completion updateCheckStatusCompletion: @escaping (SPUUserInitiatedCheckStatus) -> Void) {
-        driver.showUserInitiatedUpdateCheck() { status in
-            updateCheckStatusCompletion(SPUUserInitiatedCheckStatus(rawValue: status)!)
-        }
-    }
+//    func showUserInitiatedUpdateCheck(completion updateCheckStatusCompletion: @escaping (SPUUserInitiatedCheckStatus) -> Void) {
+//        driver.showUserInitiatedUpdateCheck() { status in
+//            updateCheckStatusCompletion(SPUUserInitiatedCheckStatus(rawValue: status)!)
+//        }
+//    }
     
     func dismissUserInitiatedUpdateCheck() {
         driver.dismissUserInitiatedUpdateCheck()
     }
     
-    func showUpdateFound(with appcastItem: SUAppcastItem, userInitiated: Bool, reply: @escaping (SPUUpdateAlertChoice) -> Void) {
-        driver.showUpdateFound(withAppcastItem: appcastItem.propertiesDictionary, userInitiated: userInitiated) { choice in
-            reply(SPUUpdateAlertChoice(rawValue: choice)!)
+    func showUpdateFound(with appcastItem: SUAppcastItem, state: SPUUserUpdateState, reply: @escaping (SPUUserUpdateChoice) -> Void) {
+        driver.showUpdateFound(withAppcastItem: appcastItem.propertiesDictionary, userInitiated: true) { choice in
+            reply(.install)
         }
     }
+
+//    func showDownloadedUpdateFound(with appcastItem: SUAppcastItem, userInitiated: Bool, reply: @escaping (SPUUpdateAlertChoice) -> Void) {
+//        driver.showDownloadedUpdateFound(withAppcastItem: appcastItem.propertiesDictionary, userInitiated: userInitiated) { choice in
+//            reply(SPUUpdateAlertChoice(rawValue: choice)! )
+//        }
+//    }
     
-    func showDownloadedUpdateFound(with appcastItem: SUAppcastItem, userInitiated: Bool, reply: @escaping (SPUUpdateAlertChoice) -> Void) {
-        driver.showDownloadedUpdateFound(withAppcastItem: appcastItem.propertiesDictionary, userInitiated: userInitiated) { choice in
-            reply(SPUUpdateAlertChoice(rawValue: choice)! )
-        }
-    }
-    
-    func showResumableUpdateFound(with appcastItem: SUAppcastItem, userInitiated: Bool, reply: @escaping (SPUInstallUpdateStatus) -> Void) {
-        driver.showResumableUpdateFound(withAppcastItem: appcastItem.propertiesDictionary, userInitiated: userInitiated) { choice in
-            reply(SPUInstallUpdateStatus(rawValue: choice)!)
-        }
-    }
-    
-    func showInformationalUpdateFound(with appcastItem: SUAppcastItem, userInitiated: Bool, reply: @escaping (SPUInformationalUpdateAlertChoice) -> Void) {
-        driver.showInformationalUpdateFound(withAppcastItem: appcastItem.propertiesDictionary, userInitiated: userInitiated) { choice in
-            reply(SPUInformationalUpdateAlertChoice(rawValue: choice)!)
-        }
-    }
+//    func showResumableUpdateFound(with appcastItem: SUAppcastItem, userInitiated: Bool, reply: @escaping (SPUInstallUpdateStatus) -> Void) {
+//        driver.showResumableUpdateFound(withAppcastItem: appcastItem.propertiesDictionary, userInitiated: userInitiated) { choice in
+//            reply(SPUInstallUpdateStatus(rawValue: choice)!)
+//        }
+//    }
+//
+//    func showInformationalUpdateFound(with appcastItem: SUAppcastItem, userInitiated: Bool, reply: @escaping (SPUInformationalUpdateAlertChoice) -> Void) {
+//        driver.showInformationalUpdateFound(withAppcastItem: appcastItem.propertiesDictionary, userInitiated: userInitiated) { choice in
+//            reply(SPUInformationalUpdateAlertChoice(rawValue: choice)!)
+//        }
+//    }
     
     func showUpdateReleaseNotes(with downloadData: SPUDownloadData) {
         driver.showUpdateReleaseNotes(withDownloadData: downloadData.data, encoding: downloadData.textEncodingName, mimeType: downloadData.mimeType)
@@ -130,11 +130,11 @@ internal class BridgingDriver: NSObject, SPUUserDriver {
         }
     }
     
-    func showDownloadInitiated(completion downloadUpdateStatusCompletion: @escaping (SPUDownloadUpdateStatus) -> Void) {
-        driver.showDownloadInitiated() { status in
-            downloadUpdateStatusCompletion(SPUDownloadUpdateStatus(rawValue: status)!)
-        }
-    }
+//    func showDownloadInitiated(completion downloadUpdateStatusCompletion: @escaping (SPUDownloadUpdateStatus) -> Void) {
+//        driver.showDownloadInitiated() { status in
+//            downloadUpdateStatusCompletion(SPUDownloadUpdateStatus(rawValue: status)!)
+//        }
+//    }
     
     func showDownloadDidReceiveExpectedContentLength(_ expectedContentLength: UInt64) {
         driver.showDownloadDidReceiveExpectedContentLength(expectedContentLength)
@@ -152,11 +152,11 @@ internal class BridgingDriver: NSObject, SPUUserDriver {
         driver.showExtractionReceivedProgress(progress)
     }
     
-    func showReady(toInstallAndRelaunch installUpdateHandler: @escaping (SPUInstallUpdateStatus) -> Void) {
-        driver.showReady() { status in
-            installUpdateHandler(SPUInstallUpdateStatus(rawValue: status)!)
-        }
-    }
+//    func showReady(toInstallAndRelaunch installUpdateHandler: @escaping (SPUInstallUpdateStatus) -> Void) {
+//        driver.showReady() { status in
+//            installUpdateHandler(SPUInstallUpdateStatus(rawValue: status)!)
+//        }
+//    }
     
     func showInstallingUpdate() {
         driver.showInstallingUpdate()
